@@ -41,7 +41,7 @@ function Dashboard() {
 
   const { data: downloads = [] } = useQuery({
     queryKey: ["my-downloads", user.id],
-    queryFn: async () => (await supabase.from("downloads").select("*, artworks(id,slug,title,preview_url,file_path)").order("last_downloaded_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await supabase.from("downloads").select("*, artworks(id,slug,title,preview_url,file_path,external_url)").order("last_downloaded_at", { ascending: false })).data ?? [],
   });
 
   const { data: orders = [] } = useQuery({
@@ -49,9 +49,29 @@ function Dashboard() {
     queryFn: async () => (await supabase.from("orders").select("*, artworks(title,slug)").order("created_at", { ascending: false })).data ?? [],
   });
 
-  async function redownload(filePath: string) {
-    const { data } = await supabase.storage.from("artwork-files").createSignedUrl(filePath, 60);
-    if (data?.signedUrl) window.open(data.signedUrl, "_blank");
+  async function redownload(art: { file_path: string | null; external_url: string | null; title: string }) {
+    try {
+      if (art.external_url) {
+        window.open(art.external_url, "_blank", "noopener,noreferrer");
+        return;
+      }
+      if (!art.file_path) {
+        toast.error("Arquivo indisponível");
+        return;
+      }
+      const { data, error } = await supabase.storage
+        .from("artwork-files")
+        .createSignedUrl(art.file_path, 60, { download: art.title });
+      if (error || !data?.signedUrl) throw error ?? new Error("Falha ao gerar link");
+      const a = document.createElement("a");
+      a.href = data.signedUrl;
+      a.rel = "noopener";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Erro ao baixar");
+    }
   }
 
   return (
@@ -88,7 +108,7 @@ function Dashboard() {
                     <div className="p-3">
                       <h3 className="line-clamp-1 text-sm font-medium">{d.artworks.title}</h3>
                       <p className="mt-1 text-xs text-muted-foreground">Baixado em {formatDate(d.last_downloaded_at)}</p>
-                      <Button size="sm" variant="outline" className="mt-2 w-full" onClick={() => redownload(d.artworks.file_path)}>
+                      <Button size="sm" variant="outline" className="mt-2 w-full" onClick={() => redownload(d.artworks)}>
                         <Download className="mr-1 h-3 w-3" /> Baixar novamente
                       </Button>
                     </div>
