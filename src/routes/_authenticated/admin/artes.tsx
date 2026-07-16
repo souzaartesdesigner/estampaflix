@@ -100,6 +100,7 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
     external_url: editing?.external_url ?? "",
     file_format: editing?.file_format ?? "png",
     price_cents: editing?.price_cents ?? 990,
+    credit_cost: editing?.credit_cost ?? 1,
     is_published: editing?.is_published ?? true,
     is_featured: editing?.is_featured ?? false,
     is_trending: editing?.is_trending ?? false,
@@ -154,6 +155,7 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
         external_url,
         file_format: form.file_format,
         price_cents: Number(form.price_cents),
+        credit_cost: Number(form.credit_cost),
         is_published: form.is_published,
         is_featured: form.is_featured,
         is_trending: form.is_trending,
@@ -198,9 +200,10 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="grid gap-2"><Label>Preço (centavos)</Label><Input type="number" value={form.price_cents} onChange={(e) => setForm({ ...form, price_cents: e.target.value })} required /></div>
-            <div className="grid gap-2"><Label>Cores (separadas por vírgula)</Label><Input value={form.colors} onChange={(e) => setForm({ ...form, colors: e.target.value })} placeholder="black,white,red" /></div>
+            <div className="grid gap-2"><Label>Custo em créditos</Label><Input type="number" min={0} value={form.credit_cost} onChange={(e) => setForm({ ...form, credit_cost: e.target.value })} required /></div>
+            <div className="grid gap-2"><Label>Cores (vírgula)</Label><Input value={form.colors} onChange={(e) => setForm({ ...form, colors: e.target.value })} placeholder="black,white,red" /></div>
           </div>
           <div className="grid gap-2">
             <Label>Imagem de preview (upload ou URL)</Label>

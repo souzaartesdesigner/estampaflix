@@ -120,11 +120,14 @@ function ManageUserDialog({ user, onClose }: { user: any; onClose: () => void })
   });
 
   const revokeArtwork = useMutation({
-    mutationFn: async (orderId: string) => {
-      const { error } = await supabase.from("orders").delete().eq("id", orderId);
-      if (error) throw error;
+    mutationFn: async (order: { id: string; artwork_id: string }) => {
+      const { error: e1 } = await supabase.from("orders").delete().eq("id", order.id);
+      if (e1) throw e1;
+      // Also remove any download record so the client loses access on the artwork page
+      const { error: e2 } = await supabase.from("downloads").delete().eq("user_id", user.id).eq("artwork_id", order.artwork_id);
+      if (e2) throw e2;
     },
-    onSuccess: () => { toast.success("Concessão removida"); qc.invalidateQueries({ queryKey: ["admin-user-granted", user.id] }); },
+    onSuccess: () => { toast.success("Concessão removida"); qc.invalidateQueries({ queryKey: ["admin-user-granted", user.id] }); qc.invalidateQueries({ queryKey: ["artwork-owned"] }); },
     onError: (e: any) => toast.error(e.message),
   });
 
