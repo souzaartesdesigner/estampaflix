@@ -15,9 +15,12 @@ import { Route as PlanosRouteImport } from './routes/planos'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ArtesSlugRouteImport } from './routes/artes.$slug'
+import { Route as AuthenticatedMinhaContaRouteImport } from './routes/_authenticated/minha-conta'
+import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 
 const SuporteRoute = SuporteRouteImport.update({
   id: '/suporte',
@@ -49,6 +52,10 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -64,6 +71,16 @@ const ArtesSlugRoute = ArtesSlugRouteImport.update({
   path: '/artes/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedMinhaContaRoute = AuthenticatedMinhaContaRouteImport.update({
+  id: '/minha-conta',
+  path: '/minha-conta',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -73,6 +90,8 @@ export interface FileRoutesByFullPath {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/suporte': typeof SuporteRoute
+  '/admin': typeof AuthenticatedAdminRouteRoute
+  '/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/artes/$slug': typeof ArtesSlugRoute
   '/blog/$slug': typeof BlogSlugRoute
 }
@@ -84,18 +103,23 @@ export interface FileRoutesByTo {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/suporte': typeof SuporteRoute
+  '/admin': typeof AuthenticatedAdminRouteRoute
+  '/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/artes/$slug': typeof ArtesSlugRoute
   '/blog/$slug': typeof BlogSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/blog': typeof BlogRouteWithChildren
   '/catalogo': typeof CatalogoRoute
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/suporte': typeof SuporteRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteRoute
+  '/_authenticated/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/artes/$slug': typeof ArtesSlugRoute
   '/blog/$slug': typeof BlogSlugRoute
 }
@@ -109,6 +133,8 @@ export interface FileRouteTypes {
     | '/planos'
     | '/reset-password'
     | '/suporte'
+    | '/admin'
+    | '/minha-conta'
     | '/artes/$slug'
     | '/blog/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -120,23 +146,29 @@ export interface FileRouteTypes {
     | '/planos'
     | '/reset-password'
     | '/suporte'
+    | '/admin'
+    | '/minha-conta'
     | '/artes/$slug'
     | '/blog/$slug'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/auth'
     | '/blog'
     | '/catalogo'
     | '/planos'
     | '/reset-password'
     | '/suporte'
+    | '/_authenticated/admin'
+    | '/_authenticated/minha-conta'
     | '/artes/$slug'
     | '/blog/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   BlogRoute: typeof BlogRouteWithChildren
   CatalogoRoute: typeof CatalogoRoute
@@ -190,6 +222,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -211,8 +250,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArtesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/minha-conta': {
+      id: '/_authenticated/minha-conta'
+      path: '/minha-conta'
+      fullPath: '/minha-conta'
+      preLoaderRoute: typeof AuthenticatedMinhaContaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRoute
+  AuthenticatedMinhaContaRoute: typeof AuthenticatedMinhaContaRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRoute,
+  AuthenticatedMinhaContaRoute: AuthenticatedMinhaContaRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface BlogRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
@@ -226,6 +292,7 @@ const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   BlogRoute: BlogRouteWithChildren,
   CatalogoRoute: CatalogoRoute,
