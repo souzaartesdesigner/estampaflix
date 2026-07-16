@@ -43,8 +43,27 @@ function Catalogo() {
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
-    queryFn: async () => (await supabase.from("categories").select("id,slug,name").order("sort_order")).data ?? [],
+    queryFn: async () => (await supabase.from("categories").select("id,slug,name,parent_id").order("sort_order").order("name")).data ?? [],
   });
+  const orderedCategories = useMemo(() => {
+    const roots = categories.filter((c: any) => !c.parent_id);
+    const childrenBy: Record<string, any[]> = {};
+    for (const c of categories as any[]) {
+      if (c.parent_id) (childrenBy[c.parent_id] ??= []).push(c);
+    }
+    const out: Array<{ cat: any; depth: number }> = [];
+    for (const r of roots) {
+      out.push({ cat: r, depth: 0 });
+      for (const child of childrenBy[r.id] ?? []) out.push({ cat: child, depth: 1 });
+    }
+    // orphans (parent not in list)
+    for (const c of categories as any[]) {
+      if (c.parent_id && !categories.find((p: any) => p.id === c.parent_id)) {
+        out.push({ cat: c, depth: 0 });
+      }
+    }
+    return out;
+  }, [categories]);
   const { data: tags = [] } = useQuery({
     queryKey: ["tags"],
     queryFn: async () => (await supabase.from("tags").select("id,slug,name").order("name")).data ?? [],
@@ -64,8 +83,11 @@ function Catalogo() {
 
       if (filters.q) query = query.ilike("title", `%${filters.q}%`);
       if (filters.categoria) {
-        const cat = categories.find((c) => c.slug === filters.categoria);
-        if (cat) query = query.eq("category_id", cat.id);
+        const cat = categories.find((c: any) => c.slug === filters.categoria);
+        if (cat) {
+          const ids = [cat.id, ...categories.filter((c: any) => c.parent_id === cat.id).map((c: any) => c.id)];
+          query = query.in("category_id", ids);
+        }
       }
       if (filters.formato) query = query.eq("file_format", filters.formato);
       if (filters.cor) query = query.contains("colors", [filters.cor]);
@@ -108,11 +130,12 @@ function Catalogo() {
           <aside className="space-y-6">
             <FilterGroup title="Categorias">
               <div className="space-y-1">
-                {categories.map((c) => (
+                {orderedCategories.map(({ cat: c, depth }) => (
                   <FilterOption
                     key={c.id}
-                    label={c.name}
+                    label={depth > 0 ? `— ${c.name}` : c.name}
                     active={filters.categoria === c.slug}
+                    depth={depth}
                     onClick={() => update({ categoria: filters.categoria === c.slug ? undefined : c.slug })}
                   />
                 ))}
@@ -214,11 +237,12 @@ function FilterGroup({ title, children }: { title: string; children: React.React
   );
 }
 
-function FilterOption({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+function FilterOption({ label, active, depth = 0, onClick }: { label: string; active: boolean; depth?: number; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className={`block w-full rounded-md px-2 py-1.5 text-left text-sm transition-colors ${
+      style={{ paddingLeft: `${8 + depth * 12}px` }}
+      className={`block w-full rounded-md py-1.5 pr-2 text-left text-sm transition-colors ${
         active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"
       }`}
     >
