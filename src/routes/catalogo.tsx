@@ -177,7 +177,7 @@ function Catalogo() {
                 <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
                 {activeFilters.map(([k, v]) => (
                   <Badge key={k} variant="secondary" className="gap-1">
-                    {v}
+                    {String(v)}
                     <button onClick={() => update({ [k]: undefined })}><X className="h-3 w-3" /></button>
                   </Badge>
                 ))}
