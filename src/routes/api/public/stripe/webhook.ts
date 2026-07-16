@@ -27,6 +27,14 @@ export const Route = createFileRoute("/api/public/stripe/webhook")({
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
+        type SubStatus = "active" | "canceled" | "past_due" | "trialing";
+        const mapStatus = (s: string): SubStatus => {
+          if (s === "active" || s === "trialing") return "active";
+          if (s === "past_due") return "past_due";
+          if (s === "canceled" || s === "incomplete_expired" || s === "unpaid" || s === "paused") return "canceled";
+          return "canceled";
+        };
+
         try {
           switch (event.type) {
             case "checkout.session.completed": {
