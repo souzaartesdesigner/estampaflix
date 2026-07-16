@@ -24,6 +24,26 @@ export const Route = createFileRoute("/planos")({
 
 function Planos() {
   const { data: plans } = useSuspenseQuery(plansQuery);
+  const checkoutFn = useServerFn(createCheckoutSession);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+
+  async function handleSubscribe(planId: string) {
+    setLoadingId(planId);
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) {
+        window.location.href = `/auth?redirect=${encodeURIComponent("/planos")}`;
+        return;
+      }
+      const { url } = await checkoutFn({ data: { planId } });
+      if (url) window.location.href = url;
+      else throw new Error("URL do checkout não recebida");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Erro ao iniciar checkout");
+      setLoadingId(null);
+    }
+  }
+
   return (
     <SiteLayout>
       <section className="bg-gradient-hero">
