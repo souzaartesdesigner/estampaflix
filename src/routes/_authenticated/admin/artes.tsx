@@ -130,10 +130,19 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
     try {
       let preview_url = form.preview_url;
       let file_path = form.file_path;
+      let external_url: string | null = form.external_url?.trim() || null;
+
       if (previewFile) preview_url = await upload(previewFile, "artwork-previews", "arts");
-      if (artFile) file_path = await upload(artFile, "artwork-files", "arts");
       if (!preview_url) throw new Error("Adicione uma imagem de preview (URL ou upload).");
-      if (!file_path) throw new Error("Adicione o arquivo para download.");
+
+      if (sourceType === "external") {
+        if (!external_url) throw new Error("Informe o link do Google Drive (ou externo).");
+        file_path = null as any;
+      } else {
+        external_url = null;
+        if (artFile) file_path = await upload(artFile, "artwork-files", "arts");
+        if (!file_path) throw new Error("Envie o arquivo para download.");
+      }
 
       const payload = {
         title: form.title,
@@ -142,6 +151,7 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
         category_id: form.category_id || null,
         preview_url,
         file_path,
+        external_url,
         file_format: form.file_format,
         price_cents: Number(form.price_cents),
         is_published: form.is_published,
