@@ -1,14 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Trash2, Pencil, ImageIcon } from "lucide-react";
+import { Trash2, Pencil, ImageIcon, CornerDownRight } from "lucide-react";
 import { slugify } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/admin/categorias")({ component: Categorias });
@@ -16,18 +17,35 @@ export const Route = createFileRoute("/_authenticated/admin/categorias")({ compo
 function Categorias() {
   const qc = useQueryClient();
   const [name, setName] = useState("");
+  const [parentId, setParentId] = useState<string>("none");
   const [editing, setEditing] = useState<any>(null);
 
   const { data: items = [] } = useQuery({
     queryKey: ["admin-categories-list"],
     queryFn: async () => (await supabase.from("categories").select("*").order("sort_order").order("name")).data ?? [],
   });
+
+  const { parents, childrenByParent } = useMemo(() => {
+    const parents = items.filter((c: any) => !c.parent_id);
+    const childrenByParent: Record<string, any[]> = {};
+    for (const c of items as any[]) {
+      if (c.parent_id) {
+        (childrenByParent[c.parent_id] ??= []).push(c);
+      }
+    }
+    return { parents, childrenByParent };
+  }, [items]);
+
   const add = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("categories").insert({ name, slug: slugify(name) });
+      const { error } = await supabase.from("categories").insert({
+        name,
+        slug: slugify(name),
+        parent_id: parentId === "none" ? null : parentId,
+      });
       if (error) throw error;
     },
-    onSuccess: () => { setName(""); qc.invalidateQueries({ queryKey: ["admin-categories-list"] }); toast.success("Categoria criada"); },
+    onSuccess: () => { setName(""); setParentId("none"); qc.invalidateQueries({ queryKey: ["admin-categories-list"] }); toast.success("Categoria criada"); },
     onError: (e: any) => toast.error(e.message),
   });
   const del = useMutation({
@@ -35,43 +53,66 @@ function Categorias() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-categories-list"] }),
   });
 
+  function renderRow(c: any, isChild = false) {
+    return (
+      <tr key={c.id} className="border-t border-border/40">
+        <td className="px-4 py-3">
+          {c.cover_url ? (
+            <img src={c.cover_url} alt="" className="h-12 w-12 rounded object-cover" />
+          ) : (
+            <div className="flex h-12 w-12 items-center justify-center rounded bg-surface-2 text-muted-foreground"><ImageIcon className="h-5 w-5" /></div>
+          )}
+        </td>
+        <td className="px-4 py-3">
+          <div className="flex items-center gap-2">
+            {isChild && <CornerDownRight className="h-4 w-4 text-muted-foreground" />}
+            <span className={isChild ? "text-muted-foreground" : "font-medium"}>{c.name}</span>
+          </div>
+        </td>
+        <td className="px-4 py-3 text-muted-foreground">{c.slug}</td>
+        <td className="px-4 py-3 text-right">
+          <Button size="icon" variant="ghost" onClick={() => setEditing(c)}><Pencil className="h-4 w-4" /></Button>
+          <Button size="icon" variant="ghost" onClick={() => { if (confirm("Excluir categoria?")) del.mutate(c.id); }}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+        </td>
+      </tr>
+    );
+  }
+
   return (
     <div>
       <h1 className="mb-6 font-display text-2xl font-bold">Categorias</h1>
-      <form onSubmit={(e) => { e.preventDefault(); if (name.trim()) add.mutate(); }} className="mb-6 flex gap-2">
-        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nome da categoria" />
+      <form onSubmit={(e) => { e.preventDefault(); if (name.trim()) add.mutate(); }} className="mb-6 flex flex-wrap gap-2">
+        <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nome da categoria" className="min-w-[200px] flex-1" />
+        <Select value={parentId} onValueChange={setParentId}>
+          <SelectTrigger className="w-[220px]"><SelectValue placeholder="Categoria pai (opcional)" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="none">Sem pai (categoria raiz)</SelectItem>
+            {parents.map((p: any) => (
+              <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Button type="submit" className="bg-gradient-brand text-brand-foreground">Adicionar</Button>
       </form>
       <div className="overflow-hidden rounded-xl border border-border/60">
         <table className="w-full text-sm">
           <thead className="bg-surface-2 text-xs uppercase text-muted-foreground"><tr><th className="px-4 py-3 text-left">Imagem</th><th className="px-4 py-3 text-left">Nome</th><th className="px-4 py-3 text-left">Slug</th><th></th></tr></thead>
           <tbody>
-            {items.map((c: any) => (
-              <tr key={c.id} className="border-t border-border/40">
-                <td className="px-4 py-3">
-                  {c.cover_url ? (
-                    <img src={c.cover_url} alt="" className="h-12 w-12 rounded object-cover" />
-                  ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded bg-surface-2 text-muted-foreground"><ImageIcon className="h-5 w-5" /></div>
-                  )}
-                </td>
-                <td className="px-4 py-3">{c.name}</td>
-                <td className="px-4 py-3 text-muted-foreground">{c.slug}</td>
-                <td className="px-4 py-3 text-right">
-                  <Button size="icon" variant="ghost" onClick={() => setEditing(c)}><Pencil className="h-4 w-4" /></Button>
-                  <Button size="icon" variant="ghost" onClick={() => { if (confirm("Excluir categoria?")) del.mutate(c.id); }}><Trash2 className="h-4 w-4 text-destructive" /></Button>
-                </td>
-              </tr>
+            {parents.map((p: any) => (
+              <>
+                {renderRow(p)}
+                {(childrenByParent[p.id] ?? []).map((child: any) => renderRow(child, true))}
+              </>
             ))}
           </tbody>
         </table>
       </div>
-      {editing && <EditCategory key={editing.id} category={editing} onClose={() => setEditing(null)} />}
+      {editing && <EditCategory key={editing.id} category={editing} allCategories={items} onClose={() => setEditing(null)} />}
     </div>
   );
 }
 
-function EditCategory({ category, onClose }: { category: any; onClose: () => void }) {
+function EditCategory({ category, allCategories, onClose }: { category: any; allCategories: any[]; onClose: () => void }) {
   const qc = useQueryClient();
   const [form, setForm] = useState({
     name: category.name ?? "",
@@ -79,9 +120,28 @@ function EditCategory({ category, onClose }: { category: any; onClose: () => voi
     description: category.description ?? "",
     cover_url: category.cover_url ?? "",
     featured: category.featured ?? false,
+    parent_id: category.parent_id ?? "none",
   });
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
+
+  // não permitir se tornar pai/filho de si mesma nem de suas filhas
+  const descendantIds = useMemo(() => {
+    const ids = new Set<string>([category.id]);
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const c of allCategories) {
+        if (c.parent_id && ids.has(c.parent_id) && !ids.has(c.id)) {
+          ids.add(c.id);
+          changed = true;
+        }
+      }
+    }
+    return ids;
+  }, [allCategories, category.id]);
+
+  const parentOptions = allCategories.filter((c: any) => !descendantIds.has(c.id));
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -101,6 +161,7 @@ function EditCategory({ category, onClose }: { category: any; onClose: () => voi
         description: form.description || null,
         cover_url: cover_url || null,
         featured: form.featured,
+        parent_id: form.parent_id === "none" ? null : form.parent_id,
       }).eq("id", category.id);
       if (error) throw error;
       toast.success("Categoria atualizada");
@@ -120,6 +181,19 @@ function EditCategory({ category, onClose }: { category: any; onClose: () => voi
         <form onSubmit={submit} className="space-y-4">
           <div className="grid gap-2"><Label>Nome</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></div>
           <div className="grid gap-2"><Label>Slug</Label><Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} /></div>
+          <div className="grid gap-2">
+            <Label>Categoria pai</Label>
+            <Select value={form.parent_id} onValueChange={(v) => setForm({ ...form, parent_id: v })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Sem pai (categoria raiz)</SelectItem>
+                {parentOptions.map((p: any) => (
+                  <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">Selecione uma categoria pai para transformar esta em subcategoria.</p>
+          </div>
           <div className="grid gap-2"><Label>Descrição</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} /></div>
           <div className="grid gap-2">
             <Label>Imagem da categoria</Label>
