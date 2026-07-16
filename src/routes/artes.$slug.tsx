@@ -291,7 +291,56 @@ function ArtworkPage() {
             )}
           </div>
         </div>
+
+        <RelatedArtworks
+          categoryId={(artwork as any).category_id}
+          currentId={artwork.id}
+        />
+
+        {artwork.description && (
+          <section className="mt-12 rounded-2xl border border-border/60 bg-card p-6 md:p-8">
+            <h2 className="mb-4 font-display text-2xl font-bold">Descrição</h2>
+            <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+              {htmlToText(artwork.description)}
+            </p>
+          </section>
+        )}
       </div>
     </SiteLayout>
   );
 }
+
+function RelatedArtworks({ categoryId, currentId }: { categoryId: string | null; currentId: string }) {
+  const { data } = useQuery({
+    queryKey: ["related-artworks", categoryId, currentId],
+    enabled: !!categoryId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("artworks")
+        .select("id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count")
+        .eq("is_published", true)
+        .eq("category_id", categoryId!)
+        .neq("id", currentId)
+        .order("download_count", { ascending: false })
+        .limit(8);
+      return data ?? [];
+    },
+  });
+
+  if (!categoryId || !data || data.length === 0) return null;
+
+  return (
+    <section className="mt-12">
+      <div className="mb-4 flex items-end justify-between">
+        <h2 className="font-display text-2xl font-bold">Produtos relacionados</h2>
+        <Link to="/catalogo" className="text-sm text-primary hover:underline">Ver mais</Link>
+      </div>
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {data.map((a: any) => (
+          <ArtworkCard key={a.id} artwork={a} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
