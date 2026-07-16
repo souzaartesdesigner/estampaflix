@@ -3,10 +3,14 @@ import { SiteLayout } from "@/components/site-layout";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 import { formatBRL, formatDate } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Download, CreditCard, Package, Sparkles } from "lucide-react";
+import { createBillingPortalSession } from "@/lib/stripe.functions";
+import { toast } from "sonner";
+import { Download, CreditCard, Package, Sparkles, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/minha-conta")({
   head: () => ({ meta: [{ title: "Minha conta — EstampaHub" }, { name: "robots", content: "noindex" }] }),
@@ -15,6 +19,20 @@ export const Route = createFileRoute("/_authenticated/minha-conta")({
 
 function Dashboard() {
   const { user } = Route.useRouteContext() as { user: any };
+  const portalFn = useServerFn(createBillingPortalSession);
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  async function openPortal() {
+    setPortalLoading(true);
+    try {
+      const { url } = await portalFn();
+      if (url) window.location.href = url;
+    } catch (err: any) {
+      toast.error(err?.message ?? "Erro ao abrir portal");
+      setPortalLoading(false);
+    }
+  }
+
 
   const { data: sub } = useQuery({
     queryKey: ["my-subscription", user.id],
@@ -95,8 +113,10 @@ function Dashboard() {
                   </div>
                 </div>
                 <div className="mt-6 flex flex-wrap gap-2">
-                  <Button asChild variant="outline"><Link to="/planos">Fazer upgrade</Link></Button>
-                  <Button variant="ghost" disabled>Cancelar assinatura</Button>
+                  <Button onClick={openPortal} disabled={portalLoading} className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
+                    {portalLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Abrindo…</> : "Gerenciar assinatura"}
+                  </Button>
+                  <Button asChild variant="outline"><Link to="/planos">Trocar de plano</Link></Button>
                 </div>
               </div>
             ) : (

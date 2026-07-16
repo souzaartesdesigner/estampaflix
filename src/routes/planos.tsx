@@ -1,11 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site-layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatBRL } from "@/lib/format";
-import { Check, Zap } from "lucide-react";
+import { createCheckoutSession } from "@/lib/stripe.functions";
+import { toast } from "sonner";
+import { Check, Zap, Loader2 } from "lucide-react";
 
 const plansQuery = queryOptions({
   queryKey: ["plans"],
@@ -20,6 +24,26 @@ export const Route = createFileRoute("/planos")({
 
 function Planos() {
   const { data: plans } = useSuspenseQuery(plansQuery);
+  const checkoutFn = useServerFn(createCheckoutSession);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+
+  async function handleSubscribe(planId: string) {
+    setLoadingId(planId);
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) {
+        window.location.href = `/auth?redirect=${encodeURIComponent("/planos")}`;
+        return;
+      }
+      const { url } = await checkoutFn({ data: { planId } });
+      if (url) window.location.href = url;
+      else throw new Error("URL do checkout não recebida");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Erro ao iniciar checkout");
+      setLoadingId(null);
+    }
+  }
+
   return (
     <SiteLayout>
       <section className="bg-gradient-hero">
@@ -58,10 +82,18 @@ function Planos() {
                   </li>
                 ))}
               </ul>
-              <Button asChild className="mt-6 bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
-                <Link to="/auth" search={{ plan: plan.tier } as any}>Assinar agora</Link>
+              <Button
+                onClick={() => handleSubscribe(plan.id)}
+                disabled={loadingId !== null}
+                className="mt-6 bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
+              >
+                {loadingId === plan.id ? (
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Redirecionando…</>
+                ) : (
+                  "Assinar agora"
+                )}
               </Button>
-              <p className="mt-3 text-center text-xs text-muted-foreground">Pagamento em breve via Stripe</p>
+              <p className="mt-3 text-center text-xs text-muted-foreground">Pagamento seguro via Stripe</p>
             </div>
           ))}
         </div>
