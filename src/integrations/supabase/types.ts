@@ -232,6 +232,11 @@ export type Database = {
           created_at: string
           id: string
           paid_at: string | null
+          pix_expires_at: string | null
+          pix_qr_code: string | null
+          pix_qr_code_base64: string | null
+          provider: string
+          provider_payment_id: string | null
           status: Database["public"]["Enums"]["order_status"]
           stripe_payment_id: string | null
           user_id: string
@@ -242,6 +247,11 @@ export type Database = {
           created_at?: string
           id?: string
           paid_at?: string | null
+          pix_expires_at?: string | null
+          pix_qr_code?: string | null
+          pix_qr_code_base64?: string | null
+          provider?: string
+          provider_payment_id?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           stripe_payment_id?: string | null
           user_id: string
@@ -252,6 +262,11 @@ export type Database = {
           created_at?: string
           id?: string
           paid_at?: string | null
+          pix_expires_at?: string | null
+          pix_qr_code?: string | null
+          pix_qr_code_base64?: string | null
+          provider?: string
+          provider_payment_id?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           stripe_payment_id?: string | null
           user_id?: string
