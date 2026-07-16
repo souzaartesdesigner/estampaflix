@@ -113,8 +113,10 @@ function Dashboard() {
                   </div>
                 </div>
                 <div className="mt-6 flex flex-wrap gap-2">
-                  <Button asChild variant="outline"><Link to="/planos">Fazer upgrade</Link></Button>
-                  <Button variant="ghost" disabled>Cancelar assinatura</Button>
+                  <Button onClick={openPortal} disabled={portalLoading} className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
+                    {portalLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Abrindo…</> : "Gerenciar assinatura"}
+                  </Button>
+                  <Button asChild variant="outline"><Link to="/planos">Trocar de plano</Link></Button>
                 </div>
               </div>
             ) : (
