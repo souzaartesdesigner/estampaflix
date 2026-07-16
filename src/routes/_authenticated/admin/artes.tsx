@@ -97,6 +97,7 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
     category_id: editing?.category_id ?? "",
     preview_url: editing?.preview_url ?? "",
     file_path: editing?.file_path ?? "",
+    external_url: editing?.external_url ?? "",
     file_format: editing?.file_format ?? "png",
     price_cents: editing?.price_cents ?? 990,
     is_published: editing?.is_published ?? true,
@@ -104,6 +105,9 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
     is_trending: editing?.is_trending ?? false,
     colors: (editing?.colors ?? []).join(","),
   });
+  const [sourceType, setSourceType] = useState<"upload" | "external">(
+    editing?.external_url ? "external" : "upload"
+  );
   const [previewFile, setPreviewFile] = useState<File | null>(null);
   const [artFile, setArtFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
