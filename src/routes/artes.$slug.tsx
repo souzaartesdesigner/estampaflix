@@ -101,17 +101,30 @@ function ArtworkPage() {
     mutationFn: async () => {
       const { data, error } = await supabase.rpc("consume_download", { _artwork_id: artwork.id });
       if (error) throw error;
-      const row = Array.isArray(data) ? data[0] : data;
+      const row: any = Array.isArray(data) ? data[0] : data;
+      if (row?.external_url) {
+        return { url: row.external_url as string, credits: row.credits_remaining, was_new: row.was_new, kind: "external" as const };
+      }
       if (!row?.file_path) throw new Error("Arquivo indisponível.");
       const { data: signed, error: sErr } = await supabase.storage
         .from("artwork-files")
-        .createSignedUrl(row.file_path, 60);
+        .createSignedUrl(row.file_path, 60, { download: true });
       if (sErr || !signed?.signedUrl) throw sErr ?? new Error("Não foi possível gerar o link.");
-      return { url: signed.signedUrl, credits: row.credits_remaining, was_new: row.was_new };
+      return { url: signed.signedUrl, credits: row.credits_remaining, was_new: row.was_new, kind: "file" as const };
     },
     onSuccess: (res) => {
       qc.invalidateQueries({ queryKey: ["my-subscription"] });
-      window.open(res.url, "_blank");
+      if (res.kind === "external") {
+        window.open(res.url, "_blank", "noopener,noreferrer");
+      } else {
+        const a = document.createElement("a");
+        a.href = res.url;
+        a.rel = "noopener";
+        a.download = "";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
       toast.success(res.was_new ? `Download liberado! Créditos restantes: ${res.credits}` : "Download liberado (você já havia baixado esta arte).");
     },
     onError: (err: any) => {

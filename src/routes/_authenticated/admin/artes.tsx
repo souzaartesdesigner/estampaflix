@@ -97,6 +97,7 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
     category_id: editing?.category_id ?? "",
     preview_url: editing?.preview_url ?? "",
     file_path: editing?.file_path ?? "",
+    external_url: editing?.external_url ?? "",
     file_format: editing?.file_format ?? "png",
     price_cents: editing?.price_cents ?? 990,
     is_published: editing?.is_published ?? true,
@@ -104,6 +105,9 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
     is_trending: editing?.is_trending ?? false,
     colors: (editing?.colors ?? []).join(","),
   });
+  const [sourceType, setSourceType] = useState<"upload" | "external">(
+    editing?.external_url ? "external" : "upload"
+  );
   const [previewFile, setPreviewFile] = useState<File | null>(null);
   const [artFile, setArtFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
@@ -126,10 +130,19 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
     try {
       let preview_url = form.preview_url;
       let file_path = form.file_path;
+      let external_url: string | null = form.external_url?.trim() || null;
+
       if (previewFile) preview_url = await upload(previewFile, "artwork-previews", "arts");
-      if (artFile) file_path = await upload(artFile, "artwork-files", "arts");
       if (!preview_url) throw new Error("Adicione uma imagem de preview (URL ou upload).");
-      if (!file_path) throw new Error("Adicione o arquivo para download.");
+
+      if (sourceType === "external") {
+        if (!external_url) throw new Error("Informe o link do Google Drive (ou externo).");
+        file_path = null as any;
+      } else {
+        external_url = null;
+        if (artFile) file_path = await upload(artFile, "artwork-files", "arts");
+        if (!file_path) throw new Error("Envie o arquivo para download.");
+      }
 
       const payload = {
         title: form.title,
@@ -138,6 +151,7 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
         category_id: form.category_id || null,
         preview_url,
         file_path,
+        external_url,
         file_format: form.file_format,
         price_cents: Number(form.price_cents),
         is_published: form.is_published,
@@ -193,10 +207,28 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
             <Input type="file" accept="image/*" onChange={(e) => setPreviewFile(e.target.files?.[0] ?? null)} />
             <Input value={form.preview_url} onChange={(e) => setForm({ ...form, preview_url: e.target.value })} placeholder="https://..." />
           </div>
-          <div className="grid gap-2">
-            <Label>Arquivo para download (privado)</Label>
-            <Input type="file" onChange={(e) => setArtFile(e.target.files?.[0] ?? null)} />
-            {form.file_path && <p className="text-xs text-muted-foreground">Atual: {form.file_path}</p>}
+          <div className="grid gap-3 rounded-lg border border-border/60 p-4">
+            <Label>Fonte do arquivo</Label>
+            <div className="flex gap-2">
+              <Button type="button" size="sm" variant={sourceType === "upload" ? "default" : "outline"} onClick={() => setSourceType("upload")}>Upload no site</Button>
+              <Button type="button" size="sm" variant={sourceType === "external" ? "default" : "outline"} onClick={() => setSourceType("external")}>Link Google Drive / Externo</Button>
+            </div>
+            {sourceType === "upload" ? (
+              <div className="grid gap-2">
+                <Label className="text-xs text-muted-foreground">Arquivo para download (privado, baixado automaticamente)</Label>
+                <Input type="file" onChange={(e) => setArtFile(e.target.files?.[0] ?? null)} />
+                {form.file_path && <p className="text-xs text-muted-foreground">Atual: {form.file_path}</p>}
+              </div>
+            ) : (
+              <div className="grid gap-2">
+                <Label className="text-xs text-muted-foreground">Link do Google Drive (o cliente será redirecionado ao clicar em Fazer Download)</Label>
+                <Input
+                  value={form.external_url}
+                  onChange={(e) => setForm({ ...form, external_url: e.target.value })}
+                  placeholder="https://drive.google.com/..."
+                />
+              </div>
+            )}
           </div>
           <div className="flex flex-wrap gap-6">
             <label className="flex items-center gap-2"><Switch checked={form.is_published} onCheckedChange={(v) => setForm({ ...form, is_published: v })} /> Publicada</label>
