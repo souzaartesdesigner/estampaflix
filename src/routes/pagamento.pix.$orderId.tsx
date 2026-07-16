@@ -183,7 +183,7 @@ function PixCheckoutPage() {
                     onFocus={(e) => e.currentTarget.select()}
                     className="flex-1 truncate rounded-md border border-border bg-background px-3 py-2 text-xs"
                   />
-                  <Button size="sm" variant="outline" onClick={copyCode}>
+                  <Button size="sm" variant="outline" aria-label="Copiar código Pix" onClick={copyCode}>
                     {copied ? (
                       <Check className="h-4 w-4" />
                     ) : (

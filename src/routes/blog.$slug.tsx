@@ -10,16 +10,42 @@ export const Route = createFileRoute("/blog/$slug")({
     if (!data) throw notFound();
     return data;
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.title} — EstampaHub Blog` },
-          { name: "description", content: loaderData.excerpt ?? "" },
-          { property: "og:title", content: loaderData.title },
-          { property: "og:image", content: loaderData.cover_url ?? "" },
-        ]
-      : [{ title: "Artigo não encontrado" }, { name: "robots", content: "noindex" }],
-  }),
+  head: ({ params, loaderData }) => {
+    if (!loaderData) return { meta: [{ title: "Artigo não encontrado" }, { name: "robots", content: "noindex" }] };
+    const url = `https://loving-code-flow.lovable.app/blog/${params.slug}`;
+    const description = (loaderData.excerpt && loaderData.excerpt.length >= 50)
+      ? loaderData.excerpt
+      : `${loaderData.title} — leia no blog da EstampaHub dicas, tutoriais e novidades sobre sublimação, DTF e produção criativa.`;
+    return {
+      meta: [
+        { title: `${loaderData.title} — EstampaHub Blog` },
+        { name: "description", content: description },
+        { property: "og:title", content: loaderData.title },
+        { property: "og:description", content: description.slice(0, 200) },
+        { property: "og:image", content: loaderData.cover_url ?? "" },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: url },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: loaderData.title,
+            image: loaderData.cover_url ? [loaderData.cover_url] : undefined,
+            datePublished: loaderData.published_at,
+            dateModified: loaderData.updated_at,
+            author: { "@type": "Person", name: loaderData.author_name },
+            publisher: { "@type": "Organization", name: "EstampaHub" },
+            mainEntityOfPage: url,
+            description,
+          }),
+        },
+      ],
+    };
+  },
   component: Post,
   notFoundComponent: () => (
     <SiteLayout>

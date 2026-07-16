@@ -78,11 +78,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "EstampaHub — Artes digitais para sublimação" },
-      { name: "description", content: "Milhares de artes digitais em alta qualidade para sublimação, DTF e produção criativa. Assine e baixe todo mês." },
+      { title: "EstampaHub — Artes digitais para sublimação, DTF e estamparia" },
+      { name: "description", content: "Milhares de artes digitais em alta qualidade (300 DPI) para sublimação, DTF e estamparia. Assine e baixe novas estampas todo mês com licença comercial." },
       { property: "og:title", content: "EstampaHub — Artes digitais para sublimação" },
-      { property: "og:description", content: "Milhares de artes digitais em alta qualidade para sublimação, DTF e produção criativa." },
+      { property: "og:description", content: "Milhares de artes digitais em alta qualidade para sublimação, DTF e produção criativa. Assine e baixe todo mês." },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "EstampaHub" },
+      { property: "og:url", content: "https://loving-code-flow.lovable.app/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
@@ -91,6 +93,31 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              name: "EstampaHub",
+              url: "https://loving-code-flow.lovable.app/",
+            },
+            {
+              "@type": "WebSite",
+              name: "EstampaHub",
+              url: "https://loving-code-flow.lovable.app/",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: "https://loving-code-flow.lovable.app/catalogo?q={search_term_string}",
+                "query-input": "required name=search_term_string",
+              },
+            },
+          ],
+        }),
+      },
     ],
   }),
   shellComponent: RootShell,
