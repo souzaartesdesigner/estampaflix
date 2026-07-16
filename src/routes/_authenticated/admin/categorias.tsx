@@ -98,12 +98,10 @@ function Categorias() {
         <table className="w-full text-sm">
           <thead className="bg-surface-2 text-xs uppercase text-muted-foreground"><tr><th className="px-4 py-3 text-left">Imagem</th><th className="px-4 py-3 text-left">Nome</th><th className="px-4 py-3 text-left">Slug</th><th></th></tr></thead>
           <tbody>
-            {parents.map((p: any) => (
-              <>
-                {renderRow(p)}
-                {(childrenByParent[p.id] ?? []).map((child: any) => renderRow(child, true))}
-              </>
-            ))}
+            {parents.flatMap((p: any) => [
+              renderRow(p),
+              ...(childrenByParent[p.id] ?? []).map((child: any) => renderRow(child, true)),
+            ])}
           </tbody>
         </table>
       </div>
