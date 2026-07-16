@@ -241,7 +241,7 @@ function ManageUserDialog({ user, onClose }: { user: any; onClose: () => void })
                     <p>{o.artworks?.title}</p>
                     <p className="text-xs text-muted-foreground">{formatDate(o.created_at)} • {o.amount_cents === 0 ? "manual" : `R$ ${(o.amount_cents / 100).toFixed(2)}`}</p>
                   </div>
-                  <Button size="sm" variant="ghost" onClick={() => revokeArtwork.mutate(o.id)}>
+                  <Button size="sm" variant="ghost" onClick={() => revokeArtwork.mutate({ id: o.id, artwork_id: o.artwork_id })}>
                     <Trash2 className="h-3 w-3" />
                   </Button>
                 </li>
