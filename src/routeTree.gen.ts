@@ -28,6 +28,7 @@ import { Route as AuthenticatedAdminVendasRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin/usuarios'
 import { Route as AuthenticatedAdminTagsRouteImport } from './routes/_authenticated/admin/tags'
 import { Route as AuthenticatedAdminSuporteRouteImport } from './routes/_authenticated/admin/suporte'
+import { Route as AuthenticatedAdminPlanosRouteImport } from './routes/_authenticated/admin/planos'
 import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_authenticated/admin/categorias'
 import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin/blog'
 import { Route as AuthenticatedAdminArtesRouteImport } from './routes/_authenticated/admin/artes'
@@ -131,6 +132,12 @@ const AuthenticatedAdminSuporteRoute =
     path: '/suporte',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminPlanosRoute =
+  AuthenticatedAdminPlanosRouteImport.update({
+    id: '/planos',
+    path: '/planos',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminCategoriasRoute =
   AuthenticatedAdminCategoriasRouteImport.update({
     id: '/categorias',
@@ -175,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/admin/artes': typeof AuthenticatedAdminArtesRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/suporte': typeof AuthenticatedAdminSuporteRoute
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
@@ -199,6 +207,7 @@ export interface FileRoutesByTo {
   '/admin/artes': typeof AuthenticatedAdminArtesRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/suporte': typeof AuthenticatedAdminSuporteRoute
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
@@ -226,6 +235,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/artes': typeof AuthenticatedAdminArtesRoute
   '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/_authenticated/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/_authenticated/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/_authenticated/admin/suporte': typeof AuthenticatedAdminSuporteRoute
   '/_authenticated/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
@@ -253,6 +263,7 @@ export interface FileRouteTypes {
     | '/admin/artes'
     | '/admin/blog'
     | '/admin/categorias'
+    | '/admin/planos'
     | '/admin/suporte'
     | '/admin/tags'
     | '/admin/usuarios'
@@ -277,6 +288,7 @@ export interface FileRouteTypes {
     | '/admin/artes'
     | '/admin/blog'
     | '/admin/categorias'
+    | '/admin/planos'
     | '/admin/suporte'
     | '/admin/tags'
     | '/admin/usuarios'
@@ -303,6 +315,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/artes'
     | '/_authenticated/admin/blog'
     | '/_authenticated/admin/categorias'
+    | '/_authenticated/admin/planos'
     | '/_authenticated/admin/suporte'
     | '/_authenticated/admin/tags'
     | '/_authenticated/admin/usuarios'
@@ -464,6 +477,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSuporteRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/planos': {
+      id: '/_authenticated/admin/planos'
+      path: '/planos'
+      fullPath: '/admin/planos'
+      preLoaderRoute: typeof AuthenticatedAdminPlanosRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/categorias': {
       id: '/_authenticated/admin/categorias'
       path: '/categorias'
@@ -506,6 +526,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminArtesRoute: typeof AuthenticatedAdminArtesRoute
   AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
   AuthenticatedAdminCategoriasRoute: typeof AuthenticatedAdminCategoriasRoute
+  AuthenticatedAdminPlanosRoute: typeof AuthenticatedAdminPlanosRoute
   AuthenticatedAdminSuporteRoute: typeof AuthenticatedAdminSuporteRoute
   AuthenticatedAdminTagsRoute: typeof AuthenticatedAdminTagsRoute
   AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
@@ -518,6 +539,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminArtesRoute: AuthenticatedAdminArtesRoute,
     AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
     AuthenticatedAdminCategoriasRoute: AuthenticatedAdminCategoriasRoute,
+    AuthenticatedAdminPlanosRoute: AuthenticatedAdminPlanosRoute,
     AuthenticatedAdminSuporteRoute: AuthenticatedAdminSuporteRoute,
     AuthenticatedAdminTagsRoute: AuthenticatedAdminTagsRoute,
     AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
@@ -571,13 +593,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

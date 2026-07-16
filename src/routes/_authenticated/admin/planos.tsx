@@ -34,7 +34,7 @@ function Planos() {
 
   const save = useMutation({
     mutationFn: async (p: PlanRow) => {
-      const { id, ...rest } = p;
+      const { id, tier: _tier, ...rest } = p;
       const { error } = await supabase.from("plans").update(rest).eq("id", id);
       if (error) throw error;
     },
