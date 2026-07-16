@@ -127,11 +127,12 @@ function Catalogo() {
           <aside className="space-y-6">
             <FilterGroup title="Categorias">
               <div className="space-y-1">
-                {categories.map((c) => (
+                {orderedCategories.map(({ cat: c, depth }) => (
                   <FilterOption
                     key={c.id}
-                    label={c.name}
+                    label={depth > 0 ? `— ${c.name}` : c.name}
                     active={filters.categoria === c.slug}
+                    depth={depth}
                     onClick={() => update({ categoria: filters.categoria === c.slug ? undefined : c.slug })}
                   />
                 ))}
