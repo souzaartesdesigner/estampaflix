@@ -74,6 +74,29 @@ function ArtworkPage() {
     },
   });
 
+  const { data: owned } = useQuery({
+    queryKey: ["artwork-owned", session?.user.id, artwork.id],
+    enabled: !!session?.user.id,
+    queryFn: async () => {
+      const [dl, ord] = await Promise.all([
+        supabase
+          .from("downloads")
+          .select("id")
+          .eq("user_id", session!.user.id)
+          .eq("artwork_id", artwork.id)
+          .maybeSingle(),
+        supabase
+          .from("orders")
+          .select("id")
+          .eq("user_id", session!.user.id)
+          .eq("artwork_id", artwork.id)
+          .eq("status", "paid")
+          .maybeSingle(),
+      ]);
+      return !!(dl.data || ord.data);
+    },
+  });
+
   const downloadMut = useMutation({
     mutationFn: async () => {
       const { data, error } = await supabase.rpc("consume_download", { _artwork_id: artwork.id });
