@@ -21,6 +21,7 @@ const NAV = [
   { to: "/admin/tags", label: "Tags", icon: Tag },
   { to: "/admin/usuarios", label: "Usuários", icon: Users },
   { to: "/admin/vendas", label: "Vendas", icon: ShoppingBag },
+  { to: "/admin/planos", label: "Planos", icon: CreditCard },
   { to: "/admin/blog", label: "Blog", icon: FileText },
   { to: "/admin/suporte", label: "Suporte", icon: MessageCircle },
 ];
