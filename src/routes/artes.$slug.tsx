@@ -100,6 +100,24 @@ function ArtworkPage() {
     },
   });
 
+  const createPix = useServerFn(createPixOrder);
+  const buyMut = useMutation({
+    mutationFn: async () => {
+      if (!session) {
+        navigate({ to: "/auth" });
+        throw new Error("not_authenticated");
+      }
+      return await createPix({ data: { artworkId: artwork.id } });
+    },
+    onSuccess: (res) => {
+      navigate({ to: "/pagamento/pix/$orderId", params: { orderId: res.orderId } });
+    },
+    onError: (err: any) => {
+      if (err?.message === "not_authenticated") return;
+      toast.error(err?.message || "Não foi possível iniciar o pagamento.");
+    },
+  });
+
   const canDownload = !!sub && (sub.credits_remaining ?? 0) > 0;
   const tags: any[] = (artwork as any).artwork_tags?.map((t: any) => t.tags).filter(Boolean) ?? [];
 
