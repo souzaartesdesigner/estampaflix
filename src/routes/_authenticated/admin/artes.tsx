@@ -82,7 +82,7 @@ function Artes() {
         </table>
       </div>
 
-      <ArtworkForm open={open} onOpenChange={setOpen} editing={editing} categories={categories} />
+      {open && <ArtworkForm key={editing?.id ?? "new"} open={open} onOpenChange={setOpen} editing={editing} categories={categories} />}
     </div>
   );
 }
