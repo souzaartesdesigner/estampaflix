@@ -91,32 +91,59 @@ function Home() {
       {/* CATEGORIES */}
       {data.categories.length > 0 && (
         <section className="mx-auto w-full max-w-7xl px-4 py-16">
-          <SectionTitle title="Categorias populares" subtitle="Encontre a estampa perfeita" />
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-8">
-            {data.categories.map((c: any) => (
-              <Link
-                key={c.id}
-                to="/catalogo"
-                search={{ categoria: c.slug } as any}
-                className="group relative flex aspect-square flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border border-border/60 bg-card text-center transition-all hover:-translate-y-1 hover:border-primary/50"
-              >
-                {c.cover_url ? (
-                  <>
-                    <img src={c.cover_url} alt={c.name} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
-                    <span className="relative z-10 mt-auto w-full px-2 pb-3 text-xs font-semibold text-foreground drop-shadow">{c.name}</span>
-                  </>
-                ) : (
-                  <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-4">
-                    <Palette className="h-6 w-6 text-primary" />
-                    <span className="text-xs font-medium">{c.name}</span>
-                  </div>
-                )}
-              </Link>
-            ))}
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <h2 className="font-display text-2xl font-bold md:text-3xl">Categorias em destaque</h2>
+            <Button asChild variant="secondary" className="rounded-lg">
+              <Link to="/catalogo">Ver Categorias</Link>
+            </Button>
+          </div>
+          <div className="relative">
+            <div className="scrollbar-none flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2">
+              {data.categories.map((c: any) => {
+                const samples: any[] = c.samples ?? [];
+                const filled = [...samples, ...Array(Math.max(0, 4 - samples.length)).fill(null)];
+                return (
+                  <Link
+                    key={c.id}
+                    to="/catalogo"
+                    search={{ categoria: c.slug } as any}
+                    className="group w-[280px] flex-none snap-start"
+                  >
+                    <div className="grid grid-cols-2 grid-rows-2 gap-2 rounded-lg bg-transparent">
+                      {filled.slice(0, 4).map((s, i) => (
+                        <div key={i} className="aspect-square overflow-hidden rounded-md bg-[#ebebeb] ring-1 ring-border/40">
+                          {s ? (
+                            <img
+                              src={s.preview_url}
+                              alt=""
+                              loading="lazy"
+                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                          ) : c.cover_url && i === 0 ? (
+                            <img src={c.cover_url} alt="" loading="lazy" className="h-full w-full object-cover" />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center text-muted-foreground/50">
+                              <Palette className="h-5 w-5" />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-3 flex items-center justify-between px-1">
+                      <span className="text-sm font-semibold text-foreground group-hover:text-primary">{c.name}</span>
+                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <FileIcon className="h-3.5 w-3.5" />
+                        {c.count}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </section>
       )}
+
 
       {/* RECENT */}
       <section className="mx-auto w-full max-w-7xl px-4 py-8">
