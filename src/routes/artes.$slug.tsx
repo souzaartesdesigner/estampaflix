@@ -74,6 +74,29 @@ function ArtworkPage() {
     },
   });
 
+  const { data: owned } = useQuery({
+    queryKey: ["artwork-owned", session?.user.id, artwork.id],
+    enabled: !!session?.user.id,
+    queryFn: async () => {
+      const [dl, ord] = await Promise.all([
+        supabase
+          .from("downloads")
+          .select("id")
+          .eq("user_id", session!.user.id)
+          .eq("artwork_id", artwork.id)
+          .maybeSingle(),
+        supabase
+          .from("orders")
+          .select("id")
+          .eq("user_id", session!.user.id)
+          .eq("artwork_id", artwork.id)
+          .eq("status", "paid")
+          .maybeSingle(),
+      ]);
+      return !!(dl.data || ord.data);
+    },
+  });
+
   const downloadMut = useMutation({
     mutationFn: async () => {
       const { data, error } = await supabase.rpc("consume_download", { _artwork_id: artwork.id });
@@ -169,38 +192,52 @@ function ArtworkPage() {
 
               <div className="mt-4 flex flex-col gap-2">
                 {session ? (
-                  <>
-                    <Button
-                      onClick={() => downloadMut.mutate()}
-                      disabled={downloadMut.isPending || !canDownload}
-                      className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
-                    >
-                      <Download className="mr-2 h-4 w-4" />
-                      {downloadMut.isPending ? "Preparando..." : canDownload ? `Baixar (${sub!.credits_remaining} créditos)` : "Baixar com assinatura"}
-                    </Button>
-                    {!sub && (
-                      <p className="text-xs text-muted-foreground">
-                        Você ainda não tem assinatura ativa. <Link to="/planos" className="text-primary underline">Ver planos</Link>.
-                      </p>
-                    )}
-                    {sub && !canDownload && (
-                      <p className="text-xs text-warning">
-                        Sem créditos este mês. <Link to="/planos" className="text-primary underline">Fazer upgrade</Link>.
-                      </p>
-                    )}
-                    <Button
-                      variant="outline"
-                      onClick={() => buyMut.mutate()}
-                      disabled={buyMut.isPending}
-                    >
-                      {buyMut.isPending ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        <ShoppingCart className="mr-2 h-4 w-4" />
+                  owned ? (
+                    <>
+                      <Button
+                        onClick={() => downloadMut.mutate()}
+                        disabled={downloadMut.isPending}
+                        className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
+                      >
+                        <Download className="mr-2 h-4 w-4" />
+                        {downloadMut.isPending ? "Preparando..." : "Fazer Download"}
+                      </Button>
+                      <p className="text-xs text-success">Você já possui esta arte. Baixe quantas vezes quiser.</p>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        onClick={() => downloadMut.mutate()}
+                        disabled={downloadMut.isPending || !canDownload}
+                        className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
+                      >
+                        <Download className="mr-2 h-4 w-4" />
+                        {downloadMut.isPending ? "Preparando..." : canDownload ? `Baixar (${sub!.credits_remaining} créditos)` : "Baixar com assinatura"}
+                      </Button>
+                      {!sub && (
+                        <p className="text-xs text-muted-foreground">
+                          Você ainda não tem assinatura ativa. <Link to="/planos" className="text-primary underline">Ver planos</Link>.
+                        </p>
                       )}
-                      Comprar avulso via Pix ({formatBRL(artwork.price_cents)})
-                    </Button>
-                  </>
+                      {sub && !canDownload && (
+                        <p className="text-xs text-warning">
+                          Sem créditos este mês. <Link to="/planos" className="text-primary underline">Fazer upgrade</Link>.
+                        </p>
+                      )}
+                      <Button
+                        variant="outline"
+                        onClick={() => buyMut.mutate()}
+                        disabled={buyMut.isPending}
+                      >
+                        {buyMut.isPending ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <ShoppingCart className="mr-2 h-4 w-4" />
+                        )}
+                        Comprar Individualmente via Pix ({formatBRL(artwork.price_cents)})
+                      </Button>
+                    </>
+                  )
                 ) : (
                   <Button asChild className="bg-gradient-brand text-brand-foreground shadow-brand">
                     <Link to="/auth">Entrar para baixar</Link>

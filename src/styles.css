@@ -47,48 +47,47 @@
 :root {
   --radius: 0.75rem;
 
-  /* Dark-first identity inspired by EstampaFlix — deep navy base with vibrant magenta/pink brand */
-  --background: oklch(0.145 0.02 275);
-  --foreground: oklch(0.98 0.005 260);
-  --surface: oklch(0.185 0.025 275);
-  --surface-2: oklch(0.225 0.03 275);
-  --card: oklch(0.19 0.025 275);
-  --card-foreground: oklch(0.98 0.005 260);
-  --popover: oklch(0.19 0.03 275);
-  --popover-foreground: oklch(0.98 0.005 260);
-  --primary: oklch(0.68 0.24 356);
-  --primary-foreground: oklch(0.99 0.005 300);
-  --secondary: oklch(0.28 0.04 275);
-  --secondary-foreground: oklch(0.98 0.005 260);
-  --muted: oklch(0.25 0.03 275);
-  --muted-foreground: oklch(0.7 0.02 270);
-  --accent: oklch(0.65 0.24 305);
-  --accent-foreground: oklch(0.99 0.005 300);
+  /* Dark neon identity — blue accent #007bff over deep navy/near-black */
+  --background: oklch(0.166 0 0);              /* #131313 */
+  --foreground: oklch(0.929 0 0);              /* #ebebeb */
+  --surface: oklch(0.209 0.036 258);           /* #071b30 */
+  --surface-2: oklch(0.278 0 0);               /* #262626 */
+  --card: oklch(0.209 0.036 258);              /* #071b30 */
+  --card-foreground: oklch(0.929 0 0);
+  --popover: oklch(0.209 0.036 258);
+  --popover-foreground: oklch(0.929 0 0);
+  --primary: oklch(0.611 0.201 253);           /* #007bff */
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.209 0.036 258);         /* #071b30 */
+  --secondary-foreground: oklch(0.929 0 0);
+  --muted: oklch(0.278 0 0);                   /* #262626 */
+  --muted-foreground: oklch(0.72 0 0);
+  --accent: oklch(0.611 0.201 253);            /* neon blue accent */
+  --accent-foreground: oklch(0.98 0 0);
   --destructive: oklch(0.65 0.24 25);
-  --destructive-foreground: oklch(0.99 0.005 260);
+  --destructive-foreground: oklch(0.99 0 0);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.68 0.24 356);
-  --brand: oklch(0.68 0.24 356);
-  --brand-foreground: oklch(0.99 0.005 300);
-  --brand-2: oklch(0.65 0.24 305);
+  --ring: oklch(0.611 0.201 253);
+  --brand: oklch(0.611 0.201 253);             /* #007bff */
+  --brand-foreground: oklch(0.98 0 0);
+  --brand-2: oklch(0.72 0.17 235);             /* lighter cyan-blue for glow */
   --success: oklch(0.72 0.18 155);
-  --success-foreground: oklch(0.14 0.02 275);
+  --success-foreground: oklch(0.14 0 0);
   --warning: oklch(0.82 0.17 85);
-  --warning-foreground: oklch(0.14 0.02 275);
+  --warning-foreground: oklch(0.14 0 0);
 
-  --gradient-brand: linear-gradient(135deg, oklch(0.68 0.24 356), oklch(0.65 0.24 305));
-  --gradient-hero: radial-gradient(ellipse at top left, oklch(0.68 0.24 356 / 0.35), transparent 55%),
-                   radial-gradient(ellipse at bottom right, oklch(0.65 0.24 305 / 0.3), transparent 60%),
-                   linear-gradient(180deg, oklch(0.145 0.02 275), oklch(0.185 0.03 275));
-  --shadow-brand: 0 20px 60px -20px oklch(0.68 0.24 356 / 0.5);
-  --shadow-elegant: 0 12px 40px -12px oklch(0 0 0 / 0.5);
+  --gradient-brand: linear-gradient(135deg, oklch(0.611 0.201 253), oklch(0.72 0.17 235));
+  --gradient-hero: radial-gradient(ellipse at top left, oklch(0.611 0.201 253 / 0.35), transparent 55%),
+                   radial-gradient(ellipse at bottom right, oklch(0.72 0.17 235 / 0.28), transparent 60%),
+                   linear-gradient(180deg, oklch(0.166 0 0), oklch(0.209 0.036 258));
+  --shadow-brand: 0 20px 60px -20px oklch(0.611 0.201 253 / 0.55);
+  --shadow-elegant: 0 12px 40px -12px oklch(0 0 0 / 0.6);
 }
 
 .dark {
-  /* Same values — app is dark by default */
-  --background: oklch(0.145 0.02 275);
-  --foreground: oklch(0.98 0.005 260);
+  --background: oklch(0.166 0 0);
+  --foreground: oklch(0.929 0 0);
 }
 
 @layer base {
