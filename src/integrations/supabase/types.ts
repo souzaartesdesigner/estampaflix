@@ -276,6 +276,7 @@ export type Database = {
           name: string
           price_cents: number
           sort_order: number
+          stripe_price_id: string | null
           tier: Database["public"]["Enums"]["plan_tier"]
         }
         Insert: {
@@ -287,6 +288,7 @@ export type Database = {
           name: string
           price_cents: number
           sort_order?: number
+          stripe_price_id?: string | null
           tier: Database["public"]["Enums"]["plan_tier"]
         }
         Update: {
@@ -298,6 +300,7 @@ export type Database = {
           name?: string
           price_cents?: number
           sort_order?: number
+          stripe_price_id?: string | null
           tier?: Database["public"]["Enums"]["plan_tier"]
         }
         Relationships: []
@@ -310,6 +313,7 @@ export type Database = {
           full_name: string | null
           id: string
           status: string
+          stripe_customer_id: string | null
           updated_at: string
         }
         Insert: {
@@ -319,6 +323,7 @@ export type Database = {
           full_name?: string | null
           id: string
           status?: string
+          stripe_customer_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -328,6 +333,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           status?: string
+          stripe_customer_id?: string | null
           updated_at?: string
         }
         Relationships: []
