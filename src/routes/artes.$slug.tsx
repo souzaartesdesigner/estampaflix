@@ -205,7 +205,7 @@ function ArtworkPage() {
               </Link>
             )}
             <h1 className="font-display text-3xl font-bold md:text-4xl">{artwork.title}</h1>
-            {artwork.description && <p className="text-muted-foreground">{artwork.description}</p>}
+
 
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
               {artwork.file_format && <span className="flex items-center gap-1"><FileType className="h-4 w-4" /> {artwork.file_format.toUpperCase()}</span>}
