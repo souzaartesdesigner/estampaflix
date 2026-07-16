@@ -62,7 +62,7 @@ export const Route = createFileRoute("/api/public/stripe/webhook")({
                   user_id: userId,
                   plan_id: planId,
                   stripe_subscription_id: subscriptionId,
-                  status: sub.status === "active" || sub.status === "trialing" ? "active" : sub.status,
+                  status: mapStatus(sub.status),
                   credits_remaining: credits,
                   current_period_start: new Date((sub as any).current_period_start * 1000).toISOString(),
                   current_period_end: new Date((sub as any).current_period_end * 1000).toISOString(),
