@@ -1,10 +1,12 @@
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
+import { createPixOrder } from "@/lib/mercadopago.functions";
 import { SiteLayout } from "@/components/site-layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatBRL, formatDate } from "@/lib/format";
-import { Download, ShoppingCart, Tag as TagIcon, Palette, FileType } from "lucide-react";
+import { Download, ShoppingCart, Tag as TagIcon, Palette, FileType, Loader2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
@@ -98,6 +100,24 @@ function ArtworkPage() {
     },
   });
 
+  const createPix = useServerFn(createPixOrder);
+  const buyMut = useMutation({
+    mutationFn: async () => {
+      if (!session) {
+        navigate({ to: "/auth" });
+        throw new Error("not_authenticated");
+      }
+      return await createPix({ data: { artworkId: artwork.id } });
+    },
+    onSuccess: (res) => {
+      navigate({ to: "/pagamento/pix/$orderId", params: { orderId: res.orderId } });
+    },
+    onError: (err: any) => {
+      if (err?.message === "not_authenticated") return;
+      toast.error(err?.message || "Não foi possível iniciar o pagamento.");
+    },
+  });
+
   const canDownload = !!sub && (sub.credits_remaining ?? 0) > 0;
   const tags: any[] = (artwork as any).artwork_tags?.map((t: any) => t.tags).filter(Boolean) ?? [];
 
@@ -168,7 +188,18 @@ function ArtworkPage() {
                         Sem créditos este mês. <Link to="/planos" className="text-primary underline">Fazer upgrade</Link>.
                       </p>
                     )}
-                    <Button variant="outline" disabled title="Em breve"><ShoppingCart className="mr-2 h-4 w-4" /> Comprar avulso (em breve)</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => buyMut.mutate()}
+                      disabled={buyMut.isPending}
+                    >
+                      {buyMut.isPending ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <ShoppingCart className="mr-2 h-4 w-4" />
+                      )}
+                      Comprar avulso via Pix ({formatBRL(artwork.price_cents)})
+                    </Button>
                   </>
                 ) : (
                   <Button asChild className="bg-gradient-brand text-brand-foreground shadow-brand">

@@ -23,6 +23,7 @@ import { Route as ArtesSlugRouteImport } from './routes/artes.$slug'
 import { Route as AuthenticatedMinhaContaRouteImport } from './routes/_authenticated/minha-conta'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as PagamentoPixOrderIdRouteImport } from './routes/pagamento.pix.$orderId'
 import { Route as AuthenticatedAdminVendasRouteImport } from './routes/_authenticated/admin/vendas'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin/usuarios'
 import { Route as AuthenticatedAdminTagsRouteImport } from './routes/_authenticated/admin/tags'
@@ -31,6 +32,7 @@ import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin/blog'
 import { Route as AuthenticatedAdminArtesRouteImport } from './routes/_authenticated/admin/artes'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
+import { Route as ApiPublicMercadopagoWebhookRouteImport } from './routes/api/public/mercadopago/webhook'
 
 const SuporteRoute = SuporteRouteImport.update({
   id: '/suporte',
@@ -101,6 +103,11 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const PagamentoPixOrderIdRoute = PagamentoPixOrderIdRouteImport.update({
+  id: '/pagamento/pix/$orderId',
+  path: '/pagamento/pix/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminVendasRoute =
   AuthenticatedAdminVendasRouteImport.update({
     id: '/vendas',
@@ -145,6 +152,12 @@ const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   path: '/api/public/stripe/webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicMercadopagoWebhookRoute =
+  ApiPublicMercadopagoWebhookRouteImport.update({
+    id: '/api/public/mercadopago/webhook',
+    path: '/api/public/mercadopago/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -166,7 +179,9 @@ export interface FileRoutesByFullPath {
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/admin/vendas': typeof AuthenticatedAdminVendasRoute
+  '/pagamento/pix/$orderId': typeof PagamentoPixOrderIdRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/api/public/mercadopago/webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesByTo {
@@ -188,7 +203,9 @@ export interface FileRoutesByTo {
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/admin/vendas': typeof AuthenticatedAdminVendasRoute
+  '/pagamento/pix/$orderId': typeof PagamentoPixOrderIdRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/api/public/mercadopago/webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRoutesById {
@@ -213,7 +230,9 @@ export interface FileRoutesById {
   '/_authenticated/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/_authenticated/admin/vendas': typeof AuthenticatedAdminVendasRoute
+  '/pagamento/pix/$orderId': typeof PagamentoPixOrderIdRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/api/public/mercadopago/webhook': typeof ApiPublicMercadopagoWebhookRoute
   '/api/public/stripe/webhook': typeof ApiPublicStripeWebhookRoute
 }
 export interface FileRouteTypes {
@@ -238,7 +257,9 @@ export interface FileRouteTypes {
     | '/admin/tags'
     | '/admin/usuarios'
     | '/admin/vendas'
+    | '/pagamento/pix/$orderId'
     | '/admin/'
+    | '/api/public/mercadopago/webhook'
     | '/api/public/stripe/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -260,7 +281,9 @@ export interface FileRouteTypes {
     | '/admin/tags'
     | '/admin/usuarios'
     | '/admin/vendas'
+    | '/pagamento/pix/$orderId'
     | '/admin'
+    | '/api/public/mercadopago/webhook'
     | '/api/public/stripe/webhook'
   id:
     | '__root__'
@@ -284,7 +307,9 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/tags'
     | '/_authenticated/admin/usuarios'
     | '/_authenticated/admin/vendas'
+    | '/pagamento/pix/$orderId'
     | '/_authenticated/admin/'
+    | '/api/public/mercadopago/webhook'
     | '/api/public/stripe/webhook'
   fileRoutesById: FileRoutesById
 }
@@ -299,6 +324,8 @@ export interface RootRouteChildren {
   SuporteRoute: typeof SuporteRoute
   ArtesSlugRoute: typeof ArtesSlugRoute
   PagamentoSucessoRoute: typeof PagamentoSucessoRoute
+  PagamentoPixOrderIdRoute: typeof PagamentoPixOrderIdRoute
+  ApiPublicMercadopagoWebhookRoute: typeof ApiPublicMercadopagoWebhookRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
 }
 
@@ -402,6 +429,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/pagamento/pix/$orderId': {
+      id: '/pagamento/pix/$orderId'
+      path: '/pagamento/pix/$orderId'
+      fullPath: '/pagamento/pix/$orderId'
+      preLoaderRoute: typeof PagamentoPixOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/vendas': {
       id: '/_authenticated/admin/vendas'
       path: '/vendas'
@@ -456,6 +490,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/stripe/webhook'
       fullPath: '/api/public/stripe/webhook'
       preLoaderRoute: typeof ApiPublicStripeWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/mercadopago/webhook': {
+      id: '/api/public/mercadopago/webhook'
+      path: '/api/public/mercadopago/webhook'
+      fullPath: '/api/public/mercadopago/webhook'
+      preLoaderRoute: typeof ApiPublicMercadopagoWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -523,6 +564,8 @@ const rootRouteChildren: RootRouteChildren = {
   SuporteRoute: SuporteRoute,
   ArtesSlugRoute: ArtesSlugRoute,
   PagamentoSucessoRoute: PagamentoSucessoRoute,
+  PagamentoPixOrderIdRoute: PagamentoPixOrderIdRoute,
+  ApiPublicMercadopagoWebhookRoute: ApiPublicMercadopagoWebhookRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
 }
 export const routeTree = rootRouteImport
