@@ -51,8 +51,9 @@ export type Database = {
           created_at: string
           description: string | null
           download_count: number
+          external_url: string | null
           file_format: string | null
-          file_path: string
+          file_path: string | null
           id: string
           is_featured: boolean
           is_published: boolean
@@ -70,8 +71,9 @@ export type Database = {
           created_at?: string
           description?: string | null
           download_count?: number
+          external_url?: string | null
           file_format?: string | null
-          file_path: string
+          file_path?: string | null
           id?: string
           is_featured?: boolean
           is_published?: boolean
@@ -89,8 +91,9 @@ export type Database = {
           created_at?: string
           description?: string | null
           download_count?: number
+          external_url?: string | null
           file_format?: string | null
-          file_path?: string
+          file_path?: string | null
           id?: string
           is_featured?: boolean
           is_published?: boolean
@@ -493,6 +496,7 @@ export type Database = {
         Args: { _artwork_id: string }
         Returns: {
           credits_remaining: number
+          external_url: string
           file_path: string
           was_new: boolean
         }[]
