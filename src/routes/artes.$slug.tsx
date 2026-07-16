@@ -9,6 +9,24 @@ import { formatBRL, formatDate } from "@/lib/format";
 import { Download, ShoppingCart, Tag as TagIcon, Palette, FileType, Loader2 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { ArtworkCard } from "@/components/artwork-card";
+
+function htmlToText(html: string): string {
+  if (!html) return "";
+  return html
+    .replace(/<\s*br\s*\/?>/gi, "\n")
+    .replace(/<\/\s*(p|div|li|h[1-6])\s*>/gi, "\n")
+    .replace(/<li[^>]*>/gi, "• ")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
 
 export const Route = createFileRoute("/artes/$slug")({
   loader: async ({ params }) => {
@@ -187,7 +205,7 @@ function ArtworkPage() {
               </Link>
             )}
             <h1 className="font-display text-3xl font-bold md:text-4xl">{artwork.title}</h1>
-            {artwork.description && <p className="text-muted-foreground">{artwork.description}</p>}
+
 
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
               {artwork.file_format && <span className="flex items-center gap-1"><FileType className="h-4 w-4" /> {artwork.file_format.toUpperCase()}</span>}
@@ -273,7 +291,56 @@ function ArtworkPage() {
             )}
           </div>
         </div>
+
+        <RelatedArtworks
+          categoryId={(artwork as any).category_id}
+          currentId={artwork.id}
+        />
+
+        {artwork.description && (
+          <section className="mt-12 rounded-2xl border border-border/60 bg-card p-6 md:p-8">
+            <h2 className="mb-4 font-display text-2xl font-bold">Descrição</h2>
+            <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+              {htmlToText(artwork.description)}
+            </p>
+          </section>
+        )}
       </div>
     </SiteLayout>
   );
 }
+
+function RelatedArtworks({ categoryId, currentId }: { categoryId: string | null; currentId: string }) {
+  const { data } = useQuery({
+    queryKey: ["related-artworks", categoryId, currentId],
+    enabled: !!categoryId,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("artworks")
+        .select("id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count")
+        .eq("is_published", true)
+        .eq("category_id", categoryId!)
+        .neq("id", currentId)
+        .order("download_count", { ascending: false })
+        .limit(8);
+      return data ?? [];
+    },
+  });
+
+  if (!categoryId || !data || data.length === 0) return null;
+
+  return (
+    <section className="mt-12">
+      <div className="mb-4 flex items-end justify-between">
+        <h2 className="font-display text-2xl font-bold">Produtos relacionados</h2>
+        <Link to="/catalogo" className="text-sm text-primary hover:underline">Ver mais</Link>
+      </div>
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {data.map((a: any) => (
+          <ArtworkCard key={a.id} artwork={a} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
