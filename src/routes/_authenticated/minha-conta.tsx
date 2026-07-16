@@ -3,10 +3,14 @@ import { SiteLayout } from "@/components/site-layout";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 import { formatBRL, formatDate } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Download, CreditCard, Package, Sparkles } from "lucide-react";
+import { createBillingPortalSession } from "@/lib/stripe.functions";
+import { toast } from "sonner";
+import { Download, CreditCard, Package, Sparkles, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/minha-conta")({
   head: () => ({ meta: [{ title: "Minha conta — EstampaHub" }, { name: "robots", content: "noindex" }] }),
