@@ -171,3 +171,16 @@ function Empty({ msg, cta }: { msg: string; cta: { label: string; to: string } }
     </div>
   );
 }
+
+function translateOrderStatus(s: string) {
+  const map: Record<string, string> = {
+    paid: "Pago",
+    pending: "Pendente",
+    failed: "Falhou",
+    refunded: "Reembolsado",
+    canceled: "Cancelado",
+    cancelled: "Cancelado",
+    processing: "Processando",
+  };
+  return map[s] ?? s;
+}
