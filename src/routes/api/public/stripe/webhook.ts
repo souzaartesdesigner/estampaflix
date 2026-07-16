@@ -76,9 +76,9 @@ export const Route = createFileRoute("/api/public/stripe/webhook")({
             case "customer.subscription.updated":
             case "customer.subscription.deleted": {
               const sub = event.data.object as any;
-              const status = event.type === "customer.subscription.deleted"
+              const status: SubStatus = event.type === "customer.subscription.deleted"
                 ? "canceled"
-                : (sub.status === "active" || sub.status === "trialing" ? "active" : sub.status);
+                : mapStatus(sub.status);
 
               await supabaseAdmin
                 .from("subscriptions")
