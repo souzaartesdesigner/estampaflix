@@ -1,11 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site-layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatBRL } from "@/lib/format";
-import { Check, Zap } from "lucide-react";
+import { createCheckoutSession } from "@/lib/stripe.functions";
+import { toast } from "sonner";
+import { Check, Zap, Loader2 } from "lucide-react";
 
 const plansQuery = queryOptions({
   queryKey: ["plans"],
