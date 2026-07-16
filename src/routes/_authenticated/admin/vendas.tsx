@@ -10,11 +10,16 @@ function Vendas() {
   const { data } = useQuery({
     queryKey: ["admin-sales"],
     queryFn: async () => {
-      const [{ data: orders }, { data: subs }] = await Promise.all([
-        supabase.from("orders").select("*, artworks(title), profiles!inner(email)").order("created_at", { ascending: false }).limit(100),
-        supabase.from("subscriptions").select("*, plans(name,price_cents), profiles!inner(email)").order("created_at", { ascending: false }).limit(100),
+      const [{ data: orders }, { data: subs }, { data: profiles }] = await Promise.all([
+        supabase.from("orders").select("*, artworks(title)").order("created_at", { ascending: false }).limit(100),
+        supabase.from("subscriptions").select("*, plans(name,price_cents,monthly_credits)").order("created_at", { ascending: false }).limit(100),
+        supabase.from("profiles").select("id,email,full_name"),
       ]);
-      return { orders: orders ?? [], subs: subs ?? [] };
+      const pmap = new Map((profiles ?? []).map((p: any) => [p.id, p]));
+      return {
+        orders: (orders ?? []).map((o: any) => ({ ...o, profile: pmap.get(o.user_id) })),
+        subs: (subs ?? []).map((s: any) => ({ ...s, profile: pmap.get(s.user_id) })),
+      };
     },
   });
 

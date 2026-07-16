@@ -21,6 +21,14 @@ import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ArtesSlugRouteImport } from './routes/artes.$slug'
 import { Route as AuthenticatedMinhaContaRouteImport } from './routes/_authenticated/minha-conta'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdminVendasRouteImport } from './routes/_authenticated/admin/vendas'
+import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin/usuarios'
+import { Route as AuthenticatedAdminTagsRouteImport } from './routes/_authenticated/admin/tags'
+import { Route as AuthenticatedAdminSuporteRouteImport } from './routes/_authenticated/admin/suporte'
+import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_authenticated/admin/categorias'
+import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin/blog'
+import { Route as AuthenticatedAdminArtesRouteImport } from './routes/_authenticated/admin/artes'
 
 const SuporteRoute = SuporteRouteImport.update({
   id: '/suporte',
@@ -81,6 +89,50 @@ const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminVendasRoute =
+  AuthenticatedAdminVendasRouteImport.update({
+    id: '/vendas',
+    path: '/vendas',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminUsuariosRoute =
+  AuthenticatedAdminUsuariosRouteImport.update({
+    id: '/usuarios',
+    path: '/usuarios',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminTagsRoute = AuthenticatedAdminTagsRouteImport.update({
+  id: '/tags',
+  path: '/tags',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminSuporteRoute =
+  AuthenticatedAdminSuporteRouteImport.update({
+    id: '/suporte',
+    path: '/suporte',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminCategoriasRoute =
+  AuthenticatedAdminCategoriasRouteImport.update({
+    id: '/categorias',
+    path: '/categorias',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminArtesRoute = AuthenticatedAdminArtesRouteImport.update({
+  id: '/artes',
+  path: '/artes',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -90,10 +142,18 @@ export interface FileRoutesByFullPath {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/suporte': typeof SuporteRoute
-  '/admin': typeof AuthenticatedAdminRouteRoute
+  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/artes/$slug': typeof ArtesSlugRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/admin/artes': typeof AuthenticatedAdminArtesRoute
+  '/admin/blog': typeof AuthenticatedAdminBlogRoute
+  '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/admin/suporte': typeof AuthenticatedAdminSuporteRoute
+  '/admin/tags': typeof AuthenticatedAdminTagsRoute
+  '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/admin/vendas': typeof AuthenticatedAdminVendasRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -103,10 +163,17 @@ export interface FileRoutesByTo {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/suporte': typeof SuporteRoute
-  '/admin': typeof AuthenticatedAdminRouteRoute
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/artes/$slug': typeof ArtesSlugRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/admin/artes': typeof AuthenticatedAdminArtesRoute
+  '/admin/blog': typeof AuthenticatedAdminBlogRoute
+  '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/admin/suporte': typeof AuthenticatedAdminSuporteRoute
+  '/admin/tags': typeof AuthenticatedAdminTagsRoute
+  '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/admin/vendas': typeof AuthenticatedAdminVendasRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -118,10 +185,18 @@ export interface FileRoutesById {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/suporte': typeof SuporteRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRouteRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/artes/$slug': typeof ArtesSlugRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/_authenticated/admin/artes': typeof AuthenticatedAdminArtesRoute
+  '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
+  '/_authenticated/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/_authenticated/admin/suporte': typeof AuthenticatedAdminSuporteRoute
+  '/_authenticated/admin/tags': typeof AuthenticatedAdminTagsRoute
+  '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/_authenticated/admin/vendas': typeof AuthenticatedAdminVendasRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -137,6 +212,14 @@ export interface FileRouteTypes {
     | '/minha-conta'
     | '/artes/$slug'
     | '/blog/$slug'
+    | '/admin/artes'
+    | '/admin/blog'
+    | '/admin/categorias'
+    | '/admin/suporte'
+    | '/admin/tags'
+    | '/admin/usuarios'
+    | '/admin/vendas'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -146,10 +229,17 @@ export interface FileRouteTypes {
     | '/planos'
     | '/reset-password'
     | '/suporte'
-    | '/admin'
     | '/minha-conta'
     | '/artes/$slug'
     | '/blog/$slug'
+    | '/admin/artes'
+    | '/admin/blog'
+    | '/admin/categorias'
+    | '/admin/suporte'
+    | '/admin/tags'
+    | '/admin/usuarios'
+    | '/admin/vendas'
+    | '/admin'
   id:
     | '__root__'
     | '/'
@@ -164,6 +254,14 @@ export interface FileRouteTypes {
     | '/_authenticated/minha-conta'
     | '/artes/$slug'
     | '/blog/$slug'
+    | '/_authenticated/admin/artes'
+    | '/_authenticated/admin/blog'
+    | '/_authenticated/admin/categorias'
+    | '/_authenticated/admin/suporte'
+    | '/_authenticated/admin/tags'
+    | '/_authenticated/admin/usuarios'
+    | '/_authenticated/admin/vendas'
+    | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -264,16 +362,100 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/vendas': {
+      id: '/_authenticated/admin/vendas'
+      path: '/vendas'
+      fullPath: '/admin/vendas'
+      preLoaderRoute: typeof AuthenticatedAdminVendasRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/usuarios': {
+      id: '/_authenticated/admin/usuarios'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AuthenticatedAdminUsuariosRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/tags': {
+      id: '/_authenticated/admin/tags'
+      path: '/tags'
+      fullPath: '/admin/tags'
+      preLoaderRoute: typeof AuthenticatedAdminTagsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/suporte': {
+      id: '/_authenticated/admin/suporte'
+      path: '/suporte'
+      fullPath: '/admin/suporte'
+      preLoaderRoute: typeof AuthenticatedAdminSuporteRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/categorias': {
+      id: '/_authenticated/admin/categorias'
+      path: '/categorias'
+      fullPath: '/admin/categorias'
+      preLoaderRoute: typeof AuthenticatedAdminCategoriasRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/blog': {
+      id: '/_authenticated/admin/blog'
+      path: '/blog'
+      fullPath: '/admin/blog'
+      preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/artes': {
+      id: '/_authenticated/admin/artes'
+      path: '/artes'
+      fullPath: '/admin/artes'
+      preLoaderRoute: typeof AuthenticatedAdminArtesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
   }
 }
 
+interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminArtesRoute: typeof AuthenticatedAdminArtesRoute
+  AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
+  AuthenticatedAdminCategoriasRoute: typeof AuthenticatedAdminCategoriasRoute
+  AuthenticatedAdminSuporteRoute: typeof AuthenticatedAdminSuporteRoute
+  AuthenticatedAdminTagsRoute: typeof AuthenticatedAdminTagsRoute
+  AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
+  AuthenticatedAdminVendasRoute: typeof AuthenticatedAdminVendasRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
+  {
+    AuthenticatedAdminArtesRoute: AuthenticatedAdminArtesRoute,
+    AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
+    AuthenticatedAdminCategoriasRoute: AuthenticatedAdminCategoriasRoute,
+    AuthenticatedAdminSuporteRoute: AuthenticatedAdminSuporteRoute,
+    AuthenticatedAdminTagsRoute: AuthenticatedAdminTagsRoute,
+    AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
+    AuthenticatedAdminVendasRoute: AuthenticatedAdminVendasRoute,
+    AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  }
+
+const AuthenticatedAdminRouteRouteWithChildren =
+  AuthenticatedAdminRouteRoute._addFileChildren(
+    AuthenticatedAdminRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRoute
+  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedMinhaContaRoute: typeof AuthenticatedMinhaContaRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRoute,
+  AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedMinhaContaRoute: AuthenticatedMinhaContaRoute,
 }
 
