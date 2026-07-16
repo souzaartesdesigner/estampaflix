@@ -82,10 +82,18 @@ function Planos() {
                   </li>
                 ))}
               </ul>
-              <Button asChild className="mt-6 bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
-                <Link to="/auth" search={{ plan: plan.tier } as any}>Assinar agora</Link>
+              <Button
+                onClick={() => handleSubscribe(plan.id)}
+                disabled={loadingId !== null}
+                className="mt-6 bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
+              >
+                {loadingId === plan.id ? (
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Redirecionando…</>
+                ) : (
+                  "Assinar agora"
+                )}
               </Button>
-              <p className="mt-3 text-center text-xs text-muted-foreground">Pagamento em breve via Stripe</p>
+              <p className="mt-3 text-center text-xs text-muted-foreground">Pagamento seguro via Stripe</p>
             </div>
           ))}
         </div>
