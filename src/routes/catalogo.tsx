@@ -234,11 +234,12 @@ function FilterGroup({ title, children }: { title: string; children: React.React
   );
 }
 
-function FilterOption({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+function FilterOption({ label, active, depth = 0, onClick }: { label: string; active: boolean; depth?: number; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className={`block w-full rounded-md px-2 py-1.5 text-left text-sm transition-colors ${
+      style={{ paddingLeft: `${8 + depth * 12}px` }}
+      className={`block w-full rounded-md py-1.5 pr-2 text-left text-sm transition-colors ${
         active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"
       }`}
     >
