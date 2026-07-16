@@ -82,14 +82,14 @@ export const Route = createFileRoute("/api/public/mercadopago/webhook")({
             "@/integrations/supabase/client.server"
           );
 
-          const nextStatus =
+          const nextStatus: "paid" | "failed" | "refunded" | null =
             mp.status === "approved"
               ? "paid"
-              : ["cancelled", "rejected", "refunded"].includes(mp.status)
-                ? mp.status === "refunded"
-                  ? "refunded"
-                  : "failed"
-                : null;
+              : mp.status === "refunded"
+                ? "refunded"
+                : ["cancelled", "rejected"].includes(mp.status)
+                  ? "failed"
+                  : null;
 
           if (!nextStatus) return new Response("ok");
 
