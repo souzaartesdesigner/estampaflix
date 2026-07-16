@@ -29,6 +29,7 @@ import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminTagsRouteImport } from './routes/_authenticated/admin/tags'
 import { Route as AuthenticatedAdminSuporteRouteImport } from './routes/_authenticated/admin/suporte'
 import { Route as AuthenticatedAdminPlanosRouteImport } from './routes/_authenticated/admin/planos'
+import { Route as AuthenticatedAdminImportarRouteImport } from './routes/_authenticated/admin/importar'
 import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_authenticated/admin/categorias'
 import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin/blog'
 import { Route as AuthenticatedAdminArtesRouteImport } from './routes/_authenticated/admin/artes'
@@ -138,6 +139,12 @@ const AuthenticatedAdminPlanosRoute =
     path: '/planos',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminImportarRoute =
+  AuthenticatedAdminImportarRouteImport.update({
+    id: '/importar',
+    path: '/importar',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminCategoriasRoute =
   AuthenticatedAdminCategoriasRouteImport.update({
     id: '/categorias',
@@ -182,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/admin/artes': typeof AuthenticatedAdminArtesRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/admin/importar': typeof AuthenticatedAdminImportarRoute
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/suporte': typeof AuthenticatedAdminSuporteRoute
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
@@ -207,6 +215,7 @@ export interface FileRoutesByTo {
   '/admin/artes': typeof AuthenticatedAdminArtesRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/admin/importar': typeof AuthenticatedAdminImportarRoute
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/suporte': typeof AuthenticatedAdminSuporteRoute
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
@@ -235,6 +244,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/artes': typeof AuthenticatedAdminArtesRoute
   '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/_authenticated/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/_authenticated/admin/importar': typeof AuthenticatedAdminImportarRoute
   '/_authenticated/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/_authenticated/admin/suporte': typeof AuthenticatedAdminSuporteRoute
   '/_authenticated/admin/tags': typeof AuthenticatedAdminTagsRoute
@@ -263,6 +273,7 @@ export interface FileRouteTypes {
     | '/admin/artes'
     | '/admin/blog'
     | '/admin/categorias'
+    | '/admin/importar'
     | '/admin/planos'
     | '/admin/suporte'
     | '/admin/tags'
@@ -288,6 +299,7 @@ export interface FileRouteTypes {
     | '/admin/artes'
     | '/admin/blog'
     | '/admin/categorias'
+    | '/admin/importar'
     | '/admin/planos'
     | '/admin/suporte'
     | '/admin/tags'
@@ -315,6 +327,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/artes'
     | '/_authenticated/admin/blog'
     | '/_authenticated/admin/categorias'
+    | '/_authenticated/admin/importar'
     | '/_authenticated/admin/planos'
     | '/_authenticated/admin/suporte'
     | '/_authenticated/admin/tags'
@@ -484,6 +497,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPlanosRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/importar': {
+      id: '/_authenticated/admin/importar'
+      path: '/importar'
+      fullPath: '/admin/importar'
+      preLoaderRoute: typeof AuthenticatedAdminImportarRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/categorias': {
       id: '/_authenticated/admin/categorias'
       path: '/categorias'
@@ -526,6 +546,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminArtesRoute: typeof AuthenticatedAdminArtesRoute
   AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
   AuthenticatedAdminCategoriasRoute: typeof AuthenticatedAdminCategoriasRoute
+  AuthenticatedAdminImportarRoute: typeof AuthenticatedAdminImportarRoute
   AuthenticatedAdminPlanosRoute: typeof AuthenticatedAdminPlanosRoute
   AuthenticatedAdminSuporteRoute: typeof AuthenticatedAdminSuporteRoute
   AuthenticatedAdminTagsRoute: typeof AuthenticatedAdminTagsRoute
@@ -539,6 +560,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminArtesRoute: AuthenticatedAdminArtesRoute,
     AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
     AuthenticatedAdminCategoriasRoute: AuthenticatedAdminCategoriasRoute,
+    AuthenticatedAdminImportarRoute: AuthenticatedAdminImportarRoute,
     AuthenticatedAdminPlanosRoute: AuthenticatedAdminPlanosRoute,
     AuthenticatedAdminSuporteRoute: AuthenticatedAdminSuporteRoute,
     AuthenticatedAdminTagsRoute: AuthenticatedAdminTagsRoute,
