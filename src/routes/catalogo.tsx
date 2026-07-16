@@ -43,8 +43,27 @@ function Catalogo() {
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
-    queryFn: async () => (await supabase.from("categories").select("id,slug,name").order("sort_order")).data ?? [],
+    queryFn: async () => (await supabase.from("categories").select("id,slug,name,parent_id").order("sort_order").order("name")).data ?? [],
   });
+  const orderedCategories = useMemo(() => {
+    const roots = categories.filter((c: any) => !c.parent_id);
+    const childrenBy: Record<string, any[]> = {};
+    for (const c of categories as any[]) {
+      if (c.parent_id) (childrenBy[c.parent_id] ??= []).push(c);
+    }
+    const out: Array<{ cat: any; depth: number }> = [];
+    for (const r of roots) {
+      out.push({ cat: r, depth: 0 });
+      for (const child of childrenBy[r.id] ?? []) out.push({ cat: child, depth: 1 });
+    }
+    // orphans (parent not in list)
+    for (const c of categories as any[]) {
+      if (c.parent_id && !categories.find((p: any) => p.id === c.parent_id)) {
+        out.push({ cat: c, depth: 0 });
+      }
+    }
+    return out;
+  }, [categories]);
   const { data: tags = [] } = useQuery({
     queryKey: ["tags"],
     queryFn: async () => (await supabase.from("tags").select("id,slug,name").order("name")).data ?? [],
