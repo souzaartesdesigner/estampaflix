@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
-import { LayoutDashboard, Palette, Tag, FolderOpen, Users, ShoppingBag, FileText, MessageCircle } from "lucide-react";
+import { LayoutDashboard, Palette, Tag, FolderOpen, Users, ShoppingBag, FileText, MessageCircle, CreditCard } from "lucide-react";
 import { useRouterState } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -21,6 +21,7 @@ const NAV = [
   { to: "/admin/tags", label: "Tags", icon: Tag },
   { to: "/admin/usuarios", label: "Usuários", icon: Users },
   { to: "/admin/vendas", label: "Vendas", icon: ShoppingBag },
+  { to: "/admin/planos", label: "Planos", icon: CreditCard },
   { to: "/admin/blog", label: "Blog", icon: FileText },
   { to: "/admin/suporte", label: "Suporte", icon: MessageCircle },
 ];
