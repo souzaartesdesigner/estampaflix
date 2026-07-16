@@ -83,8 +83,11 @@ function Catalogo() {
 
       if (filters.q) query = query.ilike("title", `%${filters.q}%`);
       if (filters.categoria) {
-        const cat = categories.find((c) => c.slug === filters.categoria);
-        if (cat) query = query.eq("category_id", cat.id);
+        const cat = categories.find((c: any) => c.slug === filters.categoria);
+        if (cat) {
+          const ids = [cat.id, ...categories.filter((c: any) => c.parent_id === cat.id).map((c: any) => c.id)];
+          query = query.in("category_id", ids);
+        }
       }
       if (filters.formato) query = query.eq("file_format", filters.formato);
       if (filters.cor) query = query.contains("colors", [filters.cor]);
