@@ -49,6 +49,7 @@ export type Database = {
           category_id: string | null
           colors: string[] | null
           created_at: string
+          credit_cost: number
           description: string | null
           download_count: number
           external_url: string | null
@@ -69,6 +70,7 @@ export type Database = {
           category_id?: string | null
           colors?: string[] | null
           created_at?: string
+          credit_cost?: number
           description?: string | null
           download_count?: number
           external_url?: string | null
@@ -89,6 +91,7 @@ export type Database = {
           category_id?: string | null
           colors?: string[] | null
           created_at?: string
+          credit_cost?: number
           description?: string | null
           download_count?: number
           external_url?: string | null
