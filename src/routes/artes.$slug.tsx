@@ -188,7 +188,18 @@ function ArtworkPage() {
                         Sem créditos este mês. <Link to="/planos" className="text-primary underline">Fazer upgrade</Link>.
                       </p>
                     )}
-                    <Button variant="outline" disabled title="Em breve"><ShoppingCart className="mr-2 h-4 w-4" /> Comprar avulso (em breve)</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => buyMut.mutate()}
+                      disabled={buyMut.isPending}
+                    >
+                      {buyMut.isPending ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      ) : (
+                        <ShoppingCart className="mr-2 h-4 w-4" />
+                      )}
+                      Comprar avulso via Pix ({formatBRL(artwork.price_cents)})
+                    </Button>
                   </>
                 ) : (
                   <Button asChild className="bg-gradient-brand text-brand-foreground shadow-brand">
