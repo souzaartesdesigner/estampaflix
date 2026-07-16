@@ -93,8 +93,10 @@ export const Route = createFileRoute("/api/public/mercadopago/webhook")({
 
           if (!nextStatus) return new Response("ok");
 
-          const update: Record<string, unknown> = { status: nextStatus };
-          if (nextStatus === "paid") update.paid_at = new Date().toISOString();
+          const update =
+            nextStatus === "paid"
+              ? { status: nextStatus, paid_at: new Date().toISOString() }
+              : { status: nextStatus };
 
           const { error } = await supabaseAdmin
             .from("orders")
