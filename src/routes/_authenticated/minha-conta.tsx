@@ -19,6 +19,20 @@ export const Route = createFileRoute("/_authenticated/minha-conta")({
 
 function Dashboard() {
   const { user } = Route.useRouteContext() as { user: any };
+  const portalFn = useServerFn(createBillingPortalSession);
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  async function openPortal() {
+    setPortalLoading(true);
+    try {
+      const { url } = await portalFn();
+      if (url) window.location.href = url;
+    } catch (err: any) {
+      toast.error(err?.message ?? "Erro ao abrir portal");
+      setPortalLoading(false);
+    }
+  }
+
 
   const { data: sub } = useQuery({
     queryKey: ["my-subscription", user.id],
