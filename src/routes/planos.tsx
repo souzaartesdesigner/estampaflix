@@ -18,7 +18,17 @@ const plansQuery = queryOptions({
 
 export const Route = createFileRoute("/planos")({
   loader: ({ context }) => context.queryClient.ensureQueryData(plansQuery),
-  head: () => ({ meta: [{ title: "Planos — EstampaHub" }, { name: "description", content: "Compare os planos Premium Lite, Pro e Plus." }] }),
+  head: () => ({
+    meta: [
+      { title: "Planos de assinatura — EstampaHub" },
+      { name: "description", content: "Compare os planos Lite, Pro e Plus da EstampaHub: créditos mensais para baixar artes digitais em alta resolução, licença comercial e cancelamento a qualquer momento." },
+      { property: "og:title", content: "Planos de assinatura — EstampaHub" },
+      { property: "og:description", content: "Escolha entre Lite, Pro e Plus. Créditos mensais para baixar artes em 300 DPI com licença comercial. Cancele quando quiser." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://loving-code-flow.lovable.app/planos" },
+    ],
+    links: [{ rel: "canonical", href: "https://loving-code-flow.lovable.app/planos" }],
+  }),
   component: Planos,
 });
 
@@ -68,7 +78,7 @@ function Planos() {
               {idx === 1 && (
                 <Badge className="absolute right-4 top-4 bg-gradient-brand text-brand-foreground border-0"><Zap className="mr-1 h-3 w-3" /> Popular</Badge>
               )}
-              <h3 className="font-display text-xl font-bold">{plan.name}</h3>
+              <h2 className="font-display text-xl font-bold">{plan.name}</h2>
               <p className="mt-1 text-sm text-muted-foreground">{plan.description}</p>
               <div className="mt-4 flex items-baseline gap-1">
                 <span className="text-4xl font-black">{formatBRL(plan.price_cents)}</span>

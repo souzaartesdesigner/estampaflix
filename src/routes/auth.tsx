@@ -11,7 +11,13 @@ import { toast } from "sonner";
 import { Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Entrar — EstampaHub" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({
+    meta: [
+      { title: "Entrar ou criar conta — EstampaHub" },
+      { name: "description", content: "Acesse sua conta na EstampaHub ou crie uma nova para assinar planos, baixar artes digitais e gerenciar suas compras." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: Auth,
 });
 
@@ -74,7 +80,7 @@ function Auth() {
             <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-xl bg-gradient-brand shadow-brand">
               <Sparkles className="h-6 w-6 text-brand-foreground" />
             </div>
-            <h1 className="font-display text-2xl font-bold">Bem-vindo à EstampaHub</h1>
+            <h1 className="font-display text-2xl font-bold">Entrar ou criar conta — EstampaHub</h1>
             <p className="mt-1 text-sm text-muted-foreground">Entre ou crie sua conta para começar</p>
           </div>
 

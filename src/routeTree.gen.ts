@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuporteRouteImport } from './routes/suporte'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PlanosRouteImport } from './routes/planos'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
@@ -39,6 +40,11 @@ import { Route as ApiPublicMercadopagoWebhookRouteImport } from './routes/api/pu
 const SuporteRoute = SuporteRouteImport.update({
   id: '/suporte',
   path: '/suporte',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/catalogo': typeof CatalogoRoute
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/suporte': typeof SuporteRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
@@ -207,6 +214,7 @@ export interface FileRoutesByTo {
   '/catalogo': typeof CatalogoRoute
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/suporte': typeof SuporteRoute
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/artes/$slug': typeof ArtesSlugRoute
@@ -235,6 +243,7 @@ export interface FileRoutesById {
   '/catalogo': typeof CatalogoRoute
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/suporte': typeof SuporteRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/minha-conta': typeof AuthenticatedMinhaContaRoute
@@ -264,6 +273,7 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/planos'
     | '/reset-password'
+    | '/sitemap.xml'
     | '/suporte'
     | '/admin'
     | '/minha-conta'
@@ -291,6 +301,7 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/planos'
     | '/reset-password'
+    | '/sitemap.xml'
     | '/suporte'
     | '/minha-conta'
     | '/artes/$slug'
@@ -318,6 +329,7 @@ export interface FileRouteTypes {
     | '/catalogo'
     | '/planos'
     | '/reset-password'
+    | '/sitemap.xml'
     | '/suporte'
     | '/_authenticated/admin'
     | '/_authenticated/minha-conta'
@@ -347,6 +359,7 @@ export interface RootRouteChildren {
   CatalogoRoute: typeof CatalogoRoute
   PlanosRoute: typeof PlanosRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SuporteRoute: typeof SuporteRoute
   ArtesSlugRoute: typeof ArtesSlugRoute
   PagamentoSucessoRoute: typeof PagamentoSucessoRoute
@@ -362,6 +375,13 @@ declare module '@tanstack/react-router' {
       path: '/suporte'
       fullPath: '/suporte'
       preLoaderRoute: typeof SuporteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -605,6 +625,7 @@ const rootRouteChildren: RootRouteChildren = {
   CatalogoRoute: CatalogoRoute,
   PlanosRoute: PlanosRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   SuporteRoute: SuporteRoute,
   ArtesSlugRoute: ArtesSlugRoute,
   PagamentoSucessoRoute: PagamentoSucessoRoute,

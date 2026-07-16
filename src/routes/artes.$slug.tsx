@@ -39,16 +39,50 @@ export const Route = createFileRoute("/artes/$slug")({
     if (!data) throw notFound();
     return data;
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.title} — EstampaHub` },
-          { name: "description", content: loaderData.description ?? "Arte digital para sublimação" },
-          { property: "og:title", content: loaderData.title },
-          { property: "og:image", content: loaderData.preview_url },
-        ]
-      : [{ title: "Arte não encontrada" }, { name: "robots", content: "noindex" }],
-  }),
+  head: ({ params, loaderData }) => {
+    if (!loaderData) return { meta: [{ title: "Arte não encontrada" }, { name: "robots", content: "noindex" }] };
+    const url = `https://loving-code-flow.lovable.app/artes/${params.slug}`;
+    const plainDesc = (loaderData.description ?? "")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    const fallback = `${loaderData.title} — arte digital em alta resolução (300 DPI) para sublimação, DTF e estamparia, com licença comercial na EstampaHub.`;
+    const description = plainDesc.length >= 50 ? plainDesc.slice(0, 300) : fallback;
+    return {
+      meta: [
+        { title: `${loaderData.title} — EstampaHub` },
+        { name: "description", content: description },
+        { property: "og:title", content: loaderData.title },
+        { property: "og:description", content: description.slice(0, 200) },
+        { property: "og:image", content: loaderData.preview_url },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: url },
+        { name: "twitter:image", content: loaderData.preview_url },
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: loaderData.title,
+            image: loaderData.preview_url,
+            description,
+            sku: loaderData.slug,
+            brand: { "@type": "Brand", name: "EstampaHub" },
+            offers: {
+              "@type": "Offer",
+              url,
+              priceCurrency: "BRL",
+              price: (Number(loaderData.price_cents ?? 0) / 100).toFixed(2),
+              availability: "https://schema.org/InStock",
+            },
+          }),
+        },
+      ],
+    };
+  },
   component: ArtworkPage,
   notFoundComponent: () => (
     <SiteLayout>

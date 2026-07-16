@@ -20,7 +20,17 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/catalogo")({
   validateSearch: (search) => searchSchema.parse(search),
-  head: () => ({ meta: [{ title: "Catálogo — EstampaHub" }, { name: "description", content: "Explore o catálogo completo de artes digitais." }] }),
+  head: () => ({
+    meta: [
+      { title: "Catálogo de artes digitais — EstampaHub" },
+      { name: "description", content: "Explore milhares de artes digitais prontas para sublimação, DTF e estamparia. Filtre por categoria, formato, cor e tags e baixe em alta resolução." },
+      { property: "og:title", content: "Catálogo de artes digitais — EstampaHub" },
+      { property: "og:description", content: "Milhares de artes em 300 DPI para sublimação e DTF. Filtre por categoria, formato, cor e tags e baixe com licença comercial." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://loving-code-flow.lovable.app/catalogo" },
+    ],
+    links: [{ rel: "canonical", href: "https://loving-code-flow.lovable.app/catalogo" }],
+  }),
   component: Catalogo,
 });
 
@@ -201,7 +211,7 @@ function Catalogo() {
                 {activeFilters.map(([k, v]) => (
                   <Badge key={k} variant="secondary" className="gap-1">
                     {String(v)}
-                    <button onClick={() => update({ [k]: undefined })}><X className="h-3 w-3" /></button>
+                    <button type="button" aria-label={`Remover filtro ${String(v)}`} onClick={() => update({ [k]: undefined })}><X className="h-3 w-3" /></button>
                   </Badge>
                 ))}
               </div>
