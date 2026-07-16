@@ -1,0 +1,60 @@
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
+import { SiteLayout } from "@/components/site-layout";
+import { formatDate } from "@/lib/format";
+import { Button } from "@/components/ui/button";
+
+export const Route = createFileRoute("/blog/$slug")({
+  loader: async ({ params }) => {
+    const { data } = await supabase.from("blog_posts").select("*").eq("slug", params.slug).eq("is_published", true).maybeSingle();
+    if (!data) throw notFound();
+    return data;
+  },
+  head: ({ loaderData }) => ({
+    meta: loaderData
+      ? [
+          { title: `${loaderData.title} — EstampaHub Blog` },
+          { name: "description", content: loaderData.excerpt ?? "" },
+          { property: "og:title", content: loaderData.title },
+          { property: "og:image", content: loaderData.cover_url ?? "" },
+        ]
+      : [{ title: "Artigo não encontrado" }, { name: "robots", content: "noindex" }],
+  }),
+  component: Post,
+  notFoundComponent: () => (
+    <SiteLayout>
+      <div className="mx-auto max-w-2xl px-4 py-24 text-center">
+        <h1 className="font-display text-3xl font-bold">Artigo não encontrado</h1>
+        <Button asChild className="mt-6"><Link to="/blog">Voltar ao blog</Link></Button>
+      </div>
+    </SiteLayout>
+  ),
+  errorComponent: () => <SiteLayout><div className="p-12 text-center">Erro ao carregar</div></SiteLayout>,
+});
+
+function Post() {
+  const post = Route.useLoaderData();
+  return (
+    <SiteLayout>
+      <article className="mx-auto w-full max-w-3xl px-4 py-12">
+        <Link to="/blog" className="text-sm text-primary hover:underline">← Voltar ao blog</Link>
+        <header className="mt-4">
+          <h1 className="font-display text-4xl font-black leading-tight md:text-5xl">{post.title}</h1>
+          <div className="mt-3 flex items-center gap-3 text-sm text-muted-foreground">
+            <span>{post.author_name}</span>
+            <span>•</span>
+            <span>{formatDate(post.published_at)}</span>
+          </div>
+        </header>
+        {post.cover_url && (
+          <div className="my-8 overflow-hidden rounded-2xl border border-border/60">
+            <img src={post.cover_url} alt={post.title} className="w-full" />
+          </div>
+        )}
+        <div className="prose prose-invert max-w-none whitespace-pre-wrap text-foreground/90 leading-relaxed">
+          {post.content}
+        </div>
+      </article>
+    </SiteLayout>
+  );
+}
