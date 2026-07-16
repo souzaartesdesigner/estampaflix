@@ -108,7 +108,7 @@ function Dashboard() {
                     <div className="p-3">
                       <h3 className="line-clamp-1 text-sm font-medium">{d.artworks.title}</h3>
                       <p className="mt-1 text-xs text-muted-foreground">Baixado em {formatDate(d.last_downloaded_at)}</p>
-                      <Button size="sm" variant="outline" className="mt-2 w-full" onClick={() => redownload(d.artworks.file_path)}>
+                      <Button size="sm" variant="outline" className="mt-2 w-full" onClick={() => redownload(d.artworks)}>
                         <Download className="mr-1 h-3 w-3" /> Baixar novamente
                       </Button>
                     </div>
