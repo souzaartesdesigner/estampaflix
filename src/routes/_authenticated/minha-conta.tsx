@@ -139,7 +139,7 @@ function Dashboard() {
                         <td className="px-4 py-3"><Link to="/artes/$slug" params={{ slug: o.artworks.slug }} className="hover:text-primary">{o.artworks.title}</Link></td>
                         <td className="px-4 py-3 text-muted-foreground">{formatDate(o.created_at)}</td>
                         <td className="px-4 py-3">{formatBRL(o.amount_cents)}</td>
-                        <td className="px-4 py-3"><Badge variant={o.status === "paid" ? "default" : "secondary"}>{o.status}</Badge></td>
+                        <td className="px-4 py-3"><Badge variant={o.status === "paid" ? "default" : "secondary"}>{translateOrderStatus(o.status)}</Badge></td>
                       </tr>
                     ))}
                   </tbody>
@@ -170,4 +170,17 @@ function Empty({ msg, cta }: { msg: string; cta: { label: string; to: string } }
       <Button asChild className="mt-4"><Link to={cta.to}>{cta.label}</Link></Button>
     </div>
   );
+}
+
+function translateOrderStatus(s: string) {
+  const map: Record<string, string> = {
+    paid: "Pago",
+    pending: "Pendente",
+    failed: "Falhou",
+    refunded: "Reembolsado",
+    canceled: "Cancelado",
+    cancelled: "Cancelado",
+    processing: "Processando",
+  };
+  return map[s] ?? s;
 }
