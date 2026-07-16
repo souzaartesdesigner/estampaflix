@@ -5,8 +5,9 @@ import { SiteLayout } from "@/components/site-layout";
 import { ArtworkCard } from "@/components/artwork-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Check, FileText as FileIcon, Palette, Sparkles, Zap } from "lucide-react";
+import { ArrowRight, Check, ChevronLeft, ChevronRight, FileText as FileIcon, Palette, Sparkles, Zap } from "lucide-react";
 import { formatBRL } from "@/lib/format";
+import { useEffect, useRef, useState } from "react";
 
 const homeQuery = queryOptions({
   queryKey: ["home-data"],
