@@ -83,15 +83,25 @@ function Home() {
         <section className="mx-auto w-full max-w-7xl px-4 py-16">
           <SectionTitle title="Categorias populares" subtitle="Encontre a estampa perfeita" />
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-8">
-            {data.categories.map((c) => (
+            {data.categories.map((c: any) => (
               <Link
                 key={c.id}
                 to="/catalogo"
                 search={{ categoria: c.slug } as any}
-                className="group flex aspect-square flex-col items-center justify-center gap-2 rounded-xl border border-border/60 bg-card p-4 text-center transition-all hover:-translate-y-1 hover:border-primary/50"
+                className="group relative flex aspect-square flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border border-border/60 bg-card text-center transition-all hover:-translate-y-1 hover:border-primary/50"
               >
-                <Palette className="h-6 w-6 text-primary" />
-                <span className="text-xs font-medium">{c.name}</span>
+                {c.cover_url ? (
+                  <>
+                    <img src={c.cover_url} alt={c.name} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/40 to-transparent" />
+                    <span className="relative z-10 mt-auto w-full px-2 pb-3 text-xs font-semibold text-foreground drop-shadow">{c.name}</span>
+                  </>
+                ) : (
+                  <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-4">
+                    <Palette className="h-6 w-6 text-primary" />
+                    <span className="text-xs font-medium">{c.name}</span>
+                  </div>
+                )}
               </Link>
             ))}
           </div>
