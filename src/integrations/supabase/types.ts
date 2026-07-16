@@ -168,6 +168,7 @@ export type Database = {
           featured: boolean
           id: string
           name: string
+          parent_id: string | null
           slug: string
           sort_order: number
         }
@@ -178,6 +179,7 @@ export type Database = {
           featured?: boolean
           id?: string
           name: string
+          parent_id?: string | null
           slug: string
           sort_order?: number
         }
@@ -188,10 +190,19 @@ export type Database = {
           featured?: boolean
           id?: string
           name?: string
+          parent_id?: string | null
           slug?: string
           sort_order?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       downloads: {
         Row: {
