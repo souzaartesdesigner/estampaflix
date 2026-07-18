@@ -13,14 +13,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useCart } from "@/hooks/use-cart";
+import { useI18n } from "@/lib/i18n";
+import { LangSwitcher } from "./lang-switcher";
+import { NotificationsBell } from "./notifications-bell";
 
-const NAV = [
-  { to: "/", label: "Início" },
-  { to: "/catalogo", label: "Catálogo" },
-  { to: "/planos", label: "Planos" },
-  { to: "/blog", label: "Blog" },
-  { to: "/suporte", label: "Suporte" },
-];
 
 export function SiteHeader() {
   const navigate = useNavigate();
