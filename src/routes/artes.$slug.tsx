@@ -333,7 +333,7 @@ function ArtworkPage() {
                   )
                 ) : (
                   <Button asChild className="bg-gradient-brand text-brand-foreground shadow-brand">
-                    <Link to="/auth">Entrar para baixar</Link>
+                    <Link to="/auth">{t("product.signInToDownload")}</Link>
                   </Button>
                 )}
               </div>
