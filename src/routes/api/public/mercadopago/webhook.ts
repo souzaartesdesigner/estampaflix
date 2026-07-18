@@ -105,7 +105,7 @@ export const Route = createFileRoute("/api/public/mercadopago/webhook")({
             if (orderRow.coupon_code) {
               const { data: coupon } = await supabaseAdmin
                 .from("coupons")
-                .select("id")
+                .select("id, uses_count")
                 .ilike("code", orderRow.coupon_code)
                 .maybeSingle();
               if (coupon) {
@@ -114,10 +114,9 @@ export const Route = createFileRoute("/api/public/mercadopago/webhook")({
                   user_id: orderRow.user_id,
                   order_id: orderRow.id,
                 });
-                await supabaseAdmin.rpc as any; // no-op placeholder
                 await supabaseAdmin
                   .from("coupons")
-                  .update({ uses_count: (await supabaseAdmin.from("coupons").select("uses_count").eq("id", coupon.id).single()).data!.uses_count + 1 })
+                  .update({ uses_count: (coupon.uses_count ?? 0) + 1 })
                   .eq("id", coupon.id);
               }
             }
