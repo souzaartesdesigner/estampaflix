@@ -349,9 +349,9 @@ function CategoriesCarousel({ categories }: { categories: any[] }) {
                 {filled.slice(0, 4).map((s, i) => (
                   <div key={i} className="aspect-square overflow-hidden rounded-md bg-[#ebebeb] ring-1 ring-border/40">
                     {s ? (
-                      <img src={s.preview_url} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <img src={s.preview_url} alt="" loading="lazy" decoding="async" width={200} height={200} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     ) : c.cover_url && i === 0 ? (
-                      <img src={c.cover_url} alt="" loading="lazy" className="h-full w-full object-cover" />
+                      <img src={c.cover_url} alt="" loading="lazy" decoding="async" width={200} height={200} className="h-full w-full object-cover" />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-muted-foreground/50">
                         <Palette className="h-5 w-5" />
