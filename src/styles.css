@@ -99,14 +99,14 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html { color-scheme: dark; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-  body { overflow-x: hidden; }
+  html {
     color-scheme: dark;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
   body {
     position: relative;
+    overflow-x: hidden;
     background-color: var(--color-background);
     background-image: var(--gradient-hero);
     background-attachment: fixed;
