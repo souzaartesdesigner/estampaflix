@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site-layout";
 import { formatDate } from "@/lib/format";
 import { Button } from "@/components/ui/button";
+import { useI18n, tField } from "@/lib/i18n";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ params }) => {
@@ -47,25 +48,33 @@ export const Route = createFileRoute("/blog/$slug")({
     };
   },
   component: Post,
-  notFoundComponent: () => (
+  notFoundComponent: NotFound,
+  errorComponent: () => <SiteLayout><div className="p-12 text-center">Erro</div></SiteLayout>,
+});
+
+function NotFound() {
+  const { t } = useI18n();
+  return (
     <SiteLayout>
       <div className="mx-auto max-w-2xl px-4 py-24 text-center">
-        <h1 className="font-display text-3xl font-bold">Artigo não encontrado</h1>
-        <Button asChild className="mt-6"><Link to="/blog">Voltar ao blog</Link></Button>
+        <h1 className="font-display text-3xl font-bold">{t("blog.notFound")}</h1>
+        <Button asChild className="mt-6"><Link to="/blog">{t("blog.back")}</Link></Button>
       </div>
     </SiteLayout>
-  ),
-  errorComponent: () => <SiteLayout><div className="p-12 text-center">Erro ao carregar</div></SiteLayout>,
-});
+  );
+}
 
 function Post() {
   const post = Route.useLoaderData();
+  const { t, lang } = useI18n();
+  const title = tField(post as any, "title", lang) || post.title;
+  const content = tField(post as any, "content", lang) || post.content;
   return (
     <SiteLayout>
       <article className="mx-auto w-full max-w-3xl px-4 py-12">
-        <Link to="/blog" className="text-sm text-primary hover:underline">← Voltar ao blog</Link>
+        <Link to="/blog" className="text-sm text-primary hover:underline">{t("blog.back")}</Link>
         <header className="mt-4">
-          <h1 className="font-display text-4xl font-black leading-tight md:text-5xl">{post.title}</h1>
+          <h1 className="font-display text-4xl font-black leading-tight md:text-5xl">{title}</h1>
           <div className="mt-3 flex items-center gap-3 text-sm text-muted-foreground">
             <span>{post.author_name}</span>
             <span>•</span>
@@ -74,11 +83,11 @@ function Post() {
         </header>
         {post.cover_url && (
           <div className="my-8 overflow-hidden rounded-2xl border border-border/60">
-            <img src={post.cover_url} alt={post.title} className="w-full" />
+            <img src={post.cover_url} alt={title} className="w-full" />
           </div>
         )}
         <div className="prose prose-invert max-w-none whitespace-pre-wrap text-foreground/90 leading-relaxed">
-          {post.content}
+          {content}
         </div>
       </article>
     </SiteLayout>
