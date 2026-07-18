@@ -71,8 +71,8 @@ function Planos() {
           {plans.map((plan, idx) => (
             <div
               key={plan.id}
-              className={`relative flex flex-col rounded-2xl border p-6 ${
-                idx === 1 ? "border-primary/60 bg-card shadow-brand" : "border-border/60 bg-card"
+              className={`relative flex flex-col rounded-2xl border p-5 sm:p-6 ${
+                idx === 1 ? "border-primary/60 bg-card shadow-brand sm:col-span-2 lg:col-span-1" : "border-border/60 bg-card"
               }`}
             >
               {idx === 1 && (
