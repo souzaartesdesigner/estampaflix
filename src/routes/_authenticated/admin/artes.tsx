@@ -140,6 +140,12 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
       if (previewFile) preview_url = await upload(previewFile, "artwork-previews", "arts");
       if (!preview_url) throw new Error("Adicione uma imagem de preview (URL ou upload).");
 
+      let gallery_urls = [...(form.gallery_urls ?? [])];
+      for (const gf of galleryFiles) {
+        const url = await upload(gf, "artwork-previews", "gallery");
+        gallery_urls.push(url);
+      }
+
       if (sourceType === "external") {
         if (!external_url) throw new Error("Informe o link do Google Drive (ou externo).");
         file_path = null as any;
@@ -164,7 +170,10 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
         is_featured: form.is_featured,
         is_trending: form.is_trending,
         colors: form.colors.split(",").map((s: string) => s.trim()).filter(Boolean),
+        gallery_urls,
+        translations: form.translations,
       };
+
 
       const { error } = isEdit
         ? await supabase.from("artworks").update(payload).eq("id", editing.id)
