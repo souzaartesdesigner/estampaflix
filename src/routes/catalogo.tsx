@@ -120,15 +120,15 @@ function Catalogo() {
 
   return (
     <SiteLayout>
-      <div className="mx-auto w-full max-w-7xl px-4 py-8">
-        <header className="mb-6">
-          <h1 className="font-display text-3xl font-bold md:text-4xl">{t("catalog.title")}</h1>
+      <div className="mx-auto w-full max-w-7xl px-3 py-6 sm:px-4 sm:py-8">
+        <header className="mb-5 sm:mb-6">
+          <h1 className="font-display text-2xl font-bold sm:text-3xl md:text-4xl">{t("catalog.title")}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{t("catalog.subtitle")}</p>
         </header>
 
         <form
           onSubmit={(e) => { e.preventDefault(); update({ q: q || undefined }); }}
-          className="mb-6 flex gap-2"
+          className="mb-4 flex gap-2 sm:mb-6"
         >
           <div className="relative flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -137,8 +137,19 @@ function Catalogo() {
           <Button type="submit" className="bg-gradient-brand text-brand-foreground">{t("catalog.search")}</Button>
         </form>
 
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setFiltersOpen((v) => !v)}
+          className="mb-4 w-full justify-center gap-2 lg:hidden"
+        >
+          <SlidersHorizontal className="h-4 w-4" />
+          {filtersOpen ? t("catalog.hideFilters") ?? "Ocultar filtros" : t("catalog.showFilters") ?? "Filtros"}
+        </Button>
+
         <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
-          <aside className="space-y-6">
+          <aside className={`${filtersOpen ? "block" : "hidden"} space-y-6 lg:block`}>
             <FilterGroup title={t("catalog.categories")}>
               <div className="space-y-1">
                 {orderedCategories.map(({ cat: c, depth }) => {
