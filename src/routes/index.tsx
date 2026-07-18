@@ -109,7 +109,7 @@ function Home() {
                   }`}
                   style={{ transform: `translateY(${(i % 3) * 14}px)` }}
                 >
-                  <img src={a.preview_url} alt={tField(a as any, "title", lang) || a.title} className="h-full w-full object-cover" loading="lazy" />
+                  <img src={a.preview_url} alt={tField(a as any, "title", lang) || a.title} className="h-full w-full object-cover" loading={i < 3 ? "eager" : "lazy"} fetchPriority={i === 0 ? "high" : undefined} decoding="async" width={400} height={400} />
                 </div>
               ))}
             </div>
