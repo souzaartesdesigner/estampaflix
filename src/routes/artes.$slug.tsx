@@ -223,12 +223,12 @@ function ArtworkPage() {
     },
     onError: (err: any) => {
       if (err?.message === "not_authenticated") return;
-      toast.error(err?.message || "Não foi possível iniciar o pagamento.");
+      toast.error(err?.message || t("product.errStartPayment"));
     },
   });
 
   const canDownload = !!sub && (sub.credits_remaining ?? 0) > 0;
-  const tags: any[] = (artwork as any).artwork_tags?.map((t: any) => t.tags).filter(Boolean) ?? [];
+  const tags: any[] = (artwork as any).artwork_tags?.map((at: any) => at.tags).filter(Boolean) ?? [];
   const cart = useCart();
   const inCart = cart.contains(artwork.id);
 
