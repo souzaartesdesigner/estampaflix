@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { formatBRL } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Download } from "lucide-react";
+import { FavoriteButton } from "./favorite-button";
 
 export type ArtworkCardData = {
   id: string;
@@ -49,6 +50,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
           {artwork.is_featured && <Badge className="bg-gradient-brand text-brand-foreground border-0">Destaque</Badge>}
           {artwork.is_trending && <Badge variant="secondary">Em alta</Badge>}
         </div>
+        <FavoriteButton artworkId={artwork.id} size="sm" className="absolute right-2 top-2" />
       </div>
       <div className="flex flex-1 flex-col gap-1 p-3">
         <h3 className="line-clamp-1 text-sm font-medium">{artwork.title}</h3>
