@@ -50,6 +50,11 @@ function Dashboard() {
     queryFn: async () => (await supabase.from("orders").select("*, artworks(title,slug)").order("created_at", { ascending: false })).data ?? [],
   });
 
+  const { data: favorites = [] } = useQuery({
+    queryKey: ["favorites", user.id],
+    queryFn: async () => (await supabase.from("favorites").select("artwork_id, artworks(id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count)").order("created_at", { ascending: false })).data ?? [],
+  });
+
   async function redownload(art: { file_path: string | null; external_url: string | null; title: string }) {
     try {
       if (art.external_url) {
