@@ -13,20 +13,25 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useCart } from "@/hooks/use-cart";
+import { useI18n } from "@/lib/i18n";
+import { LangSwitcher } from "./lang-switcher";
+import { NotificationsBell } from "./notifications-bell";
 
-const NAV = [
-  { to: "/", label: "Início" },
-  { to: "/catalogo", label: "Catálogo" },
-  { to: "/planos", label: "Planos" },
-  { to: "/blog", label: "Blog" },
-  { to: "/suporte", label: "Suporte" },
-];
 
 export function SiteHeader() {
   const navigate = useNavigate();
+  const { t } = useI18n();
+  const NAV = [
+    { to: "/", label: t("nav.home") },
+    { to: "/catalogo", label: t("nav.catalog") },
+    { to: "/planos", label: t("nav.plans") },
+    { to: "/blog", label: t("nav.blog") },
+    { to: "/suporte", label: t("nav.support") },
+  ];
   const [user, setUser] = useState<{ email?: string | null } | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [q, setQ] = useState("");
+
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const cart = useCart();
 
@@ -95,15 +100,17 @@ export function SiteHeader() {
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Buscar artes, temas, tags..."
+              placeholder={t("search.placeholder")}
               className="w-full rounded-full border border-border bg-surface/60 py-2 pl-10 pr-4 text-sm outline-none placeholder:text-muted-foreground focus:border-primary"
             />
           </div>
         </form>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-1">
+          <LangSwitcher />
+          {user && <NotificationsBell />}
           {user && (
-            <Button asChild variant="ghost" size="icon" className="relative" aria-label="Carrinho">
+            <Button asChild variant="ghost" size="icon" className="relative" aria-label={t("nav.cart")}>
               <Link to="/carrinho">
                 <ShoppingCart className="h-5 w-5" />
                 {cart.count > 0 && (
@@ -124,27 +131,28 @@ export function SiteHeader() {
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel className="truncate">{user.email}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild><Link to="/minha-conta">Minha conta</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/carrinho">Meu carrinho</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/minha-conta">{t("nav.myAccount")}</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/carrinho">{t("nav.cart")}</Link></DropdownMenuItem>
                 {isAdmin && (
                   <DropdownMenuItem asChild>
-                    <Link to="/admin"><ShieldCheck className="mr-2 h-4 w-4" /> Painel admin</Link>
+                    <Link to="/admin"><ShieldCheck className="mr-2 h-4 w-4" /> {t("nav.admin")}</Link>
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={signOut}><LogOut className="mr-2 h-4 w-4" /> Sair</DropdownMenuItem>
+                <DropdownMenuItem onClick={signOut}><LogOut className="mr-2 h-4 w-4" /> {t("nav.signOut")}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <>
               <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-                <Link to="/auth">Entrar</Link>
+                <Link to="/auth">{t("nav.signIn")}</Link>
               </Button>
               <Button asChild size="sm" className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
-                <Link to="/planos">Assinar</Link>
+                <Link to="/planos">{t("nav.subscribe")}</Link>
               </Button>
             </>
           )}
+
 
           <Sheet>
             <SheetTrigger asChild>

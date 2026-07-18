@@ -105,13 +105,17 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
     is_featured: editing?.is_featured ?? false,
     is_trending: editing?.is_trending ?? false,
     colors: (editing?.colors ?? []).join(","),
+    gallery_urls: (editing?.gallery_urls ?? []) as string[],
+    translations: (editing?.translations ?? {}) as Record<string, { title?: string; description?: string }>,
   });
   const [sourceType, setSourceType] = useState<"upload" | "external">(
     editing?.external_url ? "external" : "upload"
   );
   const [previewFile, setPreviewFile] = useState<File | null>(null);
   const [artFile, setArtFile] = useState<File | null>(null);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
+
 
   async function upload(file: File, bucket: string, folder: string) {
     const ext = file.name.split(".").pop();
@@ -135,6 +139,12 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
 
       if (previewFile) preview_url = await upload(previewFile, "artwork-previews", "arts");
       if (!preview_url) throw new Error("Adicione uma imagem de preview (URL ou upload).");
+
+      let gallery_urls = [...(form.gallery_urls ?? [])];
+      for (const gf of galleryFiles) {
+        const url = await upload(gf, "artwork-previews", "gallery");
+        gallery_urls.push(url);
+      }
 
       if (sourceType === "external") {
         if (!external_url) throw new Error("Informe o link do Google Drive (ou externo).");
@@ -160,7 +170,10 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
         is_featured: form.is_featured,
         is_trending: form.is_trending,
         colors: form.colors.split(",").map((s: string) => s.trim()).filter(Boolean),
+        gallery_urls,
+        translations: form.translations,
       };
+
 
       const { error } = isEdit
         ? await supabase.from("artworks").update(payload).eq("id", editing.id)
@@ -233,7 +246,47 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
               </div>
             )}
           </div>
+          <div className="grid gap-2 rounded-lg border border-border/60 p-4">
+            <Label>Galeria (imagens secundárias)</Label>
+            <Input type="file" accept="image/*" multiple onChange={(e) => setGalleryFiles(Array.from(e.target.files ?? []))} />
+            {form.gallery_urls.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {form.gallery_urls.map((u: string, i: number) => (
+                  <div key={i} className="relative">
+                    <img src={u} alt="" className="h-16 w-16 rounded object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setForm({ ...form, gallery_urls: form.gallery_urls.filter((_: string, j: number) => j !== i) })}
+                      className="absolute -right-2 -top-2 h-5 w-5 rounded-full bg-destructive text-xs text-destructive-foreground"
+                    >×</button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="grid gap-3 rounded-lg border border-border/60 p-4">
+            <Label>Traduções (opcional)</Label>
+            {(["en", "es"] as const).map((lg) => (
+              <div key={lg} className="grid gap-2">
+                <p className="text-xs font-semibold uppercase text-muted-foreground">{lg === "en" ? "Inglês" : "Espanhol"}</p>
+                <Input
+                  placeholder={`Título em ${lg.toUpperCase()}`}
+                  value={form.translations?.[lg]?.title ?? ""}
+                  onChange={(e) => setForm({ ...form, translations: { ...form.translations, [lg]: { ...form.translations?.[lg], title: e.target.value } } })}
+                />
+                <Textarea
+                  rows={2}
+                  placeholder={`Descrição em ${lg.toUpperCase()}`}
+                  value={form.translations?.[lg]?.description ?? ""}
+                  onChange={(e) => setForm({ ...form, translations: { ...form.translations, [lg]: { ...form.translations?.[lg], description: e.target.value } } })}
+                />
+              </div>
+            ))}
+          </div>
+
           <div className="flex flex-wrap gap-6">
+
             <label className="flex items-center gap-2"><Switch checked={form.is_published} onCheckedChange={(v) => setForm({ ...form, is_published: v })} /> Publicada</label>
             <label className="flex items-center gap-2"><Switch checked={form.is_featured} onCheckedChange={(v) => setForm({ ...form, is_featured: v })} /> Destaque</label>
             <label className="flex items-center gap-2"><Switch checked={form.is_trending} onCheckedChange={(v) => setForm({ ...form, is_trending: v })} /> Em alta</label>

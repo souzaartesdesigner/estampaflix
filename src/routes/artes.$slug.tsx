@@ -5,13 +5,17 @@ import { createPixOrder } from "@/lib/mercadopago.functions";
 import { SiteLayout } from "@/components/site-layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { formatBRL, formatDate } from "@/lib/format";
+import { formatBRL } from "@/lib/format";
 import { Download, ShoppingCart, Tag as TagIcon, Palette, FileType, Loader2, Plus, Check } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ArtworkCard } from "@/components/artwork-card";
 import { FavoriteButton } from "@/components/favorite-button";
 import { useCart } from "@/hooks/use-cart";
+import { ArtworkGallery } from "@/components/artwork-gallery";
+import { ArtworkReviews } from "@/components/artwork-reviews";
+import { useI18n, tField } from "@/lib/i18n";
+
 
 function htmlToText(html: string): string {
   if (!html) return "";
@@ -106,6 +110,12 @@ export const Route = createFileRoute("/artes/$slug")({
 
 function ArtworkPage() {
   const artwork = Route.useLoaderData();
+  const { lang } = useI18n();
+  const trTitle = tField(artwork as any, "title", lang) || artwork.title;
+  const trDesc = tField(artwork as any, "description", lang) || (artwork.description ?? "");
+  const galleryImages = [artwork.preview_url, ...((artwork as any).gallery_urls ?? [])].filter(Boolean);
+
+
   const navigate = useNavigate();
   const qc = useQueryClient();
 
@@ -221,28 +231,17 @@ function ArtworkPage() {
         </nav>
 
         <div className="grid gap-8 lg:grid-cols-2">
-          {/* IMAGE with watermark */}
-          <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-surface">
-            <div className="relative aspect-square">
-              <img src={artwork.preview_url} alt={artwork.title} className="h-full w-full object-cover" />
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-25 mix-blend-overlay"
-                style={{ backgroundImage: "repeating-linear-gradient(-30deg, transparent 0 80px, oklch(1 0 0 / 0.25) 80px 81px)" }}
-              >
-                <span className="rotate-[-20deg] font-display text-5xl font-black tracking-widest text-white/70">ESTAMPAHUB</span>
-              </div>
-            </div>
-          </div>
+          <ArtworkGallery images={galleryImages} alt={trTitle} />
 
           {/* INFO */}
           <div className="flex flex-col gap-4">
+
             {(artwork as any).categories && (
               <Link to="/catalogo" search={{ categoria: (artwork as any).categories.slug } as any} className="text-xs uppercase tracking-wider text-primary hover:underline">
                 {(artwork as any).categories.name}
               </Link>
             )}
-            <h1 className="font-display text-3xl font-bold md:text-4xl">{artwork.title}</h1>
+            <h1 className="font-display text-3xl font-bold md:text-4xl">{trTitle}</h1>
             <div className="flex items-center gap-2">
               <FavoriteButton artworkId={artwork.id} size="md" />
               <span className="text-xs text-muted-foreground">Salvar nos favoritos</span>
@@ -351,14 +350,17 @@ function ArtworkPage() {
           currentId={artwork.id}
         />
 
-        {artwork.description && (
+        <ArtworkReviews artworkId={artwork.id} />
+
+        {trDesc && (
           <section className="mt-12 rounded-2xl border border-border/60 bg-card p-6 md:p-8">
             <h2 className="mb-4 font-display text-2xl font-bold">Descrição</h2>
             <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
-              {htmlToText(artwork.description)}
+              {htmlToText(trDesc)}
             </p>
           </section>
         )}
+
       </div>
     </SiteLayout>
   );

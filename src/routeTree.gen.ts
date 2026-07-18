@@ -36,6 +36,7 @@ import { Route as AuthenticatedAdminCuponsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_authenticated/admin/categorias'
 import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin/blog'
 import { Route as AuthenticatedAdminArtesRouteImport } from './routes/_authenticated/admin/artes'
+import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin/analytics'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
 import { Route as ApiPublicMercadopagoWebhookRouteImport } from './routes/api/public/mercadopago/webhook'
 
@@ -180,6 +181,12 @@ const AuthenticatedAdminArtesRoute = AuthenticatedAdminArtesRouteImport.update({
   path: '/artes',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminAnalyticsRoute =
+  AuthenticatedAdminAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const ApiPublicStripeWebhookRoute = ApiPublicStripeWebhookRouteImport.update({
   id: '/api/public/stripe/webhook',
   path: '/api/public/stripe/webhook',
@@ -207,6 +214,7 @@ export interface FileRoutesByFullPath {
   '/artes/$slug': typeof ArtesSlugRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
+  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/artes': typeof AuthenticatedAdminArtesRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
@@ -236,6 +244,7 @@ export interface FileRoutesByTo {
   '/artes/$slug': typeof ArtesSlugRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
+  '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/artes': typeof AuthenticatedAdminArtesRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
@@ -268,6 +277,7 @@ export interface FileRoutesById {
   '/artes/$slug': typeof ArtesSlugRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
+  '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/artes': typeof AuthenticatedAdminArtesRoute
   '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/_authenticated/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
@@ -300,6 +310,7 @@ export interface FileRouteTypes {
     | '/artes/$slug'
     | '/blog/$slug'
     | '/pagamento/sucesso'
+    | '/admin/analytics'
     | '/admin/artes'
     | '/admin/blog'
     | '/admin/categorias'
@@ -329,6 +340,7 @@ export interface FileRouteTypes {
     | '/artes/$slug'
     | '/blog/$slug'
     | '/pagamento/sucesso'
+    | '/admin/analytics'
     | '/admin/artes'
     | '/admin/blog'
     | '/admin/categorias'
@@ -360,6 +372,7 @@ export interface FileRouteTypes {
     | '/artes/$slug'
     | '/blog/$slug'
     | '/pagamento/sucesso'
+    | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/artes'
     | '/_authenticated/admin/blog'
     | '/_authenticated/admin/categorias'
@@ -584,6 +597,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminArtesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/analytics': {
+      id: '/_authenticated/admin/analytics'
+      path: '/analytics'
+      fullPath: '/admin/analytics'
+      preLoaderRoute: typeof AuthenticatedAdminAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/api/public/stripe/webhook': {
       id: '/api/public/stripe/webhook'
       path: '/api/public/stripe/webhook'
@@ -602,6 +622,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminAnalyticsRoute: typeof AuthenticatedAdminAnalyticsRoute
   AuthenticatedAdminArtesRoute: typeof AuthenticatedAdminArtesRoute
   AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
   AuthenticatedAdminCategoriasRoute: typeof AuthenticatedAdminCategoriasRoute
@@ -617,6 +638,7 @@ interface AuthenticatedAdminRouteRouteChildren {
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminAnalyticsRoute: AuthenticatedAdminAnalyticsRoute,
     AuthenticatedAdminArtesRoute: AuthenticatedAdminArtesRoute,
     AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
     AuthenticatedAdminCategoriasRoute: AuthenticatedAdminCategoriasRoute,
@@ -679,13 +701,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
