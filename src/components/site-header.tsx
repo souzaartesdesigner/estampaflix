@@ -20,9 +20,18 @@ import { NotificationsBell } from "./notifications-bell";
 
 export function SiteHeader() {
   const navigate = useNavigate();
+  const { t } = useI18n();
+  const NAV = [
+    { to: "/", label: t("nav.home") },
+    { to: "/catalogo", label: t("nav.catalog") },
+    { to: "/planos", label: t("nav.plans") },
+    { to: "/blog", label: t("nav.blog") },
+    { to: "/suporte", label: t("nav.support") },
+  ];
   const [user, setUser] = useState<{ email?: string | null } | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [q, setQ] = useState("");
+
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const cart = useCart();
 
