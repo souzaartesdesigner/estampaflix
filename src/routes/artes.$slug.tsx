@@ -6,10 +6,12 @@ import { SiteLayout } from "@/components/site-layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatBRL, formatDate } from "@/lib/format";
-import { Download, ShoppingCart, Tag as TagIcon, Palette, FileType, Loader2 } from "lucide-react";
+import { Download, ShoppingCart, Tag as TagIcon, Palette, FileType, Loader2, Plus, Check } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ArtworkCard } from "@/components/artwork-card";
+import { FavoriteButton } from "@/components/favorite-button";
+import { useCart } from "@/hooks/use-cart";
 
 function htmlToText(html: string): string {
   if (!html) return "";
