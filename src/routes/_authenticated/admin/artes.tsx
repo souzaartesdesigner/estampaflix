@@ -246,7 +246,47 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
               </div>
             )}
           </div>
+          <div className="grid gap-2 rounded-lg border border-border/60 p-4">
+            <Label>Galeria (imagens secundárias)</Label>
+            <Input type="file" accept="image/*" multiple onChange={(e) => setGalleryFiles(Array.from(e.target.files ?? []))} />
+            {form.gallery_urls.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {form.gallery_urls.map((u: string, i: number) => (
+                  <div key={i} className="relative">
+                    <img src={u} alt="" className="h-16 w-16 rounded object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setForm({ ...form, gallery_urls: form.gallery_urls.filter((_: string, j: number) => j !== i) })}
+                      className="absolute -right-2 -top-2 h-5 w-5 rounded-full bg-destructive text-xs text-destructive-foreground"
+                    >×</button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="grid gap-3 rounded-lg border border-border/60 p-4">
+            <Label>Traduções (opcional)</Label>
+            {(["en", "es"] as const).map((lg) => (
+              <div key={lg} className="grid gap-2">
+                <p className="text-xs font-semibold uppercase text-muted-foreground">{lg === "en" ? "Inglês" : "Espanhol"}</p>
+                <Input
+                  placeholder={`Título em ${lg.toUpperCase()}`}
+                  value={form.translations?.[lg]?.title ?? ""}
+                  onChange={(e) => setForm({ ...form, translations: { ...form.translations, [lg]: { ...form.translations?.[lg], title: e.target.value } } })}
+                />
+                <Textarea
+                  rows={2}
+                  placeholder={`Descrição em ${lg.toUpperCase()}`}
+                  value={form.translations?.[lg]?.description ?? ""}
+                  onChange={(e) => setForm({ ...form, translations: { ...form.translations, [lg]: { ...form.translations?.[lg], description: e.target.value } } })}
+                />
+              </div>
+            ))}
+          </div>
+
           <div className="flex flex-wrap gap-6">
+
             <label className="flex items-center gap-2"><Switch checked={form.is_published} onCheckedChange={(v) => setForm({ ...form, is_published: v })} /> Publicada</label>
             <label className="flex items-center gap-2"><Switch checked={form.is_featured} onCheckedChange={(v) => setForm({ ...form, is_featured: v })} /> Destaque</label>
             <label className="flex items-center gap-2"><Switch checked={form.is_trending} onCheckedChange={(v) => setForm({ ...form, is_trending: v })} /> Em alta</label>
