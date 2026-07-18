@@ -109,7 +109,10 @@ export function SiteHeader() {
         </form>
 
 
-        <div className="ml-auto flex items-center gap-1">
+        <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
+          <Button asChild variant="ghost" size="icon" className="md:hidden" aria-label={t("search.placeholder")}>
+            <Link to="/catalogo"><Search className="h-5 w-5" /></Link>
+          </Button>
           <LangSwitcher />
           {user && <NotificationsBell />}
           {user && (
