@@ -2,7 +2,7 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LogOut, Menu, Search, ShieldCheck, Sparkles, User } from "lucide-react";
+import { LogOut, Menu, Search, ShieldCheck, ShoppingCart, Sparkles, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useCart } from "@/hooks/use-cart";
 
 const NAV = [
   { to: "/", label: "Início" },
@@ -27,6 +28,7 @@ export function SiteHeader() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [q, setQ] = useState("");
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const cart = useCart();
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
@@ -100,6 +102,18 @@ export function SiteHeader() {
         </form>
 
         <div className="ml-auto flex items-center gap-2">
+          {user && (
+            <Button asChild variant="ghost" size="icon" className="relative" aria-label="Carrinho">
+              <Link to="/carrinho">
+                <ShoppingCart className="h-5 w-5" />
+                {cart.count > 0 && (
+                  <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+                    {cart.count}
+                  </span>
+                )}
+              </Link>
+            </Button>
+          )}
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -111,6 +125,7 @@ export function SiteHeader() {
                 <DropdownMenuLabel className="truncate">{user.email}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild><Link to="/minha-conta">Minha conta</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/carrinho">Meu carrinho</Link></DropdownMenuItem>
                 {isAdmin && (
                   <DropdownMenuItem asChild>
                     <Link to="/admin"><ShieldCheck className="mr-2 h-4 w-4" /> Painel admin</Link>

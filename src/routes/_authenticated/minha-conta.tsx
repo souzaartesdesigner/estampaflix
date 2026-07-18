@@ -10,7 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { createBillingPortalSession } from "@/lib/stripe.functions";
 import { toast } from "sonner";
-import { Download, CreditCard, Package, Sparkles, Loader2 } from "lucide-react";
+import { Download, CreditCard, Package, Sparkles, Loader2, Heart } from "lucide-react";
+import { ArtworkCard } from "@/components/artwork-card";
 
 export const Route = createFileRoute("/_authenticated/minha-conta")({
   head: () => ({ meta: [{ title: "Minha conta — EstampaHub" }, { name: "robots", content: "noindex" }] }),
@@ -47,6 +48,11 @@ function Dashboard() {
   const { data: orders = [] } = useQuery({
     queryKey: ["my-orders", user.id],
     queryFn: async () => (await supabase.from("orders").select("*, artworks(title,slug)").order("created_at", { ascending: false })).data ?? [],
+  });
+
+  const { data: favorites = [] } = useQuery({
+    queryKey: ["favorites", user.id],
+    queryFn: async () => (await supabase.from("favorites").select("artwork_id, artworks(id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count)").order("created_at", { ascending: false })).data ?? [],
   });
 
   async function redownload(art: { file_path: string | null; external_url: string | null; title: string }) {
@@ -91,6 +97,7 @@ function Dashboard() {
         <Tabs defaultValue="downloads">
           <TabsList>
             <TabsTrigger value="downloads">Downloads</TabsTrigger>
+            <TabsTrigger value="favorites">Favoritos</TabsTrigger>
             <TabsTrigger value="subscription">Minha assinatura</TabsTrigger>
             <TabsTrigger value="orders">Compras avulsas</TabsTrigger>
           </TabsList>
@@ -117,6 +124,18 @@ function Dashboard() {
               </div>
             )}
           </TabsContent>
+
+          <TabsContent value="favorites" className="mt-6">
+            {favorites.length === 0 ? (
+              <Empty msg="Você ainda não salvou nenhuma arte." cta={{ label: "Explorar catálogo", to: "/catalogo" }} />
+            ) : (
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                {favorites.map((f: any) => f.artworks && <ArtworkCard key={f.artwork_id} artwork={f.artworks} />)}
+              </div>
+            )}
+          </TabsContent>
+
+
 
           <TabsContent value="subscription" className="mt-6">
             {sub ? (
@@ -154,14 +173,28 @@ function Dashboard() {
                     <tr><th className="px-4 py-3 text-left">Arte</th><th className="px-4 py-3 text-left">Data</th><th className="px-4 py-3 text-left">Valor</th><th className="px-4 py-3 text-left">Status</th></tr>
                   </thead>
                   <tbody>
-                    {orders.map((o: any) => (
-                      <tr key={o.id} className="border-t border-border/40">
-                        <td className="px-4 py-3"><Link to="/artes/$slug" params={{ slug: o.artworks.slug }} className="hover:text-primary">{o.artworks.title}</Link></td>
-                        <td className="px-4 py-3 text-muted-foreground">{formatDate(o.created_at)}</td>
-                        <td className="px-4 py-3">{formatBRL(o.amount_cents)}</td>
-                        <td className="px-4 py-3"><Badge variant={o.status === "paid" ? "default" : "secondary"}>{translateOrderStatus(o.status)}</Badge></td>
-                      </tr>
-                    ))}
+                    {orders.map((o: any) => {
+                      const itemCount = Array.isArray(o.items) ? o.items.length : (o.artworks ? 1 : 0);
+                      const label = o.artworks
+                        ? o.artworks.title
+                        : itemCount > 0
+                          ? `${itemCount} ${itemCount === 1 ? "arte" : "artes"}`
+                          : "Pedido";
+                      return (
+                        <tr key={o.id} className="border-t border-border/40">
+                          <td className="px-4 py-3">
+                            {o.artworks ? (
+                              <Link to="/artes/$slug" params={{ slug: o.artworks.slug }} className="hover:text-primary">{label}</Link>
+                            ) : (
+                              <span>{label}</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-muted-foreground">{formatDate(o.created_at)}</td>
+                          <td className="px-4 py-3">{formatBRL(o.amount_cents)}</td>
+                          <td className="px-4 py-3"><Badge variant={o.status === "paid" ? "default" : "secondary"}>{translateOrderStatus(o.status)}</Badge></td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

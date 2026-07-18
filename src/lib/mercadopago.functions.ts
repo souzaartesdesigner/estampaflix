@@ -10,54 +10,96 @@ function getAccessToken() {
   return token;
 }
 
+async function callMpCreatePayment(payload: any) {
+  const idempotencyKey = crypto.randomUUID();
+  const res = await fetch(`${MP_API}/v1/payments`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${getAccessToken()}`,
+      "Content-Type": "application/json",
+      "X-Idempotency-Key": idempotencyKey,
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const t = await res.text();
+    console.error("MP create payment failed:", res.status, t);
+    throw new Error("mp_create_failed");
+  }
+  return res.json();
+}
+
 export const createPixOrder = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: { artworkId: string }) =>
-    z.object({ artworkId: z.string().uuid() }).parse(data),
+  .inputValidator((data: { artworkId?: string; cartCheckout?: boolean; couponCode?: string | null }) =>
+    z
+      .object({
+        artworkId: z.string().uuid().optional(),
+        cartCheckout: z.boolean().optional(),
+        couponCode: z.string().trim().min(1).max(64).optional().nullable(),
+      })
+      .refine((v) => v.artworkId || v.cartCheckout, { message: "artworkId ou cartCheckout" })
+      .parse(data),
   )
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
-    // 1. Fetch artwork (RLS: is_published check public)
-    const { data: artwork, error: artErr } = await supabase
-      .from("artworks")
-      .select("id,title,price_cents,is_published")
-      .eq("id", data.artworkId)
-      .eq("is_published", true)
-      .maybeSingle();
-    if (artErr) throw new Error(artErr.message);
-    if (!artwork) throw new Error("artwork_not_found");
-    if (!artwork.price_cents || artwork.price_cents <= 0)
-      throw new Error("invalid_price");
+    // Build items list
+    type Item = { artwork_id: string; title: string; price_cents: number; slug: string };
+    let items: Item[] = [];
+    let description = "";
 
-    // 2. Reuse an existing pending Pix order for this user+artwork if not expired
-    const { data: existing } = await supabase
-      .from("orders")
-      .select("id,provider,status,pix_qr_code,pix_qr_code_base64,pix_expires_at,amount_cents")
-      .eq("user_id", userId)
-      .eq("artwork_id", artwork.id)
-      .eq("provider", "mercadopago")
-      .eq("status", "pending")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (
-      existing &&
-      existing.pix_qr_code &&
-      existing.pix_expires_at &&
-      new Date(existing.pix_expires_at).getTime() > Date.now() + 60_000
-    ) {
-      return {
-        orderId: existing.id,
-        qrCode: existing.pix_qr_code,
-        qrCodeBase64: existing.pix_qr_code_base64,
-        expiresAt: existing.pix_expires_at,
-        amountCents: existing.amount_cents,
-      };
+    if (data.cartCheckout) {
+      const { data: cart, error } = await supabase
+        .from("cart_items")
+        .select("artwork_id, artworks(id,slug,title,price_cents,is_published)");
+      if (error) throw new Error(error.message);
+      const rows = (cart ?? []) as any[];
+      items = rows
+        .filter((r) => r.artworks?.is_published && (r.artworks?.price_cents ?? 0) > 0)
+        .map((r) => ({
+          artwork_id: r.artworks.id,
+          title: r.artworks.title,
+          price_cents: r.artworks.price_cents,
+          slug: r.artworks.slug,
+        }));
+      if (items.length === 0) throw new Error("empty_cart");
+      description = items.length === 1 ? items[0].title : `${items.length} artes EstampaHub`;
+    } else {
+      const { data: art } = await supabase
+        .from("artworks")
+        .select("id,slug,title,price_cents,is_published")
+        .eq("id", data.artworkId!)
+        .eq("is_published", true)
+        .maybeSingle();
+      if (!art) throw new Error("artwork_not_found");
+      if (!art.price_cents || art.price_cents <= 0) throw new Error("invalid_price");
+      items = [{ artwork_id: art.id, title: art.title, price_cents: art.price_cents, slug: art.slug }];
+      description = art.title;
     }
 
-    // 3. Get user email for MP payer
+    const subtotal = items.reduce((s, i) => s + i.price_cents, 0);
+
+    // Apply coupon (Pix scope)
+    let discountCents = 0;
+    let couponCode: string | null = null;
+    if (data.couponCode) {
+      const { data: cval, error: cerr } = await supabase.rpc("validate_coupon", {
+        _code: data.couponCode,
+        _scope: "pix",
+        _subtotal_cents: subtotal,
+      });
+      if (cerr) throw new Error(cerr.message);
+      const row: any = Array.isArray(cval) ? cval[0] : cval;
+      if (!row?.valid) throw new Error(`coupon_${row?.message ?? "invalid"}`);
+      discountCents = row.discount_cents ?? 0;
+      couponCode = data.couponCode;
+    }
+
+    const totalCents = Math.max(0, subtotal - discountCents);
+    if (totalCents <= 0) throw new Error("total_zero");
+
+    // Payer
     const { data: profile } = await supabase
       .from("profiles")
       .select("email,full_name")
@@ -65,55 +107,33 @@ export const createPixOrder = createServerFn({ method: "POST" })
       .maybeSingle();
     const payerEmail = profile?.email || `${userId}@estampahub.local`;
 
-    // 4. Create MP Pix payment
-    const idempotencyKey = crypto.randomUUID();
-    const amount = Number((artwork.price_cents / 100).toFixed(2));
-    const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 min
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
+    const amount = Number((totalCents / 100).toFixed(2));
 
-    const mpRes = await fetch(`${MP_API}/v1/payments`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${getAccessToken()}`,
-        "Content-Type": "application/json",
-        "X-Idempotency-Key": idempotencyKey,
-      },
-      body: JSON.stringify({
-        transaction_amount: amount,
-        description: artwork.title,
-        payment_method_id: "pix",
-        date_of_expiration: expiresAt.toISOString().replace("Z", "-00:00"),
-        payer: {
-          email: payerEmail,
-          first_name: profile?.full_name?.split(" ")[0] || "Cliente",
-        },
-        metadata: {
-          artwork_id: artwork.id,
-          user_id: userId,
-        },
-      }),
+    const mp: any = await callMpCreatePayment({
+      transaction_amount: amount,
+      description,
+      payment_method_id: "pix",
+      date_of_expiration: expiresAt.toISOString().replace("Z", "-00:00"),
+      payer: { email: payerEmail, first_name: profile?.full_name?.split(" ")[0] || "Cliente" },
+      metadata: { user_id: userId, item_count: items.length },
     });
 
-    if (!mpRes.ok) {
-      const errText = await mpRes.text();
-      console.error("MP create payment failed:", mpRes.status, errText);
-      throw new Error("mp_create_failed");
-    }
-    const mp: any = await mpRes.json();
-    const qrCode = mp.point_of_interaction?.transaction_data?.qr_code as
-      | string
-      | undefined;
-    const qrCodeBase64 = mp.point_of_interaction?.transaction_data
-      ?.qr_code_base64 as string | undefined;
+    const qrCode = mp.point_of_interaction?.transaction_data?.qr_code as string | undefined;
+    const qrCodeBase64 = mp.point_of_interaction?.transaction_data?.qr_code_base64 as string | undefined;
     if (!qrCode) throw new Error("mp_no_qr_code");
 
-    // 5. Persist order via admin (no INSERT policy for authenticated on orders)
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const isMulti = items.length > 1 || !!data.cartCheckout;
     const { data: order, error: ordErr } = await supabaseAdmin
       .from("orders")
       .insert({
         user_id: userId,
-        artwork_id: artwork.id,
-        amount_cents: artwork.price_cents,
+        artwork_id: isMulti ? null : items[0].artwork_id,
+        items: isMulti ? items : null,
+        amount_cents: totalCents,
+        discount_cents: discountCents,
+        coupon_code: couponCode,
         status: "pending",
         provider: "mercadopago",
         provider_payment_id: String(mp.id),
@@ -130,7 +150,10 @@ export const createPixOrder = createServerFn({ method: "POST" })
       qrCode,
       qrCodeBase64,
       expiresAt: expiresAt.toISOString(),
-      amountCents: artwork.price_cents,
+      amountCents: totalCents,
+      subtotalCents: subtotal,
+      discountCents,
+      itemCount: items.length,
     };
   });
 
@@ -145,7 +168,7 @@ export const checkPixOrder = createServerFn({ method: "POST" })
     const { data: order, error } = await supabase
       .from("orders")
       .select(
-        "id,status,provider,provider_payment_id,pix_qr_code,pix_qr_code_base64,pix_expires_at,amount_cents,artwork_id,artworks(slug,title)",
+        "id,status,provider,provider_payment_id,pix_qr_code,pix_qr_code_base64,pix_expires_at,amount_cents,discount_cents,coupon_code,items,artwork_id,artworks(slug,title)",
       )
       .eq("id", data.orderId)
       .eq("user_id", userId)
@@ -153,30 +176,29 @@ export const checkPixOrder = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     if (!order) throw new Error("order_not_found");
 
-    // If still pending, poll MP directly (webhook is authoritative but this is a UX fallback)
     if (order.status === "pending" && order.provider_payment_id) {
       try {
-        const mpRes = await fetch(
-          `${MP_API}/v1/payments/${order.provider_payment_id}`,
-          { headers: { Authorization: `Bearer ${getAccessToken()}` } },
-        );
+        const mpRes = await fetch(`${MP_API}/v1/payments/${order.provider_payment_id}`, {
+          headers: { Authorization: `Bearer ${getAccessToken()}` },
+        });
         if (mpRes.ok) {
           const mp: any = await mpRes.json();
           if (mp.status === "approved") {
-            const { supabaseAdmin } = await import(
-              "@/integrations/supabase/client.server"
-            );
+            const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
             await supabaseAdmin
               .from("orders")
               .update({ status: "paid", paid_at: new Date().toISOString() })
               .eq("id", order.id)
               .eq("status", "pending");
+            // Grant downloads + clear cart for multi-item
+            await supabaseAdmin.rpc("grant_order_downloads", { _order_id: order.id });
+            if (order.items) {
+              await supabaseAdmin.from("cart_items").delete().eq("user_id", userId);
+            }
             return { ...order, status: "paid" as const };
           }
           if (["cancelled", "rejected", "refunded"].includes(mp.status)) {
-            const { supabaseAdmin } = await import(
-              "@/integrations/supabase/client.server"
-            );
+            const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
             await supabaseAdmin
               .from("orders")
               .update({ status: "failed" })
@@ -191,4 +213,31 @@ export const checkPixOrder = createServerFn({ method: "POST" })
     }
 
     return order;
+  });
+
+export const validateCouponFn = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { code: string; scope: "pix" | "subscription"; subtotalCents: number }) =>
+    z
+      .object({
+        code: z.string().trim().min(1).max(64),
+        scope: z.enum(["pix", "subscription"]),
+        subtotalCents: z.number().int().nonnegative(),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    const { data: res, error } = await supabase.rpc("validate_coupon", {
+      _code: data.code,
+      _scope: data.scope,
+      _subtotal_cents: data.subtotalCents,
+    });
+    if (error) throw new Error(error.message);
+    const row: any = Array.isArray(res) ? res[0] : res;
+    return {
+      valid: !!row?.valid,
+      discountCents: row?.discount_cents ?? 0,
+      message: row?.message ?? "",
+    };
   });

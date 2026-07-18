@@ -160,6 +160,35 @@ export type Database = {
         }
         Relationships: []
       }
+      cart_items: {
+        Row: {
+          artwork_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          artwork_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          artwork_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artworks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           cover_url: string | null
@@ -204,6 +233,106 @@ export type Database = {
           },
         ]
       }
+      coupon_redemptions: {
+        Row: {
+          coupon_id: string
+          created_at: string
+          discount_cents: number
+          id: string
+          order_id: string | null
+          subscription_id: string | null
+          user_id: string
+        }
+        Insert: {
+          coupon_id: string
+          created_at?: string
+          discount_cents?: number
+          id?: string
+          order_id?: string | null
+          subscription_id?: string | null
+          user_id: string
+        }
+        Update: {
+          coupon_id?: string
+          created_at?: string
+          discount_cents?: number
+          id?: string
+          order_id?: string | null
+          subscription_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupon_redemptions_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupon_redemptions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupon_redemptions_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coupons: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          discount_type: Database["public"]["Enums"]["coupon_discount_type"]
+          discount_value: number
+          expires_at: string | null
+          id: string
+          max_uses: number | null
+          once_per_user: boolean
+          scope: Database["public"]["Enums"]["coupon_scope"]
+          stripe_coupon_id: string | null
+          updated_at: string
+          uses_count: number
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          discount_type: Database["public"]["Enums"]["coupon_discount_type"]
+          discount_value: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          once_per_user?: boolean
+          scope?: Database["public"]["Enums"]["coupon_scope"]
+          stripe_coupon_id?: string | null
+          updated_at?: string
+          uses_count?: number
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          discount_type?: Database["public"]["Enums"]["coupon_discount_type"]
+          discount_value?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          once_per_user?: boolean
+          scope?: Database["public"]["Enums"]["coupon_scope"]
+          stripe_coupon_id?: string | null
+          updated_at?: string
+          uses_count?: number
+        }
+        Relationships: []
+      }
       downloads: {
         Row: {
           artwork_id: string
@@ -242,12 +371,44 @@ export type Database = {
           },
         ]
       }
-      orders: {
+      favorites: {
         Row: {
-          amount_cents: number
           artwork_id: string
           created_at: string
           id: string
+          user_id: string
+        }
+        Insert: {
+          artwork_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          artwork_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artworks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          amount_cents: number
+          artwork_id: string | null
+          coupon_code: string | null
+          created_at: string
+          discount_cents: number
+          id: string
+          items: Json | null
           paid_at: string | null
           pix_expires_at: string | null
           pix_qr_code: string | null
@@ -260,9 +421,12 @@ export type Database = {
         }
         Insert: {
           amount_cents: number
-          artwork_id: string
+          artwork_id?: string | null
+          coupon_code?: string | null
           created_at?: string
+          discount_cents?: number
           id?: string
+          items?: Json | null
           paid_at?: string | null
           pix_expires_at?: string | null
           pix_qr_code?: string | null
@@ -275,9 +439,12 @@ export type Database = {
         }
         Update: {
           amount_cents?: number
-          artwork_id?: string
+          artwork_id?: string | null
+          coupon_code?: string | null
           created_at?: string
+          discount_cents?: number
           id?: string
+          items?: Json | null
           paid_at?: string | null
           pix_expires_at?: string | null
           pix_qr_code?: string | null
@@ -515,6 +682,7 @@ export type Database = {
           was_new: boolean
         }[]
       }
+      grant_order_downloads: { Args: { _order_id: string }; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -522,9 +690,20 @@ export type Database = {
         }
         Returns: boolean
       }
+      validate_coupon: {
+        Args: { _code: string; _scope: string; _subtotal_cents: number }
+        Returns: {
+          coupon_id: string
+          discount_cents: number
+          message: string
+          valid: boolean
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "customer"
+      coupon_discount_type: "percent" | "fixed"
+      coupon_scope: "subscription" | "pix" | "both"
       order_status: "pending" | "paid" | "failed" | "refunded"
       plan_tier: "lite" | "pro" | "plus"
       subscription_status: "active" | "canceled" | "past_due" | "trialing"
@@ -657,6 +836,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "customer"],
+      coupon_discount_type: ["percent", "fixed"],
+      coupon_scope: ["subscription", "pix", "both"],
       order_status: ["pending", "paid", "failed", "refunded"],
       plan_tier: ["lite", "pro", "plus"],
       subscription_status: ["active", "canceled", "past_due", "trialing"],

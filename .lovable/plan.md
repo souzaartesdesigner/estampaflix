@@ -1,52 +1,81 @@
+# Plano — 4 features de alta prioridade
 
-# Plataforma de Artes Digitais para Sublimação
+Vou implementar em ordem para minimizar retrabalho (o carrinho e os cupons compartilham o mesmo checkout Pix; e-mails dependem de setup de domínio).
 
-Vou construir uma plataforma full-stack inspirada visualmente no estampaflix.com, com venda avulsa + assinaturas mensais com créditos, painel administrativo e área do cliente.
+## 1. Carrinho de compras (Pix múltiplo)
 
-## Escopo & Fases
+**DB**
+- Nova tabela `cart_items(user_id, artwork_id, created_at)` com RLS por dono.
+- `orders` ganha coluna `items jsonb` (snapshot: `[{artwork_id, title, price_cents}]`) e torna `artwork_id` nullable para pedidos multi-item. Compras antigas continuam funcionando.
+- RPC `grant_order_downloads(_order_id)`: ao pagar, cria linhas em `downloads` para cada item — chamada pelo webhook MP.
 
-O escopo é grande. Proponho entregar em **3 fases** para manter qualidade. Confirme se posso seguir nessa ordem (ou reordenar):
+**Server**
+- `createPixOrder` aceita `{ artworkId }` (compra rápida) **ou** `{ cartCheckout: true }` (soma todos os itens do carrinho do usuário). Gera 1 Pix com valor total.
+- Webhook Mercado Pago: se `items` existir, chama `grant_order_downloads`; senão mantém o fluxo atual (1 arte).
 
-### Fase 1 — Fundação (esta entrega)
-- Design system inspirado no estampaflix (paleta escura com destaques vibrantes, tipografia moderna, layout de grid de artes)
-- Lovable Cloud (Postgres + Auth + Storage) habilitado
-- Autenticação: cadastro, login, recuperação de senha, Google OAuth
-- Schema do banco: `profiles`, `user_roles`, `categories`, `tags`, `artworks`, `artwork_tags`, `subscriptions`, `plans`, `downloads`, `orders`, `blog_posts`, `support_messages`
-- RLS + `has_role()` security definer + storage buckets (público para previews com marca d'água, privado para arquivos finais)
-- Páginas públicas: Home, Catálogo com filtros/busca, Página do Produto, Planos, Blog (listagem + post), Suporte (form + FAQ)
-- Área do cliente: histórico de downloads, minha assinatura, compras avulsas
-- Painel admin (/admin) com CRUD de artes, categorias/tags, usuários, blog, mensagens de suporte, relatórios
+**UI**
+- Ícone de carrinho no header com contador.
+- Botão "Adicionar ao carrinho" na página do produto (ao lado de "Comprar Individualmente" — que passa a significar "compra rápida de 1 arte").
+- Nova rota `/carrinho` com lista, remover item, total, botão "Finalizar compra via Pix".
+- Após pagamento, todos os itens aparecem em Minha Conta.
 
-### Fase 2 — Pagamentos
-- Integração Stripe (Lovable Payments) para assinaturas recorrentes (Premium Lite/Pro/Plus) e compras avulsas
-- Webhooks para ativar/renovar assinaturas e resetar créditos mensais
-- Server function protegida de download que valida auth + desconta 1 crédito (idempotente por arte já baixada)
+## 2. Favoritos / Wishlist
 
-### Fase 3 — Polimento
-- Marca d'água automática em previews via edge processing
-- SEO, sitemap, Open Graph por arte/post
-- Otimizações de performance (lazy loading, CDN)
+**DB**
+- Tabela `favorites(user_id, artwork_id, created_at)` com RLS por dono e unique key.
 
-## Detalhes técnicos (Fase 1)
+**UI**
+- Botão de coração no `ArtworkCard` e na página do produto (toggle otimista via TanStack Query).
+- Aba "Favoritos" em `/minha-conta` listando artes salvas.
+- Estado desconectado: clicar redireciona para `/auth`.
 
-**Stack:** TanStack Start + React + Tailwind + shadcn/ui + Lovable Cloud (Supabase). Design tokens semânticos em `src/styles.css`.
+## 3. E-mails transacionais
 
-**Regra de créditos:**
-- `subscriptions.credits_remaining` + `current_period_end`
-- Download server function: verifica se `downloads` já contém `(user_id, artwork_id)` → libera sem descontar; senão decrementa `credits_remaining` e insere linha
-- Reset via webhook Stripe `invoice.paid` (Fase 2); enquanto isso, função SQL cron-friendly
+Uso da infraestrutura **Lovable Emails** (nativa, sem provedor externo).
 
-**Storage:**
-- Bucket `artwork-previews` (público, com watermark aplicado no upload pelo admin)
-- Bucket `artwork-files` (privado; acesso apenas via signed URL emitida pela server function após validação)
+**Setup** (se ainda não houver domínio verificado, mostro o diálogo de configuração de domínio antes).
 
-**Roles:** Enum `app_role` (`admin`, `customer`), tabela `user_roles`, função `has_role()`.
+**Templates React Email criados**
+- `pix-payment-confirmed`: pagamento avulso confirmado + link para downloads.
+- `subscription-activated`: assinatura ativada com nº de créditos.
+- `subscription-renewed`: renovação mensal + créditos restaurados.
+- `welcome`: boas-vindas ao cadastro.
+- `support-received`: confirmação de recebimento da mensagem de suporte.
 
-## Perguntas antes de começar
+**Gatilhos**
+- Webhook Stripe → dispara `subscription-activated` / `subscription-renewed`.
+- Webhook Mercado Pago (Pix pago) → `pix-payment-confirmed`.
+- Trigger no cadastro → `welcome`.
+- Envio do formulário de suporte → `support-received`.
 
-1. **Pagamentos** — Confirma Stripe (Lovable Payments integrado, sem precisar de conta própria)? Ou prefere Mercado Pago (exige integração manual via chave)?
-2. **Idioma/moeda** — Português BR + BRL confirmado?
-3. **Primeiro admin** — Me passa o e-mail que deve ser promovido a admin após o primeiro cadastro?
-4. **Marca d'água** — Você faz upload das artes já com marca d'água, ou quer que o sistema aplique automaticamente?
+Todos os templates seguem o design system (neon dark + azul #007bff), corpo branco (regra da plataforma).
 
-Se aprovar o plano e responder as 4 perguntas, começo pela Fase 1.
+## 4. Cupons de desconto
+
+**DB**
+- Tabela `coupons(code unique, discount_type enum('percent','fixed'), discount_value int, max_uses, uses_count, expires_at, applies_to enum('subscription','pix','both'), active bool)`.
+- Tabela `coupon_redemptions(coupon_id, user_id, order_id/subscription_id)` para evitar reuso quando `once_per_user`.
+- RPC `validate_coupon(_code, _context)` retorna desconto aplicável.
+
+**Aplicação**
+- Campo "Cupom" no `/carrinho` e no card de compra individual da página do produto → recalcula total antes de gerar o Pix.
+- Campo "Cupom" na página `/planos` antes de redirecionar ao Stripe Checkout → aplica `discounts: [{ coupon }]` no Stripe (cria coupon espelho no Stripe via API na primeira validação).
+
+**Admin**
+- Nova rota `/admin/cupons` com CRUD: criar código, %/valor fixo, validade, limite de usos, escopo (assinatura/avulso/ambos), ativar/desativar.
+
+## Ordem de execução
+
+1. Cupons DB + admin (base para checkout).
+2. Carrinho DB + UI + integração Pix multi-item + aplicação de cupom.
+3. Wishlist (independente, rápido).
+4. E-mails (setup domínio se preciso → templates → wiring nos webhooks).
+
+## Notas técnicas
+
+- Compras antigas 1-a-1 permanecem funcionando durante toda a migração (retrocompatibilidade em `orders.artwork_id`).
+- Cupons Stripe: espelhados via API do Stripe apenas quando aplicados a assinaturas; para Pix são aplicados localmente no cálculo do total.
+- Todos os novos endpoints server-side validam auth via `requireSupabaseAuth`.
+- Todas as tabelas novas terão `GRANT` explícito + RLS por `auth.uid()`.
+
+Confirma e começo pela etapa 1 (cupons + carrinho DB)?

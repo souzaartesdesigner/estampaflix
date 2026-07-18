@@ -6,10 +6,12 @@ import { SiteLayout } from "@/components/site-layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { formatBRL, formatDate } from "@/lib/format";
-import { Download, ShoppingCart, Tag as TagIcon, Palette, FileType, Loader2 } from "lucide-react";
+import { Download, ShoppingCart, Tag as TagIcon, Palette, FileType, Loader2, Plus, Check } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ArtworkCard } from "@/components/artwork-card";
+import { FavoriteButton } from "@/components/favorite-button";
+import { useCart } from "@/hooks/use-cart";
 
 function htmlToText(html: string): string {
   if (!html) return "";
@@ -208,6 +210,8 @@ function ArtworkPage() {
 
   const canDownload = !!sub && (sub.credits_remaining ?? 0) > 0;
   const tags: any[] = (artwork as any).artwork_tags?.map((t: any) => t.tags).filter(Boolean) ?? [];
+  const cart = useCart();
+  const inCart = cart.contains(artwork.id);
 
   return (
     <SiteLayout>
@@ -239,6 +243,11 @@ function ArtworkPage() {
               </Link>
             )}
             <h1 className="font-display text-3xl font-bold md:text-4xl">{artwork.title}</h1>
+            <div className="flex items-center gap-2">
+              <FavoriteButton artworkId={artwork.id} size="md" />
+              <span className="text-xs text-muted-foreground">Salvar nos favoritos</span>
+            </div>
+
 
 
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
@@ -299,7 +308,18 @@ function ArtworkPage() {
                         ) : (
                           <ShoppingCart className="mr-2 h-4 w-4" />
                         )}
-                        Comprar Individualmente via Pix ({formatBRL(artwork.price_cents)})
+                        Comprar via Pix ({formatBRL(artwork.price_cents)})
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        onClick={() => (inCart ? navigate({ to: "/carrinho" }) : cart.add(artwork.id))}
+                        disabled={cart.adding}
+                      >
+                        {inCart ? (
+                          <><Check className="mr-2 h-4 w-4" /> No carrinho — ver</>
+                        ) : (
+                          <><Plus className="mr-2 h-4 w-4" /> Adicionar ao carrinho</>
+                        )}
                       </Button>
                     </>
                   )

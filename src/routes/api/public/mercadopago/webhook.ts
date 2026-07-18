@@ -3,14 +3,6 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 const MP_API = "https://api.mercadopago.com";
 
-/**
- * Mercado Pago webhook - Pix payment notifications.
- * Docs: https://www.mercadopago.com.br/developers/pt/docs/your-integrations/notifications/webhooks
- *
- * The x-signature header contains: ts=...,v1=<hmac_sha256>
- * The manifest is: id:<data.id>;request-id:<x-request-id>;ts:<ts>;
- * HMAC secret is the "Chave secreta" from the webhook config panel.
- */
 export const Route = createFileRoute("/api/public/mercadopago/webhook")({
   server: {
     handlers: {
@@ -31,11 +23,8 @@ export const Route = createFileRoute("/api/public/mercadopago/webhook")({
             paymentId = url.searchParams.get("data.id") ?? url.searchParams.get("id");
           }
 
-          if (!paymentId) {
-            return new Response("missing payment id", { status: 400 });
-          }
+          if (!paymentId) return new Response("missing payment id", { status: 400 });
 
-          // Signature verification (best-effort; skip if secret not set for backward compat)
           const secret = process.env.MERCADO_PAGO_WEBHOOK_SECRET;
           const sigHeader = request.headers.get("x-signature");
           const requestId = request.headers.get("x-request-id") ?? "";
@@ -50,9 +39,7 @@ export const Route = createFileRoute("/api/public/mercadopago/webhook")({
             const v1 = parts.v1;
             if (ts && v1) {
               const manifest = `id:${paymentId};request-id:${requestId};ts:${ts};`;
-              const expected = createHmac("sha256", secret)
-                .update(manifest)
-                .digest("hex");
+              const expected = createHmac("sha256", secret).update(manifest).digest("hex");
               const a = Buffer.from(expected);
               const b = Buffer.from(v1);
               if (a.length !== b.length || !timingSafeEqual(a, b)) {
@@ -63,24 +50,15 @@ export const Route = createFileRoute("/api/public/mercadopago/webhook")({
           }
 
           const token = process.env.MERCADO_PAGO_ACCESS_TOKEN;
-          if (!token) {
-            console.error("MERCADO_PAGO_ACCESS_TOKEN not configured");
-            return new Response("misconfigured", { status: 500 });
-          }
+          if (!token) return new Response("misconfigured", { status: 500 });
 
           const mpRes = await fetch(`${MP_API}/v1/payments/${paymentId}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
-          if (!mpRes.ok) {
-            console.error("MP fetch payment failed", mpRes.status);
-            // Return 200 so MP doesn't retry forever on genuinely missing ids
-            return new Response("ok", { status: 200 });
-          }
+          if (!mpRes.ok) return new Response("ok", { status: 200 });
           const mp: any = await mpRes.json();
 
-          const { supabaseAdmin } = await import(
-            "@/integrations/supabase/client.server"
-          );
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
           const nextStatus: "paid" | "failed" | "refunded" | null =
             mp.status === "approved"
@@ -98,15 +76,50 @@ export const Route = createFileRoute("/api/public/mercadopago/webhook")({
               ? { status: nextStatus, paid_at: new Date().toISOString() }
               : { status: nextStatus };
 
-          const { error } = await supabaseAdmin
+          // Find order first (need id + user for cart cleanup + grant)
+          const { data: orderRow } = await supabaseAdmin
             .from("orders")
-            .update(update)
+            .select("id, user_id, status, items, coupon_code")
             .eq("provider", "mercadopago")
-            .eq("provider_payment_id", String(paymentId));
+            .eq("provider_payment_id", String(paymentId))
+            .maybeSingle();
 
+          if (!orderRow) return new Response("ok");
+
+          if (orderRow.status === "paid") return new Response("ok"); // idempotent
+
+          const { error } = await supabaseAdmin.from("orders").update(update).eq("id", orderRow.id);
           if (error) {
             console.error("MP webhook update error:", error);
             return new Response("db error", { status: 500 });
+          }
+
+          if (nextStatus === "paid") {
+            // Grant downloads for all items
+            await supabaseAdmin.rpc("grant_order_downloads", { _order_id: orderRow.id });
+            // Clear cart if multi-item
+            if (orderRow.items) {
+              await supabaseAdmin.from("cart_items").delete().eq("user_id", orderRow.user_id);
+            }
+            // Coupon redemption + increment counter
+            if (orderRow.coupon_code) {
+              const { data: coupon } = await supabaseAdmin
+                .from("coupons")
+                .select("id, uses_count")
+                .ilike("code", orderRow.coupon_code)
+                .maybeSingle();
+              if (coupon) {
+                await supabaseAdmin.from("coupon_redemptions").insert({
+                  coupon_id: coupon.id,
+                  user_id: orderRow.user_id,
+                  order_id: orderRow.id,
+                });
+                await supabaseAdmin
+                  .from("coupons")
+                  .update({ uses_count: (coupon.uses_count ?? 0) + 1 })
+                  .eq("id", coupon.id);
+              }
+            }
           }
 
           return new Response("ok");
