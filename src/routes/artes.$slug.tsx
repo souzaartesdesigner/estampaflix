@@ -258,7 +258,7 @@ function ArtworkPage() {
                 {tField((artwork as any).categories, "name", lang) || (artwork as any).categories.name}
               </Link>
             )}
-            <h1 className="font-display text-3xl font-bold md:text-4xl">{trTitle}</h1>
+            <h1 className="font-display text-2xl font-bold sm:text-3xl md:text-4xl">{trTitle}</h1>
             <div className="flex items-center gap-2">
               <FavoriteButton artworkId={artwork.id} size="md" />
               <span className="text-xs text-muted-foreground">{t("product.saveFavorites")}</span>
