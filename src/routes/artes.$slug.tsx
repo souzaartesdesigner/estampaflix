@@ -247,7 +247,7 @@ function ArtworkPage() {
 
             {(artwork as any).categories && (
               <Link to="/catalogo" search={{ categoria: (artwork as any).categories.slug } as any} className="text-xs uppercase tracking-wider text-primary hover:underline">
-                {(artwork as any).categories.name}
+                {tField((artwork as any).categories, "name", lang) || (artwork as any).categories.name}
               </Link>
             )}
             <h1 className="font-display text-3xl font-bold md:text-4xl">{trTitle}</h1>
