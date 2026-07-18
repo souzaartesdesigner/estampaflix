@@ -79,15 +79,15 @@ function CartPage() {
           <div className="grid gap-6 lg:grid-cols-[1fr,340px]">
             <div className="space-y-3">
               {cart.items.map((it) => (
-                <div key={it.id} className="flex items-center gap-4 rounded-xl border border-border/60 bg-card p-3">
-                  <Link to="/artes/$slug" params={{ slug: it.artworks!.slug }} className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-surface-2">
+                <div key={it.id} className="flex items-center gap-3 rounded-xl border border-border/60 bg-card p-2.5 sm:gap-4 sm:p-3">
+                  <Link to="/artes/$slug" params={{ slug: it.artworks!.slug }} className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-surface-2 sm:h-20 sm:w-20">
                     <img src={it.artworks!.preview_url} alt={it.artworks!.title} className="h-full w-full object-cover" />
                   </Link>
                   <div className="min-w-0 flex-1">
-                    <Link to="/artes/$slug" params={{ slug: it.artworks!.slug }} className="line-clamp-1 font-medium hover:text-primary">
+                    <Link to="/artes/$slug" params={{ slug: it.artworks!.slug }} className="line-clamp-2 text-sm font-medium hover:text-primary sm:text-base">
                       {it.artworks!.title}
                     </Link>
-                    <p className="mt-1 text-sm text-primary font-semibold">{formatBRL(it.artworks!.price_cents)}</p>
+                    <p className="mt-1 text-sm font-semibold text-primary">{formatBRL(it.artworks!.price_cents)}</p>
                   </div>
                   <Button variant="ghost" size="icon" onClick={() => cart.remove(it.id)} aria-label={t("cart.remove")}>
                     <Trash2 className="h-4 w-4" />
