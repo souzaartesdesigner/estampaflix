@@ -261,9 +261,9 @@ function ArtworkPage() {
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
               {artwork.file_format && <span className="flex items-center gap-1"><FileType className="h-4 w-4" /> {artwork.file_format.toUpperCase()}</span>}
               {artwork.colors && artwork.colors.length > 0 && (
-                <span className="flex items-center gap-1"><Palette className="h-4 w-4" /> {artwork.colors.length} cores</span>
+                <span className="flex items-center gap-1"><Palette className="h-4 w-4" /> {artwork.colors.length} {t("product.colorsSuffix")}</span>
               )}
-              <span className="flex items-center gap-1"><Download className="h-4 w-4" /> {artwork.download_count ?? 0} downloads</span>
+              <span className="flex items-center gap-1"><Download className="h-4 w-4" /> {artwork.download_count ?? 0} {t("product.downloads")}</span>
             </div>
 
             <div className="rounded-xl border border-border/60 bg-card p-5">
