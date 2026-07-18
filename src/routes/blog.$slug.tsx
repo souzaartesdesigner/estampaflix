@@ -83,7 +83,7 @@ function Post() {
         </header>
         {post.cover_url && (
           <div className="my-8 overflow-hidden rounded-2xl border border-border/60">
-            <img src={post.cover_url} alt={title} className="w-full" />
+            <img src={post.cover_url} alt={title} loading="eager" fetchPriority="high" decoding="async" className="w-full" />
           </div>
         )}
         <div className="prose prose-invert max-w-none whitespace-pre-wrap text-foreground/90 leading-relaxed">
