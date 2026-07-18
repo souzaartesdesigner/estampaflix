@@ -10,8 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { createBillingPortalSession } from "@/lib/stripe.functions";
 import { toast } from "sonner";
-import { Download, CreditCard, Package, Sparkles, Loader2, Heart } from "lucide-react";
+import { Download, CreditCard, Package, Sparkles, Loader2 } from "lucide-react";
 import { ArtworkCard } from "@/components/artwork-card";
+import { useI18n, tField } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/minha-conta")({
   head: () => ({ meta: [{ title: "Minha conta — EstampaHub" }, { name: "robots", content: "noindex" }] }),
@@ -22,6 +23,7 @@ function Dashboard() {
   const { user } = Route.useRouteContext() as { user: any };
   const portalFn = useServerFn(createBillingPortalSession);
   const [portalLoading, setPortalLoading] = useState(false);
+  const { t, lang } = useI18n();
 
   async function openPortal() {
     setPortalLoading(true);
@@ -29,11 +31,10 @@ function Dashboard() {
       const { url } = await portalFn();
       if (url) window.location.href = url;
     } catch (err: any) {
-      toast.error(err?.message ?? "Erro ao abrir portal");
+      toast.error(err?.message ?? t("account.errPortal"));
       setPortalLoading(false);
     }
   }
-
 
   const { data: sub } = useQuery({
     queryKey: ["my-subscription", user.id],
@@ -42,18 +43,31 @@ function Dashboard() {
 
   const { data: downloads = [] } = useQuery({
     queryKey: ["my-downloads", user.id],
-    queryFn: async () => (await supabase.from("downloads").select("*, artworks(id,slug,title,preview_url,file_path,external_url)").order("last_downloaded_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await supabase.from("downloads").select("*, artworks(id,slug,title,preview_url,file_path,external_url,translations)").order("last_downloaded_at", { ascending: false })).data ?? [],
   });
 
   const { data: orders = [] } = useQuery({
     queryKey: ["my-orders", user.id],
-    queryFn: async () => (await supabase.from("orders").select("*, artworks(title,slug)").order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await supabase.from("orders").select("*, artworks(title,slug,translations)").order("created_at", { ascending: false })).data ?? [],
   });
 
   const { data: favorites = [] } = useQuery({
     queryKey: ["favorites", user.id],
-    queryFn: async () => (await supabase.from("favorites").select("artwork_id, artworks(id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count)").order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await supabase.from("favorites").select("artwork_id, artworks(id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count,translations)").order("created_at", { ascending: false })).data ?? [],
   });
+
+  function translateOrderStatus(s: string) {
+    const map: Record<string, string> = {
+      paid: t("account.status.paid"),
+      pending: t("account.status.pending"),
+      failed: t("account.status.failed"),
+      refunded: t("account.status.refunded"),
+      canceled: t("account.status.canceled"),
+      cancelled: t("account.status.canceled"),
+      processing: t("account.status.processing"),
+    };
+    return map[s] ?? s;
+  }
 
   async function redownload(art: { file_path: string | null; external_url: string | null; title: string }) {
     try {
@@ -62,7 +76,7 @@ function Dashboard() {
         return;
       }
       if (!art.file_path) {
-        toast.error("Arquivo indisponível");
+        toast.error(t("account.errFileUnavailable"));
         return;
       }
       const { data, error } = await supabase.storage
@@ -76,7 +90,7 @@ function Dashboard() {
       a.click();
       a.remove();
     } catch (e: any) {
-      toast.error(e?.message ?? "Erro ao baixar");
+      toast.error(e?.message ?? t("account.errDownload"));
     }
   }
 
@@ -84,50 +98,53 @@ function Dashboard() {
     <SiteLayout>
       <div className="mx-auto w-full max-w-6xl px-4 py-10">
         <header className="mb-8">
-          <h1 className="font-display text-3xl font-bold">Minha conta</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Olá, {user.email}</p>
+          <h1 className="font-display text-3xl font-bold">{t("account.title")}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{t("account.greeting")} {user.email}</p>
         </header>
 
         <div className="mb-8 grid gap-4 md:grid-cols-3">
-          <StatCard icon={<CreditCard className="h-5 w-5" />} label="Plano atual" value={sub?.plans?.name ?? "Nenhum"} />
-          <StatCard icon={<Sparkles className="h-5 w-5" />} label="Créditos restantes" value={sub ? String(sub.credits_remaining) : "0"} accent />
-          <StatCard icon={<Download className="h-5 w-5" />} label="Artes baixadas" value={String(downloads.length)} />
+          <StatCard icon={<CreditCard className="h-5 w-5" />} label={t("account.currentPlan")} value={sub?.plans?.name ?? t("account.none")} />
+          <StatCard icon={<Sparkles className="h-5 w-5" />} label={t("account.creditsRemaining")} value={sub ? String(sub.credits_remaining) : "0"} accent />
+          <StatCard icon={<Download className="h-5 w-5" />} label={t("account.downloadedCount")} value={String(downloads.length)} />
         </div>
 
         <Tabs defaultValue="downloads">
           <TabsList>
-            <TabsTrigger value="downloads">Downloads</TabsTrigger>
-            <TabsTrigger value="favorites">Favoritos</TabsTrigger>
-            <TabsTrigger value="subscription">Minha assinatura</TabsTrigger>
-            <TabsTrigger value="orders">Compras avulsas</TabsTrigger>
+            <TabsTrigger value="downloads">{t("account.tabDownloads")}</TabsTrigger>
+            <TabsTrigger value="favorites">{t("account.tabFavorites")}</TabsTrigger>
+            <TabsTrigger value="subscription">{t("account.tabSubscription")}</TabsTrigger>
+            <TabsTrigger value="orders">{t("account.tabOrders")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="downloads" className="mt-6">
             {downloads.length === 0 ? (
-              <Empty msg="Você ainda não baixou nenhuma arte." cta={{ label: "Explorar catálogo", to: "/catalogo" }} />
+              <Empty msg={t("account.emptyDownloads")} cta={{ label: t("account.exploreCatalog"), to: "/catalogo" }} />
             ) : (
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                {downloads.map((d: any) => (
-                  <div key={d.id} className="overflow-hidden rounded-xl border border-border/60 bg-card">
-                    <Link to="/artes/$slug" params={{ slug: d.artworks.slug }} className="block aspect-square overflow-hidden bg-surface-2">
-                      <img src={d.artworks.preview_url} alt={d.artworks.title} className="h-full w-full object-cover" />
-                    </Link>
-                    <div className="p-3">
-                      <h3 className="line-clamp-1 text-sm font-medium">{d.artworks.title}</h3>
-                      <p className="mt-1 text-xs text-muted-foreground">Baixado em {formatDate(d.last_downloaded_at)}</p>
-                      <Button size="sm" variant="outline" className="mt-2 w-full" onClick={() => redownload(d.artworks)}>
-                        <Download className="mr-1 h-3 w-3" /> Baixar novamente
-                      </Button>
+                {downloads.map((d: any) => {
+                  const title = tField(d.artworks as any, "title", lang) || d.artworks.title;
+                  return (
+                    <div key={d.id} className="overflow-hidden rounded-xl border border-border/60 bg-card">
+                      <Link to="/artes/$slug" params={{ slug: d.artworks.slug }} className="block aspect-square overflow-hidden bg-surface-2">
+                        <img src={d.artworks.preview_url} alt={title} className="h-full w-full object-cover" />
+                      </Link>
+                      <div className="p-3">
+                        <h3 className="line-clamp-1 text-sm font-medium">{title}</h3>
+                        <p className="mt-1 text-xs text-muted-foreground">{t("account.downloadedOn")} {formatDate(d.last_downloaded_at)}</p>
+                        <Button size="sm" variant="outline" className="mt-2 w-full" onClick={() => redownload({ ...d.artworks, title })}>
+                          <Download className="mr-1 h-3 w-3" /> {t("account.redownload")}
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </TabsContent>
 
           <TabsContent value="favorites" className="mt-6">
             {favorites.length === 0 ? (
-              <Empty msg="Você ainda não salvou nenhuma arte." cta={{ label: "Explorar catálogo", to: "/catalogo" }} />
+              <Empty msg={t("account.emptyFavorites")} cta={{ label: t("account.exploreCatalog"), to: "/catalogo" }} />
             ) : (
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
                 {favorites.map((f: any) => f.artworks && <ArtworkCard key={f.artwork_id} artwork={f.artworks} />)}
@@ -135,51 +152,50 @@ function Dashboard() {
             )}
           </TabsContent>
 
-
-
           <TabsContent value="subscription" className="mt-6">
             {sub ? (
               <div className="rounded-2xl border border-border/60 bg-card p-6">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <Badge className="mb-2 bg-gradient-brand text-brand-foreground border-0">{sub.plans.name}</Badge>
-                    <p className="text-2xl font-bold">{formatBRL(sub.plans.price_cents)}<span className="text-sm font-normal text-muted-foreground">/mês</span></p>
-                    <p className="mt-1 text-sm text-muted-foreground">Renovação em {formatDate(sub.current_period_end)}</p>
+                    <p className="text-2xl font-bold">{formatBRL(sub.plans.price_cents)}<span className="text-sm font-normal text-muted-foreground">{t("plans.perMonth")}</span></p>
+                    <p className="mt-1 text-sm text-muted-foreground">{t("account.renewsOn")} {formatDate(sub.current_period_end)}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-muted-foreground">Créditos restantes</p>
+                    <p className="text-xs text-muted-foreground">{t("account.creditsRemaining")}</p>
                     <p className="text-3xl font-black text-primary">{sub.credits_remaining}<span className="text-sm text-muted-foreground">/{sub.plans.monthly_credits}</span></p>
                   </div>
                 </div>
                 <div className="mt-6 flex flex-wrap gap-2">
                   <Button onClick={openPortal} disabled={portalLoading} className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
-                    {portalLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Abrindo…</> : "Gerenciar assinatura"}
+                    {portalLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t("account.opening")}</> : t("account.managePlan")}
                   </Button>
-                  <Button asChild variant="outline"><Link to="/planos">Trocar de plano</Link></Button>
+                  <Button asChild variant="outline"><Link to="/planos">{t("account.switchPlan")}</Link></Button>
                 </div>
               </div>
             ) : (
-              <Empty msg="Você ainda não tem assinatura ativa." cta={{ label: "Ver planos", to: "/planos" }} />
+              <Empty msg={t("account.emptySub")} cta={{ label: t("account.seePlans"), to: "/planos" }} />
             )}
           </TabsContent>
 
           <TabsContent value="orders" className="mt-6">
             {orders.length === 0 ? (
-              <Empty msg="Nenhuma compra avulsa ainda." cta={{ label: "Explorar catálogo", to: "/catalogo" }} />
+              <Empty msg={t("account.emptyOrders")} cta={{ label: t("account.exploreCatalog"), to: "/catalogo" }} />
             ) : (
               <div className="overflow-hidden rounded-xl border border-border/60">
                 <table className="w-full text-sm">
                   <thead className="bg-surface-2 text-xs uppercase text-muted-foreground">
-                    <tr><th className="px-4 py-3 text-left">Arte</th><th className="px-4 py-3 text-left">Data</th><th className="px-4 py-3 text-left">Valor</th><th className="px-4 py-3 text-left">Status</th></tr>
+                    <tr><th className="px-4 py-3 text-left">{t("account.thArt")}</th><th className="px-4 py-3 text-left">{t("account.thDate")}</th><th className="px-4 py-3 text-left">{t("account.thValue")}</th><th className="px-4 py-3 text-left">{t("account.thStatus")}</th></tr>
                   </thead>
                   <tbody>
                     {orders.map((o: any) => {
                       const itemCount = Array.isArray(o.items) ? o.items.length : (o.artworks ? 1 : 0);
-                      const label = o.artworks
-                        ? o.artworks.title
+                      const title = o.artworks ? (tField(o.artworks, "title", lang) || o.artworks.title) : null;
+                      const label = title
+                        ? title
                         : itemCount > 0
-                          ? `${itemCount} ${itemCount === 1 ? "arte" : "artes"}`
-                          : "Pedido";
+                          ? `${itemCount} ${itemCount === 1 ? t("account.oneArt") : t("account.manyArt")}`
+                          : t("account.orderLabel");
                       return (
                         <tr key={o.id} className="border-t border-border/40">
                           <td className="px-4 py-3">
@@ -223,17 +239,4 @@ function Empty({ msg, cta }: { msg: string; cta: { label: string; to: string } }
       <Button asChild className="mt-4"><Link to={cta.to}>{cta.label}</Link></Button>
     </div>
   );
-}
-
-function translateOrderStatus(s: string) {
-  const map: Record<string, string> = {
-    paid: "Pago",
-    pending: "Pendente",
-    failed: "Falhou",
-    refunded: "Reembolsado",
-    canceled: "Cancelado",
-    cancelled: "Cancelado",
-    processing: "Processando",
-  };
-  return map[s] ?? s;
 }

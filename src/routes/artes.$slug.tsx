@@ -90,27 +90,36 @@ export const Route = createFileRoute("/artes/$slug")({
     };
   },
   component: ArtworkPage,
-  notFoundComponent: () => (
-    <SiteLayout>
-      <div className="mx-auto max-w-2xl px-4 py-24 text-center">
-        <h1 className="font-display text-3xl font-bold">Arte não encontrada</h1>
-        <p className="mt-2 text-muted-foreground">Ela pode ter sido removida ou nunca existiu.</p>
-        <Button asChild className="mt-6"><Link to="/catalogo">Voltar ao catálogo</Link></Button>
-      </div>
-    </SiteLayout>
-  ),
-  errorComponent: () => (
-    <SiteLayout>
-      <div className="mx-auto max-w-2xl px-4 py-24 text-center">
-        <h1 className="font-display text-3xl font-bold">Algo deu errado</h1>
-      </div>
-    </SiteLayout>
-  ),
+  notFoundComponent: NotFound,
+  errorComponent: ErrBoundary,
 });
+
+function NotFound() {
+  const { t } = useI18n();
+  return (
+    <SiteLayout>
+      <div className="mx-auto max-w-2xl px-4 py-24 text-center">
+        <h1 className="font-display text-3xl font-bold">{t("product.notFound")}</h1>
+        <p className="mt-2 text-muted-foreground">{t("product.notFoundDesc")}</p>
+        <Button asChild className="mt-6"><Link to="/catalogo">{t("product.backToCatalog")}</Link></Button>
+      </div>
+    </SiteLayout>
+  );
+}
+function ErrBoundary() {
+  const { t } = useI18n();
+  return (
+    <SiteLayout>
+      <div className="mx-auto max-w-2xl px-4 py-24 text-center">
+        <h1 className="font-display text-3xl font-bold">{t("product.somethingWrong")}</h1>
+      </div>
+    </SiteLayout>
+  );
+}
 
 function ArtworkPage() {
   const artwork = Route.useLoaderData();
-  const { lang } = useI18n();
+  const { lang, t } = useI18n();
   const trTitle = tField(artwork as any, "title", lang) || artwork.title;
   const trDesc = tField(artwork as any, "description", lang) || (artwork.description ?? "");
   const galleryImages = [artwork.preview_url, ...((artwork as any).gallery_urls ?? [])].filter(Boolean);
@@ -169,11 +178,11 @@ function ArtworkPage() {
       if (row?.external_url) {
         return { url: row.external_url as string, credits: row.credits_remaining, was_new: row.was_new, kind: "external" as const };
       }
-      if (!row?.file_path) throw new Error("Arquivo indisponível.");
+      if (!row?.file_path) throw new Error(t("product.errFileUnavailable"));
       const { data: signed, error: sErr } = await supabase.storage
         .from("artwork-files")
         .createSignedUrl(row.file_path, 60, { download: true });
-      if (sErr || !signed?.signedUrl) throw sErr ?? new Error("Não foi possível gerar o link.");
+      if (sErr || !signed?.signedUrl) throw sErr ?? new Error(t("product.errFileUnavailable"));
       return { url: signed.signedUrl, credits: row.credits_remaining, was_new: row.was_new, kind: "file" as const };
     },
     onSuccess: (res) => {
@@ -189,14 +198,14 @@ function ArtworkPage() {
         a.click();
         a.remove();
       }
-      toast.success(res.was_new ? `Download liberado! Créditos restantes: ${res.credits}` : "Download liberado (você já havia baixado esta arte).");
+      toast.success(res.was_new ? `${t("product.creditsReleased")} ${res.credits}` : t("product.alreadyDownloaded"));
     },
     onError: (err: any) => {
       const msg = err.message || "";
-      if (msg.includes("no_credits")) toast.error("Você ficou sem créditos este mês. Faça upgrade do plano.");
-      else if (msg.includes("no_active_subscription")) toast.error("Assine um plano para baixar esta arte.");
-      else if (msg.includes("not_authenticated")) { toast.error("Faça login para baixar."); navigate({ to: "/auth" }); }
-      else toast.error(msg || "Erro ao baixar.");
+      if (msg.includes("no_credits")) toast.error(t("product.errNoCredits"));
+      else if (msg.includes("no_active_subscription")) toast.error(t("product.errNoSub"));
+      else if (msg.includes("not_authenticated")) { toast.error(t("product.errLogin")); navigate({ to: "/auth" }); }
+      else toast.error(msg || t("account.errDownload"));
     },
   });
 
@@ -214,12 +223,12 @@ function ArtworkPage() {
     },
     onError: (err: any) => {
       if (err?.message === "not_authenticated") return;
-      toast.error(err?.message || "Não foi possível iniciar o pagamento.");
+      toast.error(err?.message || t("product.errStartPayment"));
     },
   });
 
   const canDownload = !!sub && (sub.credits_remaining ?? 0) > 0;
-  const tags: any[] = (artwork as any).artwork_tags?.map((t: any) => t.tags).filter(Boolean) ?? [];
+  const tags: any[] = (artwork as any).artwork_tags?.map((at: any) => at.tags).filter(Boolean) ?? [];
   const cart = useCart();
   const inCart = cart.contains(artwork.id);
 
@@ -227,7 +236,7 @@ function ArtworkPage() {
     <SiteLayout>
       <div className="mx-auto w-full max-w-6xl px-4 py-8">
         <nav className="mb-4 text-xs text-muted-foreground">
-          <Link to="/" className="hover:text-foreground">Início</Link> / <Link to="/catalogo" className="hover:text-foreground">Catálogo</Link> / <span className="text-foreground">{artwork.title}</span>
+          <Link to="/" className="hover:text-foreground">{t("product.crumbHome")}</Link> / <Link to="/catalogo" className="hover:text-foreground">{t("product.crumbCatalog")}</Link> / <span className="text-foreground">{trTitle}</span>
         </nav>
 
         <div className="grid gap-8 lg:grid-cols-2">
@@ -238,13 +247,13 @@ function ArtworkPage() {
 
             {(artwork as any).categories && (
               <Link to="/catalogo" search={{ categoria: (artwork as any).categories.slug } as any} className="text-xs uppercase tracking-wider text-primary hover:underline">
-                {(artwork as any).categories.name}
+                {tField((artwork as any).categories, "name", lang) || (artwork as any).categories.name}
               </Link>
             )}
             <h1 className="font-display text-3xl font-bold md:text-4xl">{trTitle}</h1>
             <div className="flex items-center gap-2">
               <FavoriteButton artworkId={artwork.id} size="md" />
-              <span className="text-xs text-muted-foreground">Salvar nos favoritos</span>
+              <span className="text-xs text-muted-foreground">{t("product.saveFavorites")}</span>
             </div>
 
 
@@ -252,15 +261,15 @@ function ArtworkPage() {
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
               {artwork.file_format && <span className="flex items-center gap-1"><FileType className="h-4 w-4" /> {artwork.file_format.toUpperCase()}</span>}
               {artwork.colors && artwork.colors.length > 0 && (
-                <span className="flex items-center gap-1"><Palette className="h-4 w-4" /> {artwork.colors.length} cores</span>
+                <span className="flex items-center gap-1"><Palette className="h-4 w-4" /> {artwork.colors.length} {t("product.colorsSuffix")}</span>
               )}
-              <span className="flex items-center gap-1"><Download className="h-4 w-4" /> {artwork.download_count ?? 0} downloads</span>
+              <span className="flex items-center gap-1"><Download className="h-4 w-4" /> {artwork.download_count ?? 0} {t("product.downloads")}</span>
             </div>
 
             <div className="rounded-xl border border-border/60 bg-card p-5">
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-black">{formatBRL(artwork.price_cents)}</span>
-                <span className="text-sm text-muted-foreground">avulso</span>
+                <span className="text-sm text-muted-foreground">{t("product.avulso")}</span>
               </div>
 
               <div className="mt-4 flex flex-col gap-2">
@@ -273,9 +282,9 @@ function ArtworkPage() {
                         className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
                       >
                         <Download className="mr-2 h-4 w-4" />
-                        {downloadMut.isPending ? "Preparando..." : "Fazer Download"}
+                        {downloadMut.isPending ? t("product.downloading") : t("product.download")}
                       </Button>
-                      <p className="text-xs text-success">Você já possui esta arte. Baixe quantas vezes quiser.</p>
+                      <p className="text-xs text-success">{t("product.owned")}</p>
                     </>
                   ) : (
                     <>
@@ -285,16 +294,16 @@ function ArtworkPage() {
                         className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
                       >
                         <Download className="mr-2 h-4 w-4" />
-                        {downloadMut.isPending ? "Preparando..." : canDownload ? `Baixar (${sub!.credits_remaining} créditos)` : "Baixar com assinatura"}
+                        {downloadMut.isPending ? t("product.downloading") : canDownload ? `${t("product.download")} (${sub!.credits_remaining} ${t("product.creditsRemaining")})` : t("product.downloadWithPlan")}
                       </Button>
                       {!sub && (
                         <p className="text-xs text-muted-foreground">
-                          Você ainda não tem assinatura ativa. <Link to="/planos" className="text-primary underline">Ver planos</Link>.
+                          {t("product.noSubscription")} <Link to="/planos" className="text-primary underline">{t("product.seePlans")}</Link>.
                         </p>
                       )}
                       {sub && !canDownload && (
                         <p className="text-xs text-warning">
-                          Sem créditos este mês. <Link to="/planos" className="text-primary underline">Fazer upgrade</Link>.
+                          {t("product.noCredits")} <Link to="/planos" className="text-primary underline">{t("product.upgrade")}</Link>.
                         </p>
                       )}
                       <Button
@@ -307,7 +316,7 @@ function ArtworkPage() {
                         ) : (
                           <ShoppingCart className="mr-2 h-4 w-4" />
                         )}
-                        Comprar via Pix ({formatBRL(artwork.price_cents)})
+                        {t("product.buyPix")} ({formatBRL(artwork.price_cents)})
                       </Button>
                       <Button
                         variant="secondary"
@@ -315,16 +324,16 @@ function ArtworkPage() {
                         disabled={cart.adding}
                       >
                         {inCart ? (
-                          <><Check className="mr-2 h-4 w-4" /> No carrinho — ver</>
+                          <><Check className="mr-2 h-4 w-4" /> {t("product.inCart")}</>
                         ) : (
-                          <><Plus className="mr-2 h-4 w-4" /> Adicionar ao carrinho</>
+                          <><Plus className="mr-2 h-4 w-4" /> {t("product.addToCart")}</>
                         )}
                       </Button>
                     </>
                   )
                 ) : (
                   <Button asChild className="bg-gradient-brand text-brand-foreground shadow-brand">
-                    <Link to="/auth">Entrar para baixar</Link>
+                    <Link to="/auth">{t("product.signInToDownload")}</Link>
                   </Button>
                 )}
               </div>
@@ -332,11 +341,11 @@ function ArtworkPage() {
 
             {tags.length > 0 && (
               <div>
-                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Tags</h3>
+                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("product.tags")}</h3>
                 <div className="flex flex-wrap gap-1">
-                  {tags.map((t) => (
-                    <Link key={t.id} to="/catalogo" search={{ tag: t.slug } as any}>
-                      <Badge variant="secondary" className="gap-1"><TagIcon className="h-3 w-3" /> {t.name}</Badge>
+                  {tags.map((tg: any) => (
+                    <Link key={tg.id} to="/catalogo" search={{ tag: tg.slug } as any}>
+                      <Badge variant="secondary" className="gap-1"><TagIcon className="h-3 w-3" /> {tField(tg, "name", lang) || tg.name}</Badge>
                     </Link>
                   ))}
                 </div>
@@ -354,7 +363,7 @@ function ArtworkPage() {
 
         {trDesc && (
           <section className="mt-12 rounded-2xl border border-border/60 bg-card p-6 md:p-8">
-            <h2 className="mb-4 font-display text-2xl font-bold">Descrição</h2>
+            <h2 className="mb-4 font-display text-2xl font-bold">{t("product.description")}</h2>
             <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
               {htmlToText(trDesc)}
             </p>
@@ -367,13 +376,14 @@ function ArtworkPage() {
 }
 
 function RelatedArtworks({ categoryId, currentId }: { categoryId: string | null; currentId: string }) {
+  const { t } = useI18n();
   const { data } = useQuery({
     queryKey: ["related-artworks", categoryId, currentId],
     enabled: !!categoryId,
     queryFn: async () => {
       const { data } = await supabase
         .from("artworks")
-        .select("id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count")
+        .select("id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count,translations")
         .eq("is_published", true)
         .eq("category_id", categoryId!)
         .neq("id", currentId)
@@ -388,8 +398,8 @@ function RelatedArtworks({ categoryId, currentId }: { categoryId: string | null;
   return (
     <section className="mt-12">
       <div className="mb-4 flex items-end justify-between">
-        <h2 className="font-display text-2xl font-bold">Produtos relacionados</h2>
-        <Link to="/catalogo" className="text-sm text-primary hover:underline">Ver mais</Link>
+        <h2 className="font-display text-2xl font-bold">{t("product.related")}</h2>
+        <Link to="/catalogo" className="text-sm text-primary hover:underline">{t("product.seeMore")}</Link>
       </div>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         {data.map((a: any) => (
