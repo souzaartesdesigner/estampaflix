@@ -48,38 +48,66 @@ function Home() {
     <SiteLayout>
       {/* HERO */}
       <section className="relative overflow-hidden bg-gradient-hero">
-        <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-20 lg:grid-cols-2 lg:py-28">
-          <div className="flex flex-col justify-center gap-6">
-            <Badge className="w-fit bg-primary/15 text-primary border-primary/30">
-              <Sparkles className="mr-1 h-3 w-3" /> {t("home.badge")}
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="absolute -left-32 top-10 h-72 w-72 rounded-full bg-primary/25 blur-[120px]" />
+          <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-brand-2/20 blur-[140px]" />
+          <div
+            className="absolute inset-0 opacity-[0.035]"
+            style={{
+              backgroundImage:
+                "linear-gradient(oklch(1 0 0 / 0.6) 1px, transparent 1px), linear-gradient(90deg, oklch(1 0 0 / 0.6) 1px, transparent 1px)",
+              backgroundSize: "48px 48px",
+            }}
+          />
+        </div>
+        <div className="relative mx-auto grid w-full max-w-7xl gap-12 px-4 py-24 lg:grid-cols-[1.05fr_1fr] lg:py-32">
+          <div className="flex flex-col justify-center gap-7">
+            <Badge className="glass-panel w-fit gap-1.5 rounded-full border-primary/30 px-3 py-1 text-primary">
+              <Sparkles className="h-3 w-3" /> {t("home.badge")}
             </Badge>
-            <h1 className="font-display text-4xl font-black leading-tight md:text-6xl">
-              {t("home.heroTitle1")} <span className="text-gradient-brand">{t("home.heroTitleHighlight")}</span> {t("home.heroTitle2")}
+            <h1 className="font-display text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">
+              {t("home.heroTitle1")}{" "}
+              <span className="text-gradient-brand">{t("home.heroTitleHighlight")}</span>{" "}
+              {t("home.heroTitle2")}
             </h1>
-            <p className="max-w-lg text-lg text-muted-foreground">{t("home.heroSubtitle")}</p>
-            <div className="flex flex-wrap gap-3">
-              <Button asChild size="lg" className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
-                <Link to="/planos">{t("home.ctaPlans")} <ArrowRight className="ml-2 h-4 w-4" /></Link>
+            <p className="max-w-xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+              {t("home.heroSubtitle")}
+            </p>
+            <div className="mt-2 flex flex-wrap gap-3">
+              <Button
+                asChild
+                size="lg"
+                className="h-12 rounded-full bg-gradient-brand px-6 text-brand-foreground shadow-brand transition-transform hover:-translate-y-0.5 hover:opacity-95"
+              >
+                <Link to="/planos">
+                  {t("home.ctaPlans")} <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
-              <Button asChild size="lg" variant="outline">
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="h-12 rounded-full border-border/60 bg-background/30 px-6 backdrop-blur transition-colors hover:border-primary/50 hover:bg-primary/10"
+              >
                 <Link to="/catalogo">{t("home.ctaCatalog")}</Link>
               </Button>
             </div>
-            <div className="mt-4 flex flex-wrap gap-6 text-sm text-muted-foreground">
+            <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
               <span className="flex items-center gap-2"><Check className="h-4 w-4 text-success" /> {t("home.check1")}</span>
               <span className="flex items-center gap-2"><Check className="h-4 w-4 text-success" /> {t("home.check2")}</span>
               <span className="flex items-center gap-2"><Check className="h-4 w-4 text-success" /> {t("home.check3")}</span>
             </div>
           </div>
           <div className="relative hidden lg:block">
-            <div className="grid grid-cols-3 gap-3">
+            <div aria-hidden className="absolute -inset-6 rounded-3xl bg-gradient-brand opacity-20 blur-3xl" />
+            <div className="relative grid grid-cols-3 gap-3">
               {data.recent.slice(0, 9).map((a, i) => (
                 <div
                   key={a.id}
-                  className={`aspect-square overflow-hidden rounded-xl border border-border/60 bg-surface ${
-                    i === 4 ? "shadow-brand" : ""
+                  className={`aspect-square overflow-hidden rounded-2xl border border-border/60 bg-surface transition-transform duration-500 hover:-translate-y-1 ${
+                    i === 4 ? "shadow-brand ring-1 ring-primary/40" : "shadow-elegant"
                   }`}
-                  style={{ transform: `translateY(${(i % 3) * 12}px)` }}
+                  style={{ transform: `translateY(${(i % 3) * 14}px)` }}
                 >
                   <img src={a.preview_url} alt={tField(a as any, "title", lang) || a.title} className="h-full w-full object-cover" loading="lazy" />
                 </div>
@@ -88,6 +116,7 @@ function Home() {
           </div>
         </div>
       </section>
+
 
       {/* CATEGORIES */}
       {data.categories.length > 0 && (
