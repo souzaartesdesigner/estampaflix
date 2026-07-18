@@ -317,7 +317,7 @@ function CategoriesCarousel({ categories }: { categories: any[] }) {
         type="button"
         aria-label={t("home.previous")}
         onClick={() => scrollByPage(-1)}
-        className="absolute -left-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-primary shadow-lg ring-1 ring-border/60 backdrop-blur transition hover:bg-primary hover:text-primary-foreground md:-left-5"
+        className="absolute left-1 top-1/3 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-primary shadow-lg ring-1 ring-border/60 backdrop-blur transition hover:bg-primary hover:text-primary-foreground sm:h-10 sm:w-10 md:-left-5"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
@@ -325,7 +325,7 @@ function CategoriesCarousel({ categories }: { categories: any[] }) {
         type="button"
         aria-label={t("home.next")}
         onClick={() => scrollByPage(1)}
-        className="absolute -right-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-primary shadow-lg ring-1 ring-border/60 backdrop-blur transition hover:bg-primary hover:text-primary-foreground md:-right-5"
+        className="absolute right-1 top-1/3 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-primary shadow-lg ring-1 ring-border/60 backdrop-blur transition hover:bg-primary hover:text-primary-foreground sm:h-10 sm:w-10 md:-right-5"
       >
         <ChevronRight className="h-5 w-5" />
       </button>
