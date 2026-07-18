@@ -97,6 +97,7 @@ function Dashboard() {
         <Tabs defaultValue="downloads">
           <TabsList>
             <TabsTrigger value="downloads">Downloads</TabsTrigger>
+            <TabsTrigger value="favorites">Favoritos</TabsTrigger>
             <TabsTrigger value="subscription">Minha assinatura</TabsTrigger>
             <TabsTrigger value="orders">Compras avulsas</TabsTrigger>
           </TabsList>
