@@ -1,5 +1,6 @@
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
+import { FloatingSupport } from "./floating-support";
 import type { ReactNode } from "react";
 
 export function SiteLayout({ children }: { children: ReactNode }) {
@@ -8,6 +9,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <SiteHeader />
       <main className="flex-1">{children}</main>
       <SiteFooter />
+      <FloatingSupport />
     </div>
   );
 }
