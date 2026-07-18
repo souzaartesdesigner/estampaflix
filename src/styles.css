@@ -177,3 +177,36 @@ div[style*="Edit with Lovable"],
   position: absolute !important;
   z-index: -9999 !important;
 }
+
+/* WooCommerce-like rich description */
+.woo-description { color: hsl(var(--foreground) / 0.85); }
+.woo-description h1, .woo-description h2, .woo-description h3, .woo-description h4 {
+  font-family: var(--font-display, inherit);
+  color: hsl(var(--foreground));
+  font-weight: 700;
+  margin: 1.25em 0 .5em;
+  line-height: 1.25;
+}
+.woo-description h1 { font-size: 1.5rem; }
+.woo-description h2 { font-size: 1.25rem; }
+.woo-description h3 { font-size: 1.125rem; }
+.woo-description p { margin: 0 0 1em; }
+.woo-description a { color: hsl(var(--primary)); text-decoration: underline; }
+.woo-description strong, .woo-description b { color: hsl(var(--foreground)); font-weight: 700; }
+.woo-description em, .woo-description i { font-style: italic; }
+.woo-description ul { list-style: disc; padding-left: 1.5em; margin: 0 0 1em; }
+.woo-description ol { list-style: decimal; padding-left: 1.5em; margin: 0 0 1em; }
+.woo-description li { margin: .25em 0; }
+.woo-description blockquote {
+  border-left: 3px solid hsl(var(--primary));
+  padding: .25em 1em; margin: 1em 0;
+  color: hsl(var(--foreground) / 0.9);
+  background: hsl(var(--muted) / 0.3);
+  border-radius: .5rem;
+}
+.woo-description img { max-width: 100%; height: auto; border-radius: .5rem; margin: 1em 0; }
+.woo-description hr { border: 0; border-top: 1px solid hsl(var(--border)); margin: 1.5em 0; }
+.woo-description table { width: 100%; border-collapse: collapse; margin: 1em 0; }
+.woo-description th, .woo-description td { border: 1px solid hsl(var(--border)); padding: .5em .75em; text-align: left; }
+.woo-description code { background: hsl(var(--muted)); padding: .1em .35em; border-radius: .25em; font-size: .9em; }
+.woo-description pre { background: hsl(var(--muted)); padding: 1em; border-radius: .5em; overflow-x: auto; margin: 1em 0; }
