@@ -90,23 +90,32 @@ export const Route = createFileRoute("/artes/$slug")({
     };
   },
   component: ArtworkPage,
-  notFoundComponent: () => (
-    <SiteLayout>
-      <div className="mx-auto max-w-2xl px-4 py-24 text-center">
-        <h1 className="font-display text-3xl font-bold">Arte não encontrada</h1>
-        <p className="mt-2 text-muted-foreground">Ela pode ter sido removida ou nunca existiu.</p>
-        <Button asChild className="mt-6"><Link to="/catalogo">Voltar ao catálogo</Link></Button>
-      </div>
-    </SiteLayout>
-  ),
-  errorComponent: () => (
-    <SiteLayout>
-      <div className="mx-auto max-w-2xl px-4 py-24 text-center">
-        <h1 className="font-display text-3xl font-bold">Algo deu errado</h1>
-      </div>
-    </SiteLayout>
-  ),
+  notFoundComponent: NotFound,
+  errorComponent: ErrBoundary,
 });
+
+function NotFound() {
+  const { t } = useI18n();
+  return (
+    <SiteLayout>
+      <div className="mx-auto max-w-2xl px-4 py-24 text-center">
+        <h1 className="font-display text-3xl font-bold">{t("product.notFound")}</h1>
+        <p className="mt-2 text-muted-foreground">{t("product.notFoundDesc")}</p>
+        <Button asChild className="mt-6"><Link to="/catalogo">{t("product.backToCatalog")}</Link></Button>
+      </div>
+    </SiteLayout>
+  );
+}
+function ErrBoundary() {
+  const { t } = useI18n();
+  return (
+    <SiteLayout>
+      <div className="mx-auto max-w-2xl px-4 py-24 text-center">
+        <h1 className="font-display text-3xl font-bold">{t("product.somethingWrong")}</h1>
+      </div>
+    </SiteLayout>
+  );
+}
 
 function ArtworkPage() {
   const artwork = Route.useLoaderData();
