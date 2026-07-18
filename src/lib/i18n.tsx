@@ -256,6 +256,11 @@ const DICTS: Record<Lang, Dict> = {
     "footer.privacy": "Política de privacidade",
     "footer.license": "Licença de uso comercial",
     "footer.copyright": "Todos os direitos reservados.",
+    "cookies.title": "Cookies e privacidade",
+    "cookies.body": "Usamos cookies essenciais para autenticação, carrinho e para melhorar sua experiência. Ao continuar navegando, você concorda com nossa política.",
+    "cookies.readMore": "Saiba mais",
+    "cookies.accept": "Aceitar e continuar",
+    "cookies.close": "Fechar",
 
     // Floating support
     "float.support": "Atendimento Online",
@@ -499,6 +504,11 @@ const DICTS: Record<Lang, Dict> = {
     "footer.privacy": "Privacy policy",
     "footer.license": "Commercial use license",
     "footer.copyright": "All rights reserved.",
+    "cookies.title": "Cookies & privacy",
+    "cookies.body": "We use essential cookies for authentication, cart, and to improve your experience. By continuing to browse, you agree with our policy.",
+    "cookies.readMore": "Learn more",
+    "cookies.accept": "Accept and continue",
+    "cookies.close": "Close",
 
     "float.support": "Online support",
 
@@ -740,6 +750,11 @@ const DICTS: Record<Lang, Dict> = {
     "footer.privacy": "Política de privacidad",
     "footer.license": "Licencia de uso comercial",
     "footer.copyright": "Todos los derechos reservados.",
+    "cookies.title": "Cookies y privacidad",
+    "cookies.body": "Usamos cookies esenciales para autenticación, carrito y para mejorar tu experiencia. Al continuar navegando, aceptas nuestra política.",
+    "cookies.readMore": "Saber más",
+    "cookies.accept": "Aceptar y continuar",
+    "cookies.close": "Cerrar",
 
     "float.support": "Atención en línea",
 
