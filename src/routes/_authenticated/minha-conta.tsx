@@ -109,11 +109,11 @@ function Dashboard() {
         </div>
 
         <Tabs defaultValue="downloads">
-          <TabsList>
-            <TabsTrigger value="downloads">{t("account.tabDownloads")}</TabsTrigger>
-            <TabsTrigger value="favorites">{t("account.tabFavorites")}</TabsTrigger>
-            <TabsTrigger value="subscription">{t("account.tabSubscription")}</TabsTrigger>
-            <TabsTrigger value="orders">{t("account.tabOrders")}</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <TabsTrigger value="downloads" className="shrink-0">{t("account.tabDownloads")}</TabsTrigger>
+            <TabsTrigger value="favorites" className="shrink-0">{t("account.tabFavorites")}</TabsTrigger>
+            <TabsTrigger value="subscription" className="shrink-0">{t("account.tabSubscription")}</TabsTrigger>
+            <TabsTrigger value="orders" className="shrink-0">{t("account.tabOrders")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="downloads" className="mt-6">
