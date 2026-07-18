@@ -236,7 +236,7 @@ function ArtworkPage() {
     <SiteLayout>
       <div className="mx-auto w-full max-w-6xl px-4 py-8">
         <nav className="mb-4 text-xs text-muted-foreground">
-          <Link to="/" className="hover:text-foreground">Início</Link> / <Link to="/catalogo" className="hover:text-foreground">Catálogo</Link> / <span className="text-foreground">{artwork.title}</span>
+          <Link to="/" className="hover:text-foreground">{t("product.crumbHome")}</Link> / <Link to="/catalogo" className="hover:text-foreground">{t("product.crumbCatalog")}</Link> / <span className="text-foreground">{trTitle}</span>
         </nav>
 
         <div className="grid gap-8 lg:grid-cols-2">
