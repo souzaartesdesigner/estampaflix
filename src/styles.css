@@ -99,7 +99,8 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html {
+  html { color-scheme: dark; scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { overflow-x: hidden; }
     color-scheme: dark;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
