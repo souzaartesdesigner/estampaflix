@@ -341,11 +341,11 @@ function ArtworkPage() {
 
             {tags.length > 0 && (
               <div>
-                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Tags</h3>
+                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("product.tags")}</h3>
                 <div className="flex flex-wrap gap-1">
-                  {tags.map((t) => (
-                    <Link key={t.id} to="/catalogo" search={{ tag: t.slug } as any}>
-                      <Badge variant="secondary" className="gap-1"><TagIcon className="h-3 w-3" /> {t.name}</Badge>
+                  {tags.map((tg: any) => (
+                    <Link key={tg.id} to="/catalogo" search={{ tag: tg.slug } as any}>
+                      <Badge variant="secondary" className="gap-1"><TagIcon className="h-3 w-3" /> {tField(tg, "name", lang) || tg.name}</Badge>
                     </Link>
                   ))}
                 </div>
