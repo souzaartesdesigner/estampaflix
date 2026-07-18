@@ -125,6 +125,18 @@ function Dashboard() {
             )}
           </TabsContent>
 
+          <TabsContent value="favorites" className="mt-6">
+            {favorites.length === 0 ? (
+              <Empty msg="Você ainda não salvou nenhuma arte." cta={{ label: "Explorar catálogo", to: "/catalogo" }} />
+            ) : (
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                {favorites.map((f: any) => f.artworks && <ArtworkCard key={f.artwork_id} artwork={f.artworks} />)}
+              </div>
+            )}
+          </TabsContent>
+
+
+
           <TabsContent value="subscription" className="mt-6">
             {sub ? (
               <div className="rounded-2xl border border-border/60 bg-card p-6">
