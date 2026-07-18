@@ -35,8 +35,8 @@ export function SiteFooter() {
         <div>
           <h4 className="text-sm font-semibold">{t("footer.legal")}</h4>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li>{t("footer.terms")}</li>
-            <li>{t("footer.privacy")}</li>
+            <li><Link to="/termos" className="hover:text-foreground">{t("footer.terms")}</Link></li>
+            <li><Link to="/privacidade" className="hover:text-foreground">{t("footer.privacy")}</Link></li>
             <li>{t("footer.license")}</li>
           </ul>
         </div>
