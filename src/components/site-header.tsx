@@ -167,7 +167,18 @@ export function SiteHeader() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-72">
-              <div className="mt-8 flex flex-col gap-1">
+              <form onSubmit={submitSearch} className="mt-8">
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    value={q}
+                    onChange={(e) => setQ(e.target.value)}
+                    placeholder={t("search.placeholder")}
+                    className="w-full rounded-full border border-border/60 bg-surface/50 py-2 pl-9 pr-3 text-sm outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+              </form>
+              <div className="mt-6 flex flex-col gap-1">
                 {NAV.map((item) => (
                   <Link key={item.to} to={item.to} className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
                     {item.label}
