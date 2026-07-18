@@ -308,7 +308,18 @@ function ArtworkPage() {
                         ) : (
                           <ShoppingCart className="mr-2 h-4 w-4" />
                         )}
-                        Comprar Individualmente via Pix ({formatBRL(artwork.price_cents)})
+                        Comprar via Pix ({formatBRL(artwork.price_cents)})
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        onClick={() => (inCart ? navigate({ to: "/carrinho" }) : cart.add(artwork.id))}
+                        disabled={cart.adding}
+                      >
+                        {inCart ? (
+                          <><Check className="mr-2 h-4 w-4" /> No carrinho — ver</>
+                        ) : (
+                          <><Plus className="mr-2 h-4 w-4" /> Adicionar ao carrinho</>
+                        )}
                       </Button>
                     </>
                   )
