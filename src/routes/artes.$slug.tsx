@@ -372,11 +372,13 @@ function ArtworkPage() {
         {trDesc && (
           <section className="mt-12 rounded-2xl border border-border/60 bg-card p-6 md:p-8">
             <h2 className="mb-4 font-display text-2xl font-bold">{t("product.description")}</h2>
-            <p className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
-              {htmlToText(trDesc)}
-            </p>
+            <div
+              className="woo-description prose prose-invert max-w-none text-sm leading-relaxed text-muted-foreground"
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(trDesc) }}
+            />
           </section>
         )}
+
 
       </div>
     </SiteLayout>
