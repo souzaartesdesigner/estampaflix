@@ -59,15 +59,15 @@ function Planos() {
   return (
     <SiteLayout>
       <section className="relative">
-        <div className="mx-auto w-full max-w-5xl px-4 py-16 text-center">
+        <div className="mx-auto w-full max-w-5xl px-4 py-10 text-center sm:py-16">
           <Badge className="mb-4 bg-primary/15 text-primary border-primary/30">{t("plans.badge")}</Badge>
-          <h1 className="font-display text-4xl font-black md:text-5xl">{t("plans.title")}</h1>
-          <p className="mx-auto mt-3 max-w-xl text-muted-foreground">{t("plans.subtitle")}</p>
+          <h1 className="font-display text-3xl font-black sm:text-4xl md:text-5xl">{t("plans.title")}</h1>
+          <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">{t("plans.subtitle")}</p>
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-4 py-12">
-        <div className="grid gap-6 md:grid-cols-3">
+      <section className="mx-auto w-full max-w-6xl px-3 py-8 sm:px-4 sm:py-12">
+        <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {plans.map((plan, idx) => (
             <div
               key={plan.id}
