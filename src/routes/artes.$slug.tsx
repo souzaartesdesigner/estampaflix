@@ -269,7 +269,7 @@ function ArtworkPage() {
             <div className="rounded-xl border border-border/60 bg-card p-5">
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-black">{formatBRL(artwork.price_cents)}</span>
-                <span className="text-sm text-muted-foreground">avulso</span>
+                <span className="text-sm text-muted-foreground">{t("product.avulso")}</span>
               </div>
 
               <div className="mt-4 flex flex-col gap-2">
