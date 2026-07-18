@@ -154,38 +154,58 @@ function Home() {
       )}
 
       {/* PLANS */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-16">
+      <section className="relative mx-auto w-full max-w-7xl px-4 py-20">
         <SectionTitle title={t("home.plansTitle")} subtitle={t("home.plansSubtitle")} center />
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {data.plans.map((plan, idx) => (
-            <div
-              key={plan.id}
-              className={`relative flex flex-col rounded-2xl border p-6 ${
-                idx === 1 ? "border-primary/60 bg-card shadow-brand" : "border-border/60 bg-card"
-              }`}
-            >
-              {idx === 1 && (
-                <Badge className="absolute right-4 top-4 bg-gradient-brand text-brand-foreground border-0">{t("home.popular")}</Badge>
-              )}
-              <h3 className="font-display text-xl font-bold">{plan.name}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{plan.description}</p>
-              <div className="mt-4 flex items-baseline gap-1">
-                <span className="text-4xl font-black">{formatBRL(plan.price_cents)}</span>
-                <span className="text-sm text-muted-foreground">{t("plans.perMonth")}</span>
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
+          {data.plans.map((plan, idx) => {
+            const highlighted = idx === 1;
+            return (
+              <div
+                key={plan.id}
+                className={`group relative flex flex-col overflow-hidden rounded-2xl border p-7 transition-all duration-300 hover:-translate-y-1 ${
+                  highlighted
+                    ? "border-primary/60 bg-gradient-to-b from-card to-surface shadow-brand"
+                    : "border-border/60 bg-card shadow-card hover:border-primary/40"
+                }`}
+              >
+                {highlighted && (
+                  <>
+                    <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-primary/30 blur-3xl" />
+                    <Badge className="absolute right-4 top-4 border-0 bg-gradient-brand text-brand-foreground shadow-glow">
+                      {t("home.popular")}
+                    </Badge>
+                  </>
+                )}
+                <h3 className="font-display text-xl font-bold tracking-tight">{plan.name}</h3>
+                <p className="mt-1.5 text-sm text-muted-foreground">{plan.description}</p>
+                <div className="mt-6 flex items-baseline gap-1">
+                  <span className="font-display text-5xl font-black tracking-tight">{formatBRL(plan.price_cents)}</span>
+                  <span className="text-sm text-muted-foreground">{t("plans.perMonth")}</span>
+                </div>
+                <div className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">
+                  <Sparkles className="h-3 w-3" /> {plan.monthly_credits} {t("plans.downloadsPerMonth")}
+                </div>
+                <ul className="mt-6 flex flex-1 flex-col gap-2.5 text-sm">
+                  {(plan.features as string[]).map((f: string) => (
+                    <li key={f} className="flex items-start gap-2.5 text-muted-foreground">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+                      <span className="text-foreground/90">{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  asChild
+                  className={`mt-7 h-11 rounded-full transition-transform hover:-translate-y-0.5 ${
+                    highlighted
+                      ? "bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-95"
+                      : "bg-surface-2 text-foreground hover:bg-primary hover:text-primary-foreground"
+                  }`}
+                >
+                  <Link to="/planos">{t("home.subscribe")} {plan.name}</Link>
+                </Button>
               </div>
-              <div className="mt-2 text-sm text-primary">{plan.monthly_credits} {t("plans.downloadsPerMonth")}</div>
-              <ul className="mt-4 flex flex-1 flex-col gap-2 text-sm">
-                {(plan.features as string[]).map((f: string) => (
-                  <li key={f} className="flex items-start gap-2">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" /> {f}
-                  </li>
-                ))}
-              </ul>
-              <Button asChild className="mt-6 bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
-                <Link to="/planos">{t("home.subscribe")} {plan.name}</Link>
-              </Button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
     </SiteLayout>
@@ -206,19 +226,27 @@ function SectionTitle({
   icon?: React.ReactNode;
 }) {
   return (
-    <div className={`mb-6 flex gap-4 ${center ? "flex-col items-center text-center" : "items-end justify-between"}`}>
-      <div>
-        <h2 className="flex items-center gap-2 font-display text-2xl font-bold md:text-3xl">{icon}{title}</h2>
-        {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
+    <div className={`mb-8 flex gap-4 ${center ? "flex-col items-center text-center" : "flex-col items-start sm:flex-row sm:items-end sm:justify-between"}`}>
+      <div className="min-w-0">
+        <h2 className="flex items-center gap-2.5 font-display text-3xl font-bold tracking-tight md:text-4xl">
+          {icon}
+          <span>{title}</span>
+        </h2>
+        {subtitle && <p className="mt-2 max-w-2xl text-sm text-muted-foreground md:text-base">{subtitle}</p>}
       </div>
       {cta && (
-        <Link to={cta.to} className="text-sm font-medium text-primary hover:underline">
-          {cta.label} →
+        <Link
+          to={cta.to}
+          className="group inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+        >
+          {cta.label}
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
         </Link>
       )}
     </div>
   );
 }
+
 
 function ArtGrid({ items, emptyMsg }: { items: any[]; emptyMsg: string }) {
   if (items.length === 0) {
