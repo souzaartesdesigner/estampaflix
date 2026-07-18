@@ -242,12 +242,12 @@ function ArtworkPage() {
 
   return (
     <SiteLayout>
-      <div className="mx-auto w-full max-w-6xl px-4 py-8">
+      <div className="mx-auto w-full max-w-6xl px-3 py-6 sm:px-4 sm:py-8">
         <nav className="mb-4 text-xs text-muted-foreground">
           <Link to="/" className="hover:text-foreground">{t("product.crumbHome")}</Link> / <Link to="/catalogo" className="hover:text-foreground">{t("product.crumbCatalog")}</Link> / <span className="text-foreground">{trTitle}</span>
         </nav>
 
-        <div className="grid gap-8 lg:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
           <ArtworkGallery images={galleryImages} alt={trTitle} />
 
           {/* INFO */}
