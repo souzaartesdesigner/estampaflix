@@ -154,9 +154,9 @@ function Home() {
       )}
 
       {/* PLANS */}
-      <section className="relative mx-auto w-full max-w-7xl px-4 py-20">
+      <section className="relative mx-auto w-full max-w-7xl px-4 py-14 sm:py-20">
         <SectionTitle title={t("home.plansTitle")} subtitle={t("home.plansSubtitle")} center />
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {data.plans.map((plan, idx) => {
             const highlighted = idx === 1;
             return (
