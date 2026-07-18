@@ -282,9 +282,9 @@ function ArtworkPage() {
                         className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
                       >
                         <Download className="mr-2 h-4 w-4" />
-                        {downloadMut.isPending ? "Preparando..." : "Fazer Download"}
+                        {downloadMut.isPending ? t("product.downloading") : t("product.download")}
                       </Button>
-                      <p className="text-xs text-success">Você já possui esta arte. Baixe quantas vezes quiser.</p>
+                      <p className="text-xs text-success">{t("product.owned")}</p>
                     </>
                   ) : (
                     <>
