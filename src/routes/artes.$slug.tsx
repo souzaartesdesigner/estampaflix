@@ -253,7 +253,7 @@ function ArtworkPage() {
             <h1 className="font-display text-3xl font-bold md:text-4xl">{trTitle}</h1>
             <div className="flex items-center gap-2">
               <FavoriteButton artworkId={artwork.id} size="md" />
-              <span className="text-xs text-muted-foreground">Salvar nos favoritos</span>
+              <span className="text-xs text-muted-foreground">{t("product.saveFavorites")}</span>
             </div>
 
 
