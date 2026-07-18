@@ -55,6 +55,7 @@ export type Database = {
           external_url: string | null
           file_format: string | null
           file_path: string | null
+          gallery_urls: string[]
           id: string
           is_featured: boolean
           is_published: boolean
@@ -63,6 +64,7 @@ export type Database = {
           price_cents: number
           slug: string
           title: string
+          translations: Json
           updated_at: string
           view_count: number
         }
@@ -76,6 +78,7 @@ export type Database = {
           external_url?: string | null
           file_format?: string | null
           file_path?: string | null
+          gallery_urls?: string[]
           id?: string
           is_featured?: boolean
           is_published?: boolean
@@ -84,6 +87,7 @@ export type Database = {
           price_cents?: number
           slug: string
           title: string
+          translations?: Json
           updated_at?: string
           view_count?: number
         }
@@ -97,6 +101,7 @@ export type Database = {
           external_url?: string | null
           file_format?: string | null
           file_path?: string | null
+          gallery_urls?: string[]
           id?: string
           is_featured?: boolean
           is_published?: boolean
@@ -105,6 +110,7 @@ export type Database = {
           price_cents?: number
           slug?: string
           title?: string
+          translations?: Json
           updated_at?: string
           view_count?: number
         }
@@ -130,6 +136,7 @@ export type Database = {
           published_at: string
           slug: string
           title: string
+          translations: Json
           updated_at: string
         }
         Insert: {
@@ -143,6 +150,7 @@ export type Database = {
           published_at?: string
           slug: string
           title: string
+          translations?: Json
           updated_at?: string
         }
         Update: {
@@ -156,6 +164,7 @@ export type Database = {
           published_at?: string
           slug?: string
           title?: string
+          translations?: Json
           updated_at?: string
         }
         Relationships: []
@@ -200,6 +209,7 @@ export type Database = {
           parent_id: string | null
           slug: string
           sort_order: number
+          translations: Json
         }
         Insert: {
           cover_url?: string | null
@@ -211,6 +221,7 @@ export type Database = {
           parent_id?: string | null
           slug: string
           sort_order?: number
+          translations?: Json
         }
         Update: {
           cover_url?: string | null
@@ -222,6 +233,7 @@ export type Database = {
           parent_id?: string | null
           slug?: string
           sort_order?: number
+          translations?: Json
         }
         Relationships: [
           {
@@ -400,6 +412,39 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          kind: string
+          link: string | null
+          message: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          kind?: string
+          link?: string | null
+          message?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          kind?: string
+          link?: string | null
+          message?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           amount_cents: number
@@ -536,6 +581,47 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      reviews: {
+        Row: {
+          artwork_id: string
+          comment: string | null
+          created_at: string
+          id: string
+          is_approved: boolean
+          rating: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          artwork_id: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          is_approved?: boolean
+          rating: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          artwork_id?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          is_approved?: boolean
+          rating?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artworks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subscriptions: {
         Row: {
@@ -683,6 +769,10 @@ export type Database = {
         }[]
       }
       grant_order_downloads: { Args: { _order_id: string }; Returns: undefined }
+      has_purchased_or_downloaded: {
+        Args: { _artwork_id: string; _user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
