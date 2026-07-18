@@ -182,8 +182,8 @@ function Dashboard() {
             {orders.length === 0 ? (
               <Empty msg={t("account.emptyOrders")} cta={{ label: t("account.exploreCatalog"), to: "/catalogo" }} />
             ) : (
-              <div className="overflow-hidden rounded-xl border border-border/60">
-                <table className="w-full text-sm">
+              <div className="overflow-x-auto rounded-xl border border-border/60">
+                <table className="w-full min-w-[520px] text-sm">
                   <thead className="bg-surface-2 text-xs uppercase text-muted-foreground">
                     <tr><th className="px-4 py-3 text-left">{t("account.thArt")}</th><th className="px-4 py-3 text-left">{t("account.thDate")}</th><th className="px-4 py-3 text-left">{t("account.thValue")}</th><th className="px-4 py-3 text-left">{t("account.thStatus")}</th></tr>
                   </thead>
