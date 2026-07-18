@@ -110,6 +110,11 @@ export const Route = createFileRoute("/artes/$slug")({
 
 function ArtworkPage() {
   const artwork = Route.useLoaderData();
+  const { lang } = useI18n();
+  const trTitle = tField((artwork as any).translations, "title", lang, artwork.title);
+  const trDesc = tField((artwork as any).translations, "description", lang, artwork.description ?? "");
+  const galleryImages = [artwork.preview_url, ...((artwork as any).gallery_urls ?? [])].filter(Boolean);
+
   const navigate = useNavigate();
   const qc = useQueryClient();
 
