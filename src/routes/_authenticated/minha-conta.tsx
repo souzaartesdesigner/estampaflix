@@ -10,7 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { createBillingPortalSession } from "@/lib/stripe.functions";
 import { toast } from "sonner";
-import { Download, CreditCard, Package, Sparkles, Loader2 } from "lucide-react";
+import { Download, CreditCard, Package, Sparkles, Loader2, Heart } from "lucide-react";
+import { ArtworkCard } from "@/components/artwork-card";
 
 export const Route = createFileRoute("/_authenticated/minha-conta")({
   head: () => ({ meta: [{ title: "Minha conta — EstampaHub" }, { name: "robots", content: "noindex" }] }),
