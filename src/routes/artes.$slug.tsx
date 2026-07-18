@@ -324,9 +324,9 @@ function ArtworkPage() {
                         disabled={cart.adding}
                       >
                         {inCart ? (
-                          <><Check className="mr-2 h-4 w-4" /> No carrinho — ver</>
+                          <><Check className="mr-2 h-4 w-4" /> {t("product.inCart")}</>
                         ) : (
-                          <><Plus className="mr-2 h-4 w-4" /> Adicionar ao carrinho</>
+                          <><Plus className="mr-2 h-4 w-4" /> {t("product.addToCart")}</>
                         )}
                       </Button>
                     </>
