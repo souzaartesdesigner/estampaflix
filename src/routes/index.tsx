@@ -162,9 +162,9 @@ function Home() {
             return (
               <div
                 key={plan.id}
-                className={`group relative flex flex-col overflow-hidden rounded-2xl border p-7 transition-all duration-300 hover:-translate-y-1 ${
+                className={`group relative flex flex-col overflow-hidden rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 sm:p-7 ${
                   highlighted
-                    ? "border-primary/60 bg-gradient-to-b from-card to-surface shadow-brand"
+                    ? "border-primary/60 bg-gradient-to-b from-card to-surface shadow-brand sm:col-span-2 lg:col-span-1"
                     : "border-border/60 bg-card shadow-card hover:border-primary/40"
                 }`}
               >
@@ -179,7 +179,7 @@ function Home() {
                 <h3 className="font-display text-xl font-bold tracking-tight">{plan.name}</h3>
                 <p className="mt-1.5 text-sm text-muted-foreground">{plan.description}</p>
                 <div className="mt-6 flex items-baseline gap-1">
-                  <span className="font-display text-5xl font-black tracking-tight">{formatBRL(plan.price_cents)}</span>
+                  <span className="font-display text-4xl font-black tracking-tight sm:text-5xl">{formatBRL(plan.price_cents)}</span>
                   <span className="text-sm text-muted-foreground">{t("plans.perMonth")}</span>
                 </div>
                 <div className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">
