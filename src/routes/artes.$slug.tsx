@@ -119,7 +119,7 @@ function ErrBoundary() {
 
 function ArtworkPage() {
   const artwork = Route.useLoaderData();
-  const { lang } = useI18n();
+  const { lang, t } = useI18n();
   const trTitle = tField(artwork as any, "title", lang) || artwork.title;
   const trDesc = tField(artwork as any, "description", lang) || (artwork.description ?? "");
   const galleryImages = [artwork.preview_url, ...((artwork as any).gallery_urls ?? [])].filter(Boolean);
