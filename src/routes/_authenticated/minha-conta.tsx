@@ -173,14 +173,28 @@ function Dashboard() {
                     <tr><th className="px-4 py-3 text-left">Arte</th><th className="px-4 py-3 text-left">Data</th><th className="px-4 py-3 text-left">Valor</th><th className="px-4 py-3 text-left">Status</th></tr>
                   </thead>
                   <tbody>
-                    {orders.map((o: any) => (
-                      <tr key={o.id} className="border-t border-border/40">
-                        <td className="px-4 py-3"><Link to="/artes/$slug" params={{ slug: o.artworks.slug }} className="hover:text-primary">{o.artworks.title}</Link></td>
-                        <td className="px-4 py-3 text-muted-foreground">{formatDate(o.created_at)}</td>
-                        <td className="px-4 py-3">{formatBRL(o.amount_cents)}</td>
-                        <td className="px-4 py-3"><Badge variant={o.status === "paid" ? "default" : "secondary"}>{translateOrderStatus(o.status)}</Badge></td>
-                      </tr>
-                    ))}
+                    {orders.map((o: any) => {
+                      const itemCount = Array.isArray(o.items) ? o.items.length : (o.artworks ? 1 : 0);
+                      const label = o.artworks
+                        ? o.artworks.title
+                        : itemCount > 0
+                          ? `${itemCount} ${itemCount === 1 ? "arte" : "artes"}`
+                          : "Pedido";
+                      return (
+                        <tr key={o.id} className="border-t border-border/40">
+                          <td className="px-4 py-3">
+                            {o.artworks ? (
+                              <Link to="/artes/$slug" params={{ slug: o.artworks.slug }} className="hover:text-primary">{label}</Link>
+                            ) : (
+                              <span>{label}</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-muted-foreground">{formatDate(o.created_at)}</td>
+                          <td className="px-4 py-3">{formatBRL(o.amount_cents)}</td>
+                          <td className="px-4 py-3"><Badge variant={o.status === "paid" ? "default" : "secondary"}>{translateOrderStatus(o.status)}</Badge></td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
