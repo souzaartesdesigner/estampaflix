@@ -120,10 +120,10 @@ function Home() {
 
       {/* CATEGORIES */}
       {data.categories.length > 0 && (
-        <section className="mx-auto w-full max-w-7xl px-4 py-16">
-          <div className="mb-6 flex items-center justify-between gap-4">
-            <h2 className="font-display text-2xl font-bold md:text-3xl">{t("home.categoriesTitle")}</h2>
-            <Button asChild variant="secondary" className="rounded-lg">
+        <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:py-16">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="font-display text-2xl font-bold sm:text-3xl">{t("home.categoriesTitle")}</h2>
+            <Button asChild variant="secondary" size="sm" className="rounded-lg">
               <Link to="/catalogo">{t("home.viewCategories")}</Link>
             </Button>
           </div>
@@ -132,14 +132,14 @@ function Home() {
       )}
 
       {/* RECENT */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-8">
+      <section className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-8">
         <SectionTitle title={t("home.recentTitle")} subtitle={t("home.recentSubtitle")} cta={{ to: "/catalogo", label: t("home.viewAll") }} />
         <ArtGrid items={data.recent.slice(0, 8)} emptyMsg={t("home.emptyGrid")} />
       </section>
 
       {/* TRENDING */}
       {data.trending.length > 0 && (
-        <section className="mx-auto w-full max-w-7xl px-4 py-8">
+        <section className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-8">
           <SectionTitle title={t("home.trendingTitle")} subtitle={t("home.trendingSubtitle")} icon={<Zap className="h-5 w-5 text-brand-2" />} />
           <ArtGrid items={data.trending} emptyMsg={t("home.emptyGrid")} />
         </section>
@@ -147,7 +147,7 @@ function Home() {
 
       {/* FEATURED */}
       {data.featured.length > 0 && (
-        <section className="mx-auto w-full max-w-7xl px-4 py-8">
+        <section className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-8">
           <SectionTitle title={t("home.featuredTitle")} subtitle={t("home.featuredSubtitle")} />
           <ArtGrid items={data.featured} emptyMsg={t("home.emptyGrid")} />
         </section>
