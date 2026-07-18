@@ -69,9 +69,9 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-4 px-4">
-        <Link to="/" className="flex shrink-0 items-center gap-2.5 font-display text-lg font-bold tracking-tight">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-brand shadow-brand ring-1 ring-primary/30">
+      <div className="mx-auto flex h-14 w-full max-w-7xl items-center gap-2 px-3 sm:h-16 sm:gap-4 sm:px-4">
+        <Link to="/" className="flex shrink-0 items-center gap-2 font-display text-base font-bold tracking-tight sm:gap-2.5 sm:text-lg">
+          <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-brand shadow-brand ring-1 ring-primary/30 sm:h-9 sm:w-9">
             <Sparkles className="h-4 w-4 text-brand-foreground" />
           </span>
           <span className="text-gradient-brand">EstampaHub</span>
@@ -109,7 +109,10 @@ export function SiteHeader() {
         </form>
 
 
-        <div className="ml-auto flex items-center gap-1">
+        <div className="ml-auto flex items-center gap-0.5 sm:gap-1">
+          <Button asChild variant="ghost" size="icon" className="md:hidden" aria-label={t("search.placeholder")}>
+            <Link to="/catalogo"><Search className="h-5 w-5" /></Link>
+          </Button>
           <LangSwitcher />
           {user && <NotificationsBell />}
           {user && (
@@ -164,7 +167,18 @@ export function SiteHeader() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-72">
-              <div className="mt-8 flex flex-col gap-1">
+              <form onSubmit={submitSearch} className="mt-8">
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    value={q}
+                    onChange={(e) => setQ(e.target.value)}
+                    placeholder={t("search.placeholder")}
+                    className="w-full rounded-full border border-border/60 bg-surface/50 py-2 pl-9 pr-3 text-sm outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+              </form>
+              <div className="mt-6 flex flex-col gap-1">
                 {NAV.map((item) => (
                   <Link key={item.to} to={item.to} className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
                     {item.label}

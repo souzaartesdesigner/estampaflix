@@ -96,24 +96,24 @@ function Dashboard() {
 
   return (
     <SiteLayout>
-      <div className="mx-auto w-full max-w-6xl px-4 py-10">
-        <header className="mb-8">
-          <h1 className="font-display text-3xl font-bold">{t("account.title")}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t("account.greeting")} {user.email}</p>
+      <div className="mx-auto w-full max-w-6xl px-3 py-6 sm:px-4 sm:py-10">
+        <header className="mb-6 sm:mb-8">
+          <h1 className="font-display text-2xl font-bold sm:text-3xl">{t("account.title")}</h1>
+          <p className="mt-1 text-sm text-muted-foreground break-words">{t("account.greeting")} {user.email}</p>
         </header>
 
-        <div className="mb-8 grid gap-4 md:grid-cols-3">
+        <div className="mb-6 grid gap-3 sm:mb-8 sm:grid-cols-2 sm:gap-4 md:grid-cols-3">
           <StatCard icon={<CreditCard className="h-5 w-5" />} label={t("account.currentPlan")} value={sub?.plans?.name ?? t("account.none")} />
           <StatCard icon={<Sparkles className="h-5 w-5" />} label={t("account.creditsRemaining")} value={sub ? String(sub.credits_remaining) : "0"} accent />
           <StatCard icon={<Download className="h-5 w-5" />} label={t("account.downloadedCount")} value={String(downloads.length)} />
         </div>
 
         <Tabs defaultValue="downloads">
-          <TabsList>
-            <TabsTrigger value="downloads">{t("account.tabDownloads")}</TabsTrigger>
-            <TabsTrigger value="favorites">{t("account.tabFavorites")}</TabsTrigger>
-            <TabsTrigger value="subscription">{t("account.tabSubscription")}</TabsTrigger>
-            <TabsTrigger value="orders">{t("account.tabOrders")}</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <TabsTrigger value="downloads" className="shrink-0">{t("account.tabDownloads")}</TabsTrigger>
+            <TabsTrigger value="favorites" className="shrink-0">{t("account.tabFavorites")}</TabsTrigger>
+            <TabsTrigger value="subscription" className="shrink-0">{t("account.tabSubscription")}</TabsTrigger>
+            <TabsTrigger value="orders" className="shrink-0">{t("account.tabOrders")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="downloads" className="mt-6">
@@ -182,8 +182,8 @@ function Dashboard() {
             {orders.length === 0 ? (
               <Empty msg={t("account.emptyOrders")} cta={{ label: t("account.exploreCatalog"), to: "/catalogo" }} />
             ) : (
-              <div className="overflow-hidden rounded-xl border border-border/60">
-                <table className="w-full text-sm">
+              <div className="overflow-x-auto rounded-xl border border-border/60">
+                <table className="w-full min-w-[520px] text-sm">
                   <thead className="bg-surface-2 text-xs uppercase text-muted-foreground">
                     <tr><th className="px-4 py-3 text-left">{t("account.thArt")}</th><th className="px-4 py-3 text-left">{t("account.thDate")}</th><th className="px-4 py-3 text-left">{t("account.thValue")}</th><th className="px-4 py-3 text-left">{t("account.thStatus")}</th></tr>
                   </thead>

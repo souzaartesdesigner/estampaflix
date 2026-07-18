@@ -60,17 +60,17 @@ function Home() {
             }}
           />
         </div>
-        <div className="relative mx-auto grid w-full max-w-7xl gap-12 px-4 py-24 lg:grid-cols-[1.05fr_1fr] lg:py-32">
-          <div className="flex flex-col justify-center gap-7">
+        <div className="relative mx-auto grid w-full max-w-7xl gap-8 px-4 py-14 sm:gap-12 sm:py-20 lg:grid-cols-[1.05fr_1fr] lg:py-28">
+          <div className="flex flex-col justify-center gap-5 sm:gap-7">
             <Badge className="glass-panel w-fit gap-1.5 rounded-full border-primary/30 px-3 py-1 text-primary">
               <Sparkles className="h-3 w-3" /> {t("home.badge")}
             </Badge>
-            <h1 className="font-display text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">
+            <h1 className="font-display text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
               {t("home.heroTitle1")}{" "}
               <span className="text-gradient-brand">{t("home.heroTitleHighlight")}</span>{" "}
               {t("home.heroTitle2")}
             </h1>
-            <p className="max-w-xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+            <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl">
               {t("home.heroSubtitle")}
             </p>
             <div className="mt-2 flex flex-wrap gap-3">
@@ -120,10 +120,10 @@ function Home() {
 
       {/* CATEGORIES */}
       {data.categories.length > 0 && (
-        <section className="mx-auto w-full max-w-7xl px-4 py-16">
-          <div className="mb-6 flex items-center justify-between gap-4">
-            <h2 className="font-display text-2xl font-bold md:text-3xl">{t("home.categoriesTitle")}</h2>
-            <Button asChild variant="secondary" className="rounded-lg">
+        <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:py-16">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="font-display text-2xl font-bold sm:text-3xl">{t("home.categoriesTitle")}</h2>
+            <Button asChild variant="secondary" size="sm" className="rounded-lg">
               <Link to="/catalogo">{t("home.viewCategories")}</Link>
             </Button>
           </div>
@@ -132,14 +132,14 @@ function Home() {
       )}
 
       {/* RECENT */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-8">
+      <section className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-8">
         <SectionTitle title={t("home.recentTitle")} subtitle={t("home.recentSubtitle")} cta={{ to: "/catalogo", label: t("home.viewAll") }} />
         <ArtGrid items={data.recent.slice(0, 8)} emptyMsg={t("home.emptyGrid")} />
       </section>
 
       {/* TRENDING */}
       {data.trending.length > 0 && (
-        <section className="mx-auto w-full max-w-7xl px-4 py-8">
+        <section className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-8">
           <SectionTitle title={t("home.trendingTitle")} subtitle={t("home.trendingSubtitle")} icon={<Zap className="h-5 w-5 text-brand-2" />} />
           <ArtGrid items={data.trending} emptyMsg={t("home.emptyGrid")} />
         </section>
@@ -147,24 +147,24 @@ function Home() {
 
       {/* FEATURED */}
       {data.featured.length > 0 && (
-        <section className="mx-auto w-full max-w-7xl px-4 py-8">
+        <section className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-8">
           <SectionTitle title={t("home.featuredTitle")} subtitle={t("home.featuredSubtitle")} />
           <ArtGrid items={data.featured} emptyMsg={t("home.emptyGrid")} />
         </section>
       )}
 
       {/* PLANS */}
-      <section className="relative mx-auto w-full max-w-7xl px-4 py-20">
+      <section className="relative mx-auto w-full max-w-7xl px-4 py-14 sm:py-20">
         <SectionTitle title={t("home.plansTitle")} subtitle={t("home.plansSubtitle")} center />
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {data.plans.map((plan, idx) => {
             const highlighted = idx === 1;
             return (
               <div
                 key={plan.id}
-                className={`group relative flex flex-col overflow-hidden rounded-2xl border p-7 transition-all duration-300 hover:-translate-y-1 ${
+                className={`group relative flex flex-col overflow-hidden rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 sm:p-7 ${
                   highlighted
-                    ? "border-primary/60 bg-gradient-to-b from-card to-surface shadow-brand"
+                    ? "border-primary/60 bg-gradient-to-b from-card to-surface shadow-brand sm:col-span-2 lg:col-span-1"
                     : "border-border/60 bg-card shadow-card hover:border-primary/40"
                 }`}
               >
@@ -179,7 +179,7 @@ function Home() {
                 <h3 className="font-display text-xl font-bold tracking-tight">{plan.name}</h3>
                 <p className="mt-1.5 text-sm text-muted-foreground">{plan.description}</p>
                 <div className="mt-6 flex items-baseline gap-1">
-                  <span className="font-display text-5xl font-black tracking-tight">{formatBRL(plan.price_cents)}</span>
+                  <span className="font-display text-4xl font-black tracking-tight sm:text-5xl">{formatBRL(plan.price_cents)}</span>
                   <span className="text-sm text-muted-foreground">{t("plans.perMonth")}</span>
                 </div>
                 <div className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">
@@ -226,9 +226,9 @@ function SectionTitle({
   icon?: React.ReactNode;
 }) {
   return (
-    <div className={`mb-8 flex gap-4 ${center ? "flex-col items-center text-center" : "flex-col items-start sm:flex-row sm:items-end sm:justify-between"}`}>
+    <div className={`mb-6 flex gap-3 sm:mb-8 sm:gap-4 ${center ? "flex-col items-center text-center" : "flex-col items-start sm:flex-row sm:items-end sm:justify-between"}`}>
       <div className="min-w-0">
-        <h2 className="flex items-center gap-2.5 font-display text-3xl font-bold tracking-tight md:text-4xl">
+        <h2 className="flex items-center gap-2.5 font-display text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
           {icon}
           <span>{title}</span>
         </h2>
@@ -237,7 +237,7 @@ function SectionTitle({
       {cta && (
         <Link
           to={cta.to}
-          className="group inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+          className="group inline-flex items-center gap-1.5 whitespace-nowrap text-sm font-medium text-primary transition-colors hover:text-primary/80"
         >
           {cta.label}
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -317,7 +317,7 @@ function CategoriesCarousel({ categories }: { categories: any[] }) {
         type="button"
         aria-label={t("home.previous")}
         onClick={() => scrollByPage(-1)}
-        className="absolute -left-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-primary shadow-lg ring-1 ring-border/60 backdrop-blur transition hover:bg-primary hover:text-primary-foreground md:-left-5"
+        className="absolute left-1 top-1/3 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-primary shadow-lg ring-1 ring-border/60 backdrop-blur transition hover:bg-primary hover:text-primary-foreground sm:h-10 sm:w-10 md:-left-5"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
@@ -325,14 +325,14 @@ function CategoriesCarousel({ categories }: { categories: any[] }) {
         type="button"
         aria-label={t("home.next")}
         onClick={() => scrollByPage(1)}
-        className="absolute -right-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-primary shadow-lg ring-1 ring-border/60 backdrop-blur transition hover:bg-primary hover:text-primary-foreground md:-right-5"
+        className="absolute right-1 top-1/3 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-primary shadow-lg ring-1 ring-border/60 backdrop-blur transition hover:bg-primary hover:text-primary-foreground sm:h-10 sm:w-10 md:-right-5"
       >
         <ChevronRight className="h-5 w-5" />
       </button>
 
       <div
         ref={scrollerRef}
-        className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 sm:gap-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {categories.map((c: any) => {
           const samples: any[] = c.samples ?? [];
@@ -343,7 +343,7 @@ function CategoriesCarousel({ categories }: { categories: any[] }) {
               key={c.id}
               to="/catalogo"
               search={{ categoria: c.slug } as any}
-              className="group w-[260px] flex-none snap-start md:w-[280px]"
+              className="group w-[70%] flex-none snap-start sm:w-[260px] md:w-[280px]"
             >
               <div className="grid grid-cols-2 grid-rows-2 gap-2">
                 {filled.slice(0, 4).map((s, i) => (
