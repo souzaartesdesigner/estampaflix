@@ -66,8 +66,8 @@ function CartPage() {
 
   return (
     <SiteLayout>
-      <div className="mx-auto w-full max-w-5xl px-4 py-10">
-        <h1 className="mb-6 font-display text-3xl font-bold">{t("cart.title")}</h1>
+      <div className="mx-auto w-full max-w-5xl px-3 py-6 sm:px-4 sm:py-10">
+        <h1 className="mb-5 font-display text-2xl font-bold sm:mb-6 sm:text-3xl">{t("cart.title")}</h1>
 
         {cart.items.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border/60 p-12 text-center">
