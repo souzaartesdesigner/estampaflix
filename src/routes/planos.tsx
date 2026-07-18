@@ -10,6 +10,7 @@ import { formatBRL } from "@/lib/format";
 import { createCheckoutSession } from "@/lib/stripe.functions";
 import { toast } from "sonner";
 import { Check, Zap, Loader2 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 const plansQuery = queryOptions({
   queryKey: ["plans"],
@@ -36,6 +37,7 @@ function Planos() {
   const { data: plans } = useSuspenseQuery(plansQuery);
   const checkoutFn = useServerFn(createCheckoutSession);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const { t } = useI18n();
 
   async function handleSubscribe(planId: string) {
     setLoadingId(planId);
@@ -47,9 +49,9 @@ function Planos() {
       }
       const { url } = await checkoutFn({ data: { planId } });
       if (url) window.location.href = url;
-      else throw new Error("URL do checkout não recebida");
+      else throw new Error(t("plans.checkoutUrlMissing"));
     } catch (err: any) {
-      toast.error(err?.message ?? "Erro ao iniciar checkout");
+      toast.error(err?.message ?? t("plans.checkoutError"));
       setLoadingId(null);
     }
   }
@@ -58,11 +60,9 @@ function Planos() {
     <SiteLayout>
       <section className="bg-gradient-hero">
         <div className="mx-auto w-full max-w-5xl px-4 py-16 text-center">
-          <Badge className="mb-4 bg-primary/15 text-primary border-primary/30">Assinatura mensal</Badge>
-          <h1 className="font-display text-4xl font-black md:text-5xl">Escolha seu plano</h1>
-          <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-            Créditos mensais para baixar as artes que quiser. Cancele quando quiser, sem burocracia.
-          </p>
+          <Badge className="mb-4 bg-primary/15 text-primary border-primary/30">{t("plans.badge")}</Badge>
+          <h1 className="font-display text-4xl font-black md:text-5xl">{t("plans.title")}</h1>
+          <p className="mx-auto mt-3 max-w-xl text-muted-foreground">{t("plans.subtitle")}</p>
         </div>
       </section>
 
@@ -76,15 +76,15 @@ function Planos() {
               }`}
             >
               {idx === 1 && (
-                <Badge className="absolute right-4 top-4 bg-gradient-brand text-brand-foreground border-0"><Zap className="mr-1 h-3 w-3" /> Popular</Badge>
+                <Badge className="absolute right-4 top-4 bg-gradient-brand text-brand-foreground border-0"><Zap className="mr-1 h-3 w-3" /> {t("plans.popular")}</Badge>
               )}
               <h2 className="font-display text-xl font-bold">{plan.name}</h2>
               <p className="mt-1 text-sm text-muted-foreground">{plan.description}</p>
               <div className="mt-4 flex items-baseline gap-1">
                 <span className="text-4xl font-black">{formatBRL(plan.price_cents)}</span>
-                <span className="text-sm text-muted-foreground">/mês</span>
+                <span className="text-sm text-muted-foreground">{t("plans.perMonth")}</span>
               </div>
-              <div className="mt-2 text-sm font-medium text-primary">{plan.monthly_credits} downloads / mês</div>
+              <div className="mt-2 text-sm font-medium text-primary">{plan.monthly_credits} {t("plans.downloadsPerMonth")}</div>
               <ul className="mt-4 flex flex-1 flex-col gap-2 text-sm">
                 {(plan.features as string[]).map((f: string) => (
                   <li key={f} className="flex items-start gap-2">
@@ -98,27 +98,27 @@ function Planos() {
                 className="mt-6 bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
               >
                 {loadingId === plan.id ? (
-                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Redirecionando…</>
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t("plans.redirecting")}</>
                 ) : (
-                  "Assinar agora"
+                  t("plans.subscribeNow")
                 )}
               </Button>
-              <p className="mt-3 text-center text-xs text-muted-foreground">Pagamento seguro via Stripe</p>
+              <p className="mt-3 text-center text-xs text-muted-foreground">{t("plans.securePayment")}</p>
             </div>
           ))}
         </div>
 
         <div className="mt-16 rounded-2xl border border-border/60 bg-card p-8">
-          <h2 className="font-display text-2xl font-bold">Como funciona</h2>
+          <h2 className="font-display text-2xl font-bold">{t("plans.howTitle")}</h2>
           <div className="mt-6 grid gap-6 md:grid-cols-3">
             {[
-              { t: "1. Escolha seu plano", d: "Selecione Lite, Pro ou Plus com base no volume mensal que você precisa." },
-              { t: "2. Baixe suas artes", d: "Cada download consome 1 crédito. Downloads repetidos da mesma arte não descontam." },
-              { t: "3. Renovação automática", d: "Todo mês seus créditos são renovados. Cancele quando quiser." },
+              { title: t("plans.step1Title"), desc: t("plans.step1Desc") },
+              { title: t("plans.step2Title"), desc: t("plans.step2Desc") },
+              { title: t("plans.step3Title"), desc: t("plans.step3Desc") },
             ].map((s) => (
-              <div key={s.t}>
-                <h3 className="font-semibold text-primary">{s.t}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{s.d}</p>
+              <div key={s.title}>
+                <h3 className="font-semibold text-primary">{s.title}</h3>
+                <p className="mt-1 text-sm text-muted-foreground">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -127,3 +127,6 @@ function Planos() {
     </SiteLayout>
   );
 }
+
+// Link import kept in case future navigation is added
+void Link;
