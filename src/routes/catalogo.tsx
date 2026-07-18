@@ -51,6 +51,7 @@ function Catalogo() {
   const search = Route.useSearch();
   const navigate = useNavigate();
   const [q, setQ] = useState(search.q ?? "");
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const { t, lang } = useI18n();
 
   const { data: categories = [] } = useQuery({
