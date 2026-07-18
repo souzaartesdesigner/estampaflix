@@ -47,7 +47,7 @@ function Home() {
   return (
     <SiteLayout>
       {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-hero">
+      <section className="relative overflow-hidden">
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div className="absolute -left-32 top-10 h-72 w-72 rounded-full bg-primary/25 blur-[120px]" />
           <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-brand-2/20 blur-[140px]" />
