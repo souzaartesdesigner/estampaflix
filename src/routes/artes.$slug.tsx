@@ -231,22 +231,11 @@ function ArtworkPage() {
         </nav>
 
         <div className="grid gap-8 lg:grid-cols-2">
-          {/* IMAGE with watermark */}
-          <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-surface">
-            <div className="relative aspect-square">
-              <img src={artwork.preview_url} alt={artwork.title} className="h-full w-full object-cover" />
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-25 mix-blend-overlay"
-                style={{ backgroundImage: "repeating-linear-gradient(-30deg, transparent 0 80px, oklch(1 0 0 / 0.25) 80px 81px)" }}
-              >
-                <span className="rotate-[-20deg] font-display text-5xl font-black tracking-widest text-white/70">ESTAMPAHUB</span>
-              </div>
-            </div>
-          </div>
+          <ArtworkGallery images={galleryImages} alt={trTitle} />
 
           {/* INFO */}
           <div className="flex flex-col gap-4">
+
             {(artwork as any).categories && (
               <Link to="/catalogo" search={{ categoria: (artwork as any).categories.slug } as any} className="text-xs uppercase tracking-wider text-primary hover:underline">
                 {(artwork as any).categories.name}
