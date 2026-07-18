@@ -332,7 +332,7 @@ function CategoriesCarousel({ categories }: { categories: any[] }) {
 
       <div
         ref={scrollerRef}
-        className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 sm:gap-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {categories.map((c: any) => {
           const samples: any[] = c.samples ?? [];
@@ -343,7 +343,7 @@ function CategoriesCarousel({ categories }: { categories: any[] }) {
               key={c.id}
               to="/catalogo"
               search={{ categoria: c.slug } as any}
-              className="group w-[260px] flex-none snap-start md:w-[280px]"
+              className="group w-[70%] flex-none snap-start sm:w-[260px] md:w-[280px]"
             >
               <div className="grid grid-cols-2 grid-rows-2 gap-2">
                 {filled.slice(0, 4).map((s, i) => (
