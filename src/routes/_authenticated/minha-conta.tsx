@@ -96,13 +96,13 @@ function Dashboard() {
 
   return (
     <SiteLayout>
-      <div className="mx-auto w-full max-w-6xl px-4 py-10">
-        <header className="mb-8">
-          <h1 className="font-display text-3xl font-bold">{t("account.title")}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t("account.greeting")} {user.email}</p>
+      <div className="mx-auto w-full max-w-6xl px-3 py-6 sm:px-4 sm:py-10">
+        <header className="mb-6 sm:mb-8">
+          <h1 className="font-display text-2xl font-bold sm:text-3xl">{t("account.title")}</h1>
+          <p className="mt-1 text-sm text-muted-foreground break-words">{t("account.greeting")} {user.email}</p>
         </header>
 
-        <div className="mb-8 grid gap-4 md:grid-cols-3">
+        <div className="mb-6 grid gap-3 sm:mb-8 sm:grid-cols-2 sm:gap-4 md:grid-cols-3">
           <StatCard icon={<CreditCard className="h-5 w-5" />} label={t("account.currentPlan")} value={sub?.plans?.name ?? t("account.none")} />
           <StatCard icon={<Sparkles className="h-5 w-5" />} label={t("account.creditsRemaining")} value={sub ? String(sub.credits_remaining) : "0"} accent />
           <StatCard icon={<Download className="h-5 w-5" />} label={t("account.downloadedCount")} value={String(downloads.length)} />
