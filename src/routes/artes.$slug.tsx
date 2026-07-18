@@ -316,7 +316,7 @@ function ArtworkPage() {
                         ) : (
                           <ShoppingCart className="mr-2 h-4 w-4" />
                         )}
-                        Comprar via Pix ({formatBRL(artwork.price_cents)})
+                        {t("product.buyPix")} ({formatBRL(artwork.price_cents)})
                       </Button>
                       <Button
                         variant="secondary"
