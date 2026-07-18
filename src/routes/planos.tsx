@@ -58,7 +58,7 @@ function Planos() {
 
   return (
     <SiteLayout>
-      <section className="bg-gradient-hero">
+      <section className="relative">
         <div className="mx-auto w-full max-w-5xl px-4 py-16 text-center">
           <Badge className="mb-4 bg-primary/15 text-primary border-primary/30">{t("plans.badge")}</Badge>
           <h1 className="font-display text-4xl font-black md:text-5xl">{t("plans.title")}</h1>
