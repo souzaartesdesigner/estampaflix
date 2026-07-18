@@ -105,13 +105,17 @@ function ArtworkForm({ open, onOpenChange, editing, categories }: any) {
     is_featured: editing?.is_featured ?? false,
     is_trending: editing?.is_trending ?? false,
     colors: (editing?.colors ?? []).join(","),
+    gallery_urls: (editing?.gallery_urls ?? []) as string[],
+    translations: (editing?.translations ?? {}) as Record<string, { title?: string; description?: string }>,
   });
   const [sourceType, setSourceType] = useState<"upload" | "external">(
     editing?.external_url ? "external" : "upload"
   );
   const [previewFile, setPreviewFile] = useState<File | null>(null);
   const [artFile, setArtFile] = useState<File | null>(null);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
+
 
   async function upload(file: File, bucket: string, folder: string) {
     const ext = file.name.split(".").pop();
