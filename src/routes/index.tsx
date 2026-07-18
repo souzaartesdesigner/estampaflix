@@ -60,17 +60,17 @@ function Home() {
             }}
           />
         </div>
-        <div className="relative mx-auto grid w-full max-w-7xl gap-12 px-4 py-24 lg:grid-cols-[1.05fr_1fr] lg:py-32">
-          <div className="flex flex-col justify-center gap-7">
+        <div className="relative mx-auto grid w-full max-w-7xl gap-8 px-4 py-14 sm:gap-12 sm:py-20 lg:grid-cols-[1.05fr_1fr] lg:py-28">
+          <div className="flex flex-col justify-center gap-5 sm:gap-7">
             <Badge className="glass-panel w-fit gap-1.5 rounded-full border-primary/30 px-3 py-1 text-primary">
               <Sparkles className="h-3 w-3" /> {t("home.badge")}
             </Badge>
-            <h1 className="font-display text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">
+            <h1 className="font-display text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
               {t("home.heroTitle1")}{" "}
               <span className="text-gradient-brand">{t("home.heroTitleHighlight")}</span>{" "}
               {t("home.heroTitle2")}
             </h1>
-            <p className="max-w-xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+            <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl">
               {t("home.heroSubtitle")}
             </p>
             <div className="mt-2 flex flex-wrap gap-3">
