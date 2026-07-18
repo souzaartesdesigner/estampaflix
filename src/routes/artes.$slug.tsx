@@ -178,11 +178,11 @@ function ArtworkPage() {
       if (row?.external_url) {
         return { url: row.external_url as string, credits: row.credits_remaining, was_new: row.was_new, kind: "external" as const };
       }
-      if (!row?.file_path) throw new Error("Arquivo indisponível.");
+      if (!row?.file_path) throw new Error(t("product.errFileUnavailable"));
       const { data: signed, error: sErr } = await supabase.storage
         .from("artwork-files")
         .createSignedUrl(row.file_path, 60, { download: true });
-      if (sErr || !signed?.signedUrl) throw sErr ?? new Error("Não foi possível gerar o link.");
+      if (sErr || !signed?.signedUrl) throw sErr ?? new Error(t("product.errFileUnavailable"));
       return { url: signed.signedUrl, credits: row.credits_remaining, was_new: row.was_new, kind: "file" as const };
     },
     onSuccess: (res) => {
@@ -198,14 +198,14 @@ function ArtworkPage() {
         a.click();
         a.remove();
       }
-      toast.success(res.was_new ? `Download liberado! Créditos restantes: ${res.credits}` : "Download liberado (você já havia baixado esta arte).");
+      toast.success(res.was_new ? `${t("product.creditsReleased")} ${res.credits}` : t("product.alreadyDownloaded"));
     },
     onError: (err: any) => {
       const msg = err.message || "";
-      if (msg.includes("no_credits")) toast.error("Você ficou sem créditos este mês. Faça upgrade do plano.");
-      else if (msg.includes("no_active_subscription")) toast.error("Assine um plano para baixar esta arte.");
-      else if (msg.includes("not_authenticated")) { toast.error("Faça login para baixar."); navigate({ to: "/auth" }); }
-      else toast.error(msg || "Erro ao baixar.");
+      if (msg.includes("no_credits")) toast.error(t("product.errNoCredits"));
+      else if (msg.includes("no_active_subscription")) toast.error(t("product.errNoSub"));
+      else if (msg.includes("not_authenticated")) { toast.error(t("product.errLogin")); navigate({ to: "/auth" }); }
+      else toast.error(msg || t("account.errDownload"));
     },
   });
 
