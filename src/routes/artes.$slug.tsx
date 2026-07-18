@@ -5,13 +5,17 @@ import { createPixOrder } from "@/lib/mercadopago.functions";
 import { SiteLayout } from "@/components/site-layout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { formatBRL, formatDate } from "@/lib/format";
+import { formatBRL } from "@/lib/format";
 import { Download, ShoppingCart, Tag as TagIcon, Palette, FileType, Loader2, Plus, Check } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ArtworkCard } from "@/components/artwork-card";
 import { FavoriteButton } from "@/components/favorite-button";
 import { useCart } from "@/hooks/use-cart";
+import { ArtworkGallery } from "@/components/artwork-gallery";
+import { ArtworkReviews } from "@/components/artwork-reviews";
+import { useI18n, tField } from "@/lib/i18n";
+
 
 function htmlToText(html: string): string {
   if (!html) return "";
