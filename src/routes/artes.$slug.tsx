@@ -17,40 +17,30 @@ import { ArtworkReviews } from "@/components/artwork-reviews";
 import { useI18n, tField } from "@/lib/i18n";
 
 
-function htmlToText(html: string): string {
+function sanitizeHtml(html: string): string {
   if (!html) return "";
-  return html
-    // literal escape sequences that came from CSV (backslash + n/r/t)
+  let s = html
+    // literal escape sequences from CSV
     .replace(/\\r\\n/g, "\n")
     .replace(/\\n/g, "\n")
     .replace(/\\r/g, "\n")
-    .replace(/\\t/g, " ")
-    // block-level tags become line breaks
-    .replace(/<\s*br\s*\/?>/gi, "\n")
-    .replace(/<\/\s*(p|div|li|h[1-6]|tr)\s*>/gi, "\n")
-    .replace(/<li[^>]*>/gi, "• ")
-    // strip all remaining tags (including <style>/<script> content)
-    .replace(/<(script|style)[^>]*>[\s\S]*?<\/\1>/gi, "")
-    .replace(/<[^>]+>/g, "")
-    // common entities
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&lt;/gi, "<")
-    .replace(/&gt;/gi, ">")
-    .replace(/&quot;/gi, '"')
-    .replace(/&#39;/gi, "'")
-    .replace(/&aacute;/gi, "á").replace(/&eacute;/gi, "é").replace(/&iacute;/gi, "í")
-    .replace(/&oacute;/gi, "ó").replace(/&uacute;/gi, "ú").replace(/&atilde;/gi, "ã")
-    .replace(/&otilde;/gi, "õ").replace(/&ccedil;/gi, "ç").replace(/&ecirc;/gi, "ê")
-    .replace(/&acirc;/gi, "â").replace(/&ocirc;/gi, "ô")
-    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(parseInt(n, 10)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCharCode(parseInt(n, 16)))
-    // collapse whitespace
-    .replace(/[ \t]+\n/g, "\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .replace(/[ \t]{2,}/g, " ")
-    .trim();
+    .replace(/\\t/g, " ");
+  // strip dangerous blocks
+  s = s.replace(/<(script|style|iframe|object|embed|link|meta)[^>]*>[\s\S]*?<\/\1>/gi, "");
+  s = s.replace(/<(script|style|iframe|object|embed|link|meta)[^>]*\/?>/gi, "");
+  // strip on* handlers and javascript: urls
+  s = s.replace(/\s+on[a-z]+\s*=\s*"[^"]*"/gi, "");
+  s = s.replace(/\s+on[a-z]+\s*=\s*'[^']*'/gi, "");
+  s = s.replace(/\s+on[a-z]+\s*=\s*[^\s>]+/gi, "");
+  s = s.replace(/(href|src)\s*=\s*"(\s*javascript:[^"]*)"/gi, '$1="#"');
+  s = s.replace(/(href|src)\s*=\s*'(\s*javascript:[^']*)'/gi, "$1='#'");
+  // if the source has no HTML tags at all, convert newlines to <br>
+  if (!/<[a-z][\s\S]*>/i.test(s)) {
+    s = s.replace(/\n/g, "<br>");
+  }
+  return s.trim();
 }
+
 
 export const Route = createFileRoute("/artes/$slug")({
   loader: async ({ params }) => {
