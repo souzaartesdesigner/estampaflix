@@ -48,38 +48,66 @@ function Home() {
     <SiteLayout>
       {/* HERO */}
       <section className="relative overflow-hidden bg-gradient-hero">
-        <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-20 lg:grid-cols-2 lg:py-28">
-          <div className="flex flex-col justify-center gap-6">
-            <Badge className="w-fit bg-primary/15 text-primary border-primary/30">
-              <Sparkles className="mr-1 h-3 w-3" /> {t("home.badge")}
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="absolute -left-32 top-10 h-72 w-72 rounded-full bg-primary/25 blur-[120px]" />
+          <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-brand-2/20 blur-[140px]" />
+          <div
+            className="absolute inset-0 opacity-[0.035]"
+            style={{
+              backgroundImage:
+                "linear-gradient(oklch(1 0 0 / 0.6) 1px, transparent 1px), linear-gradient(90deg, oklch(1 0 0 / 0.6) 1px, transparent 1px)",
+              backgroundSize: "48px 48px",
+            }}
+          />
+        </div>
+        <div className="relative mx-auto grid w-full max-w-7xl gap-12 px-4 py-24 lg:grid-cols-[1.05fr_1fr] lg:py-32">
+          <div className="flex flex-col justify-center gap-7">
+            <Badge className="glass-panel w-fit gap-1.5 rounded-full border-primary/30 px-3 py-1 text-primary">
+              <Sparkles className="h-3 w-3" /> {t("home.badge")}
             </Badge>
-            <h1 className="font-display text-4xl font-black leading-tight md:text-6xl">
-              {t("home.heroTitle1")} <span className="text-gradient-brand">{t("home.heroTitleHighlight")}</span> {t("home.heroTitle2")}
+            <h1 className="font-display text-5xl font-black leading-[1.02] tracking-tight md:text-7xl">
+              {t("home.heroTitle1")}{" "}
+              <span className="text-gradient-brand">{t("home.heroTitleHighlight")}</span>{" "}
+              {t("home.heroTitle2")}
             </h1>
-            <p className="max-w-lg text-lg text-muted-foreground">{t("home.heroSubtitle")}</p>
-            <div className="flex flex-wrap gap-3">
-              <Button asChild size="lg" className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
-                <Link to="/planos">{t("home.ctaPlans")} <ArrowRight className="ml-2 h-4 w-4" /></Link>
+            <p className="max-w-xl text-lg leading-relaxed text-muted-foreground md:text-xl">
+              {t("home.heroSubtitle")}
+            </p>
+            <div className="mt-2 flex flex-wrap gap-3">
+              <Button
+                asChild
+                size="lg"
+                className="h-12 rounded-full bg-gradient-brand px-6 text-brand-foreground shadow-brand transition-transform hover:-translate-y-0.5 hover:opacity-95"
+              >
+                <Link to="/planos">
+                  {t("home.ctaPlans")} <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
-              <Button asChild size="lg" variant="outline">
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="h-12 rounded-full border-border/60 bg-background/30 px-6 backdrop-blur transition-colors hover:border-primary/50 hover:bg-primary/10"
+              >
                 <Link to="/catalogo">{t("home.ctaCatalog")}</Link>
               </Button>
             </div>
-            <div className="mt-4 flex flex-wrap gap-6 text-sm text-muted-foreground">
+            <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
               <span className="flex items-center gap-2"><Check className="h-4 w-4 text-success" /> {t("home.check1")}</span>
               <span className="flex items-center gap-2"><Check className="h-4 w-4 text-success" /> {t("home.check2")}</span>
               <span className="flex items-center gap-2"><Check className="h-4 w-4 text-success" /> {t("home.check3")}</span>
             </div>
           </div>
           <div className="relative hidden lg:block">
-            <div className="grid grid-cols-3 gap-3">
+            <div aria-hidden className="absolute -inset-6 rounded-3xl bg-gradient-brand opacity-20 blur-3xl" />
+            <div className="relative grid grid-cols-3 gap-3">
               {data.recent.slice(0, 9).map((a, i) => (
                 <div
                   key={a.id}
-                  className={`aspect-square overflow-hidden rounded-xl border border-border/60 bg-surface ${
-                    i === 4 ? "shadow-brand" : ""
+                  className={`aspect-square overflow-hidden rounded-2xl border border-border/60 bg-surface transition-transform duration-500 hover:-translate-y-1 ${
+                    i === 4 ? "shadow-brand ring-1 ring-primary/40" : "shadow-elegant"
                   }`}
-                  style={{ transform: `translateY(${(i % 3) * 12}px)` }}
+                  style={{ transform: `translateY(${(i % 3) * 14}px)` }}
                 >
                   <img src={a.preview_url} alt={tField(a as any, "title", lang) || a.title} className="h-full w-full object-cover" loading="lazy" />
                 </div>
@@ -88,6 +116,7 @@ function Home() {
           </div>
         </div>
       </section>
+
 
       {/* CATEGORIES */}
       {data.categories.length > 0 && (
@@ -125,38 +154,58 @@ function Home() {
       )}
 
       {/* PLANS */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-16">
+      <section className="relative mx-auto w-full max-w-7xl px-4 py-20">
         <SectionTitle title={t("home.plansTitle")} subtitle={t("home.plansSubtitle")} center />
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {data.plans.map((plan, idx) => (
-            <div
-              key={plan.id}
-              className={`relative flex flex-col rounded-2xl border p-6 ${
-                idx === 1 ? "border-primary/60 bg-card shadow-brand" : "border-border/60 bg-card"
-              }`}
-            >
-              {idx === 1 && (
-                <Badge className="absolute right-4 top-4 bg-gradient-brand text-brand-foreground border-0">{t("home.popular")}</Badge>
-              )}
-              <h3 className="font-display text-xl font-bold">{plan.name}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{plan.description}</p>
-              <div className="mt-4 flex items-baseline gap-1">
-                <span className="text-4xl font-black">{formatBRL(plan.price_cents)}</span>
-                <span className="text-sm text-muted-foreground">{t("plans.perMonth")}</span>
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
+          {data.plans.map((plan, idx) => {
+            const highlighted = idx === 1;
+            return (
+              <div
+                key={plan.id}
+                className={`group relative flex flex-col overflow-hidden rounded-2xl border p-7 transition-all duration-300 hover:-translate-y-1 ${
+                  highlighted
+                    ? "border-primary/60 bg-gradient-to-b from-card to-surface shadow-brand"
+                    : "border-border/60 bg-card shadow-card hover:border-primary/40"
+                }`}
+              >
+                {highlighted && (
+                  <>
+                    <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-primary/30 blur-3xl" />
+                    <Badge className="absolute right-4 top-4 border-0 bg-gradient-brand text-brand-foreground shadow-glow">
+                      {t("home.popular")}
+                    </Badge>
+                  </>
+                )}
+                <h3 className="font-display text-xl font-bold tracking-tight">{plan.name}</h3>
+                <p className="mt-1.5 text-sm text-muted-foreground">{plan.description}</p>
+                <div className="mt-6 flex items-baseline gap-1">
+                  <span className="font-display text-5xl font-black tracking-tight">{formatBRL(plan.price_cents)}</span>
+                  <span className="text-sm text-muted-foreground">{t("plans.perMonth")}</span>
+                </div>
+                <div className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">
+                  <Sparkles className="h-3 w-3" /> {plan.monthly_credits} {t("plans.downloadsPerMonth")}
+                </div>
+                <ul className="mt-6 flex flex-1 flex-col gap-2.5 text-sm">
+                  {(plan.features as string[]).map((f: string) => (
+                    <li key={f} className="flex items-start gap-2.5 text-muted-foreground">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+                      <span className="text-foreground/90">{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  asChild
+                  className={`mt-7 h-11 rounded-full transition-transform hover:-translate-y-0.5 ${
+                    highlighted
+                      ? "bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-95"
+                      : "bg-surface-2 text-foreground hover:bg-primary hover:text-primary-foreground"
+                  }`}
+                >
+                  <Link to="/planos">{t("home.subscribe")} {plan.name}</Link>
+                </Button>
               </div>
-              <div className="mt-2 text-sm text-primary">{plan.monthly_credits} {t("plans.downloadsPerMonth")}</div>
-              <ul className="mt-4 flex flex-1 flex-col gap-2 text-sm">
-                {(plan.features as string[]).map((f: string) => (
-                  <li key={f} className="flex items-start gap-2">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" /> {f}
-                  </li>
-                ))}
-              </ul>
-              <Button asChild className="mt-6 bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
-                <Link to="/planos">{t("home.subscribe")} {plan.name}</Link>
-              </Button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
     </SiteLayout>
@@ -177,19 +226,27 @@ function SectionTitle({
   icon?: React.ReactNode;
 }) {
   return (
-    <div className={`mb-6 flex gap-4 ${center ? "flex-col items-center text-center" : "items-end justify-between"}`}>
-      <div>
-        <h2 className="flex items-center gap-2 font-display text-2xl font-bold md:text-3xl">{icon}{title}</h2>
-        {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
+    <div className={`mb-8 flex gap-4 ${center ? "flex-col items-center text-center" : "flex-col items-start sm:flex-row sm:items-end sm:justify-between"}`}>
+      <div className="min-w-0">
+        <h2 className="flex items-center gap-2.5 font-display text-3xl font-bold tracking-tight md:text-4xl">
+          {icon}
+          <span>{title}</span>
+        </h2>
+        {subtitle && <p className="mt-2 max-w-2xl text-sm text-muted-foreground md:text-base">{subtitle}</p>}
       </div>
       {cta && (
-        <Link to={cta.to} className="text-sm font-medium text-primary hover:underline">
-          {cta.label} →
+        <Link
+          to={cta.to}
+          className="group inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+        >
+          {cta.label}
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
         </Link>
       )}
     </div>
   );
 }
+
 
 function ArtGrid({ items, emptyMsg }: { items: any[]; emptyMsg: string }) {
   if (items.length === 0) {

@@ -68,24 +68,26 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-lg">
+    <header className="sticky top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-xl">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center gap-4 px-4">
-        <Link to="/" className="flex items-center gap-2 font-display text-lg font-bold">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-brand shadow-brand">
+        <Link to="/" className="flex shrink-0 items-center gap-2.5 font-display text-lg font-bold tracking-tight">
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-brand shadow-brand ring-1 ring-primary/30">
             <Sparkles className="h-4 w-4 text-brand-foreground" />
           </span>
           <span className="text-gradient-brand">EstampaHub</span>
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-0.5 lg:flex">
           {NAV.map((item) => {
             const active = item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
             return (
               <Link
                 key={item.to}
                 to={item.to}
-                className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                  active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                className={`relative rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
+                  active
+                    ? "bg-primary/10 text-foreground"
+                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                 }`}
               >
                 {item.label}
@@ -96,15 +98,16 @@ export function SiteHeader() {
 
         <form onSubmit={submitSearch} className="hidden flex-1 items-center md:flex">
           <div className="relative w-full max-w-md">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder={t("search.placeholder")}
-              className="w-full rounded-full border border-border bg-surface/60 py-2 pl-10 pr-4 text-sm outline-none placeholder:text-muted-foreground focus:border-primary"
+              className="w-full rounded-full border border-border/60 bg-surface/50 py-2.5 pl-10 pr-4 text-sm outline-none ring-0 transition-all placeholder:text-muted-foreground/70 focus:border-primary/60 focus:bg-surface focus:ring-2 focus:ring-primary/20"
             />
           </div>
         </form>
+
 
         <div className="ml-auto flex items-center gap-1">
           <LangSwitcher />
