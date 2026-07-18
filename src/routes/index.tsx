@@ -226,9 +226,9 @@ function SectionTitle({
   icon?: React.ReactNode;
 }) {
   return (
-    <div className={`mb-8 flex gap-4 ${center ? "flex-col items-center text-center" : "flex-col items-start sm:flex-row sm:items-end sm:justify-between"}`}>
+    <div className={`mb-6 flex gap-3 sm:mb-8 sm:gap-4 ${center ? "flex-col items-center text-center" : "flex-col items-start sm:flex-row sm:items-end sm:justify-between"}`}>
       <div className="min-w-0">
-        <h2 className="flex items-center gap-2.5 font-display text-3xl font-bold tracking-tight md:text-4xl">
+        <h2 className="flex items-center gap-2.5 font-display text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
           {icon}
           <span>{title}</span>
         </h2>
@@ -237,7 +237,7 @@ function SectionTitle({
       {cta && (
         <Link
           to={cta.to}
-          className="group inline-flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"
+          className="group inline-flex items-center gap-1.5 whitespace-nowrap text-sm font-medium text-primary transition-colors hover:text-primary/80"
         >
           {cta.label}
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
