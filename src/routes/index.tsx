@@ -177,7 +177,7 @@ function SectionTitle({
   icon?: React.ReactNode;
 }) {
   return (
-    <div className={`mb-6 flex items-end justify-between gap-4 ${center ? "flex-col items-center text-center" : ""}`}>
+    <div className={`mb-6 flex gap-4 ${center ? "flex-col items-center text-center" : "items-end justify-between"}`}>
       <div>
         <h2 className="flex items-center gap-2 font-display text-2xl font-bold md:text-3xl">{icon}{title}</h2>
         {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
