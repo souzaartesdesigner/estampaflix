@@ -36,7 +36,7 @@ function Blog() {
               return (
                 <Link key={p.id} to="/blog/$slug" params={{ slug: p.slug }} className="group flex flex-col overflow-hidden rounded-xl border border-border/60 bg-card transition-all hover:-translate-y-1 hover:border-primary/50">
                   <div className="aspect-video overflow-hidden bg-surface-2">
-                    {p.cover_url ? <img src={p.cover_url} alt={title} className="h-full w-full object-cover transition-transform group-hover:scale-105" /> : <div className="grid h-full place-items-center text-muted-foreground">{t("card.noImage")}</div>}
+                    {p.cover_url ? <img src={p.cover_url} alt={title} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform group-hover:scale-105" /> : <div className="grid h-full place-items-center text-muted-foreground">{t("card.noImage")}</div>}
                   </div>
                   <div className="flex flex-1 flex-col gap-2 p-5">
                     <h2 className="font-display text-lg font-bold leading-tight">{title}</h2>

@@ -32,6 +32,9 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
             src={artwork.preview_url}
             alt={title}
             loading="lazy"
+            decoding="async"
+            width={400}
+            height={400}
             className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.08]"
           />
         ) : (

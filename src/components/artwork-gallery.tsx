@@ -29,6 +29,9 @@ export function ArtworkGallery({ images, alt, showWatermark = true }: Props) {
             <img
               src={current}
               alt={alt}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
               className="h-full w-full cursor-zoom-in object-cover transition-transform duration-300 group-hover:scale-105"
               onClick={() => setZoomOpen(true)}
             />
@@ -84,7 +87,7 @@ export function ArtworkGallery({ images, alt, showWatermark = true }: Props) {
                   i === idx ? "border-primary" : "border-border/50 hover:border-border"
                 }`}
               >
-                <img src={src} alt="" className="h-full w-full object-cover" />
+                <img src={src} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
               </button>
             ))}
           </div>
@@ -182,6 +185,7 @@ function ZoomViewer({
           src={src}
           alt={alt}
           draggable={false}
+          decoding="async"
           style={{
             transform: `translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
             cursor: scale > 1 ? "grab" : "zoom-in",
