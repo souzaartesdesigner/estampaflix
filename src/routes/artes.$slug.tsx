@@ -210,6 +210,8 @@ function ArtworkPage() {
 
   const canDownload = !!sub && (sub.credits_remaining ?? 0) > 0;
   const tags: any[] = (artwork as any).artwork_tags?.map((t: any) => t.tags).filter(Boolean) ?? [];
+  const cart = useCart();
+  const inCart = cart.contains(artwork.id);
 
   return (
     <SiteLayout>
