@@ -294,16 +294,16 @@ function ArtworkPage() {
                         className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
                       >
                         <Download className="mr-2 h-4 w-4" />
-                        {downloadMut.isPending ? "Preparando..." : canDownload ? `Baixar (${sub!.credits_remaining} créditos)` : "Baixar com assinatura"}
+                        {downloadMut.isPending ? t("product.downloading") : canDownload ? `${t("product.download")} (${sub!.credits_remaining} ${t("product.creditsRemaining")})` : t("product.downloadWithPlan")}
                       </Button>
                       {!sub && (
                         <p className="text-xs text-muted-foreground">
-                          Você ainda não tem assinatura ativa. <Link to="/planos" className="text-primary underline">Ver planos</Link>.
+                          {t("product.noSubscription")} <Link to="/planos" className="text-primary underline">{t("product.seePlans")}</Link>.
                         </p>
                       )}
                       {sub && !canDownload && (
                         <p className="text-xs text-warning">
-                          Sem créditos este mês. <Link to="/planos" className="text-primary underline">Fazer upgrade</Link>.
+                          {t("product.noCredits")} <Link to="/planos" className="text-primary underline">{t("product.upgrade")}</Link>.
                         </p>
                       )}
                       <Button
