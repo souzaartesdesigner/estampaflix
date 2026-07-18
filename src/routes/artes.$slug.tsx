@@ -243,6 +243,11 @@ function ArtworkPage() {
               </Link>
             )}
             <h1 className="font-display text-3xl font-bold md:text-4xl">{artwork.title}</h1>
+            <div className="flex items-center gap-2">
+              <FavoriteButton artworkId={artwork.id} size="md" />
+              <span className="text-xs text-muted-foreground">Salvar nos favoritos</span>
+            </div>
+
 
 
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
