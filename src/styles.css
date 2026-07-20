@@ -170,6 +170,19 @@
   border: 1px solid oklch(1 0 0 / 0.08);
 }
 
+@keyframes marquee-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes marquee-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+@utility animate-marquee-left { animation: marquee-left 50s linear infinite; }
+@utility animate-marquee-right { animation: marquee-right 50s linear infinite; }
+
+
+
 a[href*="lovable.dev"],
 iframe[src*="lovable.dev"],
 div[style*="Edit with Lovable"],
