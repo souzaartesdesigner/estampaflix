@@ -49,7 +49,7 @@ function Artes() {
 
   const bulkUpdate = useMutation({
     mutationFn: async (patch: Record<string, any>) => {
-      const { error } = await supabase.from("artworks").update(patch).in("id", selected);
+      const { error } = await (supabase.from("artworks") as any).update(patch).in("id", selected);
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-artworks"] }); toast.success("Artes atualizadas"); setSelected([]); setBulkOpen(false); setBulkValue(""); setBulkAction(""); },
