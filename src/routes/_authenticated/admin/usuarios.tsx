@@ -16,44 +16,91 @@ export const Route = createFileRoute("/_authenticated/admin/usuarios")({ compone
 
 function Users() {
   const [selected, setSelected] = useState<any | null>(null);
+  const [q, setQ] = useState("");
+  const [filter, setFilter] = useState<"all" | "subscribers" | "admins" | "free">("all");
 
   const { data: rows = [] } = useQuery({
     queryKey: ["admin-users"],
     queryFn: async () => {
       const { data: profiles } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
-      const { data: subs } = await supabase.from("subscriptions").select("id,user_id,plans(name),status,credits_remaining,current_period_end");
+      const { data: subs } = await supabase.from("subscriptions").select("id,user_id,plans(name,monthly_credits),status,credits_remaining,current_period_end");
       const { data: roles } = await supabase.from("user_roles").select("user_id,role");
+      const { data: orders } = await supabase.from("orders").select("user_id,amount_cents,status");
       const byUser = new Map<string, any>();
-      (profiles ?? []).forEach((p: any) => byUser.set(p.id, { ...p, subscription: null, roles: [] }));
+      (profiles ?? []).forEach((p: any) => byUser.set(p.id, { ...p, subscription: null, roles: [], orders_count: 0, total_spent: 0 }));
       (subs ?? []).forEach((s: any) => { const u = byUser.get(s.user_id); if (u && s.status === "active") u.subscription = s; });
       (roles ?? []).forEach((r: any) => { const u = byUser.get(r.user_id); if (u) u.roles.push(r.role); });
+      (orders ?? []).forEach((o: any) => { const u = byUser.get(o.user_id); if (u && o.status === "paid") { u.orders_count += 1; u.total_spent += o.amount_cents; } });
       return Array.from(byUser.values());
     },
+  });
+
+  const filtered = rows.filter((u: any) => {
+    if (filter === "subscribers" && !u.subscription) return false;
+    if (filter === "admins" && !u.roles.includes("admin")) return false;
+    if (filter === "free" && u.subscription) return false;
+    if (!q) return true;
+    const term = q.toLowerCase();
+    return u.full_name?.toLowerCase().includes(term) || u.email?.toLowerCase().includes(term) || u.phone?.toLowerCase().includes(term);
   });
 
   return (
     <div>
       <h1 className="mb-6 font-display text-2xl font-bold">Usuários</h1>
-      <div className="overflow-hidden rounded-xl border border-border/60">
-        <table className="w-full text-sm">
+
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <div className="relative flex-1 min-w-[240px]">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar por nome, e-mail ou telefone…" className="pl-9" />
+        </div>
+        <Select value={filter} onValueChange={(v: any) => setFilter(v)}>
+          <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos ({rows.length})</SelectItem>
+            <SelectItem value="subscribers">Assinantes ativos</SelectItem>
+            <SelectItem value="admins">Administradores</SelectItem>
+            <SelectItem value="free">Sem assinatura</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="overflow-x-auto rounded-xl border border-border/60">
+        <table className="w-full min-w-[820px] text-sm">
           <thead className="bg-surface-2 text-xs uppercase text-muted-foreground">
             <tr>
-              <th className="px-4 py-3 text-left">Nome</th>
-              <th className="px-4 py-3 text-left">E-mail</th>
-              <th className="px-4 py-3 text-left">Plano</th>
+              <th className="px-4 py-3 text-left">Cliente</th>
+              <th className="px-4 py-3 text-left">Contato</th>
+              <th className="px-4 py-3 text-left">Plano / Créditos</th>
+              <th className="px-4 py-3 text-left">Pedidos</th>
+              <th className="px-4 py-3 text-left">Total gasto</th>
               <th className="px-4 py-3 text-left">Papéis</th>
-              <th className="px-4 py-3 text-left">Criado em</th>
+              <th className="px-4 py-3 text-left">Cadastro</th>
               <th className="px-4 py-3 text-right">Ações</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((u) => (
-              <tr key={u.id} className="border-t border-border/40">
-                <td className="px-4 py-3">{u.full_name ?? "—"}</td>
-                <td className="px-4 py-3 text-muted-foreground">{u.email}</td>
-                <td className="px-4 py-3">{u.subscription ? <Badge>{u.subscription.plans?.name} • {u.subscription.credits_remaining} cr.</Badge> : "—"}</td>
-                <td className="px-4 py-3 flex gap-1">{u.roles.map((r: string) => <Badge key={r} variant={r === "admin" ? "default" : "secondary"}>{r}</Badge>)}</td>
-                <td className="px-4 py-3 text-muted-foreground">{formatDate(u.created_at)}</td>
+            {filtered.length === 0 && (
+              <tr><td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">Nenhum usuário encontrado.</td></tr>
+            )}
+            {filtered.map((u: any) => (
+              <tr key={u.id} className="border-t border-border/40 hover:bg-surface-2/40">
+                <td className="px-4 py-3">
+                  <p className="font-medium">{u.full_name ?? "—"}</p>
+                  <p className="text-[11px] text-muted-foreground font-mono">{u.id.slice(0, 8)}…</p>
+                </td>
+                <td className="px-4 py-3">
+                  <p className="text-muted-foreground">{u.email}</p>
+                  {u.phone && <p className="text-xs text-muted-foreground">{u.phone}</p>}
+                </td>
+                <td className="px-4 py-3">
+                  {u.subscription
+                    ? <Badge>{u.subscription.plans?.name} • {u.subscription.credits_remaining}/{u.subscription.plans?.monthly_credits ?? 0} cr.</Badge>
+                    : <span className="text-xs text-muted-foreground">—</span>}
+                </td>
+                <td className="px-4 py-3">{u.orders_count}</td>
+                <td className="px-4 py-3">{u.total_spent > 0 ? `R$ ${(u.total_spent / 100).toFixed(2)}` : "—"}</td>
+                <td className="px-4 py-3"><div className="flex flex-wrap gap-1">{u.roles.map((r: string) => <Badge key={r} variant={r === "admin" ? "default" : "secondary"}>{r}</Badge>)}</div></td>
+                <td className="px-4 py-3 text-muted-foreground text-xs">{formatDate(u.created_at)}</td>
                 <td className="px-4 py-3 text-right">
                   <Button size="sm" variant="outline" onClick={() => setSelected(u)}>
                     <Settings2 className="mr-1 h-3 w-3" /> Gerenciar
@@ -64,6 +111,7 @@ function Users() {
           </tbody>
         </table>
       </div>
+
 
       {selected && (
         <ManageUserDialog user={selected} onClose={() => setSelected(null)} />
