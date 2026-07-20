@@ -53,11 +53,6 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
             ESTAMPAHUB
           </span>
         </div>
-        {/* Bottom gradient veil for legibility on hover */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-background/80 via-background/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        />
         <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5">
           {artwork.is_featured && (
             <Badge className="border-0 bg-gradient-brand text-brand-foreground shadow-glow">
