@@ -150,7 +150,7 @@ function ManualItemsPanel({ sectionId }: { sectionId: string }) {
     queryFn: async () => {
       const { data } = await (supabase as any)
         .from("home_section_items")
-        .select("id, sort_order, artwork:artworks(id,title,thumbnail_url)")
+        .select("id, sort_order, artwork:artworks(id,title,preview_url)")
         .eq("section_id", sectionId)
         .order("sort_order");
       return data ?? [];
@@ -159,7 +159,7 @@ function ManualItemsPanel({ sectionId }: { sectionId: string }) {
   const { data: pool = [] } = useQuery({
     queryKey: ["admin-section-pool", sectionId, search],
     queryFn: async () => {
-      let q: any = supabase.from("artworks").select("id,title,thumbnail_url").eq("is_published", true).limit(20);
+      let q: any = supabase.from("artworks").select("id,title,preview_url").eq("is_published", true).limit(20);
       if (search) q = q.ilike("title", `%${search}%`);
       return (await q).data ?? [];
     },
@@ -194,7 +194,7 @@ function ManualItemsPanel({ sectionId }: { sectionId: string }) {
         <div className="mb-3 grid gap-2 sm:grid-cols-2">
           {items.map((it: any) => (
             <div key={it.id} className="flex items-center gap-2 rounded-md border border-border/60 bg-background p-2">
-              <img src={it.artwork?.thumbnail_url} alt="" className="h-10 w-10 rounded object-cover" />
+              <img src={it.artwork?.preview_url} alt="" className="h-10 w-10 rounded object-cover" />
               <span className="flex-1 truncate text-sm">{it.artwork?.title}</span>
               <Button size="sm" variant="ghost" onClick={() => remove.mutate(it.id)}><Trash2 className="h-3 w-3" /></Button>
             </div>
@@ -206,7 +206,7 @@ function ManualItemsPanel({ sectionId }: { sectionId: string }) {
       <div className="grid gap-2 sm:grid-cols-2">
         {pool.filter((a: any) => !selectedIds.has(a.id)).map((a: any) => (
           <button key={a.id} onClick={() => add.mutate(a.id)} className="flex items-center gap-3 rounded-md border border-border/60 bg-background p-2 text-left hover:border-primary transition-colors">
-            <img src={a.thumbnail_url} alt="" className="h-10 w-10 rounded object-cover" />
+            <img src={a.preview_url} alt="" className="h-10 w-10 rounded object-cover" />
             <span className="flex-1 truncate text-sm">{a.title}</span>
             <Plus className="h-4 w-4 text-primary" />
           </button>
@@ -221,12 +221,12 @@ function FeaturedManager() {
   const [search, setSearch] = useState("");
   const { data: featured = [] } = useQuery({
     queryKey: ["admin-featured"],
-    queryFn: async () => ((await (supabase as any).from("artworks").select("id,title,thumbnail_url,slug,featured_order").eq("is_featured", true).order("featured_order")).data ?? []),
+    queryFn: async () => ((await (supabase as any).from("artworks").select("id,title,preview_url,slug,featured_order").eq("is_featured", true).order("featured_order")).data ?? []),
   });
   const { data: pool = [] } = useQuery({
     queryKey: ["admin-featured-pool", search],
     queryFn: async () => {
-      let q: any = supabase.from("artworks").select("id,title,thumbnail_url,slug,is_featured").eq("is_published", true).limit(20);
+      let q: any = supabase.from("artworks").select("id,title,preview_url,slug,is_featured").eq("is_published", true).limit(20);
       if (search) q = q.ilike("title", `%${search}%`);
       return (await q).data ?? [];
     },
@@ -280,7 +280,7 @@ function FeaturedManager() {
         <div className="grid gap-2 sm:grid-cols-2">
           {pool.filter((a: any) => !a.is_featured).map((a: any) => (
             <button key={a.id} onClick={() => toggle.mutate({ id: a.id, is_featured: true })} className="flex items-center gap-3 rounded-md border border-border/60 bg-surface-2 p-2 text-left hover:border-primary transition-colors">
-              <img src={a.thumbnail_url} alt="" className="h-10 w-10 rounded object-cover bg-background" />
+              <img src={a.preview_url} alt="" className="h-10 w-10 rounded object-cover bg-background" />
               <span className="flex-1 truncate text-sm">{a.title}</span>
               <Star className="h-4 w-4 text-primary" />
             </button>
@@ -297,7 +297,7 @@ function SortableFeatured({ a, onRemove }: any) {
   return (
     <div ref={setNodeRef} style={style} className="flex items-center gap-2 rounded-md border border-border/60 bg-surface-2 p-2">
       <button {...attributes} {...listeners} className="cursor-grab text-muted-foreground hover:text-foreground"><GripVertical className="h-4 w-4" /></button>
-      <img src={a.thumbnail_url} alt="" className="h-10 w-10 rounded object-cover bg-background" />
+      <img src={a.preview_url} alt="" className="h-10 w-10 rounded object-cover bg-background" />
       <span className="flex-1 truncate text-sm">{a.title}</span>
       <Badge variant="outline">#{a.featured_order}</Badge>
       <Button size="sm" variant="ghost" onClick={onRemove}><StarOff className="h-3 w-3" /></Button>
