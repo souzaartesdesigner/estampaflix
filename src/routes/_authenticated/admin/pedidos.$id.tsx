@@ -27,11 +27,11 @@ function OrderDetail() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("orders")
-        .select("*, artworks(id,title,slug,thumbnail_url)")
+        .select("*, artworks(id,title,slug)")
         .eq("id", id)
         .maybeSingle();
       if (error) throw error;
-      return data;
+      return data as any;
     },
   });
 
