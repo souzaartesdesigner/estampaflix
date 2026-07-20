@@ -1,81 +1,75 @@
-# Plano — 4 features de alta prioridade
+# Painel Admin — Nível Profissional
 
-Vou implementar em ordem para minimizar retrabalho (o carrinho e os cupons compartilham o mesmo checkout Pix; e-mails dependem de setup de domínio).
+Vou implementar os 6 itens da lista "Importante". Ordem otimizada para minimizar retrabalho (configurações e destaques são a base para o resto do site consumir).
 
-## 1. Carrinho de compras (Pix múltiplo)
+## 1. Configurações da loja (`/admin/configuracoes`)
 
-**DB**
-- Nova tabela `cart_items(user_id, artwork_id, created_at)` com RLS por dono.
-- `orders` ganha coluna `items jsonb` (snapshot: `[{artwork_id, title, price_cents}]`) e torna `artwork_id` nullable para pedidos multi-item. Compras antigas continuam funcionando.
-- RPC `grant_order_downloads(_order_id)`: ao pagar, cria linhas em `downloads` para cada item — chamada pelo webhook MP.
+**DB**: nova tabela `site_settings` (chave/valor JSON, singleton) com campos:
+- Identidade: nome da loja, tagline, logo_url, favicon_url, cor primária
+- Contato: email suporte, whatsapp, instagram, facebook, tiktok
+- SEO/Analytics: GA4 measurement_id, Meta Pixel ID, texto do rodapé
+- Banner topo: mensagem promocional + link + ativo
 
-**Server**
-- `createPixOrder` aceita `{ artworkId }` (compra rápida) **ou** `{ cartCheckout: true }` (soma todos os itens do carrinho do usuário). Gera 1 Pix com valor total.
-- Webhook Mercado Pago: se `items` existir, chama `grant_order_downloads`; senão mantém o fluxo atual (1 arte).
+**UI**: página com abas (Identidade / Contato / SEO / Rodapé). Upload de logo/favicon no bucket existente. Aplicado em tempo real via hook `useSiteSettings()` no header/footer/head da rota `__root`.
 
-**UI**
-- Ícone de carrinho no header com contador.
-- Botão "Adicionar ao carrinho" na página do produto (ao lado de "Comprar Individualmente" — que passa a significar "compra rápida de 1 arte").
-- Nova rota `/carrinho` com lista, remover item, total, botão "Finalizar compra via Pix".
-- Após pagamento, todos os itens aparecem em Minha Conta.
+## 2. Destaques da home editáveis
 
-## 2. Favoritos / Wishlist
+**DB**: colunas `is_featured`, `featured_order` já existem em `artworks` (verificar; se não, adicionar). Nova tabela `home_sections` com blocos configuráveis (nome, tipo `featured|popular|new|category`, ordem, ativo).
 
-**DB**
-- Tabela `favorites(user_id, artwork_id, created_at)` com RLS por dono e unique key.
+**UI**: página `/admin/home` com:
+- Lista das artes marcadas como destaque com drag-and-drop de ordem (usando `@dnd-kit/sortable`, já instalável)
+- Toggle de qual seção aparece na home e sua ordem
+- Home passa a ler dessa configuração em vez de hardcoded
 
-**UI**
-- Botão de coração no `ArtworkCard` e na página do produto (toggle otimista via TanStack Query).
-- Aba "Favoritos" em `/minha-conta` listando artes salvas.
-- Estado desconectado: clicar redireciona para `/auth`.
+## 3. Banners / carrossel promocional
 
-## 3. E-mails transacionais
+**DB**: tabela `banners(id, title, image_url, link_url, position enum('home_hero','home_middle','catalog_top'), is_active, order, starts_at, ends_at)`.
 
-Uso da infraestrutura **Lovable Emails** (nativa, sem provedor externo).
+**UI**: `/admin/banners` com CRUD + upload de imagem + preview. Componente `<PromoBanner position="…"/>` consome e exibe carrossel automático nos locais.
 
-**Setup** (se ainda não houver domínio verificado, mostro o diálogo de configuração de domínio antes).
+## 4. Log de e-mails + reenviar
 
-**Templates React Email criados**
-- `pix-payment-confirmed`: pagamento avulso confirmado + link para downloads.
-- `subscription-activated`: assinatura ativada com nº de créditos.
-- `subscription-renewed`: renovação mensal + créditos restaurados.
-- `welcome`: boas-vindas ao cadastro.
-- `support-received`: confirmação de recebimento da mensagem de suporte.
+**DB**: tabela `email_logs(id, to_email, template, subject, status enum('sent','failed','pending'), provider_message_id, error, related_order_id, related_user_id, created_at)`. Toda função que envia e-mail passa a inserir aqui.
 
-**Gatilhos**
-- Webhook Stripe → dispara `subscription-activated` / `subscription-renewed`.
-- Webhook Mercado Pago (Pix pago) → `pix-payment-confirmed`.
-- Trigger no cadastro → `welcome`.
-- Envio do formulário de suporte → `support-received`.
+**UI**:
+- Aba "E-mails enviados" na página do pedido (`/admin/pedidos/:id`) mostrando o que foi disparado
+- Botão "Reenviar" que chama server function que refaz o envio e loga
+- Página global `/admin/emails` opcional listando últimos 200 envios com filtro
 
-Todos os templates seguem o design system (neon dark + azul #007bff), corpo branco (regra da plataforma).
+Observação: a infraestrutura de envio (Lovable Emails + domínio) precisa estar configurada. Se ainda não estiver, o log fica pronto e o envio real ativa quando você conectar o domínio.
 
-## 4. Cupons de desconto
+## 5. Suporte com estado
 
-**DB**
-- Tabela `coupons(code unique, discount_type enum('percent','fixed'), discount_value int, max_uses, uses_count, expires_at, applies_to enum('subscription','pix','both'), active bool)`.
-- Tabela `coupon_redemptions(coupon_id, user_id, order_id/subscription_id)` para evitar reuso quando `once_per_user`.
-- RPC `validate_coupon(_code, _context)` retorna desconto aplicável.
+**DB**: adicionar em `support_messages` as colunas `status enum('open','in_progress','resolved','closed')`, `assigned_to uuid`, `admin_reply text`, `replied_at`, `replied_by`. Default 'open'.
 
-**Aplicação**
-- Campo "Cupom" no `/carrinho` e no card de compra individual da página do produto → recalcula total antes de gerar o Pix.
-- Campo "Cupom" na página `/planos` antes de redirecionar ao Stripe Checkout → aplica `discounts: [{ coupon }]` no Stripe (cria coupon espelho no Stripe via API na primeira validação).
+**UI**: `/admin/suporte` reformulada com:
+- Kanban / tabs por status (Abertas / Em andamento / Resolvidas)
+- Detalhe do ticket com histórico + campo de resposta que envia e-mail ao cliente
+- Atribuir a admin, mudar status, marcar resolvida
 
-**Admin**
-- Nova rota `/admin/cupons` com CRUD: criar código, %/valor fixo, validade, limite de usos, escopo (assinatura/avulso/ambos), ativar/desativar.
+## 6. Ações em massa nas artes
+
+**UI** em `/admin/artes`:
+- Checkbox em cada linha + "selecionar todos"
+- Barra de ações flutuante quando há seleção: Publicar / Despublicar / Mover para categoria / Ajustar preço (± %) / Ajustar custo em créditos / Deletar
+- Confirmação em modal antes de executar
+- Duplicar arte com 1 clique (botão individual)
 
 ## Ordem de execução
 
-1. Cupons DB + admin (base para checkout).
-2. Carrinho DB + UI + integração Pix multi-item + aplicação de cupom.
-3. Wishlist (independente, rápido).
-4. E-mails (setup domínio se preciso → templates → wiring nos webhooks).
+1. **Configurações da loja** — base para header/footer/SEO usarem
+2. **Ações em massa** (curto, alto impacto) 
+3. **Suporte com estado**
+4. **Banners** 
+5. **Destaques da home**
+6. **Log de e-mails** (por último; se não houver domínio ainda, log fica dormente)
 
 ## Notas técnicas
 
-- Compras antigas 1-a-1 permanecem funcionando durante toda a migração (retrocompatibilidade em `orders.artwork_id`).
-- Cupons Stripe: espelhados via API do Stripe apenas quando aplicados a assinaturas; para Pix são aplicados localmente no cálculo do total.
-- Todos os novos endpoints server-side validam auth via `requireSupabaseAuth`.
-- Todas as tabelas novas terão `GRANT` explícito + RLS por `auth.uid()`.
+- Todas novas tabelas: RLS com policies `has_role(auth.uid(), 'admin')` para escrita; leituras públicas só onde faz sentido (settings, banners ativos, home_sections).
+- Todos os grants `authenticated` + `service_role` (e `anon` para settings/banners/home_sections públicos).
+- `@dnd-kit/core` e `@dnd-kit/sortable` para drag-and-drop.
+- Uploads reaproveitam bucket `artwork-previews` (já público).
+- E-mails: adicionar wrapper `sendEmail()` que sempre loga em `email_logs` antes/depois do envio real.
 
-Confirma e começo pela etapa 1 (cupons + carrinho DB)?
+Posso começar pelo item 1?
