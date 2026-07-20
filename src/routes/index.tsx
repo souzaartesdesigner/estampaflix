@@ -10,6 +10,7 @@ import { CategoriesCarousel } from "@/features/home/categories-carousel";
 import { SectionTitle } from "@/features/home/section-title";
 import { ArtGrid } from "@/features/home/art-grid";
 import { PlansSection } from "@/features/home/plans-section";
+import { TestimonialsSection } from "@/features/home/testimonials-section";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 
