@@ -107,9 +107,9 @@ const PagamentoSucessoRoute = PagamentoSucessoRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
-  id: '/blog/$slug',
-  path: '/blog/$slug',
-  getParentRoute: () => rootRouteImport,
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BlogRoute,
 } as any)
 const ArtesSlugRoute = ArtesSlugRouteImport.update({
   id: '/artes/$slug',
@@ -489,7 +489,6 @@ export interface RootRouteChildren {
   SuporteRoute: typeof SuporteRoute
   TermosRoute: typeof TermosRoute
   ArtesSlugRoute: typeof ArtesSlugRoute
-  BlogSlugRoute: typeof BlogSlugRoute
   PagamentoSucessoRoute: typeof PagamentoSucessoRoute
   BlogIndexRoute: typeof BlogIndexRoute
   PagamentoPixOrderIdRoute: typeof PagamentoPixOrderIdRoute
@@ -585,10 +584,10 @@ declare module '@tanstack/react-router' {
     }
     '/blog/$slug': {
       id: '/blog/$slug'
-      path: '/blog/$slug'
+      path: '/$slug'
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BlogRoute
     }
     '/artes/$slug': {
       id: '/artes/$slug'
@@ -834,7 +833,6 @@ const rootRouteChildren: RootRouteChildren = {
   SuporteRoute: SuporteRoute,
   TermosRoute: TermosRoute,
   ArtesSlugRoute: ArtesSlugRoute,
-  BlogSlugRoute: BlogSlugRoute,
   PagamentoSucessoRoute: PagamentoSucessoRoute,
   BlogIndexRoute: BlogIndexRoute,
   PagamentoPixOrderIdRoute: PagamentoPixOrderIdRoute,
@@ -844,3 +842,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
