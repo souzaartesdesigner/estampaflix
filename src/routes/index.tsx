@@ -76,9 +76,16 @@ function Home() {
           </section>
         );
       }
-      case "manual":
-        // Manual curation not yet backed by an items table; skip silently.
-        return null;
+      case "manual": {
+        const items = data.manualItems?.[s.id] ?? [];
+        if (items.length === 0) return null;
+        return (
+          <section key={s.id} className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-8">
+            <SectionTitle title={s.title || "Seleção"} subtitle={t("home.featuredSubtitle")} />
+            <ArtGrid items={items.slice(0, s.item_limit ?? 8)} emptyMsg={t("home.emptyGrid")} />
+          </section>
+        );
+      }
       case "_categories":
         if (data.categories.length === 0) return null;
         return (
