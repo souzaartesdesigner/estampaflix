@@ -36,6 +36,7 @@ export function SiteHeader() {
 
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const cart = useCart();
+  const { data: settings } = useSiteSettings();
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
