@@ -17,6 +17,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
 const NAV = [
   { to: "/admin", label: "Visão geral", icon: LayoutDashboard, exact: true },
   { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/admin/home", label: "Home", icon: Home },
+  { to: "/admin/banners", label: "Banners", icon: ImageIcon },
 
   { to: "/admin/artes", label: "Artes", icon: Palette },
   { to: "/admin/importar", label: "Importar CSV", icon: Upload },
@@ -28,6 +30,8 @@ const NAV = [
   { to: "/admin/planos", label: "Planos", icon: CreditCard },
   { to: "/admin/blog", label: "Blog", icon: FileText },
   { to: "/admin/suporte", label: "Suporte", icon: MessageCircle },
+  { to: "/admin/emails", label: "E-mails", icon: Mail },
+  { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ];
 
 function AdminLayout() {
