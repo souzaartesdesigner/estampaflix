@@ -16,6 +16,8 @@ import { useCart } from "@/hooks/use-cart";
 import { useI18n } from "@/lib/i18n";
 import { LangSwitcher } from "./lang-switcher";
 import { NotificationsBell } from "./notifications-bell";
+import { PromoBanner } from "./promo-banner";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
 
 export function SiteHeader() {
