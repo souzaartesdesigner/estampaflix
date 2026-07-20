@@ -1,26 +1,21 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import { Search, SlidersHorizontal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site-layout";
-import { ArtworkCard } from "@/components/artwork-card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Search, SlidersHorizontal, X } from "lucide-react";
-import { useMemo, useState } from "react";
-import { z } from "zod";
-import { useI18n, tField } from "@/lib/i18n";
-
-const searchSchema = z.object({
-  q: z.string().optional(),
-  categoria: z.string().optional(),
-  tag: z.string().optional(),
-  formato: z.string().optional(),
-  cor: z.string().optional(),
-});
+import { useI18n } from "@/lib/i18n";
+import {
+  catalogSearchSchema,
+  type CatalogSearch,
+} from "@/features/catalog/catalog-constants";
+import { CatalogFilters } from "@/features/catalog/catalog-filters";
+import { CatalogResults } from "@/features/catalog/catalog-results";
 
 export const Route = createFileRoute("/catalogo")({
-  validateSearch: (search) => searchSchema.parse(search),
+  validateSearch: (search) => catalogSearchSchema.parse(search),
   head: () => ({
     meta: [
       { title: "Catálogo de artes digitais — EstampaHub" },
@@ -35,47 +30,17 @@ export const Route = createFileRoute("/catalogo")({
   component: Catalogo,
 });
 
-const FORMATS = ["png", "jpg", "psd", "zip", "rar"];
-const COLORS = [
-  { key: "color.black", value: "black" },
-  { key: "color.white", value: "white" },
-  { key: "color.red", value: "red" },
-  { key: "color.blue", value: "blue" },
-  { key: "color.green", value: "green" },
-  { key: "color.yellow", value: "yellow" },
-  { key: "color.pink", value: "pink" },
-  { key: "color.purple", value: "purple" },
-];
-
 function Catalogo() {
   const search = Route.useSearch();
   const navigate = useNavigate();
   const [q, setQ] = useState(search.q ?? "");
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => (await supabase.from("categories").select("id,slug,name,parent_id,translations").order("sort_order").order("name")).data ?? [],
   });
-  const orderedCategories = useMemo(() => {
-    const roots = categories.filter((c: any) => !c.parent_id);
-    const childrenBy: Record<string, any[]> = {};
-    for (const c of categories as any[]) {
-      if (c.parent_id) (childrenBy[c.parent_id] ??= []).push(c);
-    }
-    const out: Array<{ cat: any; depth: number }> = [];
-    for (const r of roots) {
-      out.push({ cat: r, depth: 0 });
-      for (const child of childrenBy[r.id] ?? []) out.push({ cat: child, depth: 1 });
-    }
-    for (const c of categories as any[]) {
-      if (c.parent_id && !categories.find((p: any) => p.id === c.parent_id)) {
-        out.push({ cat: c, depth: 0 });
-      }
-    }
-    return out;
-  }, [categories]);
   const { data: tags = [] } = useQuery({
     queryKey: ["tags"],
     queryFn: async () => (await supabase.from("tags").select("id,slug,name,translations").order("name")).data ?? [],
@@ -112,11 +77,9 @@ function Catalogo() {
     },
   });
 
-  function update(patch: Record<string, string | undefined>) {
+  function update(patch: Partial<CatalogSearch>) {
     navigate({ to: "/catalogo", search: { ...filters, ...patch } as any });
   }
-
-  const activeFilters = Object.entries(filters).filter(([, v]) => v);
 
   return (
     <SiteLayout>
@@ -150,131 +113,17 @@ function Catalogo() {
 
         <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
           <aside className={`${filtersOpen ? "block" : "hidden"} space-y-6 lg:block`}>
-            <FilterGroup title={t("catalog.categories")}>
-              <div className="space-y-1">
-                {orderedCategories.map(({ cat: c, depth }) => {
-                  const nm = tField(c as any, "name", lang) || c.name;
-                  return (
-                    <FilterOption
-                      key={c.id}
-                      label={depth > 0 ? `— ${nm}` : nm}
-                      active={filters.categoria === c.slug}
-                      depth={depth}
-                      onClick={() => update({ categoria: filters.categoria === c.slug ? undefined : c.slug })}
-                    />
-                  );
-                })}
-              </div>
-            </FilterGroup>
-
-            <FilterGroup title={t("catalog.format")}>
-              <div className="flex flex-wrap gap-1">
-                {FORMATS.map((f) => (
-                  <button
-                    key={f}
-                    onClick={() => update({ formato: filters.formato === f ? undefined : f })}
-                    className={`rounded-md border px-2 py-1 text-xs uppercase transition-colors ${
-                      filters.formato === f ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"
-                    }`}
-                  >
-                    {f}
-                  </button>
-                ))}
-              </div>
-            </FilterGroup>
-
-            <FilterGroup title={t("catalog.colors")}>
-              <div className="flex flex-wrap gap-2">
-                {COLORS.map((c) => (
-                  <button
-                    key={c.value}
-                    title={t(c.key)}
-                    aria-label={t(c.key)}
-                    onClick={() => update({ cor: filters.cor === c.value ? undefined : c.value })}
-                    className={`h-7 w-7 rounded-full border-2 transition-transform hover:scale-110 ${
-                      filters.cor === c.value ? "border-primary" : "border-border"
-                    }`}
-                    style={{ background: c.value }}
-                  />
-                ))}
-              </div>
-            </FilterGroup>
-
-            {tags.length > 0 && (
-              <FilterGroup title={t("catalog.tags")}>
-                <div className="flex flex-wrap gap-1">
-                  {tags.slice(0, 20).map((tt: any) => {
-                    const nm = tField(tt, "name", lang) || tt.name;
-                    return (
-                      <button
-                        key={tt.id}
-                        onClick={() => update({ tag: filters.tag === tt.slug ? undefined : tt.slug })}
-                        className={`rounded-full border px-2 py-0.5 text-xs transition-colors ${
-                          filters.tag === tt.slug ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"
-                        }`}
-                      >
-                        {nm}
-                      </button>
-                    );
-                  })}
-                </div>
-              </FilterGroup>
-            )}
+            <CatalogFilters filters={filters} categories={categories} tags={tags} onChange={update} />
           </aside>
 
-          <div>
-            {activeFilters.length > 0 && (
-              <div className="mb-4 flex flex-wrap items-center gap-2 text-sm">
-                <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
-                {activeFilters.map(([k, v]) => (
-                  <Badge key={k} variant="secondary" className="gap-1">
-                    {String(v)}
-                    <button type="button" aria-label={`${t("catalog.removeFilter")} ${String(v)}`} onClick={() => update({ [k]: undefined })}><X className="h-3 w-3" /></button>
-                  </Badge>
-                ))}
-              </div>
-            )}
-            {isLoading ? (
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="aspect-square animate-pulse rounded-xl bg-surface" />
-                ))}
-              </div>
-            ) : artworks.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-border/60 p-12 text-center text-sm text-muted-foreground">
-                {t("catalog.empty")}
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
-                {artworks.map((a: any) => <ArtworkCard key={a.id} artwork={a} />)}
-              </div>
-            )}
-          </div>
+          <CatalogResults
+            filters={filters}
+            artworks={artworks}
+            isLoading={isLoading}
+            onRemoveFilter={(k) => update({ [k]: undefined } as any)}
+          />
         </div>
       </div>
     </SiteLayout>
-  );
-}
-
-function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</h3>
-      {children}
-    </div>
-  );
-}
-
-function FilterOption({ label, active, depth = 0, onClick }: { label: string; active: boolean; depth?: number; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{ paddingLeft: `${8 + depth * 12}px` }}
-      className={`block w-full rounded-md py-1.5 pr-2 text-left text-sm transition-colors ${
-        active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"
-      }`}
-    >
-      {label}
-    </button>
   );
 }
