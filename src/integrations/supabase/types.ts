@@ -516,6 +516,45 @@ export type Database = {
           },
         ]
       }
+      home_section_items: {
+        Row: {
+          artwork_id: string
+          created_at: string
+          id: string
+          section_id: string
+          sort_order: number
+        }
+        Insert: {
+          artwork_id: string
+          created_at?: string
+          id?: string
+          section_id: string
+          sort_order?: number
+        }
+        Update: {
+          artwork_id?: string
+          created_at?: string
+          id?: string
+          section_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "home_section_items_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artworks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "home_section_items_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "home_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       home_sections: {
         Row: {
           category_id: string | null
