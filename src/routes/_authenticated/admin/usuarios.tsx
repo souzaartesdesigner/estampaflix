@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatDate } from "@/lib/format";
 import { toast } from "sonner";
-import { Settings2, Plus, Trash2, Package, CreditCard } from "lucide-react";
+import { Settings2, Plus, Trash2, Package, CreditCard, Search } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/usuarios")({ component: Users });
 
