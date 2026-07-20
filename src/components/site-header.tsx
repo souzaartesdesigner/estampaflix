@@ -16,6 +16,8 @@ import { useCart } from "@/hooks/use-cart";
 import { useI18n } from "@/lib/i18n";
 import { LangSwitcher } from "./lang-switcher";
 import { NotificationsBell } from "./notifications-bell";
+import { PromoBanner } from "./promo-banner";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
 
 export function SiteHeader() {
@@ -34,6 +36,7 @@ export function SiteHeader() {
 
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const cart = useCart();
+  const { data: settings } = useSiteSettings();
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
@@ -69,12 +72,19 @@ export function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-xl">
+      <PromoBanner />
       <div className="mx-auto flex h-14 w-full max-w-7xl items-center gap-2 px-3 sm:h-16 sm:gap-4 sm:px-4">
         <Link to="/" className="flex shrink-0 items-center gap-2 font-display text-base font-bold tracking-tight sm:gap-2.5 sm:text-lg">
-          <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-brand shadow-brand ring-1 ring-primary/30 sm:h-9 sm:w-9">
-            <Sparkles className="h-4 w-4 text-brand-foreground" />
-          </span>
-          <span className="text-gradient-brand">EstampaHub</span>
+          {settings?.logo_url ? (
+            <img src={settings.logo_url} alt={settings.site_name} className="h-9 w-auto max-w-[140px] object-contain" />
+          ) : (
+            <>
+              <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-brand shadow-brand ring-1 ring-primary/30 sm:h-9 sm:w-9">
+                <Sparkles className="h-4 w-4 text-brand-foreground" />
+              </span>
+              <span className="text-gradient-brand">{settings?.site_name ?? "EstampaHub"}</span>
+            </>
+          )}
         </Link>
 
         <nav className="hidden items-center gap-0.5 lg:flex">

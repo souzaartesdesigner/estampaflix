@@ -53,6 +53,7 @@ export type Database = {
           description: string | null
           download_count: number
           external_url: string | null
+          featured_order: number
           file_format: string | null
           file_path: string | null
           gallery_urls: string[]
@@ -76,6 +77,7 @@ export type Database = {
           description?: string | null
           download_count?: number
           external_url?: string | null
+          featured_order?: number
           file_format?: string | null
           file_path?: string | null
           gallery_urls?: string[]
@@ -99,6 +101,7 @@ export type Database = {
           description?: string | null
           download_count?: number
           external_url?: string | null
+          featured_order?: number
           file_format?: string | null
           file_path?: string | null
           gallery_urls?: string[]
@@ -123,6 +126,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      banners: {
+        Row: {
+          created_at: string
+          cta_label: string | null
+          ends_at: string | null
+          id: string
+          image_url: string
+          is_active: boolean
+          link_url: string | null
+          position: string
+          sort_order: number
+          starts_at: string | null
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cta_label?: string | null
+          ends_at?: string | null
+          id?: string
+          image_url: string
+          is_active?: boolean
+          link_url?: string | null
+          position?: string
+          sort_order?: number
+          starts_at?: string | null
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cta_label?: string | null
+          ends_at?: string | null
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          link_url?: string | null
+          position?: string
+          sort_order?: number
+          starts_at?: string | null
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       blog_posts: {
         Row: {
@@ -383,6 +434,59 @@ export type Database = {
           },
         ]
       }
+      email_logs: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          payload: Json | null
+          provider_message_id: string | null
+          related_order_id: string | null
+          related_user_id: string | null
+          sent_by: string | null
+          status: string
+          subject: string | null
+          template: string
+          to_email: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          payload?: Json | null
+          provider_message_id?: string | null
+          related_order_id?: string | null
+          related_user_id?: string | null
+          sent_by?: string | null
+          status?: string
+          subject?: string | null
+          template: string
+          to_email: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          payload?: Json | null
+          provider_message_id?: string | null
+          related_order_id?: string | null
+          related_user_id?: string | null
+          sent_by?: string | null
+          status?: string
+          subject?: string | null
+          template?: string
+          to_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_logs_related_order_id_fkey"
+            columns: ["related_order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       favorites: {
         Row: {
           artwork_id: string
@@ -408,6 +512,50 @@ export type Database = {
             columns: ["artwork_id"]
             isOneToOne: false
             referencedRelation: "artworks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      home_sections: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          item_limit: number
+          section_type: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          item_limit?: number
+          section_type: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          item_limit?: number
+          section_type?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "home_sections_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
         ]
@@ -629,6 +777,78 @@ export type Database = {
           },
         ]
       }
+      site_settings: {
+        Row: {
+          facebook_url: string | null
+          favicon_url: string | null
+          footer_text: string | null
+          ga4_measurement_id: string | null
+          google_search_console_id: string | null
+          id: boolean
+          instagram_url: string | null
+          legal_business_name: string | null
+          legal_document: string | null
+          logo_url: string | null
+          meta_pixel_id: string | null
+          primary_color: string | null
+          promo_banner_enabled: boolean
+          promo_banner_link: string | null
+          promo_banner_text: string | null
+          site_name: string
+          support_email: string | null
+          tagline: string | null
+          tiktok_url: string | null
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          facebook_url?: string | null
+          favicon_url?: string | null
+          footer_text?: string | null
+          ga4_measurement_id?: string | null
+          google_search_console_id?: string | null
+          id?: boolean
+          instagram_url?: string | null
+          legal_business_name?: string | null
+          legal_document?: string | null
+          logo_url?: string | null
+          meta_pixel_id?: string | null
+          primary_color?: string | null
+          promo_banner_enabled?: boolean
+          promo_banner_link?: string | null
+          promo_banner_text?: string | null
+          site_name?: string
+          support_email?: string | null
+          tagline?: string | null
+          tiktok_url?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          facebook_url?: string | null
+          favicon_url?: string | null
+          footer_text?: string | null
+          ga4_measurement_id?: string | null
+          google_search_console_id?: string | null
+          id?: boolean
+          instagram_url?: string | null
+          legal_business_name?: string | null
+          legal_document?: string | null
+          logo_url?: string | null
+          meta_pixel_id?: string | null
+          primary_color?: string | null
+          promo_banner_enabled?: boolean
+          promo_banner_link?: string | null
+          promo_banner_text?: string | null
+          site_name?: string
+          support_email?: string | null
+          tagline?: string | null
+          tiktok_url?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           cancel_at_period_end: boolean
@@ -682,11 +902,14 @@ export type Database = {
       support_messages: {
         Row: {
           admin_reply: string | null
+          assigned_to: string | null
           created_at: string
           email: string
           id: string
           message: string
           name: string
+          replied_at: string | null
+          replied_by: string | null
           status: Database["public"]["Enums"]["support_status"]
           subject: string
           updated_at: string
@@ -694,11 +917,14 @@ export type Database = {
         }
         Insert: {
           admin_reply?: string | null
+          assigned_to?: string | null
           created_at?: string
           email: string
           id?: string
           message: string
           name: string
+          replied_at?: string | null
+          replied_by?: string | null
           status?: Database["public"]["Enums"]["support_status"]
           subject: string
           updated_at?: string
@@ -706,11 +932,14 @@ export type Database = {
         }
         Update: {
           admin_reply?: string | null
+          assigned_to?: string | null
           created_at?: string
           email?: string
           id?: string
           message?: string
           name?: string
+          replied_at?: string | null
+          replied_by?: string | null
           status?: Database["public"]["Enums"]["support_status"]
           subject?: string
           updated_at?: string
