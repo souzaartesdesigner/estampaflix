@@ -79,8 +79,8 @@ function Configuracoes() {
                 </div>
               </Field>
               <div />
-              <ImageField label="Logo" url={form.logo_url} onFile={(f) => upload(f, "logo")} uploading={logoUploading} onClear={() => setForm((f: any) => ({ ...f, logo_url: null }))} />
-              <ImageField label="Favicon" url={form.favicon_url} onFile={(f) => upload(f, "favicon")} uploading={faviconUploading} onClear={() => setForm((f: any) => ({ ...f, favicon_url: null }))} />
+              <ImageField label="Logo" url={form.logo_url} onFile={(f: File) => upload(f, "logo")} uploading={logoUploading} onClear={() => setForm((s: any) => ({ ...s, logo_url: null }))} />
+              <ImageField label="Favicon" url={form.favicon_url} onFile={(f: File) => upload(f, "favicon")} uploading={faviconUploading} onClear={() => setForm((s: any) => ({ ...s, favicon_url: null }))} />
             </div>
           </Section>
         </TabsContent>
