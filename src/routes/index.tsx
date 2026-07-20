@@ -133,6 +133,8 @@ function Home() {
       {data.middleBanners.length > 0 && <HeroBanners banners={data.middleBanners} />}
 
       {!hasPlans && <PlansSection plans={data.plans} />}
+
+      <TestimonialsSection />
     </SiteLayout>
   );
 }
