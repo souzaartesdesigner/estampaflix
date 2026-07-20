@@ -61,6 +61,24 @@ export const homeQuery = queryOptions({
     );
     const categoryItems: Record<string, any[]> = Object.fromEntries(catItemsEntries);
 
+    // Prefetch items for "manual"-typed sections (manual curation)
+    const manualSections = sectionsList.filter((s) => s.section_type === "manual");
+    const manualItemsEntries = await Promise.all(
+      manualSections.map(async (s) => {
+        const { data: rows } = await (supabase as any)
+          .from("home_section_items")
+          .select(`sort_order, artwork:artworks(${ARTWORK_COLS}, is_published)`)
+          .eq("section_id", s.id)
+          .order("sort_order", { ascending: true })
+          .limit(s.item_limit ?? 8);
+        const items = ((rows ?? []) as any[])
+          .map((r) => r.artwork)
+          .filter((a) => a && a.is_published);
+        return [s.id, items] as const;
+      })
+    );
+    const manualItems: Record<string, any[]> = Object.fromEntries(manualItemsEntries);
+
     return {
       featured: featured ?? [],
       recent: recent ?? [],
@@ -72,6 +90,7 @@ export const homeQuery = queryOptions({
       heroBanners: (heroBanners ?? []).filter(filterWindow),
       middleBanners: (middleBanners ?? []).filter(filterWindow),
       categoryItems,
+      manualItems,
     };
   },
 });
