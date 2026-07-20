@@ -10,7 +10,7 @@ const blogQuery = queryOptions({
   queryFn: async () => (await supabase.from("blog_posts").select("id,slug,title,excerpt,cover_url,author_name,published_at,translations").eq("is_published", true).order("published_at", { ascending: false })).data ?? [],
 });
 
-export const Route = createFileRoute("/blog")({
+export const Route = createFileRoute("/blog/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(blogQuery),
   head: () => ({ meta: [{ title: "Blog — EstampaHub" }, { name: "description", content: "Dicas, tutoriais e novidades sobre sublimação e artes digitais." }] }),
   component: Blog,

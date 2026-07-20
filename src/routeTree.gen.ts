@@ -16,10 +16,10 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PlanosRouteImport } from './routes/planos'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
-import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as PagamentoSucessoRouteImport } from './routes/pagamento.sucesso'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ArtesSlugRouteImport } from './routes/artes.$slug'
@@ -82,11 +82,6 @@ const CatalogoRoute = CatalogoRouteImport.update({
   path: '/catalogo',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -101,15 +96,20 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogIndexRoute = BlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PagamentoSucessoRoute = PagamentoSucessoRouteImport.update({
   id: '/pagamento/sucesso',
   path: '/pagamento/sucesso',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => BlogRoute,
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ArtesSlugRoute = ArtesSlugRouteImport.update({
   id: '/artes/$slug',
@@ -248,7 +248,6 @@ const AuthenticatedAdminPedidosIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/blog': typeof BlogRouteWithChildren
   '/catalogo': typeof CatalogoRoute
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -262,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/artes/$slug': typeof ArtesSlugRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
+  '/blog/': typeof BlogIndexRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/artes': typeof AuthenticatedAdminArtesRoute
   '/admin/banners': typeof AuthenticatedAdminBannersRoute
@@ -286,7 +286,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/blog': typeof BlogRouteWithChildren
   '/catalogo': typeof CatalogoRoute
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -299,6 +298,7 @@ export interface FileRoutesByTo {
   '/artes/$slug': typeof ArtesSlugRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
+  '/blog': typeof BlogIndexRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/artes': typeof AuthenticatedAdminArtesRoute
   '/admin/banners': typeof AuthenticatedAdminBannersRoute
@@ -325,7 +325,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/blog': typeof BlogRouteWithChildren
   '/catalogo': typeof CatalogoRoute
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -339,6 +338,7 @@ export interface FileRoutesById {
   '/artes/$slug': typeof ArtesSlugRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
+  '/blog/': typeof BlogIndexRoute
   '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/artes': typeof AuthenticatedAdminArtesRoute
   '/_authenticated/admin/banners': typeof AuthenticatedAdminBannersRoute
@@ -365,7 +365,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
-    | '/blog'
     | '/catalogo'
     | '/planos'
     | '/privacidade'
@@ -379,6 +378,7 @@ export interface FileRouteTypes {
     | '/artes/$slug'
     | '/blog/$slug'
     | '/pagamento/sucesso'
+    | '/blog/'
     | '/admin/analytics'
     | '/admin/artes'
     | '/admin/banners'
@@ -403,7 +403,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
-    | '/blog'
     | '/catalogo'
     | '/planos'
     | '/privacidade'
@@ -416,6 +415,7 @@ export interface FileRouteTypes {
     | '/artes/$slug'
     | '/blog/$slug'
     | '/pagamento/sucesso'
+    | '/blog'
     | '/admin/analytics'
     | '/admin/artes'
     | '/admin/banners'
@@ -441,7 +441,6 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
-    | '/blog'
     | '/catalogo'
     | '/planos'
     | '/privacidade'
@@ -455,6 +454,7 @@ export interface FileRouteTypes {
     | '/artes/$slug'
     | '/blog/$slug'
     | '/pagamento/sucesso'
+    | '/blog/'
     | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/artes'
     | '/_authenticated/admin/banners'
@@ -481,7 +481,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
-  BlogRoute: typeof BlogRouteWithChildren
   CatalogoRoute: typeof CatalogoRoute
   PlanosRoute: typeof PlanosRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
@@ -490,7 +489,9 @@ export interface RootRouteChildren {
   SuporteRoute: typeof SuporteRoute
   TermosRoute: typeof TermosRoute
   ArtesSlugRoute: typeof ArtesSlugRoute
+  BlogSlugRoute: typeof BlogSlugRoute
   PagamentoSucessoRoute: typeof PagamentoSucessoRoute
+  BlogIndexRoute: typeof BlogIndexRoute
   PagamentoPixOrderIdRoute: typeof PagamentoPixOrderIdRoute
   ApiPublicMercadopagoWebhookRoute: typeof ApiPublicMercadopagoWebhookRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
@@ -547,13 +548,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CatalogoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog': {
-      id: '/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof BlogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -575,6 +569,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog/': {
+      id: '/blog/'
+      path: '/blog'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pagamento/sucesso': {
       id: '/pagamento/sucesso'
       path: '/pagamento/sucesso'
@@ -584,10 +585,10 @@ declare module '@tanstack/react-router' {
     }
     '/blog/$slug': {
       id: '/blog/$slug'
-      path: '/$slug'
+      path: '/blog/$slug'
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
-      parentRoute: typeof BlogRoute
+      parentRoute: typeof rootRouteImport
     }
     '/artes/$slug': {
       id: '/artes/$slug'
@@ -821,21 +822,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
-interface BlogRouteChildren {
-  BlogSlugRoute: typeof BlogSlugRoute
-}
-
-const BlogRouteChildren: BlogRouteChildren = {
-  BlogSlugRoute: BlogSlugRoute,
-}
-
-const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
-  BlogRoute: BlogRouteWithChildren,
   CatalogoRoute: CatalogoRoute,
   PlanosRoute: PlanosRoute,
   PrivacidadeRoute: PrivacidadeRoute,
@@ -844,7 +834,9 @@ const rootRouteChildren: RootRouteChildren = {
   SuporteRoute: SuporteRoute,
   TermosRoute: TermosRoute,
   ArtesSlugRoute: ArtesSlugRoute,
+  BlogSlugRoute: BlogSlugRoute,
   PagamentoSucessoRoute: PagamentoSucessoRoute,
+  BlogIndexRoute: BlogIndexRoute,
   PagamentoPixOrderIdRoute: PagamentoPixOrderIdRoute,
   ApiPublicMercadopagoWebhookRoute: ApiPublicMercadopagoWebhookRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
@@ -852,13 +844,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
