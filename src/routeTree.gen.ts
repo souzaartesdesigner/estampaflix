@@ -34,9 +34,13 @@ import { Route as AuthenticatedAdminTagsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminSuporteRouteImport } from './routes/_authenticated/admin/suporte'
 import { Route as AuthenticatedAdminPlanosRouteImport } from './routes/_authenticated/admin/planos'
 import { Route as AuthenticatedAdminImportarRouteImport } from './routes/_authenticated/admin/importar'
+import { Route as AuthenticatedAdminHomeRouteImport } from './routes/_authenticated/admin/home'
+import { Route as AuthenticatedAdminEmailsRouteImport } from './routes/_authenticated/admin/emails'
 import { Route as AuthenticatedAdminCuponsRouteImport } from './routes/_authenticated/admin/cupons'
+import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin/configuracoes'
 import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_authenticated/admin/categorias'
 import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin/blog'
+import { Route as AuthenticatedAdminBannersRouteImport } from './routes/_authenticated/admin/banners'
 import { Route as AuthenticatedAdminArtesRouteImport } from './routes/_authenticated/admin/artes'
 import { Route as AuthenticatedAdminAnalyticsRouteImport } from './routes/_authenticated/admin/analytics'
 import { Route as ApiPublicStripeWebhookRouteImport } from './routes/api/public/stripe/webhook'
@@ -172,10 +176,27 @@ const AuthenticatedAdminImportarRoute =
     path: '/importar',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminHomeRoute = AuthenticatedAdminHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminEmailsRoute =
+  AuthenticatedAdminEmailsRouteImport.update({
+    id: '/emails',
+    path: '/emails',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminCuponsRoute =
   AuthenticatedAdminCuponsRouteImport.update({
     id: '/cupons',
     path: '/cupons',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminConfiguracoesRoute =
+  AuthenticatedAdminConfiguracoesRouteImport.update({
+    id: '/configuracoes',
+    path: '/configuracoes',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 const AuthenticatedAdminCategoriasRoute =
@@ -189,6 +210,12 @@ const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
   path: '/blog',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminBannersRoute =
+  AuthenticatedAdminBannersRouteImport.update({
+    id: '/banners',
+    path: '/banners',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminArtesRoute = AuthenticatedAdminArtesRouteImport.update({
   id: '/artes',
   path: '/artes',
@@ -237,9 +264,13 @@ export interface FileRoutesByFullPath {
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/artes': typeof AuthenticatedAdminArtesRoute
+  '/admin/banners': typeof AuthenticatedAdminBannersRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/cupons': typeof AuthenticatedAdminCuponsRoute
+  '/admin/emails': typeof AuthenticatedAdminEmailsRoute
+  '/admin/home': typeof AuthenticatedAdminHomeRoute
   '/admin/importar': typeof AuthenticatedAdminImportarRoute
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/suporte': typeof AuthenticatedAdminSuporteRoute
@@ -270,9 +301,13 @@ export interface FileRoutesByTo {
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/artes': typeof AuthenticatedAdminArtesRoute
+  '/admin/banners': typeof AuthenticatedAdminBannersRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/cupons': typeof AuthenticatedAdminCuponsRoute
+  '/admin/emails': typeof AuthenticatedAdminEmailsRoute
+  '/admin/home': typeof AuthenticatedAdminHomeRoute
   '/admin/importar': typeof AuthenticatedAdminImportarRoute
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/suporte': typeof AuthenticatedAdminSuporteRoute
@@ -306,9 +341,13 @@ export interface FileRoutesById {
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/artes': typeof AuthenticatedAdminArtesRoute
+  '/_authenticated/admin/banners': typeof AuthenticatedAdminBannersRoute
   '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/_authenticated/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/cupons': typeof AuthenticatedAdminCuponsRoute
+  '/_authenticated/admin/emails': typeof AuthenticatedAdminEmailsRoute
+  '/_authenticated/admin/home': typeof AuthenticatedAdminHomeRoute
   '/_authenticated/admin/importar': typeof AuthenticatedAdminImportarRoute
   '/_authenticated/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/_authenticated/admin/suporte': typeof AuthenticatedAdminSuporteRoute
@@ -342,9 +381,13 @@ export interface FileRouteTypes {
     | '/pagamento/sucesso'
     | '/admin/analytics'
     | '/admin/artes'
+    | '/admin/banners'
     | '/admin/blog'
     | '/admin/categorias'
+    | '/admin/configuracoes'
     | '/admin/cupons'
+    | '/admin/emails'
+    | '/admin/home'
     | '/admin/importar'
     | '/admin/planos'
     | '/admin/suporte'
@@ -375,9 +418,13 @@ export interface FileRouteTypes {
     | '/pagamento/sucesso'
     | '/admin/analytics'
     | '/admin/artes'
+    | '/admin/banners'
     | '/admin/blog'
     | '/admin/categorias'
+    | '/admin/configuracoes'
     | '/admin/cupons'
+    | '/admin/emails'
+    | '/admin/home'
     | '/admin/importar'
     | '/admin/planos'
     | '/admin/suporte'
@@ -410,9 +457,13 @@ export interface FileRouteTypes {
     | '/pagamento/sucesso'
     | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/artes'
+    | '/_authenticated/admin/banners'
     | '/_authenticated/admin/blog'
     | '/_authenticated/admin/categorias'
+    | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/cupons'
+    | '/_authenticated/admin/emails'
+    | '/_authenticated/admin/home'
     | '/_authenticated/admin/importar'
     | '/_authenticated/admin/planos'
     | '/_authenticated/admin/suporte'
@@ -622,11 +673,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminImportarRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/home': {
+      id: '/_authenticated/admin/home'
+      path: '/home'
+      fullPath: '/admin/home'
+      preLoaderRoute: typeof AuthenticatedAdminHomeRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/emails': {
+      id: '/_authenticated/admin/emails'
+      path: '/emails'
+      fullPath: '/admin/emails'
+      preLoaderRoute: typeof AuthenticatedAdminEmailsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/cupons': {
       id: '/_authenticated/admin/cupons'
       path: '/cupons'
       fullPath: '/admin/cupons'
       preLoaderRoute: typeof AuthenticatedAdminCuponsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/configuracoes': {
+      id: '/_authenticated/admin/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/admin/configuracoes'
+      preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/categorias': {
@@ -641,6 +713,13 @@ declare module '@tanstack/react-router' {
       path: '/blog'
       fullPath: '/admin/blog'
       preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/banners': {
+      id: '/_authenticated/admin/banners'
+      path: '/banners'
+      fullPath: '/admin/banners'
+      preLoaderRoute: typeof AuthenticatedAdminBannersRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/artes': {
@@ -684,9 +763,13 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminAnalyticsRoute: typeof AuthenticatedAdminAnalyticsRoute
   AuthenticatedAdminArtesRoute: typeof AuthenticatedAdminArtesRoute
+  AuthenticatedAdminBannersRoute: typeof AuthenticatedAdminBannersRoute
   AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
   AuthenticatedAdminCategoriasRoute: typeof AuthenticatedAdminCategoriasRoute
+  AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
   AuthenticatedAdminCuponsRoute: typeof AuthenticatedAdminCuponsRoute
+  AuthenticatedAdminEmailsRoute: typeof AuthenticatedAdminEmailsRoute
+  AuthenticatedAdminHomeRoute: typeof AuthenticatedAdminHomeRoute
   AuthenticatedAdminImportarRoute: typeof AuthenticatedAdminImportarRoute
   AuthenticatedAdminPlanosRoute: typeof AuthenticatedAdminPlanosRoute
   AuthenticatedAdminSuporteRoute: typeof AuthenticatedAdminSuporteRoute
@@ -701,9 +784,13 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
   {
     AuthenticatedAdminAnalyticsRoute: AuthenticatedAdminAnalyticsRoute,
     AuthenticatedAdminArtesRoute: AuthenticatedAdminArtesRoute,
+    AuthenticatedAdminBannersRoute: AuthenticatedAdminBannersRoute,
     AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
     AuthenticatedAdminCategoriasRoute: AuthenticatedAdminCategoriasRoute,
+    AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
     AuthenticatedAdminCuponsRoute: AuthenticatedAdminCuponsRoute,
+    AuthenticatedAdminEmailsRoute: AuthenticatedAdminEmailsRoute,
+    AuthenticatedAdminHomeRoute: AuthenticatedAdminHomeRoute,
     AuthenticatedAdminImportarRoute: AuthenticatedAdminImportarRoute,
     AuthenticatedAdminPlanosRoute: AuthenticatedAdminPlanosRoute,
     AuthenticatedAdminSuporteRoute: AuthenticatedAdminSuporteRoute,
