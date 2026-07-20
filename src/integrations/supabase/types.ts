@@ -454,6 +454,7 @@ export type Database = {
           discount_cents: number
           id: string
           items: Json | null
+          order_number: number
           paid_at: string | null
           pix_expires_at: string | null
           pix_qr_code: string | null
@@ -472,6 +473,7 @@ export type Database = {
           discount_cents?: number
           id?: string
           items?: Json | null
+          order_number?: number
           paid_at?: string | null
           pix_expires_at?: string | null
           pix_qr_code?: string | null
@@ -490,6 +492,7 @@ export type Database = {
           discount_cents?: number
           id?: string
           items?: Json | null
+          order_number?: number
           paid_at?: string | null
           pix_expires_at?: string | null
           pix_qr_code?: string | null
@@ -556,6 +559,7 @@ export type Database = {
           email: string | null
           full_name: string | null
           id: string
+          phone: string | null
           status: string
           stripe_customer_id: string | null
           updated_at: string
@@ -566,6 +570,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          phone?: string | null
           status?: string
           stripe_customer_id?: string | null
           updated_at?: string
@@ -576,6 +581,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          phone?: string | null
           status?: string
           stripe_customer_id?: string | null
           updated_at?: string
