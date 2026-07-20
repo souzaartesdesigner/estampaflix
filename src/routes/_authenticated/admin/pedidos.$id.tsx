@@ -168,7 +168,7 @@ function OrderDetail() {
               <p className="font-semibold">{profile?.p?.full_name ?? "—"}</p>
               <p className="flex items-center gap-2 text-muted-foreground"><Mail className="h-3 w-3" /> {profile?.p?.email ?? "—"}</p>
               {profile?.p?.phone && <p className="flex items-center gap-2 text-muted-foreground"><Phone className="h-3 w-3" /> {profile.p.phone}</p>}
-              <p className="text-xs text-muted-foreground">Cadastrado em {formatDate(profile?.p?.created_at)}</p>
+              {profile?.p?.created_at && <p className="text-xs text-muted-foreground">Cadastrado em {formatDate(profile.p.created_at)}</p>}
               <p className="text-xs text-muted-foreground font-mono break-all">ID: {order.user_id}</p>
               <Button asChild size="sm" variant="outline" className="mt-2 w-full" onClick={() => navigate({ to: "/admin/usuarios" })}>
                 <Link to="/admin/usuarios">Ver na lista de usuários</Link>
