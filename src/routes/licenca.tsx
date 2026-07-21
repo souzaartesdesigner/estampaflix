@@ -56,7 +56,7 @@ function LicensePage() {
           <li>Utilizar as artes em serviços de <strong>impressão sob demanda (POD)</strong> em plataformas onde a arte fica hospedada como arquivo baixável (ex.: Redbubble, Teespring). Uso em POD é permitido apenas quando <em>você</em> é quem produz e envia o produto físico.</li>
         </ul>
 
-        <h2 className="mb-2 mt-8 font-django text-xl font-semibold text-foreground">4. Marcas e personagens de terceiros</h2>
+        <h2 className="mb-2 mt-8 font-display text-xl font-semibold text-foreground">4. Marcas e personagens de terceiros</h2>
         <p className="mb-4">
           Algumas artes podem conter representações de times, personagens, marcas ou celebridades. A licença concedida pelo
           Estampa Flix cobre apenas o <strong>arquivo em si</strong> — o uso comercial de marcas de terceiros é de
