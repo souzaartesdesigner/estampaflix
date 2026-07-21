@@ -2,7 +2,8 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LogOut, Menu, Search, ShieldCheck, ShoppingCart, Sparkles, User } from "lucide-react";
+import { LogOut, Menu, Search, ShieldCheck, ShoppingCart, User } from "lucide-react";
+import logoAsset from "@/assets/estampa-flix-logo.png.asset.json";
 import {
   DropdownMenu,
   DropdownMenuContent,
