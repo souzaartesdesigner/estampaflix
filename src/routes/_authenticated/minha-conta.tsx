@@ -15,7 +15,7 @@ import { ArtworkCard } from "@/components/artwork-card";
 import { useI18n, tField } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/minha-conta")({
-  head: () => ({ meta: [{ title: "Minha conta — EstampaHub" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Minha conta — Estampa Flix" }, { name: "robots", content: "noindex" }] }),
   component: Dashboard,
 });
 

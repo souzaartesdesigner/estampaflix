@@ -1,18 +1,19 @@
 import { Link } from "@tanstack/react-router";
-import { Sparkles } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { useSiteSettings } from "@/hooks/use-site-settings";
+import logoAsset from "@/assets/estampa-flix-logo.png.asset.json";
 
 export function SiteFooter() {
   const { t } = useI18n();
+  const { data: settings } = useSiteSettings();
+  const logoUrl = settings?.logo_url || logoAsset.url;
+  const siteName = settings?.site_name || "Estampa Flix";
   return (
     <footer className="mt-24 border-t border-border/50 bg-surface/40">
       <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-12 md:grid-cols-4">
         <div>
           <div className="flex items-center gap-2 font-display text-lg font-bold">
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-brand shadow-brand">
-              <Sparkles className="h-4 w-4 text-brand-foreground" />
-            </span>
-            <span className="text-gradient-brand">EstampaHub</span>
+            <img src={logoUrl} alt={siteName} className="h-10 w-auto max-w-[180px] object-contain" />
           </div>
           <p className="mt-3 text-sm text-muted-foreground">{t("footer.tagline")}</p>
         </div>
@@ -42,7 +43,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-border/40 py-4 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} EstampaHub — {t("footer.copyright")}
+        © {new Date().getFullYear()} Estampa Flix — {t("footer.copyright")}
       </div>
     </footer>
   );

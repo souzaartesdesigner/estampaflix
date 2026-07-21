@@ -16,10 +16,10 @@ export const Route = createFileRoute("/blog/$slug")({
     const url = `https://loving-code-flow.lovable.app/blog/${params.slug}`;
     const description = (loaderData.excerpt && loaderData.excerpt.length >= 50)
       ? loaderData.excerpt
-      : `${loaderData.title} — leia no blog da EstampaHub dicas, tutoriais e novidades sobre sublimação, DTF e produção criativa.`;
+      : `${loaderData.title} — leia no blog da Estampa Flix dicas, tutoriais e novidades sobre sublimação, DTF e produção criativa.`;
     return {
       meta: [
-        { title: `${loaderData.title} — EstampaHub Blog` },
+        { title: `${loaderData.title} — Estampa Flix Blog` },
         { name: "description", content: description },
         { property: "og:title", content: loaderData.title },
         { property: "og:description", content: description.slice(0, 200) },
@@ -39,7 +39,7 @@ export const Route = createFileRoute("/blog/$slug")({
             datePublished: loaderData.published_at,
             dateModified: loaderData.updated_at,
             author: { "@type": "Person", name: loaderData.author_name },
-            publisher: { "@type": "Organization", name: "EstampaHub" },
+            publisher: { "@type": "Organization", name: "Estampa Flix" },
             mainEntityOfPage: url,
             description,
           }),

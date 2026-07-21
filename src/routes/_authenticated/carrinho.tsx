@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_authenticated/carrinho")({
-  head: () => ({ meta: [{ title: "Carrinho — EstampaHub" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Carrinho — Estampa Flix" }, { name: "robots", content: "noindex" }] }),
   component: CartPage,
 });
 

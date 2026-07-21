@@ -12,7 +12,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/pagamento/pix/$orderId")({
   head: () => ({
     meta: [
-      { title: "Pagamento Pix — EstampaHub" },
+      { title: "Pagamento Pix — Estampa Flix" },
       { name: "robots", content: "noindex" },
     ],
   }),

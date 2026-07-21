@@ -4,11 +4,11 @@ import { SiteLayout } from "@/components/site-layout";
 export const Route = createFileRoute("/termos")({
   head: () => ({
     meta: [
-      { title: "Termos de Uso — EstampaHub" },
-      { name: "description", content: "Termos e condições de uso do EstampaHub: licença de uso, assinaturas, compras avulsas e responsabilidades." },
+      { title: "Termos de Uso — Estampa Flix" },
+      { name: "description", content: "Termos e condições de uso do Estampa Flix: licença de uso, assinaturas, compras avulsas e responsabilidades." },
       { name: "robots", content: "index,follow" },
-      { property: "og:title", content: "Termos de Uso — EstampaHub" },
-      { property: "og:description", content: "Termos e condições para uso das artes digitais do EstampaHub." },
+      { property: "og:title", content: "Termos de Uso — Estampa Flix" },
+      { property: "og:description", content: "Termos e condições para uso das artes digitais do Estampa Flix." },
       { property: "og:type", content: "article" },
     ],
   }),
@@ -23,12 +23,12 @@ function TermsPage() {
         <p className="mb-8 text-xs">Última atualização: {new Date().toLocaleDateString("pt-BR")}</p>
 
         <p className="mb-6">
-          Ao criar uma conta ou realizar uma compra no EstampaHub, você concorda integralmente com estes Termos de Uso.
+          Ao criar uma conta ou realizar uma compra no Estampa Flix, você concorda integralmente com estes Termos de Uso.
           Leia com atenção antes de utilizar o serviço.
         </p>
 
         <h2 className="mb-2 mt-8 font-display text-xl font-semibold text-foreground">1. Sobre o serviço</h2>
-        <p className="mb-4">O EstampaHub é um marketplace de artes digitais em alta resolução para sublimação, DTF, camisetas e outros produtos personalizados. Oferecemos: (a) assinaturas mensais com créditos para downloads; (b) compras avulsas via Pix.</p>
+        <p className="mb-4">O Estampa Flix é um marketplace de artes digitais em alta resolução para sublimação, DTF, camisetas e outros produtos personalizados. Oferecemos: (a) assinaturas mensais com créditos para downloads; (b) compras avulsas via Pix.</p>
 
         <h2 className="mb-2 mt-8 font-display text-xl font-semibold text-foreground">2. Cadastro</h2>
         <p className="mb-4">Você deve ter 18 anos ou mais e fornecer informações verdadeiras. Você é responsável pela segurança da sua senha e por todas as atividades realizadas na sua conta.</p>
@@ -61,13 +61,13 @@ function TermsPage() {
         <p className="mb-4">Devido à natureza digital do produto (entrega instantânea de arquivo), <strong>não oferecemos reembolso</strong> após o download da arte. Assinaturas podem ser canceladas a qualquer momento, mas não há reembolso proporcional do período em andamento. Casos excepcionais serão avaliados individualmente pelo suporte.</p>
 
         <h2 className="mb-2 mt-8 font-display text-xl font-semibold text-foreground">7. Propriedade intelectual</h2>
-        <p className="mb-4">Todas as artes disponibilizadas são de propriedade do EstampaHub ou licenciadas de forma legítima. Marcas, logos e nomes de terceiros eventualmente representados são de responsabilidade do comprador quanto ao uso comercial adequado.</p>
+        <p className="mb-4">Todas as artes disponibilizadas são de propriedade do Estampa Flix ou licenciadas de forma legítima. Marcas, logos e nomes de terceiros eventualmente representados são de responsabilidade do comprador quanto ao uso comercial adequado.</p>
 
         <h2 className="mb-2 mt-8 font-display text-xl font-semibold text-foreground">8. Suspensão e encerramento</h2>
         <p className="mb-4">Podemos suspender ou encerrar contas que violem estes Termos, incluindo (mas não limitado a) redistribuição indevida de arquivos, fraudes em pagamentos ou uso abusivo do serviço, sem direito a reembolso.</p>
 
         <h2 className="mb-2 mt-8 font-display text-xl font-semibold text-foreground">9. Limitação de responsabilidade</h2>
-        <p className="mb-4">O EstampaHub não se responsabiliza por resultados comerciais obtidos pelo usuário com as artes, nem por indisponibilidades pontuais decorrentes de manutenção ou fatores externos (provedores de pagamento, infraestrutura de terceiros).</p>
+        <p className="mb-4">O Estampa Flix não se responsabiliza por resultados comerciais obtidos pelo usuário com as artes, nem por indisponibilidades pontuais decorrentes de manutenção ou fatores externos (provedores de pagamento, infraestrutura de terceiros).</p>
 
         <h2 className="mb-2 mt-8 font-display text-xl font-semibold text-foreground">10. Alterações</h2>
         <p className="mb-4">Podemos atualizar estes Termos a qualquer momento. Alterações relevantes serão comunicadas por e-mail. O uso contínuo do serviço após a alteração constitui aceitação dos novos termos.</p>

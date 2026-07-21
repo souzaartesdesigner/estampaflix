@@ -80,12 +80,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "EstampaHub — Artes digitais para sublimação, DTF e estamparia" },
+      { title: "Estampa Flix — Artes digitais para sublimação, DTF e estamparia" },
       { name: "description", content: "Milhares de artes digitais em alta qualidade (300 DPI) para sublimação, DTF e estamparia. Assine e baixe novas estampas todo mês com licença comercial." },
-      { property: "og:title", content: "EstampaHub — Artes digitais para sublimação" },
+      { property: "og:title", content: "Estampa Flix — Artes digitais para sublimação" },
       { property: "og:description", content: "Milhares de artes digitais em alta qualidade para sublimação, DTF e produção criativa. Assine e baixe todo mês." },
       { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "EstampaHub" },
+      { property: "og:site_name", content: "Estampa Flix" },
       { property: "og:url", content: "https://loving-code-flow.lovable.app/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -107,12 +107,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "@graph": [
             {
               "@type": "Organization",
-              name: "EstampaHub",
+              name: "Estampa Flix",
               url: "https://loving-code-flow.lovable.app/",
             },
             {
               "@type": "WebSite",
-              name: "EstampaHub",
+              name: "Estampa Flix",
               url: "https://loving-code-flow.lovable.app/",
               potentialAction: {
                 "@type": "SearchAction",

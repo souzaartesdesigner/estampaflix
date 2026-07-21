@@ -4,10 +4,10 @@ import { SiteLayout } from "@/components/site-layout";
 export const Route = createFileRoute("/privacidade")({
   head: () => ({
     meta: [
-      { title: "Política de Privacidade — EstampaHub" },
-      { name: "description", content: "Saiba como o EstampaHub coleta, utiliza e protege seus dados pessoais em conformidade com a LGPD." },
+      { title: "Política de Privacidade — Estampa Flix" },
+      { name: "description", content: "Saiba como o Estampa Flix coleta, utiliza e protege seus dados pessoais em conformidade com a LGPD." },
       { name: "robots", content: "index,follow" },
-      { property: "og:title", content: "Política de Privacidade — EstampaHub" },
+      { property: "og:title", content: "Política de Privacidade — Estampa Flix" },
       { property: "og:description", content: "Como tratamos seus dados pessoais em conformidade com a LGPD." },
       { property: "og:type", content: "article" },
     ],
@@ -23,7 +23,7 @@ function PrivacyPage() {
         <p className="mb-8 text-xs">Última atualização: {new Date().toLocaleDateString("pt-BR")}</p>
 
         <p className="mb-6">
-          O EstampaHub ("nós", "nosso") respeita a sua privacidade e está comprometido em proteger seus dados pessoais.
+          O Estampa Flix ("nós", "nosso") respeita a sua privacidade e está comprometido em proteger seus dados pessoais.
           Esta política descreve como coletamos, utilizamos e protegemos suas informações, em conformidade com a Lei Geral
           de Proteção de Dados (LGPD - Lei nº 13.709/2018).
         </p>

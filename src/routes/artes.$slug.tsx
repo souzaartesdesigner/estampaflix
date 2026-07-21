@@ -35,11 +35,11 @@ export const Route = createFileRoute("/artes/$slug")({
       .replace(/<[^>]+>/g, " ")
       .replace(/\s+/g, " ")
       .trim();
-    const fallback = `${loaderData.title} — arte digital em alta resolução (300 DPI) para sublimação, DTF e estamparia, com licença comercial na EstampaHub.`;
+    const fallback = `${loaderData.title} — arte digital em alta resolução (300 DPI) para sublimação, DTF e estamparia, com licença comercial na Estampa Flix.`;
     const description = plainDesc.length >= 50 ? plainDesc.slice(0, 300) : fallback;
     return {
       meta: [
-        { title: `${loaderData.title} — EstampaHub` },
+        { title: `${loaderData.title} — Estampa Flix` },
         { name: "description", content: description },
         { property: "og:title", content: loaderData.title },
         { property: "og:description", content: description.slice(0, 200) },
@@ -59,7 +59,7 @@ export const Route = createFileRoute("/artes/$slug")({
             image: loaderData.preview_url,
             description,
             sku: loaderData.slug,
-            brand: { "@type": "Brand", name: "EstampaHub" },
+            brand: { "@type": "Brand", name: "Estampa Flix" },
             offers: {
               "@type": "Offer",
               url,

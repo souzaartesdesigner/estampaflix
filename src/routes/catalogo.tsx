@@ -18,9 +18,9 @@ export const Route = createFileRoute("/catalogo")({
   validateSearch: (search) => catalogSearchSchema.parse(search),
   head: () => ({
     meta: [
-      { title: "Catálogo de artes digitais — EstampaHub" },
+      { title: "Catálogo de artes digitais — Estampa Flix" },
       { name: "description", content: "Explore milhares de artes digitais prontas para sublimação, DTF e estamparia. Filtre por categoria, formato, cor e tags e baixe em alta resolução." },
-      { property: "og:title", content: "Catálogo de artes digitais — EstampaHub" },
+      { property: "og:title", content: "Catálogo de artes digitais — Estampa Flix" },
       { property: "og:description", content: "Milhares de artes em 300 DPI para sublimação e DTF. Filtre por categoria, formato, cor e tags e baixe com licença comercial." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://loving-code-flow.lovable.app/catalogo" },

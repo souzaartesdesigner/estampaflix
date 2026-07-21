@@ -12,7 +12,7 @@ const blogQuery = queryOptions({
 
 export const Route = createFileRoute("/blog/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(blogQuery),
-  head: () => ({ meta: [{ title: "Blog — EstampaHub" }, { name: "description", content: "Dicas, tutoriais e novidades sobre sublimação e artes digitais." }] }),
+  head: () => ({ meta: [{ title: "Blog — Estampa Flix" }, { name: "description", content: "Dicas, tutoriais e novidades sobre sublimação e artes digitais." }] }),
   component: Blog,
 });
 
