@@ -24,7 +24,7 @@ export type SiteSettings = {
 };
 
 const DEFAULTS: SiteSettings = {
-  site_name: "EstampaHub",
+  site_name: "Estampa Flix",
   tagline: "Artes digitais para sublimação",
   logo_url: null,
   favicon_url: null,

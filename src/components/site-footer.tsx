@@ -12,7 +12,7 @@ export function SiteFooter() {
             <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-brand shadow-brand">
               <Sparkles className="h-4 w-4 text-brand-foreground" />
             </span>
-            <span className="text-gradient-brand">EstampaHub</span>
+            <span className="text-gradient-brand">Estampa Flix</span>
           </div>
           <p className="mt-3 text-sm text-muted-foreground">{t("footer.tagline")}</p>
         </div>
@@ -42,7 +42,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-border/40 py-4 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} EstampaHub — {t("footer.copyright")}
+        © {new Date().getFullYear()} Estampa Flix — {t("footer.copyright")}
       </div>
     </footer>
   );

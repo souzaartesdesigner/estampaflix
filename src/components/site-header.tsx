@@ -82,7 +82,7 @@ export function SiteHeader() {
               <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-brand shadow-brand ring-1 ring-primary/30 sm:h-9 sm:w-9">
                 <Sparkles className="h-4 w-4 text-brand-foreground" />
               </span>
-              <span className="text-gradient-brand">{settings?.site_name ?? "EstampaHub"}</span>
+              <span className="text-gradient-brand">{settings?.site_name ?? "Estampa Flix"}</span>
             </>
           )}
         </Link>

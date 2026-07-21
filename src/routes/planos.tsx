@@ -21,9 +21,9 @@ export const Route = createFileRoute("/planos")({
   loader: ({ context }) => context.queryClient.ensureQueryData(plansQuery),
   head: () => ({
     meta: [
-      { title: "Planos de assinatura — EstampaHub" },
-      { name: "description", content: "Compare os planos Lite, Pro e Plus da EstampaHub: créditos mensais para baixar artes digitais em alta resolução, licença comercial e cancelamento a qualquer momento." },
-      { property: "og:title", content: "Planos de assinatura — EstampaHub" },
+      { title: "Planos de assinatura — Estampa Flix" },
+      { name: "description", content: "Compare os planos Lite, Pro e Plus da Estampa Flix: créditos mensais para baixar artes digitais em alta resolução, licença comercial e cancelamento a qualquer momento." },
+      { property: "og:title", content: "Planos de assinatura — Estampa Flix" },
       { property: "og:description", content: "Escolha entre Lite, Pro e Plus. Créditos mensais para baixar artes em 300 DPI com licença comercial. Cancele quando quiser." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://loving-code-flow.lovable.app/planos" },

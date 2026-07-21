@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/pagamento/sucesso")({
-  head: () => ({ meta: [{ title: "Pagamento confirmado — EstampaHub" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Pagamento confirmado — Estampa Flix" }, { name: "robots", content: "noindex" }] }),
   component: Sucesso,
 });
 

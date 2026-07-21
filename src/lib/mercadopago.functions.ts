@@ -64,7 +64,7 @@ export const createPixOrder = createServerFn({ method: "POST" })
           slug: r.artworks.slug,
         }));
       if (items.length === 0) throw new Error("empty_cart");
-      description = items.length === 1 ? items[0].title : `${items.length} artes EstampaHub`;
+      description = items.length === 1 ? items[0].title : `${items.length} artes Estampa Flix`;
     } else {
       const { data: art } = await supabase
         .from("artworks")

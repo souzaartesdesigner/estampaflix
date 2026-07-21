@@ -15,10 +15,10 @@ import { useI18n } from "@/lib/i18n";
 export const Route = createFileRoute("/suporte")({
   head: () => ({
     meta: [
-      { title: "Suporte e perguntas frequentes — EstampaHub" },
-      { name: "description", content: "Tire dúvidas sobre assinatura, créditos, licença comercial e downloads na EstampaHub, ou fale com nosso time pelo formulário de contato." },
-      { property: "og:title", content: "Suporte — EstampaHub" },
-      { property: "og:description", content: "Perguntas frequentes sobre planos, créditos e licença de uso, além de canal direto com a equipe da EstampaHub." },
+      { title: "Suporte e perguntas frequentes — Estampa Flix" },
+      { name: "description", content: "Tire dúvidas sobre assinatura, créditos, licença comercial e downloads na Estampa Flix, ou fale com nosso time pelo formulário de contato." },
+      { property: "og:title", content: "Suporte — Estampa Flix" },
+      { property: "og:description", content: "Perguntas frequentes sobre planos, créditos e licença de uso, além de canal direto com a equipe da Estampa Flix." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://loving-code-flow.lovable.app/suporte" },
     ],
