@@ -117,6 +117,7 @@ function Dashboard() {
             <TabsTrigger value="favorites" className="shrink-0">{t("account.tabFavorites")}</TabsTrigger>
             <TabsTrigger value="subscription" className="shrink-0">{t("account.tabSubscription")}</TabsTrigger>
             <TabsTrigger value="orders" className="shrink-0">{t("account.tabOrders")}</TabsTrigger>
+            <TabsTrigger value="profile" className="shrink-0">Perfil</TabsTrigger>
           </TabsList>
 
           <TabsContent value="downloads" className="mt-6">
