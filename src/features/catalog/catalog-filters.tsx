@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { tField, useI18n } from "@/lib/i18n";
-import { COLORS, FORMATS, type CatalogSearch } from "./catalog-constants";
+import { FORMATS, type CatalogSearch } from "./catalog-constants";
 import { FilterGroup, FilterOption } from "./filter-group";
 
 type Props = {
@@ -67,22 +67,6 @@ export function CatalogFilters({ filters, categories, tags, onChange }: Props) {
         </div>
       </FilterGroup>
 
-      <FilterGroup title={t("catalog.colors")}>
-        <div className="flex flex-wrap gap-2">
-          {COLORS.map((c) => (
-            <button
-              key={c.value}
-              title={t(c.key)}
-              aria-label={t(c.key)}
-              onClick={() => onChange({ cor: filters.cor === c.value ? undefined : c.value })}
-              className={`h-7 w-7 rounded-full border-2 transition-transform hover:scale-110 ${
-                filters.cor === c.value ? "border-primary" : "border-border"
-              }`}
-              style={{ background: c.value }}
-            />
-          ))}
-        </div>
-      </FilterGroup>
 
       {tags.length > 0 && (
         <FilterGroup title={t("catalog.tags")}>
