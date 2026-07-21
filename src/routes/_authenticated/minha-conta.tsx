@@ -247,20 +247,13 @@ function ProfilePanel({ userId, email }: { userId: string; email: string }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [changingPw, setChangingPw] = useState(false);
 
-  // sync form with loaded profile
-  useState(() => {
+  useEffect(() => {
     if (profile) {
       setFullName(profile.full_name ?? "");
       setPhone(profile.phone ?? "");
       setAvatarUrl(profile.avatar_url ?? null);
     }
-  });
-  // Re-sync when profile arrives
-  if (profile && fullName === "" && phone === "" && avatarUrl === null && (profile.full_name || profile.phone || profile.avatar_url)) {
-    setFullName(profile.full_name ?? "");
-    setPhone(profile.phone ?? "");
-    setAvatarUrl(profile.avatar_url ?? null);
-  }
+  }, [profile]);
 
   async function saveProfile(e: React.FormEvent) {
     e.preventDefault();
