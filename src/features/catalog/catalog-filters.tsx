@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { tField, useI18n } from "@/lib/i18n";
-import { COLORS, FORMATS, type CatalogSearch } from "./catalog-constants";
+import { FORMATS, type CatalogSearch } from "./catalog-constants";
 import { FilterGroup, FilterOption } from "./filter-group";
 
 type Props = {
