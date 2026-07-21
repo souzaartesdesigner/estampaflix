@@ -75,16 +75,11 @@ export function SiteHeader() {
       <PromoBanner />
       <div className="mx-auto flex h-14 w-full max-w-7xl items-center gap-2 px-3 sm:h-16 sm:gap-4 sm:px-4">
         <Link to="/" className="flex shrink-0 items-center gap-2 font-display text-base font-bold tracking-tight sm:gap-2.5 sm:text-lg">
-          {settings?.logo_url ? (
-            <img src={settings.logo_url} alt={settings.site_name} className="h-9 w-auto max-w-[140px] object-contain" />
-          ) : (
-            <>
-              <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-brand shadow-brand ring-1 ring-primary/30 sm:h-9 sm:w-9">
-                <Sparkles className="h-4 w-4 text-brand-foreground" />
-              </span>
-              <span className="text-gradient-brand">{settings?.site_name ?? "Estampa Flix"}</span>
-            </>
-          )}
+          <img
+            src={settings?.logo_url || logoAsset.url}
+            alt={settings?.site_name ?? "Estampa Flix"}
+            className="h-9 w-auto max-w-[160px] object-contain sm:h-10 sm:max-w-[180px]"
+          />
         </Link>
 
         <nav className="hidden items-center gap-0.5 lg:flex">
