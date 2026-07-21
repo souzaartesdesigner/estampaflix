@@ -28,26 +28,33 @@ export const Route = createFileRoute("/api/public/mercadopago/webhook")({
           const secret = process.env.MERCADO_PAGO_WEBHOOK_SECRET;
           const sigHeader = request.headers.get("x-signature");
           const requestId = request.headers.get("x-request-id") ?? "";
-          if (secret && sigHeader) {
-            const parts = Object.fromEntries(
-              sigHeader.split(",").map((p) => {
-                const [k, v] = p.trim().split("=");
-                return [k, v];
-              }),
-            );
-            const ts = parts.ts;
-            const v1 = parts.v1;
-            if (ts && v1) {
-              const manifest = `id:${paymentId};request-id:${requestId};ts:${ts};`;
-              const expected = createHmac("sha256", secret).update(manifest).digest("hex");
-              const a = Buffer.from(expected);
-              const b = Buffer.from(v1);
-              if (a.length !== b.length || !timingSafeEqual(a, b)) {
-                console.warn("MP webhook signature mismatch");
-                return new Response("invalid signature", { status: 401 });
-              }
-            }
+          if (!secret) {
+            console.error("MP webhook rejected: MERCADO_PAGO_WEBHOOK_SECRET not configured");
+            return new Response("misconfigured", { status: 401 });
           }
+          if (!sigHeader) {
+            return new Response("missing signature", { status: 401 });
+          }
+          const parts = Object.fromEntries(
+            sigHeader.split(",").map((p) => {
+              const [k, v] = p.trim().split("=");
+              return [k, v];
+            }),
+          );
+          const ts = parts.ts;
+          const v1 = parts.v1;
+          if (!ts || !v1) {
+            return new Response("invalid signature", { status: 401 });
+          }
+          const manifest = `id:${paymentId};request-id:${requestId};ts:${ts};`;
+          const expected = createHmac("sha256", secret).update(manifest).digest("hex");
+          const a = Buffer.from(expected);
+          const b = Buffer.from(v1);
+          if (a.length !== b.length || !timingSafeEqual(a, b)) {
+            console.warn("MP webhook signature mismatch");
+            return new Response("invalid signature", { status: 401 });
+          }
+
 
           const token = process.env.MERCADO_PAGO_ACCESS_TOKEN;
           if (!token) return new Response("misconfigured", { status: 500 });
