@@ -38,7 +38,7 @@ export function SiteFooter() {
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
             <li><Link to="/termos" className="hover:text-foreground">{t("footer.terms")}</Link></li>
             <li><Link to="/privacidade" className="hover:text-foreground">{t("footer.privacy")}</Link></li>
-            <li>{t("footer.license")}</li>
+            <li><Link to="/licenca" className="hover:text-foreground">{t("footer.license")}</Link></li>
           </ul>
         </div>
       </div>
