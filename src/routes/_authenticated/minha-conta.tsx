@@ -4,15 +4,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatBRL, formatDate } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { createBillingPortalSession } from "@/lib/stripe.functions";
 import { toast } from "sonner";
-import { Download, CreditCard, Package, Sparkles, Loader2 } from "lucide-react";
+import { Download, CreditCard, Package, Sparkles, Loader2, User as UserIcon, Camera, KeyRound } from "lucide-react";
 import { ArtworkCard } from "@/components/artwork-card";
 import { useI18n, tField } from "@/lib/i18n";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_authenticated/minha-conta")({
   head: () => ({ meta: [{ title: "Minha conta — Estampa Flix" }, { name: "robots", content: "noindex" }] }),
@@ -114,6 +117,7 @@ function Dashboard() {
             <TabsTrigger value="favorites" className="shrink-0">{t("account.tabFavorites")}</TabsTrigger>
             <TabsTrigger value="subscription" className="shrink-0">{t("account.tabSubscription")}</TabsTrigger>
             <TabsTrigger value="orders" className="shrink-0">{t("account.tabOrders")}</TabsTrigger>
+            <TabsTrigger value="profile" className="shrink-0">Perfil</TabsTrigger>
           </TabsList>
 
           <TabsContent value="downloads" className="mt-6">
@@ -216,9 +220,198 @@ function Dashboard() {
               </div>
             )}
           </TabsContent>
+          <TabsContent value="profile" className="mt-6">
+            <ProfilePanel userId={user.id} email={user.email} />
+          </TabsContent>
         </Tabs>
       </div>
     </SiteLayout>
+  );
+}
+
+function ProfilePanel({ userId, email }: { userId: string; email: string }) {
+  const qc = useQueryClient();
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ["profile", userId],
+    queryFn: async () =>
+      (await supabase.from("profiles").select("full_name, phone, avatar_url").eq("id", userId).maybeSingle()).data,
+  });
+
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [changingPw, setChangingPw] = useState(false);
+
+  useEffect(() => {
+    if (profile) {
+      setFullName(profile.full_name ?? "");
+      setPhone(profile.phone ?? "");
+      setAvatarUrl(profile.avatar_url ?? null);
+    }
+  }, [profile]);
+
+  async function saveProfile(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving(true);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ full_name: fullName.trim() || null, phone: phone.trim() || null, avatar_url: avatarUrl })
+      .eq("id", userId);
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    toast.success("Informações atualizadas!");
+    qc.invalidateQueries({ queryKey: ["profile", userId] });
+  }
+
+  async function uploadAvatar(file: File) {
+    if (!file.type.startsWith("image/")) return toast.error("Selecione uma imagem");
+    if (file.size > 3 * 1024 * 1024) return toast.error("Imagem muito grande (máx 3MB)");
+    setUploading(true);
+    const ext = file.name.split(".").pop() ?? "jpg";
+    const path = `avatars/${userId}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("artwork-previews").upload(path, file, { upsert: true });
+    if (error) {
+      setUploading(false);
+      return toast.error(error.message);
+    }
+    const { data } = supabase.storage.from("artwork-previews").getPublicUrl(path);
+    setAvatarUrl(data.publicUrl);
+    setUploading(false);
+    toast.success("Foto enviada — clique em Salvar para confirmar");
+  }
+
+  async function changePassword(e: React.FormEvent) {
+    e.preventDefault();
+    if (newPassword.length < 6) return toast.error("Senha deve ter pelo menos 6 caracteres");
+    if (newPassword !== confirmPassword) return toast.error("As senhas não coincidem");
+    setChangingPw(true);
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    setChangingPw(false);
+    if (error) return toast.error(error.message);
+    setNewPassword("");
+    setConfirmPassword("");
+    toast.success("Senha alterada com sucesso!");
+  }
+
+  if (isLoading) return <div className="rounded-xl border border-border/60 bg-card p-6 text-sm text-muted-foreground">Carregando...</div>;
+
+  const initials = (fullName || email || "?").split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
+
+  return (
+    <div className="grid gap-6 md:grid-cols-2">
+      <form onSubmit={saveProfile} className="rounded-2xl border border-border/60 bg-card p-6">
+        <div className="mb-5 flex items-center gap-2">
+          <UserIcon className="h-5 w-5 text-primary" />
+          <h2 className="font-display text-lg font-bold">Minhas informações</h2>
+        </div>
+
+        <div className="mb-5 flex items-center gap-4">
+          <div className="relative">
+            <div className="grid h-20 w-20 place-items-center overflow-hidden rounded-full border border-border/60 bg-surface-2">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="Foto de perfil" className="h-full w-full object-cover" />
+              ) : (
+                <span className="font-display text-xl font-bold text-muted-foreground">{initials}</span>
+              )}
+            </div>
+            <label className="absolute -bottom-1 -right-1 grid h-8 w-8 cursor-pointer place-items-center rounded-full bg-primary text-primary-foreground shadow-brand hover:opacity-90">
+              {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => e.target.files?.[0] && uploadAvatar(e.target.files[0])}
+                disabled={uploading}
+              />
+            </label>
+          </div>
+          <div className="text-xs text-muted-foreground">
+            <p>Foto de perfil</p>
+            <p>JPG ou PNG até 3MB</p>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <div className="grid gap-1.5">
+            <Label htmlFor="email-ro">E-mail</Label>
+            <Input id="email-ro" value={email} disabled readOnly />
+            <p className="text-xs text-muted-foreground">O e-mail não pode ser alterado por aqui.</p>
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="fullname">Nome completo</Label>
+            <Input id="fullname" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Seu nome" />
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="phone">Telefone / WhatsApp</Label>
+            <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="(11) 91234-5678" />
+          </div>
+        </div>
+
+        <Button type="submit" disabled={saving} className="mt-5 w-full bg-gradient-brand text-brand-foreground shadow-brand">
+          {saving ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Salvando...</> : "Salvar alterações"}
+        </Button>
+      </form>
+
+      <form onSubmit={changePassword} className="rounded-2xl border border-border/60 bg-card p-6">
+        <div className="mb-5 flex items-center gap-2">
+          <KeyRound className="h-5 w-5 text-primary" />
+          <h2 className="font-display text-lg font-bold">Alterar senha</h2>
+        </div>
+        <div className="space-y-3">
+          <div className="grid gap-1.5">
+            <Label htmlFor="np">Nova senha</Label>
+            <Input id="np" type="password" minLength={6} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="Mínimo 6 caracteres" />
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="cp">Confirmar nova senha</Label>
+            <Input id="cp" type="password" minLength={6} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Repita a senha" />
+          </div>
+          <PasswordStrength password={newPassword} />
+        </div>
+        <Button type="submit" disabled={changingPw || !newPassword} className="mt-5 w-full" variant="outline">
+          {changingPw ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Alterando...</> : "Alterar senha"}
+        </Button>
+        <p className="mt-3 text-xs text-muted-foreground">
+          Esqueceu sua senha atual? <Link to="/auth" className="text-primary hover:underline">Use "Esqueci minha senha"</Link> na tela de login.
+        </p>
+      </form>
+    </div>
+  );
+}
+
+function PasswordStrength({ password }: { password: string }) {
+  const checks = [
+    { label: "Pelo menos 6 caracteres", ok: password.length >= 6 },
+    { label: "Uma letra maiúscula", ok: /[A-Z]/.test(password) },
+    { label: "Um número", ok: /[0-9]/.test(password) },
+    { label: "Um símbolo (!@#...)", ok: /[^A-Za-z0-9]/.test(password) },
+  ];
+  const score = checks.filter((c) => c.ok).length;
+  const label = score <= 1 ? "Fraca" : score === 2 ? "Razoável" : score === 3 ? "Boa" : "Forte";
+  const color = score <= 1 ? "bg-destructive" : score === 2 ? "bg-yellow-500" : score === 3 ? "bg-primary" : "bg-green-500";
+  if (!password) return null;
+  return (
+    <div className="rounded-lg border border-border/60 bg-surface-2 p-3">
+      <div className="mb-2 flex items-center justify-between text-xs">
+        <span className="text-muted-foreground">Força da senha</span>
+        <span className="font-medium">{label}</span>
+      </div>
+      <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-border">
+        <div className={`h-full transition-all ${color}`} style={{ width: `${(score / 4) * 100}%` }} />
+      </div>
+      <ul className="space-y-1 text-xs">
+        {checks.map((c) => (
+          <li key={c.label} className={c.ok ? "text-green-500" : "text-muted-foreground"}>
+            {c.ok ? "✓" : "○"} {c.label}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
