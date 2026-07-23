@@ -40,19 +40,6 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
         ) : (
           <div className="grid h-full place-items-center text-muted-foreground">{t("card.noImage")}</div>
         )}
-        {/* Subtle diagonal watermark, quieter than before */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.12] mix-blend-overlay"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(-30deg, transparent 0 80px, oklch(1 0 0 / 0.2) 80px 81px)",
-          }}
-        >
-          <span className="rotate-[-20deg] font-display text-xl font-black tracking-[0.2em] text-white/60">
-            ESTAMPAHUB
-          </span>
-        </div>
         <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5">
           {artwork.is_featured && (
             <Badge className="border-0 bg-gradient-brand text-brand-foreground shadow-glow">

@@ -35,15 +35,6 @@ export function ArtworkGallery({ images, alt, showWatermark = true }: Props) {
               className="h-full w-full cursor-zoom-in object-cover transition-transform duration-300 group-hover:scale-105"
               onClick={() => setZoomOpen(true)}
             />
-            {showWatermark && (
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-25 mix-blend-overlay"
-                style={{ backgroundImage: "repeating-linear-gradient(-30deg, transparent 0 80px, oklch(1 0 0 / 0.25) 80px 81px)" }}
-              >
-                <span className="rotate-[-20deg] font-display text-5xl font-black tracking-widest text-white/70">ESTAMPAHUB</span>
-              </div>
-            )}
             <button
               type="button"
               onClick={() => setZoomOpen(true)}
