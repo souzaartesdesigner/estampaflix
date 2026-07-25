@@ -99,11 +99,11 @@ export function CartUpsell() {
                   <Button
                     size="sm"
                     variant={inCart ? "secondary" : "outline"}
-                    disabled={inCart || cart.isAdding}
+                    disabled={inCart || cart.adding}
                     onClick={() => cart.add(a.id)}
                     className="h-7 px-2 text-xs"
                   >
-                    {cart.isAdding ? (
+                    {cart.adding ? (
                       <Loader2 className="h-3.5 w-3.5 animate-spin" />
                     ) : inCart ? (
                       <Check className="h-3.5 w-3.5" />
