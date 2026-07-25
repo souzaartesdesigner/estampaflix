@@ -461,6 +461,8 @@ const DICTS: Record<Lang, Dict> = {
     "cart.notAuth": "Please sign in",
     "cart.couponApplied": "Coupon applied:",
     "cart.errPix": "Error generating Pix",
+    "cart.upsellTitle": "Customers also bought",
+    "cart.upsellAdd": "Add",
 
     "account.title": "My account",
     "account.greeting": "Hi,",
@@ -709,6 +711,8 @@ const DICTS: Record<Lang, Dict> = {
     "cart.notAuth": "Inicia sesión",
     "cart.couponApplied": "Cupón aplicado:",
     "cart.errPix": "Error al generar Pix",
+    "cart.upsellTitle": "Clientes también compraron",
+    "cart.upsellAdd": "Agregar",
 
     "account.title": "Mi cuenta",
     "account.greeting": "Hola,",

@@ -11,6 +11,7 @@ import { formatBRL } from "@/lib/format";
 import { Trash2, ShoppingBag, Loader2, Tag, X, Check } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
+import { CartUpsell } from "@/features/cart/cart-upsell";
 
 export const Route = createFileRoute("/_authenticated/carrinho")({
   head: () => ({ meta: [{ title: "Carrinho — Estampa Flix" }, { name: "robots", content: "noindex" }] }),
@@ -137,6 +138,12 @@ function CartPage() {
               </Button>
               <Button variant="ghost" className="mt-2 w-full" onClick={() => cart.clear()}>{t("cart.clear")}</Button>
             </aside>
+          </div>
+        )}
+
+        {cart.items.length > 0 && (
+          <div className="mt-8">
+            <CartUpsell />
           </div>
         )}
       </div>
