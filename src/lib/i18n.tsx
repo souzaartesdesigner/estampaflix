@@ -207,6 +207,8 @@ const DICTS: Record<Lang, Dict> = {
     "cart.notAuth": "Faça login",
     "cart.couponApplied": "Cupom aplicado:",
     "cart.errPix": "Erro ao gerar Pix",
+    "cart.upsellTitle": "Clientes também levaram",
+    "cart.upsellAdd": "Adicionar",
 
     // Minha conta
     "account.title": "Minha conta",
