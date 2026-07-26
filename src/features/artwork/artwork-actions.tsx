@@ -149,12 +149,12 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
                 {downloadMut.isPending ? t("product.downloading") : canDownload ? `${t("product.download")} (${sub!.credits_remaining} ${t("product.creditsRemaining")})` : t("product.downloadWithPlan")}
               </Button>
               {!sub && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-center text-xs text-muted-foreground">
                   {t("product.noSubscription")} <Link to="/planos" className="text-primary underline">{t("product.seePlans")}</Link>.
                 </p>
               )}
               {sub && !canDownload && (
-                <p className="text-xs text-warning">
+                <p className="text-center text-xs text-warning">
                   {t("product.noCredits")} <Link to="/planos" className="text-primary underline">{t("product.upgrade")}</Link>.
                 </p>
               )}
@@ -171,6 +171,7 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
                 variant="outline"
                 onClick={() => (inCart ? navigate({ to: "/carrinho" }) : cart.add(artwork.id))}
                 disabled={cart.adding}
+                className="border-border/60 bg-cart text-foreground hover:bg-cart-hover hover:text-foreground"
               >
                 {inCart ? (
                   <><Check className="mr-2 h-4 w-4" /> {t("product.inCart")}</>
