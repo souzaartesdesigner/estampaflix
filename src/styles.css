@@ -40,6 +40,8 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
+  --color-cart: var(--cart);
+  --color-cart-hover: var(--cart-hover);
   --font-sans: "Manrope", system-ui, -apple-system, sans-serif;
   --font-display: "Sora", "Manrope", system-ui, sans-serif;
 }
