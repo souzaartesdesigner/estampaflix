@@ -152,11 +152,18 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
             </div>
             <div className="grid gap-2">
               <Label>Formato</Label>
-              <Select value={form.file_format} onValueChange={(v) => setForm({ ...form, file_format: v })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{["png", "jpg", "psd", "zip", "rar"].map((f) => <SelectItem key={f} value={f}>{f.toUpperCase()}</SelectItem>)}</SelectContent>
-              </Select>
+              <Input
+                list="artwork-format-options"
+                value={form.file_format}
+                onChange={(e) => setForm({ ...form, file_format: e.target.value })}
+                placeholder="cdr, psd, ai, png..."
+              />
+              <datalist id="artwork-format-options">
+                {knownFormats.map((f: string) => <option key={f} value={f} />)}
+              </datalist>
+              <p className="text-xs text-muted-foreground">Digite qualquer formato ou escolha um já usado.</p>
             </div>
+
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div className="grid gap-2"><Label>Preço (centavos)</Label><Input type="number" value={form.price_cents} onChange={(e) => setForm({ ...form, price_cents: e.target.value })} required /></div>
