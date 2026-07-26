@@ -10,7 +10,10 @@ export const Route = createFileRoute("/privacidade")({
       { property: "og:title", content: "Política de Privacidade — Estampa Flix" },
       { property: "og:description", content: "Como tratamos seus dados pessoais em conformidade com a LGPD." },
       { property: "og:type", content: "article" },
+      { property: "og:url", content: "https://estampaflix.com/privacidade" },
+      { name: "keywords", content: "política de privacidade, LGPD, proteção de dados" },
     ],
+    links: [{ rel: "canonical", href: "https://estampaflix.com/privacidade" }],
   }),
   component: PrivacyPage,
 });
