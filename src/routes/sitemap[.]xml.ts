@@ -21,7 +21,21 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/planos", changefreq: "weekly", priority: "0.8" },
           { path: "/blog", changefreq: "weekly", priority: "0.7" },
           { path: "/suporte", changefreq: "monthly", priority: "0.5" },
+          { path: "/licenca", changefreq: "yearly", priority: "0.4" },
+          { path: "/termos", changefreq: "yearly", priority: "0.3" },
+          { path: "/privacidade", changefreq: "yearly", priority: "0.3" },
         ];
+
+        try {
+          const { data: categories } = await supabase.from("categories").select("slug");
+          for (const c of categories ?? []) {
+            entries.push({
+              path: `/catalogo?categoria=${encodeURIComponent(c.slug)}`,
+              changefreq: "weekly",
+              priority: "0.7",
+            });
+          }
+        } catch {}
 
         try {
           const { data: artworks } = await supabase
@@ -42,6 +56,7 @@ export const Route = createFileRoute("/sitemap.xml")({
             entries.push({ path: `/blog/${p.slug}`, lastmod: p.updated_at, changefreq: "monthly", priority: "0.6" });
           }
         } catch {}
+
 
         const urls = entries.map((e) =>
           [
