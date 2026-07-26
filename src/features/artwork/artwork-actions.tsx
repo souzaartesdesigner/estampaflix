@@ -1,9 +1,18 @@
+import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, Download, Loader2, Plus, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { createPixOrder } from "@/lib/mercadopago.functions";
 import { useCart } from "@/hooks/use-cart";
@@ -24,6 +33,7 @@ export function ArtworkActions({ artwork, session, sub, owned }: Props) {
   const cart = useCart();
   const inCart = cart.contains(artwork.id);
   const canDownload = !!sub && (sub.credits_remaining ?? 0) > 0;
+  const [planDialogOpen, setPlanDialogOpen] = useState(false);
 
   const downloadMut = useMutation({
     mutationFn: async () => {
@@ -105,8 +115,8 @@ export function ArtworkActions({ artwork, session, sub, owned }: Props) {
           ) : (
             <>
               <Button
-                onClick={() => downloadMut.mutate()}
-                disabled={downloadMut.isPending || !canDownload}
+                onClick={() => (canDownload ? downloadMut.mutate() : setPlanDialogOpen(true))}
+                disabled={downloadMut.isPending}
                 className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
               >
                 <Download className="mr-2 h-4 w-4" />
@@ -145,6 +155,25 @@ export function ArtworkActions({ artwork, session, sub, owned }: Props) {
           </Button>
         )}
       </div>
+
+      <Dialog open={planDialogOpen} onOpenChange={setPlanDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{sub ? t("product.creditsDialogTitle") : t("product.planDialogTitle")}</DialogTitle>
+            <DialogDescription>
+              {sub ? t("product.creditsDialogBody") : t("product.planDialogBody")}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button variant="ghost" onClick={() => setPlanDialogOpen(false)}>
+              {t("product.close")}
+            </Button>
+            <Button asChild className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
+              <Link to="/planos">{sub ? t("product.upgrade") : t("product.seePlans")}</Link>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
