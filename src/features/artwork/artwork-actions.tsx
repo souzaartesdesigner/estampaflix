@@ -177,14 +177,6 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
         )}
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-md border border-success/40 bg-success/10 px-3 py-1.5 text-xs font-medium text-success">
-          <Zap className="h-3.5 w-3.5" /> {t("product.instantDelivery")}
-        </span>
-        <span className="inline-flex items-center gap-1.5 rounded-md border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">
-          <PixIcon /> {t("product.pixPayment")}
-        </span>
-      </div>
 
       <div className="mt-5 border-t border-border/60 pt-4">
         <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
