@@ -17,8 +17,8 @@ export function ArtworkInfo({ artwork, title, session, sub, owned }: Props) {
   const { t, lang } = useI18n();
   const tags: any[] = artwork.artwork_tags?.map((at: any) => at.tags).filter(Boolean) ?? [];
 
-  return (
-    <div className="flex flex-col gap-4">
+  const header = (
+    <div className="flex flex-col gap-3">
       {artwork.categories && (
         <Link
           to="/catalogo"
@@ -28,7 +28,7 @@ export function ArtworkInfo({ artwork, title, session, sub, owned }: Props) {
           {tField(artwork.categories, "name", lang) || artwork.categories.name}
         </Link>
       )}
-      <h1 className="font-display text-2xl font-bold sm:text-3xl md:text-4xl">{title}</h1>
+      <h1 className="font-display text-2xl font-bold sm:text-3xl">{title}</h1>
       <div className="flex items-center gap-2">
         <FavoriteButton artworkId={artwork.id} size="md" />
         <span className="text-xs text-muted-foreground">{t("product.saveFavorites")}</span>
@@ -45,8 +45,12 @@ export function ArtworkInfo({ artwork, title, session, sub, owned }: Props) {
           <span className="flex items-center gap-1"><Download className="h-4 w-4" /> + de {artwork.download_count} {t("product.downloads")}</span>
         )}
       </div>
+    </div>
+  );
 
-      <ArtworkActions artwork={artwork} session={session} sub={sub} owned={owned} />
+  return (
+    <div className="flex flex-col gap-4">
+      <ArtworkActions artwork={artwork} session={session} sub={sub} owned={owned} header={header} />
 
       {tags.length > 0 && (
         <div>

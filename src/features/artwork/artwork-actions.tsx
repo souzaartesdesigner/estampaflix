@@ -24,9 +24,10 @@ type Props = {
   session: any;
   sub: any;
   owned: boolean | undefined;
+  header?: React.ReactNode;
 };
 
-export function ArtworkActions({ artwork, session, sub, owned }: Props) {
+export function ArtworkActions({ artwork, session, sub, owned, header }: Props) {
   const { t } = useI18n();
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -108,7 +109,18 @@ export function ArtworkActions({ artwork, session, sub, owned }: Props) {
 
   return (
     <div className="rounded-xl border border-border/60 bg-card p-5">
-      <div className="flex items-baseline gap-2">
+      <div className="mb-4 flex flex-wrap gap-1.5">
+        <span className="inline-flex items-center gap-1 rounded border border-success/40 bg-success/10 px-2 py-0.5 text-[10px] font-medium text-success">
+          <Zap className="h-3 w-3" /> {t("product.instantDelivery")}
+        </span>
+        <span className="inline-flex items-center gap-1 rounded border border-primary/40 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+          <PixIcon /> {t("product.pixPayment")}
+        </span>
+      </div>
+
+      {header}
+
+      <div className="mt-4 flex items-baseline gap-2">
         <span className="text-3xl font-black">{formatBRL(artwork.price_cents)}</span>
       </div>
 
@@ -176,14 +188,6 @@ export function ArtworkActions({ artwork, session, sub, owned }: Props) {
         )}
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        <span className="inline-flex items-center gap-1.5 rounded-md border border-success/40 bg-success/10 px-3 py-1.5 text-xs font-medium text-success">
-          <Zap className="h-3.5 w-3.5" /> {t("product.instantDelivery")}
-        </span>
-        <span className="inline-flex items-center gap-1.5 rounded-md border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">
-          <PixIcon /> {t("product.pixPayment")}
-        </span>
-      </div>
 
       <div className="mt-5 border-t border-border/60 pt-4">
         <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -306,8 +310,10 @@ function FacebookIcon() {
 
 function PixIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
-      <path d="M12 2.5 21.5 12 12 21.5 2.5 12 12 2.5Zm0 3.3L5.8 12l6.2 6.2 6.2-6.2L12 5.8Z"/>
+    <svg viewBox="0 0 512 512" className="h-3 w-3" fill="currentColor" aria-hidden="true">
+      <path d="M242.4 292.5 189.6 345.3c-9.9 9.9-23.1 15.4-37.1 15.4h-10.4l66.7 66.7c20.8 20.8 54.6 20.8 75.4 0l67-67h-6.4c-14 0-27.2-5.5-37.1-15.4l-52.9-52.9c-3.4-3.4-9-3.4-12.4 0z"/>
+      <path d="M152.5 151.3c14 0 27.2 5.5 37.1 15.4l52.9 52.9c3.4 3.4 9 3.4 12.4 0l52.8-52.8c9.9-9.9 23.1-15.4 37.1-15.4h6.4l-67-67c-20.8-20.8-54.6-20.8-75.4 0l-66.7 66.7h10.4z"/>
+      <path d="m427.1 218.3-40.4-40.4c-.9.4-1.9.6-2.9.6h-29.1c-9.7 0-19.1 3.9-26 10.8l-52.8 52.8c-4.4 4.4-10.2 6.6-16 6.6s-11.6-2.2-16-6.6L191 189.2c-6.9-6.9-16.3-10.8-26-10.8h-35.8c-1 0-1.9-.2-2.7-.5l-40.6 40.6c-20.8 20.8-20.8 54.6 0 75.4l40.6 40.6c.8-.3 1.8-.5 2.7-.5H165c9.7 0 19.1-3.9 26-10.8l52.9-52.9c8.5-8.5 23.4-8.5 31.9 0l52.8 52.8c6.9 6.9 16.3 10.8 26 10.8h29.1c1 0 2 .2 2.9.6l40.4-40.4c20.9-20.8 20.9-54.6.1-75.4z"/>
     </svg>
   );
 }
