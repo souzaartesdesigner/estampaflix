@@ -992,18 +992,21 @@ export type Database = {
           id: string
           name: string
           slug: string
+          translations: Json
         }
         Insert: {
           created_at?: string
           id?: string
           name: string
           slug: string
+          translations?: Json
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
           slug?: string
+          translations?: Json
         }
         Relationships: []
       }
