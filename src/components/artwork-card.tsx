@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { formatBRL } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
-import { Download } from "lucide-react";
+
 import { FavoriteButton } from "./favorite-button";
 import { useI18n, tField } from "@/lib/i18n";
 
@@ -61,9 +61,6 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
         <div className="mt-auto flex items-center justify-between pt-2 text-xs">
           <span className="font-display text-base font-bold tracking-tight text-foreground">
             {formatBRL(artwork.price_cents)}
-          </span>
-          <span className="inline-flex items-center gap-1 text-muted-foreground">
-            <Download className="h-3 w-3" /> {artwork.download_count ?? 0}
           </span>
         </div>
       </div>
