@@ -27,6 +27,7 @@ export const Route = createFileRoute("/planos")({
       { property: "og:description", content: "Escolha entre Lite, Pro e Plus. Créditos mensais para baixar artes em 300 DPI com licença comercial. Cancele quando quiser." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://estampaflix.com/planos" },
+      { name: "keywords", content: "assinatura de artes para sublimação, planos de estampas digitais, pacote de artes DTF, créditos para download" },
     ],
     links: [{ rel: "canonical", href: "https://estampaflix.com/planos" }],
   }),

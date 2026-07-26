@@ -21,6 +21,7 @@ export const Route = createFileRoute("/suporte")({
       { property: "og:description", content: "Perguntas frequentes sobre planos, créditos e licença de uso, além de canal direto com a equipe da Estampa Flix." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://estampaflix.com/suporte" },
+      { name: "keywords", content: "suporte estampa flix, dúvidas sublimação, como baixar artes, licença comercial" },
     ],
     links: [{ rel: "canonical", href: "https://estampaflix.com/suporte" }],
     scripts: [

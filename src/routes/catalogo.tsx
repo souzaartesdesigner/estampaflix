@@ -24,6 +24,7 @@ export const Route = createFileRoute("/catalogo")({
       { property: "og:description", content: "Milhares de artes em 300 DPI para sublimação e DTF. Filtre por categoria, formato, cor e tags e baixe com licença comercial." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://estampaflix.com/catalogo" },
+      { name: "keywords", content: "catálogo de artes para sublimação, estampas digitais prontas, arte para camiseta, arte para caneca, artes DTF, download de estampas" },
     ],
     links: [{ rel: "canonical", href: "https://estampaflix.com/catalogo" }],
   }),
