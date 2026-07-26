@@ -12,7 +12,28 @@ const blogQuery = queryOptions({
 
 export const Route = createFileRoute("/blog/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(blogQuery),
-  head: () => ({ meta: [{ title: "Blog — Estampa Flix" }, { name: "description", content: "Dicas, tutoriais e novidades sobre sublimação e artes digitais." }] }),
+  head: () => ({
+    meta: [
+      { title: "Blog de sublimação e estamparia — Estampa Flix" },
+      {
+        name: "description",
+        content:
+          "Dicas, tutoriais e novidades sobre sublimação, DTF e artes digitais: como imprimir, escolher tecidos, precificar e vender produtos personalizados.",
+      },
+      {
+        name: "keywords",
+        content: "blog sublimação, tutorial DTF, como sublimar, estamparia digital, artes digitais",
+      },
+      { property: "og:title", content: "Blog de sublimação e estamparia — Estampa Flix" },
+      {
+        property: "og:description",
+        content: "Tutoriais e novidades sobre sublimação, DTF e artes digitais para estamparia.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://estampaflix.com/blog" },
+    ],
+    links: [{ rel: "canonical", href: "https://estampaflix.com/blog" }],
+  }),
   component: Blog,
 });
 
