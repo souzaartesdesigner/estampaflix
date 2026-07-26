@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { formatBRL } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
-import { Download } from "lucide-react";
+
 import { FavoriteButton } from "./favorite-button";
 import { useI18n, tField } from "@/lib/i18n";
 
