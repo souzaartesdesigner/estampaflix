@@ -24,9 +24,10 @@ type Props = {
   session: any;
   sub: any;
   owned: boolean | undefined;
+  header?: React.ReactNode;
 };
 
-export function ArtworkActions({ artwork, session, sub, owned }: Props) {
+export function ArtworkActions({ artwork, session, sub, owned, header }: Props) {
   const { t } = useI18n();
   const navigate = useNavigate();
   const qc = useQueryClient();
