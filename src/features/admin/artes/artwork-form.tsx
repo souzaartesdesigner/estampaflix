@@ -61,6 +61,20 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
 
+  const { data: knownFormats = [] } = useQuery({
+    queryKey: ["admin-artwork-formats"],
+    queryFn: async () => {
+      const { data } = await supabase.from("artworks").select("file_format").not("file_format", "is", null);
+      const set = new Set<string>(FORMAT_SUGGESTIONS);
+      for (const r of data ?? []) {
+        const f = normalizeFormat(r.file_format || "");
+        if (f) set.add(f);
+      }
+      return Array.from(set).sort();
+    },
+  });
+
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
