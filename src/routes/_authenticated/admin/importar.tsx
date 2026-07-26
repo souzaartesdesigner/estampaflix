@@ -80,6 +80,8 @@ function Importar() {
   const [defaultFormat, setDefaultFormat] = useState("cdr");
   const [publishAll, setPublishAll] = useState(true);
   const [keepHtml, setKeepHtml] = useState(true);
+  const [autoFormat, setAutoFormat] = useState(true);
+
 
   async function ensureCategory(name: string): Promise<string | null> {
     const clean = name.trim();
@@ -187,7 +189,11 @@ function Importar() {
             preview_url,
             file_path: null as string | null,
             external_url,
-            file_format: defaultFormat,
+            file_format:
+              (autoFormat
+                ? guessFormat(external_url ?? "", title, cTags >= 0 ? row[cTags] : "", rawDesc)
+                : null) || defaultFormat.trim().toLowerCase().replace(/^\./, ""),
+
             price_cents,
             credit_cost: defaultCreditCost,
             is_published: publishAll ? true : is_published,
