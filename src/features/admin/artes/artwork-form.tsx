@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { slugify } from "@/lib/format";
+import { FORMAT_SUGGESTIONS, normalizeFormat } from "@/features/catalog/catalog-constants";
+
 
 type Props = {
   open: boolean;
@@ -59,6 +61,20 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
 
+  const { data: knownFormats = [] } = useQuery({
+    queryKey: ["admin-artwork-formats"],
+    queryFn: async () => {
+      const { data } = await supabase.from("artworks").select("file_format").not("file_format", "is", null);
+      const set = new Set<string>(FORMAT_SUGGESTIONS);
+      for (const r of data ?? []) {
+        const f = normalizeFormat(r.file_format || "");
+        if (f) set.add(f);
+      }
+      return Array.from(set).sort();
+    },
+  });
+
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
@@ -93,7 +109,7 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         preview_url,
         file_path,
         external_url,
-        file_format: form.file_format,
+        file_format: normalizeFormat(form.file_format) || null,
         price_cents: Number(form.price_cents),
         credit_cost: Number(form.credit_cost),
         is_published: form.is_published,
@@ -136,11 +152,18 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
             </div>
             <div className="grid gap-2">
               <Label>Formato</Label>
-              <Select value={form.file_format} onValueChange={(v) => setForm({ ...form, file_format: v })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{["png", "jpg", "psd", "zip", "rar"].map((f) => <SelectItem key={f} value={f}>{f.toUpperCase()}</SelectItem>)}</SelectContent>
-              </Select>
+              <Input
+                list="artwork-format-options"
+                value={form.file_format}
+                onChange={(e) => setForm({ ...form, file_format: e.target.value })}
+                placeholder="cdr, psd, ai, png..."
+              />
+              <datalist id="artwork-format-options">
+                {knownFormats.map((f: string) => <option key={f} value={f} />)}
+              </datalist>
+              <p className="text-xs text-muted-foreground">Digite qualquer formato ou escolha um já usado.</p>
             </div>
+
           </div>
           <div className="grid grid-cols-3 gap-4">
             <div className="grid gap-2"><Label>Preço (centavos)</Label><Input type="number" value={form.price_cents} onChange={(e) => setForm({ ...form, price_cents: e.target.value })} required /></div>

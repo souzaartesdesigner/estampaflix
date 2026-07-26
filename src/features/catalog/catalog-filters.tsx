@@ -1,17 +1,20 @@
 import { useMemo } from "react";
 import { tField, useI18n } from "@/lib/i18n";
-import { FORMATS, type CatalogSearch } from "./catalog-constants";
+import { type CatalogSearch } from "./catalog-constants";
+import { FileFormatIcon } from "@/features/artwork/file-format-icon";
 import { FilterGroup, FilterOption } from "./filter-group";
 
 type Props = {
   filters: CatalogSearch;
   categories: any[];
   tags: any[];
+  formats?: string[];
   onChange: (patch: Partial<CatalogSearch>) => void;
 };
 
-export function CatalogFilters({ filters, categories, tags, onChange }: Props) {
+export function CatalogFilters({ filters, categories, tags, formats = [], onChange }: Props) {
   const { t, lang } = useI18n();
+
 
   const orderedCategories = useMemo(() => {
     const roots = categories.filter((c: any) => !c.parent_id);
@@ -51,21 +54,25 @@ export function CatalogFilters({ filters, categories, tags, onChange }: Props) {
         </div>
       </FilterGroup>
 
-      <FilterGroup title={t("catalog.format")}>
-        <div className="flex flex-wrap gap-1">
-          {FORMATS.map((f) => (
-            <button
-              key={f}
-              onClick={() => onChange({ formato: filters.formato === f ? undefined : f })}
-              className={`rounded-md border px-2 py-1 text-xs uppercase transition-colors ${
-                filters.formato === f ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"
-              }`}
-            >
-              {f}
-            </button>
-          ))}
-        </div>
-      </FilterGroup>
+      {formats.length > 0 && (
+        <FilterGroup title={t("catalog.format")}>
+          <div className="flex flex-wrap gap-1">
+            {formats.map((f: string) => (
+              <button
+                key={f}
+                onClick={() => onChange({ formato: filters.formato === f ? undefined : f })}
+                className={`flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs uppercase transition-colors ${
+                  filters.formato === f ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"
+                }`}
+              >
+                <FileFormatIcon format={f} className="h-3.5 w-3.5" />
+                {f}
+              </button>
+            ))}
+          </div>
+        </FilterGroup>
+      )}
+
 
 
       {tags.length > 0 && (

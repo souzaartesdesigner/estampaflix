@@ -46,6 +46,19 @@ function Catalogo() {
     queryKey: ["tags"],
     queryFn: async () => (await supabase.from("tags").select("id,slug,name,translations").order("name")).data ?? [],
   });
+  const { data: formats = [] } = useQuery({
+    queryKey: ["artwork-formats"],
+    queryFn: async () => {
+      const { data } = await supabase.from("artworks").select("file_format").eq("is_published", true).not("file_format", "is", null);
+      const set = new Set<string>();
+      for (const r of data ?? []) {
+        const f = (r.file_format || "").trim().toLowerCase().replace(/^\./, "");
+        if (f) set.add(f);
+      }
+      return Array.from(set).sort();
+    },
+  });
+
 
   const filters = useMemo(() => search, [search]);
 
@@ -114,7 +127,7 @@ function Catalogo() {
 
         <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
           <aside className={`${filtersOpen ? "block" : "hidden"} space-y-6 lg:block`}>
-            <CatalogFilters filters={filters} categories={categories} tags={tags} onChange={update} />
+            <CatalogFilters filters={filters} categories={categories} tags={tags} formats={formats} onChange={update} />
           </aside>
 
           <CatalogResults

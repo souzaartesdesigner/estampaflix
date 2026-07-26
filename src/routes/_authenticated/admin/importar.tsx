@@ -53,6 +53,22 @@ function parsePriceToCents(v: string): number {
   return Math.round(n * 100);
 }
 
+const KNOWN_EXT = ["cdr", "psd", "ai", "eps", "svg", "pdf", "png", "jpg", "jpeg", "webp", "zip", "rar"];
+
+/** O CSV do WooCommerce não tem coluna de formato: deduzimos pelo link/nome/tags. */
+function guessFormat(...sources: string[]): string | null {
+  const hay = sources.filter(Boolean).join(" ").toLowerCase();
+  const byExt = hay.match(/\.(cdr|psd|ai|eps|svg|pdf|png|jpe?g|webp|zip|rar)\b/);
+  if (byExt) return byExt[1] === "jpeg" ? "jpg" : byExt[1];
+  if (hay.includes("coreldraw") || hay.includes("corel draw") || hay.includes("corel")) return "cdr";
+  if (hay.includes("photoshop")) return "psd";
+  if (hay.includes("illustrator")) return "ai";
+  if (hay.includes("vetor") || hay.includes("vector")) return "cdr";
+  for (const e of KNOWN_EXT) if (new RegExp(`\\b${e}\\b`).test(hay)) return e === "jpeg" ? "jpg" : e;
+  return null;
+}
+
+
 type LogItem = { title: string; status: "ok" | "error" | "skip"; message?: string };
 
 function Importar() {
@@ -64,6 +80,8 @@ function Importar() {
   const [defaultFormat, setDefaultFormat] = useState("cdr");
   const [publishAll, setPublishAll] = useState(true);
   const [keepHtml, setKeepHtml] = useState(true);
+  const [autoFormat, setAutoFormat] = useState(true);
+
 
   async function ensureCategory(name: string): Promise<string | null> {
     const clean = name.trim();
@@ -171,7 +189,11 @@ function Importar() {
             preview_url,
             file_path: null as string | null,
             external_url,
-            file_format: defaultFormat,
+            file_format:
+              (autoFormat
+                ? guessFormat(external_url ?? "", title, cTags >= 0 ? row[cTags] : "", rawDesc)
+                : null) || defaultFormat.trim().toLowerCase().replace(/^\./, ""),
+
             price_cents,
             credit_cost: defaultCreditCost,
             is_published: publishAll ? true : is_published,
@@ -243,8 +265,9 @@ function Importar() {
             <Input type="number" min={0} value={defaultCreditCost} onChange={(e) => setDefaultCreditCost(Number(e.target.value))} />
           </div>
           <div className="grid gap-2">
-            <Label>Formato padrão</Label>
+            <Label>Formato padrão (fallback)</Label>
             <Input value={defaultFormat} onChange={(e) => setDefaultFormat(e.target.value)} placeholder="cdr, png, psd..." />
+            <p className="text-xs text-muted-foreground">Usado quando não for possível detectar o formato no CSV.</p>
           </div>
           <div className="flex flex-col justify-end gap-3">
             <label className="flex items-center gap-2 text-sm">
@@ -253,7 +276,11 @@ function Importar() {
             <label className="flex items-center gap-2 text-sm">
               <Switch checked={keepHtml} onCheckedChange={setKeepHtml} /> Manter HTML na descrição
             </label>
+            <label className="flex items-center gap-2 text-sm">
+              <Switch checked={autoFormat} onCheckedChange={setAutoFormat} /> Detectar formato automaticamente
+            </label>
           </div>
+
         </div>
 
         <Button onClick={importAll} disabled={!file || busy} className="bg-gradient-brand text-brand-foreground">
