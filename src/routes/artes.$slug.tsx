@@ -69,6 +69,18 @@ export const Route = createFileRoute("/artes/$slug")({
             },
           }),
         },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Início", item: "https://estampaflix.com/" },
+              { "@type": "ListItem", position: 2, name: "Catálogo", item: "https://estampaflix.com/catalogo" },
+              { "@type": "ListItem", position: 3, name: loaderData.title, item: url },
+            ],
+          }),
+        },
       ],
     };
   },
