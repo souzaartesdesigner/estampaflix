@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
+import supportIcon from "@/assets/support-float.png";
 
 export function FloatingSupport() {
   const { t } = useI18n();
@@ -10,7 +11,7 @@ export function FloatingSupport() {
       className="fixed bottom-3 right-3 z-[9999] transition-transform duration-300 hover:scale-110 sm:bottom-5 sm:right-5"
     >
       <img
-        src="https://estampaflix.com/wp-content/uploads/2025/12/ATENDIMENTO.png"
+        src={supportIcon}
         alt={t("float.support")}
         loading="lazy"
         decoding="async"
