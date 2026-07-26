@@ -30,7 +30,7 @@ export const Route = createFileRoute("/artes/$slug")({
   },
   head: ({ params, loaderData }) => {
     if (!loaderData) return { meta: [{ title: "Arte não encontrada" }, { name: "robots", content: "noindex" }] };
-    const url = `https://loving-code-flow.lovable.app/artes/${params.slug}`;
+    const url = `https://estampaflix.com/artes/${params.slug}`;
     const plainDesc = (loaderData.description ?? "")
       .replace(/<[^>]+>/g, " ")
       .replace(/\s+/g, " ")

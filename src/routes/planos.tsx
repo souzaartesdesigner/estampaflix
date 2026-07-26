@@ -26,9 +26,9 @@ export const Route = createFileRoute("/planos")({
       { property: "og:title", content: "Planos de assinatura — Estampa Flix" },
       { property: "og:description", content: "Escolha entre Lite, Pro e Plus. Créditos mensais para baixar artes em 300 DPI com licença comercial. Cancele quando quiser." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://loving-code-flow.lovable.app/planos" },
+      { property: "og:url", content: "https://estampaflix.com/planos" },
     ],
-    links: [{ rel: "canonical", href: "https://loving-code-flow.lovable.app/planos" }],
+    links: [{ rel: "canonical", href: "https://estampaflix.com/planos" }],
   }),
   component: Planos,
 });

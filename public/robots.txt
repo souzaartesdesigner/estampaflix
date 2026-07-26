@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://loving-code-flow.lovable.app/sitemap.xml
+Sitemap: https://estampaflix.com/sitemap.xml

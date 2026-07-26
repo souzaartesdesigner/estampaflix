@@ -20,9 +20,9 @@ export const Route = createFileRoute("/suporte")({
       { property: "og:title", content: "Suporte — Estampa Flix" },
       { property: "og:description", content: "Perguntas frequentes sobre planos, créditos e licença de uso, além de canal direto com a equipe da Estampa Flix." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://loving-code-flow.lovable.app/suporte" },
+      { property: "og:url", content: "https://estampaflix.com/suporte" },
     ],
-    links: [{ rel: "canonical", href: "https://loving-code-flow.lovable.app/suporte" }],
+    links: [{ rel: "canonical", href: "https://estampaflix.com/suporte" }],
     scripts: [
       {
         type: "application/ld+json",
