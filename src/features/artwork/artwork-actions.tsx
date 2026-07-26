@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Check, Download, Loader2, Plus, ShoppingCart } from "lucide-react";
+import { Check, Download, Link2, Loader2, Send, ShoppingCart, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +34,20 @@ export function ArtworkActions({ artwork, session, sub, owned }: Props) {
   const inCart = cart.contains(artwork.id);
   const canDownload = !!sub && (sub.credits_remaining ?? 0) > 0;
   const [planDialogOpen, setPlanDialogOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const shareUrl = typeof window !== "undefined" ? window.location.href : `https://estampaflix.com/artes/${artwork.slug}`;
+  const shareUrlEnc = encodeURIComponent(shareUrl);
+  const shareText = encodeURIComponent(`${artwork.title} — ${shareUrl}`);
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      toast.success(t("product.linkCopied"));
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error(t("product.copyLink"));
+    }
+  };
 
   const downloadMut = useMutation({
     mutationFn: async () => {
@@ -132,21 +146,27 @@ export function ArtworkActions({ artwork, session, sub, owned }: Props) {
                   {t("product.noCredits")} <Link to="/planos" className="text-primary underline">{t("product.upgrade")}</Link>.
                 </p>
               )}
-              <Button variant="outline" onClick={() => buyMut.mutate()} disabled={buyMut.isPending}>
-                {buyMut.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShoppingCart className="mr-2 h-4 w-4" />}
+              <Button
+                onClick={() => buyMut.mutate()}
+                disabled={buyMut.isPending}
+                size="lg"
+                className="bg-primary text-primary-foreground shadow-brand ring-1 ring-primary/40 hover:bg-primary/90"
+              >
+                {buyMut.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
                 {t("product.buyPix")} ({formatBRL(artwork.price_cents)})
               </Button>
               <Button
-                variant="secondary"
+                variant="outline"
                 onClick={() => (inCart ? navigate({ to: "/carrinho" }) : cart.add(artwork.id))}
                 disabled={cart.adding}
               >
                 {inCart ? (
                   <><Check className="mr-2 h-4 w-4" /> {t("product.inCart")}</>
                 ) : (
-                  <><Plus className="mr-2 h-4 w-4" /> {t("product.addToCart")}</>
+                  <><ShoppingCart className="mr-2 h-4 w-4" /> {t("product.addToCart")}</>
                 )}
               </Button>
+
             </>
           )
         ) : (
@@ -154,6 +174,59 @@ export function ArtworkActions({ artwork, session, sub, owned }: Props) {
             <Link to="/auth">{t("product.signInToDownload")}</Link>
           </Button>
         )}
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        <span className="inline-flex items-center gap-1.5 rounded-md border border-success/40 bg-success/10 px-3 py-1.5 text-xs font-medium text-success">
+          <Zap className="h-3.5 w-3.5" /> {t("product.instantDelivery")}
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-md border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">
+          <PixIcon /> {t("product.pixPayment")}
+        </span>
+      </div>
+
+      <div className="mt-5 border-t border-border/60 pt-4">
+        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {t("product.shareThis")}
+        </span>
+        <div className="mt-2 flex items-center gap-2">
+          <a
+            href={`https://wa.me/?text=${shareText}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="WhatsApp"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-muted/40 text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
+          >
+            <WhatsappIcon />
+          </a>
+          <a
+            href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrlEnc}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-muted/40 text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
+          >
+            <FacebookIcon />
+          </a>
+          <a
+            href={`https://t.me/share/url?url=${shareUrlEnc}&text=${shareText}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Telegram"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-border/60 bg-muted/40 text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
+          >
+            <Send className="h-4 w-4" />
+          </a>
+          <button
+            type="button"
+            onClick={copyLink}
+            aria-label={t("product.copyLink")}
+            className="flex h-9 items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 px-3 text-xs text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
+          >
+            {copied ? <Check className="h-4 w-4" /> : <Link2 className="h-4 w-4" />}
+            {copied ? t("product.linkCopied") : t("product.copyLink")}
+          </button>
+        </div>
       </div>
 
       <Dialog open={planDialogOpen} onOpenChange={setPlanDialogOpen}>
@@ -213,4 +286,28 @@ export function useArtworkOwnership(userId: string | undefined, artworkId: strin
       return !!(dl.data || ord.data);
     },
   });
+}
+
+function WhatsappIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+      <path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.6-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.06 2.88 1.21 3.08c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.72 2-1.41.25-.69.25-1.28.17-1.41-.07-.13-.27-.2-.57-.35M12.05 21.5h-.01a9.5 9.5 0 0 1-4.83-1.32l-.35-.2-3.59.94.96-3.5-.23-.36a9.44 9.44 0 0 1-1.45-5.05c0-5.22 4.27-9.47 9.51-9.47a9.46 9.46 0 0 1 9.5 9.48c0 5.22-4.27 9.48-9.51 9.48M20.6 3.44A11.87 11.87 0 0 0 12.05 0C5.46 0 .1 5.34.1 11.9c0 2.1.55 4.14 1.6 5.95L0 24l6.34-1.65a11.98 11.98 0 0 0 5.7 1.45h.01c6.58 0 11.94-5.34 11.95-11.9a11.8 11.8 0 0 0-3.4-8.46"/>
+    </svg>
+  );
+}
+
+function FacebookIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+      <path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07"/>
+    </svg>
+  );
+}
+
+function PixIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
+      <path d="M12 2.5 21.5 12 12 21.5 2.5 12 12 2.5Zm0 3.3L5.8 12l6.2 6.2 6.2-6.2L12 5.8Z"/>
+    </svg>
+  );
 }
