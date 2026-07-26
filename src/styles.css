@@ -40,6 +40,8 @@
   --color-warning-foreground: var(--warning-foreground);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
+  --color-cart: var(--cart);
+  --color-cart-hover: var(--cart-hover);
   --font-sans: "Manrope", system-ui, -apple-system, sans-serif;
   --font-display: "Sora", "Manrope", system-ui, sans-serif;
 }
@@ -52,6 +54,8 @@
   --foreground: oklch(0.955 0 0);              /* crisper white for premium contrast */
   --surface: oklch(0.198 0.028 258);           /* elevated navy panel */
   --surface-2: oklch(0.245 0.024 258);         /* higher elevation */
+  --cart: #121b28;                             /* cart button base */
+  --cart-hover: #1c283a;                       /* cart button hover */
   --card: oklch(0.185 0.024 258);              /* card at rest */
   --card-foreground: oklch(0.955 0 0);
   --popover: oklch(0.185 0.024 258);

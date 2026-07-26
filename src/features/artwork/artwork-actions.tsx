@@ -109,11 +109,11 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
 
   return (
     <div className="rounded-xl border border-border/60 bg-card p-5">
-      <div className="mb-4 flex flex-wrap gap-1.5">
-        <span className="inline-flex items-center gap-1 rounded border border-success/40 bg-success/10 px-2 py-0.5 text-[10px] font-medium text-success">
-          <Zap className="h-3 w-3" /> {t("product.instantDelivery")}
+      <div className="mb-4 flex flex-wrap gap-2">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-success/40 bg-success/10 px-3 py-1 text-xs font-medium text-success">
+          <Zap className="h-3.5 w-3.5" /> {t("product.instantDelivery")}
         </span>
-        <span className="inline-flex items-center gap-1 rounded border border-primary/40 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
           <PixIcon /> {t("product.pixPayment")}
         </span>
       </div>
@@ -149,12 +149,12 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
                 {downloadMut.isPending ? t("product.downloading") : canDownload ? `${t("product.download")} (${sub!.credits_remaining} ${t("product.creditsRemaining")})` : t("product.downloadWithPlan")}
               </Button>
               {!sub && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-center text-xs text-muted-foreground">
                   {t("product.noSubscription")} <Link to="/planos" className="text-primary underline">{t("product.seePlans")}</Link>.
                 </p>
               )}
               {sub && !canDownload && (
-                <p className="text-xs text-warning">
+                <p className="text-center text-xs text-warning">
                   {t("product.noCredits")} <Link to="/planos" className="text-primary underline">{t("product.upgrade")}</Link>.
                 </p>
               )}
@@ -171,6 +171,7 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
                 variant="outline"
                 onClick={() => (inCart ? navigate({ to: "/carrinho" }) : cart.add(artwork.id))}
                 disabled={cart.adding}
+                className="border-border/60 bg-cart text-foreground hover:bg-cart-hover hover:text-foreground"
               >
                 {inCart ? (
                   <><Check className="mr-2 h-4 w-4" /> {t("product.inCart")}</>
