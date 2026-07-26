@@ -1,4 +1,12 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://loving-code-flow.lovable.app/sitemap.xml
+Disallow: /admin
+Disallow: /minha-conta
+Disallow: /carrinho
+Disallow: /auth
+Disallow: /reset-password
+Disallow: /pagamento
+Disallow: /lovable/
+
+Sitemap: https://estampaflix.com/sitemap.xml

@@ -16,6 +16,30 @@ import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(homeQuery),
+  head: () => ({
+    meta: [
+      { title: "Estampa Flix — Artes digitais para sublimação e DTF" },
+      {
+        name: "description",
+        content:
+          "Baixe artes digitais em 300 DPI para sublimação, DTF e estamparia. Assinatura com créditos mensais, licença comercial vitalícia e novas estampas toda semana.",
+      },
+      {
+        name: "keywords",
+        content:
+          "artes para sublimação, estampas digitais, arte digital DTF, artes para camiseta, estampas prontas, arte para caneca, artes 300 dpi, licença comercial",
+      },
+      { property: "og:title", content: "Estampa Flix — Artes digitais para sublimação e DTF" },
+      {
+        property: "og:description",
+        content:
+          "Artes digitais em alta resolução para sublimação, DTF e estamparia, com licença comercial e novas estampas toda semana.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://estampaflix.com/" },
+    ],
+    links: [{ rel: "canonical", href: "https://estampaflix.com/" }],
+  }),
   component: Home,
 });
 

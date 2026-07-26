@@ -10,7 +10,10 @@ export const Route = createFileRoute("/termos")({
       { property: "og:title", content: "Termos de Uso — Estampa Flix" },
       { property: "og:description", content: "Termos e condições para uso das artes digitais do Estampa Flix." },
       { property: "og:type", content: "article" },
+      { property: "og:url", content: "https://estampaflix.com/termos" },
+      { name: "keywords", content: "termos de uso, condições de uso estampa flix" },
     ],
+    links: [{ rel: "canonical", href: "https://estampaflix.com/termos" }],
   }),
   component: TermsPage,
 });

@@ -13,7 +13,7 @@ export const Route = createFileRoute("/blog/$slug")({
   },
   head: ({ params, loaderData }) => {
     if (!loaderData) return { meta: [{ title: "Artigo não encontrado" }, { name: "robots", content: "noindex" }] };
-    const url = `https://loving-code-flow.lovable.app/blog/${params.slug}`;
+    const url = `https://estampaflix.com/blog/${params.slug}`;
     const description = (loaderData.excerpt && loaderData.excerpt.length >= 50)
       ? loaderData.excerpt
       : `${loaderData.title} — leia no blog da Estampa Flix dicas, tutoriais e novidades sobre sublimação, DTF e produção criativa.`;

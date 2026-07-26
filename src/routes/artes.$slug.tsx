@@ -30,7 +30,7 @@ export const Route = createFileRoute("/artes/$slug")({
   },
   head: ({ params, loaderData }) => {
     if (!loaderData) return { meta: [{ title: "Arte não encontrada" }, { name: "robots", content: "noindex" }] };
-    const url = `https://loving-code-flow.lovable.app/artes/${params.slug}`;
+    const url = `https://estampaflix.com/artes/${params.slug}`;
     const plainDesc = (loaderData.description ?? "")
       .replace(/<[^>]+>/g, " ")
       .replace(/\s+/g, " ")
@@ -67,6 +67,18 @@ export const Route = createFileRoute("/artes/$slug")({
               price: (Number(loaderData.price_cents ?? 0) / 100).toFixed(2),
               availability: "https://schema.org/InStock",
             },
+          }),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Início", item: "https://estampaflix.com/" },
+              { "@type": "ListItem", position: 2, name: "Catálogo", item: "https://estampaflix.com/catalogo" },
+              { "@type": "ListItem", position: 3, name: loaderData.title, item: url },
+            ],
           }),
         },
       ],

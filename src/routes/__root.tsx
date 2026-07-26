@@ -86,7 +86,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "Milhares de artes digitais em alta qualidade (300 DPI) para sublimação, DTF e estamparia. Assine e baixe novas estampas todo mês com licença comercial." },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Estampa Flix" },
-      { property: "og:url", content: "https://loving-code-flow.lovable.app/" },
+      { property: "og:url", content: "https://estampaflix.com/" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Estampa Flix — Artes digitais para sublimação, DTF e estamparia" },
       { name: "twitter:description", content: "Milhares de artes digitais em alta qualidade (300 DPI) para sublimação, DTF e estamparia. Assine e baixe novas estampas todo mês com licença comercial." },
@@ -112,15 +112,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             {
               "@type": "Organization",
               name: "Estampa Flix",
-              url: "https://loving-code-flow.lovable.app/",
+              url: "https://estampaflix.com/",
             },
             {
               "@type": "WebSite",
               name: "Estampa Flix",
-              url: "https://loving-code-flow.lovable.app/",
+              url: "https://estampaflix.com/",
               potentialAction: {
                 "@type": "SearchAction",
-                target: "https://loving-code-flow.lovable.app/catalogo?q={search_term_string}",
+                target: "https://estampaflix.com/catalogo?q={search_term_string}",
                 "query-input": "required name=search_term_string",
               },
             },

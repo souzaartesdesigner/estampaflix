@@ -10,7 +10,10 @@ export const Route = createFileRoute("/licenca")({
       { property: "og:title", content: "Licença de Uso Comercial — Estampa Flix" },
       { property: "og:description", content: "Direitos, permissões e restrições da licença comercial das artes do Estampa Flix." },
       { property: "og:type", content: "article" },
+      { property: "og:url", content: "https://estampaflix.com/licenca" },
+      { name: "keywords", content: "licença comercial artes digitais, uso comercial sublimação, direitos de uso estampas" },
     ],
+    links: [{ rel: "canonical", href: "https://estampaflix.com/licenca" }],
   }),
   component: LicensePage,
 });
