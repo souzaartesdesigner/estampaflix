@@ -10,7 +10,13 @@ export const catalogSearchSchema = z.object({
 
 export type CatalogSearch = z.infer<typeof catalogSearchSchema>;
 
-export const FORMATS = ["png", "jpg", "psd", "zip", "rar"] as const;
+/** Sugestões iniciais — a lista real é montada com os formatos cadastrados nos produtos. */
+export const FORMAT_SUGGESTIONS = ["cdr", "psd", "ai", "eps", "svg", "pdf", "png", "jpg", "zip", "rar"];
+
+/** Normaliza o formato digitado (remove ponto, espaços e caixa alta). */
+export function normalizeFormat(value: string) {
+  return (value || "").trim().toLowerCase().replace(/^\./, "");
+}
 
 export const COLORS = [
   { key: "color.black", value: "black" },
