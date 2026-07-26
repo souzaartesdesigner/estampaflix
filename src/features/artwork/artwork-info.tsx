@@ -41,7 +41,9 @@ export function ArtworkInfo({ artwork, title, session, sub, owned }: Props) {
         {artwork.colors && artwork.colors.length > 0 && (
           <span className="flex items-center gap-1"><Palette className="h-4 w-4" /> {artwork.colors.length} {t("product.colorsSuffix")}</span>
         )}
-        <span className="flex items-center gap-1"><Download className="h-4 w-4" /> {artwork.download_count ?? 0} {t("product.downloads")}</span>
+        {(artwork.download_count ?? 0) > 0 && (
+          <span className="flex items-center gap-1"><Download className="h-4 w-4" /> + de {artwork.download_count} {t("product.downloads")}</span>
+        )}
       </div>
 
       <ArtworkActions artwork={artwork} session={session} sub={sub} owned={owned} />
