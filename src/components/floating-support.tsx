@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
+import supportIcon from "@/assets/support-float.png";
 
 export function FloatingSupport() {
   const { t } = useI18n();
