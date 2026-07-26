@@ -46,6 +46,19 @@ function Catalogo() {
     queryKey: ["tags"],
     queryFn: async () => (await supabase.from("tags").select("id,slug,name,translations").order("name")).data ?? [],
   });
+  const { data: formats = [] } = useQuery({
+    queryKey: ["artwork-formats"],
+    queryFn: async () => {
+      const { data } = await supabase.from("artworks").select("file_format").eq("is_published", true).not("file_format", "is", null);
+      const set = new Set<string>();
+      for (const r of data ?? []) {
+        const f = (r.file_format || "").trim().toLowerCase().replace(/^\./, "");
+        if (f) set.add(f);
+      }
+      return Array.from(set).sort();
+    },
+  });
+
 
   const filters = useMemo(() => search, [search]);
 
