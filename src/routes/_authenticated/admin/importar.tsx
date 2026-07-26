@@ -265,8 +265,9 @@ function Importar() {
             <Input type="number" min={0} value={defaultCreditCost} onChange={(e) => setDefaultCreditCost(Number(e.target.value))} />
           </div>
           <div className="grid gap-2">
-            <Label>Formato padrão</Label>
+            <Label>Formato padrão (fallback)</Label>
             <Input value={defaultFormat} onChange={(e) => setDefaultFormat(e.target.value)} placeholder="cdr, png, psd..." />
+            <p className="text-xs text-muted-foreground">Usado quando não for possível detectar o formato no CSV.</p>
           </div>
           <div className="flex flex-col justify-end gap-3">
             <label className="flex items-center gap-2 text-sm">
@@ -275,7 +276,11 @@ function Importar() {
             <label className="flex items-center gap-2 text-sm">
               <Switch checked={keepHtml} onCheckedChange={setKeepHtml} /> Manter HTML na descrição
             </label>
+            <label className="flex items-center gap-2 text-sm">
+              <Switch checked={autoFormat} onCheckedChange={setAutoFormat} /> Detectar formato automaticamente
+            </label>
           </div>
+
         </div>
 
         <Button onClick={importAll} disabled={!file || busy} className="bg-gradient-brand text-brand-foreground">
