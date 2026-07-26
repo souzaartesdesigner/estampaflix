@@ -1,4 +1,12 @@
 User-agent: *
 Allow: /
 
+Disallow: /admin
+Disallow: /minha-conta
+Disallow: /carrinho
+Disallow: /auth
+Disallow: /reset-password
+Disallow: /pagamento
+Disallow: /lovable/
+
 Sitemap: https://estampaflix.com/sitemap.xml
