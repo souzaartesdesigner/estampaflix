@@ -1,17 +1,20 @@
 import { useMemo } from "react";
 import { tField, useI18n } from "@/lib/i18n";
-import { FORMATS, type CatalogSearch } from "./catalog-constants";
+import { type CatalogSearch } from "./catalog-constants";
+import { FileFormatIcon } from "@/features/artwork/file-format-icon";
 import { FilterGroup, FilterOption } from "./filter-group";
 
 type Props = {
   filters: CatalogSearch;
   categories: any[];
   tags: any[];
+  formats?: string[];
   onChange: (patch: Partial<CatalogSearch>) => void;
 };
 
-export function CatalogFilters({ filters, categories, tags, onChange }: Props) {
+export function CatalogFilters({ filters, categories, tags, formats = [], onChange }: Props) {
   const { t, lang } = useI18n();
+
 
   const orderedCategories = useMemo(() => {
     const roots = categories.filter((c: any) => !c.parent_id);
