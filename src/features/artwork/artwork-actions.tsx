@@ -109,11 +109,11 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
 
   return (
     <div className="rounded-xl border border-border/60 bg-card p-5">
-      <div className="mb-4 flex flex-wrap gap-1.5">
-        <span className="inline-flex items-center gap-1 rounded border border-success/40 bg-success/10 px-2 py-0.5 text-[10px] font-medium text-success">
-          <Zap className="h-3 w-3" /> {t("product.instantDelivery")}
+      <div className="mb-4 flex flex-wrap gap-2">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-success/40 bg-success/10 px-3 py-1 text-xs font-medium text-success">
+          <Zap className="h-3.5 w-3.5" /> {t("product.instantDelivery")}
         </span>
-        <span className="inline-flex items-center gap-1 rounded border border-primary/40 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
           <PixIcon /> {t("product.pixPayment")}
         </span>
       </div>
