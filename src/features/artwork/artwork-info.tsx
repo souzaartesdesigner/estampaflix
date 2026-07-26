@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Download, FileType, Palette, Tag as TagIcon } from "lucide-react";
+import { Download, Palette, Tag as TagIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { FavoriteButton } from "@/components/favorite-button";
 import { tField, useI18n } from "@/lib/i18n";
 import { ArtworkActions } from "./artwork-actions";
+import { FileFormatIcon } from "./file-format-icon";
 
 type Props = {
   artwork: any;
