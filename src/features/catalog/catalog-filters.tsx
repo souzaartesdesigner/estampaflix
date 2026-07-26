@@ -54,21 +54,25 @@ export function CatalogFilters({ filters, categories, tags, formats = [], onChan
         </div>
       </FilterGroup>
 
-      <FilterGroup title={t("catalog.format")}>
-        <div className="flex flex-wrap gap-1">
-          {FORMATS.map((f) => (
-            <button
-              key={f}
-              onClick={() => onChange({ formato: filters.formato === f ? undefined : f })}
-              className={`rounded-md border px-2 py-1 text-xs uppercase transition-colors ${
-                filters.formato === f ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"
-              }`}
-            >
-              {f}
-            </button>
-          ))}
-        </div>
-      </FilterGroup>
+      {formats.length > 0 && (
+        <FilterGroup title={t("catalog.format")}>
+          <div className="flex flex-wrap gap-1">
+            {formats.map((f: string) => (
+              <button
+                key={f}
+                onClick={() => onChange({ formato: filters.formato === f ? undefined : f })}
+                className={`flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs uppercase transition-colors ${
+                  filters.formato === f ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"
+                }`}
+              >
+                <FileFormatIcon format={f} className="h-3.5 w-3.5" />
+                {f}
+              </button>
+            ))}
+          </div>
+        </FilterGroup>
+      )}
+
 
 
       {tags.length > 0 && (
