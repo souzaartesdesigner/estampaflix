@@ -132,21 +132,27 @@ export function ArtworkActions({ artwork, session, sub, owned }: Props) {
                   {t("product.noCredits")} <Link to="/planos" className="text-primary underline">{t("product.upgrade")}</Link>.
                 </p>
               )}
-              <Button variant="outline" onClick={() => buyMut.mutate()} disabled={buyMut.isPending}>
-                {buyMut.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShoppingCart className="mr-2 h-4 w-4" />}
+              <Button
+                onClick={() => buyMut.mutate()}
+                disabled={buyMut.isPending}
+                size="lg"
+                className="bg-primary text-primary-foreground shadow-brand ring-1 ring-primary/40 hover:bg-primary/90"
+              >
+                {buyMut.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
                 {t("product.buyPix")} ({formatBRL(artwork.price_cents)})
               </Button>
               <Button
-                variant="secondary"
+                variant="outline"
                 onClick={() => (inCart ? navigate({ to: "/carrinho" }) : cart.add(artwork.id))}
                 disabled={cart.adding}
               >
                 {inCart ? (
                   <><Check className="mr-2 h-4 w-4" /> {t("product.inCart")}</>
                 ) : (
-                  <><Plus className="mr-2 h-4 w-4" /> {t("product.addToCart")}</>
+                  <><ShoppingCart className="mr-2 h-4 w-4" /> {t("product.addToCart")}</>
                 )}
               </Button>
+
             </>
           )
         ) : (
