@@ -109,7 +109,7 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         preview_url,
         file_path,
         external_url,
-        file_format: form.file_format,
+        file_format: normalizeFormat(form.file_format) || null,
         price_cents: Number(form.price_cents),
         credit_cost: Number(form.credit_cost),
         is_published: form.is_published,
