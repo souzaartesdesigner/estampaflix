@@ -1,4 +1,5 @@
 import { FileImage, FileText, FileType, Layers, PenTool, Shapes } from "lucide-react";
+import corelAsset from "@/assets/coreldraw.webp.asset.json";
 
 type Props = { format: string; className?: string };
 
@@ -20,7 +21,15 @@ function BrandMark({ label, className }: { label: string; className?: string }) 
 export function FileFormatIcon({ format, className = "h-4 w-4" }: Props) {
   const f = (format || "").trim().toLowerCase().replace(/^\./, "");
 
-  if (f.includes("cdr") || f.includes("corel")) return <BrandMark label="Cdr" />;
+  if (f.includes("cdr") || f.includes("corel"))
+    return (
+      <img
+        src={corelAsset.url}
+        alt="CorelDRAW"
+        className="h-5 w-5 rounded-[4px] object-contain"
+        loading="lazy"
+      />
+    );
   if (f.includes("psd") || f.includes("photoshop")) return <BrandMark label="Ps" />;
   if (f.includes("ai") || f.includes("illustrator")) return <BrandMark label="Ai" />;
   if (f.includes("eps")) return <PenTool className={className} />;
