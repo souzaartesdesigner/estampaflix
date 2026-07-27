@@ -37,12 +37,16 @@ export const Route = createFileRoute("/artes/$slug")({
       .replace(/\s+/g, " ")
       .trim();
     const fallback = `${loaderData.title} — arte digital em alta resolução (300 DPI) para sublimação, DTF e estamparia, com licença comercial na Estampa Flix.`;
-    const description = plainDesc.length >= 50 ? plainDesc.slice(0, 300) : fallback;
+    const seoDesc = ((loaderData as any).seo_description ?? "").trim();
+    const description = seoDesc || (plainDesc.length >= 50 ? plainDesc.slice(0, 300) : fallback);
+    const seoTitle = ((loaderData as any).seo_title ?? "").trim() || `${loaderData.title} — Estampa Flix`;
+    const keyword = ((loaderData as any).seo_keyword ?? "").trim();
     return {
       meta: [
-        { title: `${loaderData.title} — Estampa Flix` },
+        { title: seoTitle },
         { name: "description", content: description },
-        { property: "og:title", content: loaderData.title },
+        ...(keyword ? [{ name: "keywords", content: keyword }] : []),
+        { property: "og:title", content: seoTitle },
         { property: "og:description", content: description.slice(0, 200) },
         { property: "og:image", content: loaderData.preview_url },
         { property: "og:type", content: "product" },
