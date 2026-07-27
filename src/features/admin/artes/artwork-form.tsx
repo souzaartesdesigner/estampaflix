@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { slugify } from "@/lib/format";
@@ -53,6 +52,12 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
     gallery_urls: (editing?.gallery_urls ?? []) as string[],
     translations: (editing?.translations ?? {}) as Record<string, { title?: string; description?: string }>,
   });
+  const [categoryIds, setCategoryIds] = useState<string[]>(() => {
+    const linked: string[] = (editing?.artwork_categories ?? []).map((r: any) => r.category_id).filter(Boolean);
+    const all = new Set<string>(linked);
+    if (editing?.category_id) all.add(editing.category_id);
+    return Array.from(all);
+  });
   const [sourceType, setSourceType] = useState<"upload" | "external">(
     editing?.external_url ? "external" : "upload"
   );
@@ -60,6 +65,7 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
   const [artFile, setArtFile] = useState<File | null>(null);
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
+
 
   const { data: knownFormats = [] } = useQuery({
     queryKey: ["admin-artwork-formats"],
@@ -105,7 +111,7 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         title: form.title,
         description: form.description,
         slug: form.slug || slugify(form.title),
-        category_id: form.category_id || null,
+        category_id: categoryIds[0] || null,
         preview_url,
         file_path,
         external_url,
@@ -120,13 +126,30 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         translations: form.translations,
       };
 
-      const { error } = isEdit
-        ? await supabase.from("artworks").update(payload).eq("id", editing.id)
-        : await supabase.from("artworks").insert(payload);
-      if (error) throw error;
+      let artworkId = editing?.id as string | undefined;
+      if (isEdit) {
+        const { error } = await supabase.from("artworks").update(payload).eq("id", editing.id);
+        if (error) throw error;
+      } else {
+        const { data: ins, error } = await supabase.from("artworks").insert(payload).select("id").single();
+        if (error) throw error;
+        artworkId = ins.id;
+      }
+
+      if (artworkId) {
+        await supabase.from("artwork_categories").delete().eq("artwork_id", artworkId);
+        if (categoryIds.length) {
+          const { error: linkErr } = await supabase
+            .from("artwork_categories")
+            .insert(categoryIds.map((cid) => ({ artwork_id: artworkId!, category_id: cid })));
+          if (linkErr) throw linkErr;
+        }
+      }
+
       toast.success(isEdit ? "Arte atualizada" : "Arte criada");
       qc.invalidateQueries({ queryKey: ["admin-artworks"] });
       onOpenChange(false);
+
     } catch (err: any) {
       toast.error(err.message ?? "Erro ao salvar");
     } finally {
@@ -142,14 +165,35 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
           <div className="grid gap-2"><Label>Título</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required /></div>
           <div className="grid gap-2"><Label>Slug (URL)</Label><Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="deixe vazio para gerar automaticamente" /></div>
           <div className="grid gap-2"><Label>Descrição</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} /></div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label>Categoria</Label>
-              <Select value={form.category_id} onValueChange={(v) => setForm({ ...form, category_id: v })}>
-                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                <SelectContent>{categories.map((c: any) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
-              </Select>
+          <div className="grid gap-2 rounded-lg border border-border/60 p-4">
+            <Label>Categorias (múltiplas)</Label>
+            <p className="text-xs text-muted-foreground">A primeira selecionada é a categoria principal. Marque quantas quiser.</p>
+            <div className="max-h-48 space-y-1 overflow-y-auto pr-1">
+              {categories.map((c: any) => {
+                const checked = categoryIds.includes(c.id);
+                return (
+                  <label key={c.id} className="flex cursor-pointer items-center gap-2 rounded px-1 py-1 text-sm hover:bg-muted/40">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 accent-primary"
+                      checked={checked}
+                      onChange={() =>
+                        setCategoryIds((prev) =>
+                          prev.includes(c.id) ? prev.filter((x) => x !== c.id) : [...prev, c.id]
+                        )
+                      }
+                    />
+                    <span>{c.parent_id ? `— ${c.name}` : c.name}</span>
+                    {checked && categoryIds[0] === c.id && (
+                      <span className="ml-auto text-xs text-primary">principal</span>
+                    )}
+                  </label>
+                );
+              })}
             </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+
             <div className="grid gap-2">
               <Label>Formato</Label>
               <Input

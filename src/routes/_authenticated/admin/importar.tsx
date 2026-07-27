@@ -142,13 +142,18 @@ function Importar() {
         try {
           if (!title) throw new Error("Nome vazio");
 
-          // Category: use first entry; if it contains ">" use the last leaf
-          let category_id: string | null = null;
+          // Categories: CSV may bring several separated by comma; "A > B" uses the leaf
+          const categoryIds: string[] = [];
           if (cCats >= 0 && row[cCats]) {
-            const first = row[cCats].split(",")[0].trim();
-            const leaf = first.split(">").pop()?.trim() || first;
-            category_id = await ensureCategory(leaf);
+            const names = row[cCats].split(",").map((s) => s.trim()).filter(Boolean);
+            for (const nm of names) {
+              const leaf = nm.split(">").pop()?.trim() || nm;
+              const id = await ensureCategory(leaf);
+              if (id && !categoryIds.includes(id)) categoryIds.push(id);
+            }
           }
+          const category_id: string | null = categoryIds[0] ?? null;
+
 
           // Description
           const rawDesc = cDesc >= 0 ? row[cDesc] : "";
@@ -200,6 +205,14 @@ function Importar() {
             const { data: ins, error } = await supabase.from("artworks").insert(payload).select("id").single();
             if (error) throw error;
             artworkId = ins.id;
+          }
+
+          // Multi-categorias
+          if (categoryIds.length) {
+            await supabase.from("artwork_categories").delete().eq("artwork_id", artworkId);
+            await supabase
+              .from("artwork_categories")
+              .insert(categoryIds.map((cid) => ({ artwork_id: artworkId, category_id: cid })));
           }
 
           // Tags

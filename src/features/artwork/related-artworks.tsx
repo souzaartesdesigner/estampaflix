@@ -4,25 +4,30 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArtworkCard } from "@/components/artwork-card";
 import { useI18n } from "@/lib/i18n";
 
-export function RelatedArtworks({ categoryId, currentId }: { categoryId: string | null; currentId: string }) {
+export function RelatedArtworks({ categoryIds, currentId }: { categoryIds: string[]; currentId: string }) {
   const { t } = useI18n();
   const { data } = useQuery({
-    queryKey: ["related-artworks", categoryId, currentId],
-    enabled: !!categoryId,
+    queryKey: ["related-artworks", categoryIds, currentId],
+    enabled: categoryIds.length > 0,
     queryFn: async () => {
+      const { data: links } = await supabase
+        .from("artwork_categories")
+        .select("artwork_id")
+        .in("category_id", categoryIds);
+      const ids = Array.from(new Set((links ?? []).map((l: any) => l.artwork_id))).filter((id) => id !== currentId);
+      if (ids.length === 0) return [];
       const { data } = await supabase
         .from("artworks")
         .select("id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count,translations")
         .eq("is_published", true)
-        .eq("category_id", categoryId!)
-        .neq("id", currentId)
+        .in("id", ids)
         .order("download_count", { ascending: false })
         .limit(8);
       return data ?? [];
     },
   });
 
-  if (!categoryId || !data || data.length === 0) return null;
+  if (categoryIds.length === 0 || !data || data.length === 0) return null;
 
   return (
     <section className="mt-12">

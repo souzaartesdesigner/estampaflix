@@ -22,7 +22,7 @@ export const Route = createFileRoute("/artes/$slug")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("artworks")
-      .select("*, categories(name,slug), artwork_tags(tags(id,name,slug))")
+      .select("*, categories(name,slug), artwork_categories(categories(id,name,slug)), artwork_tags(tags(id,name,slug))")
       .eq("slug", params.slug)
       .eq("is_published", true)
       .maybeSingle();
@@ -118,7 +118,13 @@ function ArtworkPage() {
           <ArtworkInfo artwork={artwork} title={trTitle} session={session} sub={sub} owned={owned} />
         </div>
 
-        <RelatedArtworks categoryId={(artwork as any).category_id} currentId={artwork.id} />
+        <RelatedArtworks
+          categoryIds={Array.from(new Set([
+            (artwork as any).category_id,
+            ...(((artwork as any).artwork_categories ?? []).map((r: any) => r.categories?.id)),
+          ].filter(Boolean))) as string[]}
+          currentId={artwork.id}
+        />
 
         <ArtworkReviews artworkId={artwork.id} />
 

@@ -28,17 +28,30 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
     });
   }
 
-  if (artwork.categories) {
+  const cats: any[] = [
+    ...(artwork.categories ? [artwork.categories] : []),
+    ...((artwork.artwork_categories ?? []).map((r: any) => r.categories).filter(Boolean)),
+  ].filter((c, i, arr) => arr.findIndex((x) => x.slug === c.slug) === i);
+
+  if (cats.length > 0) {
     rows.push({
       icon: <LayoutGrid className="h-4 w-4" />,
-      label: "Categoria",
+      label: cats.length > 1 ? "Categorias" : "Categoria",
       value: (
-        <Link to="/catalogo" search={{ categoria: artwork.categories.slug } as any} className="text-primary hover:underline">
-          {artwork.categories.name}
-        </Link>
+        <span className="flex flex-wrap gap-x-2 gap-y-1">
+          {cats.map((c, i) => (
+            <span key={c.slug}>
+              <Link to="/catalogo" search={{ categoria: c.slug } as any} className="text-primary hover:underline">
+                {c.name}
+              </Link>
+              {i < cats.length - 1 && <span className="text-muted-foreground">,</span>}
+            </span>
+          ))}
+        </span>
       ),
     });
   }
+
 
   rows.push({ icon: <Zap className="h-4 w-4" />, label: "Entrega", value: "Download imediato após a compra" });
   rows.push({

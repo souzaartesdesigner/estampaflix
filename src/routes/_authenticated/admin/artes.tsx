@@ -25,11 +25,11 @@ function Artes() {
 
   const { data: artworks = [] } = useQuery({
     queryKey: ["admin-artworks"],
-    queryFn: async () => (await supabase.from("artworks").select("*, categories(name)").order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await supabase.from("artworks").select("*, categories(name), artwork_categories(category_id)").order("created_at", { ascending: false })).data ?? [],
   });
   const { data: categories = [] } = useQuery({
     queryKey: ["admin-categories"],
-    queryFn: async () => (await supabase.from("categories").select("id,name").order("name")).data ?? [],
+    queryFn: async () => (await supabase.from("categories").select("id,name,parent_id").order("name")).data ?? [],
   });
 
   const filtered = useMemo(() => {
@@ -56,7 +56,22 @@ function Artes() {
     onError: (e: any) => toast.error(e.message),
   });
 
+  const bulkAddCategory = useMutation({
+    mutationFn: async (categoryId: string) => {
+      const { error } = await (supabase.from("artwork_categories") as any).upsert(
+        selected.map((id) => ({ artwork_id: id, category_id: categoryId })),
+        { onConflict: "artwork_id,category_id" }
+      );
+      if (error) throw error;
+      // Define como principal quando a arte ainda não tem categoria principal
+      await (supabase.from("artworks") as any).update({ category_id: categoryId }).in("id", selected).is("category_id", null);
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-artworks"] }); toast.success("Categoria adicionada"); setSelected([]); setBulkOpen(false); setBulkValue(""); setBulkAction(""); },
+    onError: (e: any) => toast.error(e.message),
+  });
+
   const bulkDelete = useMutation({
+
     mutationFn: async () => {
       const { error } = await supabase.from("artworks").delete().in("id", selected);
       if (error) throw error;
@@ -79,7 +94,7 @@ function Artes() {
       bulkUpdate.mutate({ price_cents: cents });
     } else if (bulkAction === "category") {
       if (!bulkValue) return toast.error("Selecione a categoria");
-      bulkUpdate.mutate({ category_id: bulkValue });
+      bulkAddCategory.mutate(bulkValue);
     } else if (bulkAction === "credit_cost") {
       const c = parseInt(bulkValue, 10);
       if (!Number.isFinite(c) || c < 0) return toast.error("Valor inválido");
@@ -106,7 +121,7 @@ function Artes() {
             <Button size="sm" variant="outline" onClick={() => bulkUpdate.mutate({ is_published: true })}><Eye className="mr-1 h-3 w-3" /> Publicar</Button>
             <Button size="sm" variant="outline" onClick={() => bulkUpdate.mutate({ is_published: false })}><EyeOff className="mr-1 h-3 w-3" /> Despublicar</Button>
             <Button size="sm" variant="outline" onClick={() => { setBulkAction("price"); setBulkOpen(true); }}><DollarSign className="mr-1 h-3 w-3" /> Alterar preço</Button>
-            <Button size="sm" variant="outline" onClick={() => { setBulkAction("category"); setBulkOpen(true); }}><Tag className="mr-1 h-3 w-3" /> Alterar categoria</Button>
+            <Button size="sm" variant="outline" onClick={() => { setBulkAction("category"); setBulkOpen(true); }}><Tag className="mr-1 h-3 w-3" /> Adicionar categoria</Button>
             <Button size="sm" variant="outline" onClick={() => { setBulkAction("credit_cost"); setBulkOpen(true); }}>Créditos</Button>
             <Button size="sm" variant="destructive" onClick={() => { if (confirm(`Excluir ${selected.length} artes?`)) bulkDelete.mutate(); }}><Trash2 className="mr-1 h-3 w-3" /> Excluir</Button>
             <Button size="sm" variant="ghost" onClick={() => setSelected([])}>Limpar</Button>
@@ -132,7 +147,7 @@ function Artes() {
           <DialogHeader>
             <DialogTitle>
               {bulkAction === "price" && "Alterar preço em massa"}
-              {bulkAction === "category" && "Alterar categoria em massa"}
+              {bulkAction === "category" && "Adicionar categoria em massa"}
               {bulkAction === "credit_cost" && "Alterar custo em créditos"}
             </DialogTitle>
           </DialogHeader>

@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      artwork_categories: {
+        Row: {
+          artwork_id: string
+          category_id: string
+        }
+        Insert: {
+          artwork_id: string
+          category_id: string
+        }
+        Update: {
+          artwork_id?: string
+          category_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "artwork_categories_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artworks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "artwork_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       artwork_tags: {
         Row: {
           artwork_id: string
