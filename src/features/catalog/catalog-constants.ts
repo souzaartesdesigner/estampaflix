@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { FORMAT_KEYS, normalizeFormatKey } from "@/features/artwork/formats";
 
 export const catalogSearchSchema = z.object({
   q: z.string().optional(),
