@@ -126,6 +126,9 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         is_trending: form.is_trending,
         colors: form.colors.split(",").map((s: string) => s.trim()).filter(Boolean),
         gallery_urls,
+        seo_title: form.seo_title?.trim() || null,
+        seo_description: form.seo_description?.trim() || null,
+        seo_keyword: form.seo_keyword?.trim() || null,
         translations: form.translations,
       };
 
