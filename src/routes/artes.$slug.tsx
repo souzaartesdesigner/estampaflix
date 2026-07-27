@@ -10,6 +10,7 @@ import {
 } from "@/features/artwork/artwork-boundaries";
 import { ArtworkInfo } from "@/features/artwork/artwork-info";
 import { ArtworkDescription } from "@/features/artwork/artwork-description";
+import { ProductInfoPanel } from "@/features/artwork/product-info-panel";
 import { RelatedArtworks } from "@/features/artwork/related-artworks";
 import {
   useArtworkOwnership,
@@ -110,7 +111,10 @@ function ArtworkPage() {
         </nav>
 
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-          <ArtworkGallery images={galleryImages} alt={trTitle} />
+          <div>
+            <ArtworkGallery images={galleryImages} alt={trTitle} />
+            <ProductInfoPanel artwork={artwork} />
+          </div>
           <ArtworkInfo artwork={artwork} title={trTitle} session={session} sub={sub} owned={owned} />
         </div>
 

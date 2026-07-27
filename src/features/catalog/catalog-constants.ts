@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { FORMAT_KEYS, normalizeFormatKey } from "@/features/artwork/formats";
 
 export const catalogSearchSchema = z.object({
   q: z.string().optional(),
@@ -11,11 +12,11 @@ export const catalogSearchSchema = z.object({
 export type CatalogSearch = z.infer<typeof catalogSearchSchema>;
 
 /** Sugestões iniciais — a lista real é montada com os formatos cadastrados nos produtos. */
-export const FORMAT_SUGGESTIONS = ["cdr", "psd", "ai", "eps", "svg", "pdf", "png", "jpg", "zip", "rar"];
+export const FORMAT_SUGGESTIONS = FORMAT_KEYS as unknown as string[];
 
-/** Normaliza o formato digitado (remove ponto, espaços e caixa alta). */
+/** Normaliza o formato digitado (mapeia para uma chave conhecida quando possível). */
 export function normalizeFormat(value: string) {
-  return (value || "").trim().toLowerCase().replace(/^\./, "");
+  return normalizeFormatKey(value) ?? (value || "").trim().toLowerCase().replace(/^\./, "");
 }
 
 export const COLORS = [

@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { slugify } from "@/lib/format";
+import { detectFormat } from "@/features/artwork/formats";
 import { Upload, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/importar")({ component: Importar });
@@ -53,19 +54,9 @@ function parsePriceToCents(v: string): number {
   return Math.round(n * 100);
 }
 
-const KNOWN_EXT = ["cdr", "psd", "ai", "eps", "svg", "pdf", "png", "jpg", "jpeg", "webp", "zip", "rar"];
-
 /** O CSV do WooCommerce não tem coluna de formato: deduzimos pelo link/nome/tags. */
 function guessFormat(...sources: string[]): string | null {
-  const hay = sources.filter(Boolean).join(" ").toLowerCase();
-  const byExt = hay.match(/\.(cdr|psd|ai|eps|svg|pdf|png|jpe?g|webp|zip|rar)\b/);
-  if (byExt) return byExt[1] === "jpeg" ? "jpg" : byExt[1];
-  if (hay.includes("coreldraw") || hay.includes("corel draw") || hay.includes("corel")) return "cdr";
-  if (hay.includes("photoshop")) return "psd";
-  if (hay.includes("illustrator")) return "ai";
-  if (hay.includes("vetor") || hay.includes("vector")) return "cdr";
-  for (const e of KNOWN_EXT) if (new RegExp(`\\b${e}\\b`).test(hay)) return e === "jpeg" ? "jpg" : e;
-  return null;
+  return detectFormat(...sources);
 }
 
 
