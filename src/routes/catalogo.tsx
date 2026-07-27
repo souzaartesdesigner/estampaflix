@@ -63,8 +63,21 @@ function Catalogo() {
   const filters = useMemo(() => search, [search]);
 
   const { data: artworks = [], isLoading } = useQuery({
-    queryKey: ["catalog", filters],
+    queryKey: ["catalog", filters, categories.length],
     queryFn: async () => {
+      let artworkIdsFilter: string[] | null = null;
+      if (filters.categoria) {
+        const cat = categories.find((c: any) => c.slug === filters.categoria);
+        if (!cat) return [];
+        const ids = [cat.id, ...categories.filter((c: any) => c.parent_id === cat.id).map((c: any) => c.id)];
+        const { data: links } = await supabase
+          .from("artwork_categories")
+          .select("artwork_id")
+          .in("category_id", ids);
+        artworkIdsFilter = Array.from(new Set((links ?? []).map((l: any) => l.artwork_id)));
+        if (artworkIdsFilter.length === 0) return [];
+      }
+
       let query = supabase
         .from("artworks")
         .select("id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count,category_id,colors,file_format,translations,artwork_tags(tag_id,tags(slug))")
@@ -73,13 +86,7 @@ function Catalogo() {
         .limit(60);
 
       if (filters.q) query = query.ilike("title", `%${filters.q}%`);
-      if (filters.categoria) {
-        const cat = categories.find((c: any) => c.slug === filters.categoria);
-        if (cat) {
-          const ids = [cat.id, ...categories.filter((c: any) => c.parent_id === cat.id).map((c: any) => c.id)];
-          query = query.in("category_id", ids);
-        }
-      }
+      if (artworkIdsFilter) query = query.in("id", artworkIdsFilter);
       if (filters.formato) query = query.eq("file_format", filters.formato);
       if (filters.cor) query = query.contains("colors", [filters.cor]);
       const { data } = await query;
@@ -90,6 +97,7 @@ function Catalogo() {
       return rows;
     },
   });
+
 
   function update(patch: Partial<CatalogSearch>) {
     navigate({ to: "/catalogo", search: { ...filters, ...patch } as any });
