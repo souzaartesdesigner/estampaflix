@@ -10,6 +10,7 @@ import {
 } from "@/features/artwork/artwork-boundaries";
 import { ArtworkInfo } from "@/features/artwork/artwork-info";
 import { ArtworkDescription } from "@/features/artwork/artwork-description";
+import { ProductInfoPanel } from "@/features/artwork/product-info-panel";
 import { RelatedArtworks } from "@/features/artwork/related-artworks";
 import {
   useArtworkOwnership,
