@@ -1,8 +1,6 @@
-import { CalendarDays, CheckCircle2, Download, FileCheck2, Hash, LayoutGrid, ShieldCheck, Zap } from "lucide-react";
+import { Download, Hash, LayoutGrid, ShieldCheck, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { FileFormatIcon } from "./file-format-icon";
 import { formatDescription, formatLabel } from "./formats";
-import { formatDate } from "@/lib/format";
 
 type Row = { icon: React.ReactNode; label: string; value: React.ReactNode };
 
@@ -16,7 +14,7 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
 
   if (fmt) {
     rows.push({
-      icon: <FileFormatIcon format={fmt} className="h-4 w-4" />,
+      icon: <span className="h-4 w-4 rounded-sm bg-primary/20" />,
       label: "Formato do arquivo",
       value: (
         <span className="flex flex-wrap items-center gap-2">
@@ -41,7 +39,6 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
     });
   }
 
-  rows.push({ icon: <FileCheck2 className="h-4 w-4" />, label: "Resolução", value: "Alta resolução — 300 DPI" });
   rows.push({ icon: <Zap className="h-4 w-4" />, label: "Entrega", value: "Download imediato após a compra" });
   rows.push({
     icon: <ShieldCheck className="h-4 w-4" />,
@@ -52,7 +49,6 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
       </Link>
     ),
   });
-  rows.push({ icon: <CheckCircle2 className="h-4 w-4" />, label: "Uso", value: "Sublimação, DTF, camisetas, canecas e brindes" });
 
   if ((artwork.download_count ?? 0) > 0) {
     rows.push({
@@ -60,10 +56,6 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
       label: "Downloads",
       value: `+ de ${artwork.download_count} downloads realizados`,
     });
-  }
-
-  if (artwork.created_at) {
-    rows.push({ icon: <CalendarDays className="h-4 w-4" />, label: "Publicado em", value: formatDate(artwork.created_at) });
   }
 
   if (code) {
