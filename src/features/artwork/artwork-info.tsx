@@ -37,7 +37,9 @@ export function ArtworkInfo({ artwork, title, session, sub, owned }: Props) {
 
       <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
         {artwork.file_format && (
-          <span className="flex items-center gap-1.5"><FileFormatIcon format={artwork.file_format} /> {artwork.file_format.toUpperCase()}</span>
+          <span className="flex items-center gap-1.5">
+            <FileFormatIcon format={artwork.file_format} /> {formatDescription(artwork.file_format)}
+          </span>
         )}
         {artwork.colors && artwork.colors.length > 0 && (
           <span className="flex items-center gap-1"><Palette className="h-4 w-4" /> {artwork.colors.length} {t("product.colorsSuffix")}</span>
