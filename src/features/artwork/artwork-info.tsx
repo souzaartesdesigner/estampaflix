@@ -18,18 +18,26 @@ type Props = {
 export function ArtworkInfo({ artwork, title, session, sub, owned }: Props) {
   const { t, lang } = useI18n();
   const tags: any[] = artwork.artwork_tags?.map((at: any) => at.tags).filter(Boolean) ?? [];
+  const cats: any[] = [
+    ...(artwork.categories ? [artwork.categories] : []),
+    ...((artwork.artwork_categories ?? []).map((r: any) => r.categories).filter(Boolean)),
+  ].filter((c, i, arr) => arr.findIndex((x) => x.slug === c.slug) === i);
 
   const header = (
     <div className="flex flex-col gap-3">
-      {artwork.categories && (
-        <Link
-          to="/catalogo"
-          search={{ categoria: artwork.categories.slug } as any}
-          className="text-xs uppercase tracking-wider text-primary hover:underline"
-        >
-          {tField(artwork.categories, "name", lang) || artwork.categories.name}
-        </Link>
+      {cats.length > 0 && (
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs uppercase tracking-wider">
+          {cats.map((c, i) => (
+            <span key={c.slug} className="flex items-center gap-2">
+              <Link to="/catalogo" search={{ categoria: c.slug } as any} className="text-primary hover:underline">
+                {tField(c, "name", lang) || c.name}
+              </Link>
+              {i < cats.length - 1 && <span className="text-muted-foreground">·</span>}
+            </span>
+          ))}
+        </div>
       )}
+
       <h1 className="font-display text-2xl font-bold sm:text-3xl">{title}</h1>
       <div className="flex items-center gap-2">
         <FavoriteButton artworkId={artwork.id} size="md" />
