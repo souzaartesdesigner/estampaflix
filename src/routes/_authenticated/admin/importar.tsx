@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { slugify } from "@/lib/format";
+import { detectFormat } from "@/features/artwork/formats";
 import { Upload, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/importar")({ component: Importar });
