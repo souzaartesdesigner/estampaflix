@@ -15,11 +15,17 @@ export type ArtworkCardData = {
   is_trending?: boolean;
   download_count?: number | null;
   translations?: any;
+  categories?: { id?: string; name: string; slug: string; translations?: any } | null;
+  artwork_categories?: Array<{ categories: { id?: string; name: string; slug: string; translations?: any } | null }> | null;
 };
 
 export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
   const { t, lang } = useI18n();
   const title = tField(artwork as any, "title", lang) || artwork.title;
+  const cats = [
+    ...(artwork.categories ? [artwork.categories] : []),
+    ...((artwork.artwork_categories ?? []).map((r) => r.categories).filter(Boolean) as NonNullable<ArtworkCardData["categories"]>[]),
+  ].filter((c, i, arr) => arr.findIndex((x) => x!.slug === c!.slug) === i);
   return (
     <Link
       to="/artes/$slug"
@@ -58,6 +64,11 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
         <h3 className="line-clamp-1 text-sm font-semibold tracking-tight text-foreground/95 transition-colors group-hover:text-primary">
           {title}
         </h3>
+        {cats.length > 0 && (
+          <p className="line-clamp-1 text-[11px] text-muted-foreground">
+            {cats.map((c) => tField(c as any, "name", lang) || c!.name).join(" · ")}
+          </p>
+        )}
         <div className="mt-auto flex items-center justify-between pt-2 text-xs">
           <span className="font-display text-base font-bold tracking-tight text-foreground">
             {formatBRL(artwork.price_cents)}
