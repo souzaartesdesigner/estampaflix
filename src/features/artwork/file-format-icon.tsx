@@ -4,17 +4,16 @@ type Props = { format: string; className?: string };
 
 /**
  * Badge textual padronizado para formatos de arquivo.
- * Exibe sempre o nome do formato em maiúsculo, sem ícones ou logos.
+ * Mesmo estilo usado no painel "Informações do produto".
  */
 export function FileFormatIcon({ format, className = "" }: Props) {
   const label = formatLabel(format);
   return (
     <span
       className={
-        "inline-flex h-5 min-w-5 items-center justify-center rounded-[4px] border border-primary/50 bg-primary/15 px-1.5 text-[9px] font-black leading-none tracking-tight text-primary uppercase " +
+        "inline-flex items-center rounded-md border border-primary/40 bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary " +
         className
       }
-      aria-hidden="true"
     >
       {label}
     </span>

@@ -1,6 +1,8 @@
 import { Download, FileType, Hash, LayoutGrid, ShieldCheck, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { formatDescription, formatLabel } from "./formats";
+import { FileFormatIcon } from "./file-format-icon";
+
 
 type Row = { icon: React.ReactNode; label: string; value: React.ReactNode };
 
@@ -18,12 +20,11 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
       label: "Formato do arquivo",
       value: (
         <span className="flex flex-wrap items-center gap-2">
-          <span className="rounded-md border border-primary/40 bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-            {fmtLabel}
-          </span>
+          <FileFormatIcon format={fmt} />
           <span>{fmtDesc}</span>
         </span>
       ),
+
     });
   }
 

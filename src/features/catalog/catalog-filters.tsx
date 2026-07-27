@@ -61,13 +61,13 @@ export function CatalogFilters({ filters, categories, tags, formats = [], onChan
               <button
                 key={f}
                 onClick={() => onChange({ formato: filters.formato === f ? undefined : f })}
-                className={`flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs uppercase transition-colors ${
+                className={`flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs transition-colors ${
                   filters.formato === f ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"
                 }`}
               >
-                <FileFormatIcon format={f} className="h-3.5 w-3.5" />
-                {f}
+                <FileFormatIcon format={f} />
               </button>
+
             ))}
           </div>
         </FilterGroup>
