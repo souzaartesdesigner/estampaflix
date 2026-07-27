@@ -166,14 +166,35 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
           <div className="grid gap-2"><Label>Título</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required /></div>
           <div className="grid gap-2"><Label>Slug (URL)</Label><Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="deixe vazio para gerar automaticamente" /></div>
           <div className="grid gap-2"><Label>Descrição</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} /></div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label>Categoria</Label>
-              <Select value={form.category_id} onValueChange={(v) => setForm({ ...form, category_id: v })}>
-                <SelectTrigger><SelectValue placeholder="Selecione" /></SelectTrigger>
-                <SelectContent>{categories.map((c: any) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
-              </Select>
+          <div className="grid gap-2 rounded-lg border border-border/60 p-4">
+            <Label>Categorias (múltiplas)</Label>
+            <p className="text-xs text-muted-foreground">A primeira selecionada é a categoria principal. Marque quantas quiser.</p>
+            <div className="max-h-48 space-y-1 overflow-y-auto pr-1">
+              {categories.map((c: any) => {
+                const checked = categoryIds.includes(c.id);
+                return (
+                  <label key={c.id} className="flex cursor-pointer items-center gap-2 rounded px-1 py-1 text-sm hover:bg-muted/40">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 accent-primary"
+                      checked={checked}
+                      onChange={() =>
+                        setCategoryIds((prev) =>
+                          prev.includes(c.id) ? prev.filter((x) => x !== c.id) : [...prev, c.id]
+                        )
+                      }
+                    />
+                    <span>{c.parent_id ? `— ${c.name}` : c.name}</span>
+                    {checked && categoryIds[0] === c.id && (
+                      <span className="ml-auto text-xs text-primary">principal</span>
+                    )}
+                  </label>
+                );
+              })}
             </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+
             <div className="grid gap-2">
               <Label>Formato</Label>
               <Input
