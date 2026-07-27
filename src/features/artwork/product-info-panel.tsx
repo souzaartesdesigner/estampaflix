@@ -1,4 +1,4 @@
-import { Download, Hash, LayoutGrid, ShieldCheck, Zap } from "lucide-react";
+import { Download, FileType, Hash, LayoutGrid, ShieldCheck, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { formatDescription, formatLabel } from "./formats";
 
