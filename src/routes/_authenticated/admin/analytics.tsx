@@ -22,7 +22,7 @@ function Analytics() {
         supabase.from("orders").select("amount_cents,status,created_at,items,artwork_id,coupon_id").gte("created_at", last30),
         supabase.from("subscriptions").select("id,status,plan_id,created_at,plans(name,tier,price_cents)"),
         supabase.from("plans").select("id,name,price_cents"),
-        supabase.from("artworks").select("id,title,download_count,category_id,categories(name)").order("download_count", { ascending: false }).limit(10),
+        supabase.from("artworks").select("id,title,download_count,category_id,categories!artworks_category_id_fkey(name)").order("download_count", { ascending: false }).limit(10),
         supabase.from("downloads").select("id,artwork_id,created_at,source").gte("created_at", last30),
         supabase.from("profiles").select("id,created_at").gte("created_at", last30),
         supabase.from("reviews").select("rating,created_at,artwork_id,artworks(title)").order("created_at", { ascending: false }).limit(50),

@@ -22,7 +22,7 @@ export const Route = createFileRoute("/artes/$slug")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("artworks")
-      .select("*, categories(name,slug), artwork_categories(categories(id,name,slug)), artwork_tags(tags(id,name,slug))")
+      .select("*, categories!artworks_category_id_fkey(name,slug), artwork_categories(categories(id,name,slug)), artwork_tags(tags(id,name,slug))")
       .eq("slug", params.slug)
       .eq("is_published", true)
       .maybeSingle();
