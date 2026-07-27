@@ -53,6 +53,12 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
     gallery_urls: (editing?.gallery_urls ?? []) as string[],
     translations: (editing?.translations ?? {}) as Record<string, { title?: string; description?: string }>,
   });
+  const [categoryIds, setCategoryIds] = useState<string[]>(() => {
+    const linked: string[] = (editing?.artwork_categories ?? []).map((r: any) => r.category_id).filter(Boolean);
+    const all = new Set<string>(linked);
+    if (editing?.category_id) all.add(editing.category_id);
+    return Array.from(all);
+  });
   const [sourceType, setSourceType] = useState<"upload" | "external">(
     editing?.external_url ? "external" : "upload"
   );
@@ -60,6 +66,7 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
   const [artFile, setArtFile] = useState<File | null>(null);
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
+
 
   const { data: knownFormats = [] } = useQuery({
     queryKey: ["admin-artwork-formats"],
