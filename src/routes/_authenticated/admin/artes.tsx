@@ -121,7 +121,7 @@ function Artes() {
             <Button size="sm" variant="outline" onClick={() => bulkUpdate.mutate({ is_published: true })}><Eye className="mr-1 h-3 w-3" /> Publicar</Button>
             <Button size="sm" variant="outline" onClick={() => bulkUpdate.mutate({ is_published: false })}><EyeOff className="mr-1 h-3 w-3" /> Despublicar</Button>
             <Button size="sm" variant="outline" onClick={() => { setBulkAction("price"); setBulkOpen(true); }}><DollarSign className="mr-1 h-3 w-3" /> Alterar preço</Button>
-            <Button size="sm" variant="outline" onClick={() => { setBulkAction("category"); setBulkOpen(true); }}><Tag className="mr-1 h-3 w-3" /> Alterar categoria</Button>
+            <Button size="sm" variant="outline" onClick={() => { setBulkAction("category"); setBulkOpen(true); }}><Tag className="mr-1 h-3 w-3" /> Adicionar categoria</Button>
             <Button size="sm" variant="outline" onClick={() => { setBulkAction("credit_cost"); setBulkOpen(true); }}>Créditos</Button>
             <Button size="sm" variant="destructive" onClick={() => { if (confirm(`Excluir ${selected.length} artes?`)) bulkDelete.mutate(); }}><Trash2 className="mr-1 h-3 w-3" /> Excluir</Button>
             <Button size="sm" variant="ghost" onClick={() => setSelected([])}>Limpar</Button>
@@ -147,7 +147,7 @@ function Artes() {
           <DialogHeader>
             <DialogTitle>
               {bulkAction === "price" && "Alterar preço em massa"}
-              {bulkAction === "category" && "Alterar categoria em massa"}
+              {bulkAction === "category" && "Adicionar categoria em massa"}
               {bulkAction === "credit_cost" && "Alterar custo em créditos"}
             </DialogTitle>
           </DialogHeader>
