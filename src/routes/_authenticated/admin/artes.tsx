@@ -25,7 +25,7 @@ function Artes() {
 
   const { data: artworks = [] } = useQuery({
     queryKey: ["admin-artworks"],
-    queryFn: async () => (await supabase.from("artworks").select("*, categories(name)").order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await supabase.from("artworks").select("*, categories(name), artwork_categories(category_id)").order("created_at", { ascending: false })).data ?? [],
   });
   const { data: categories = [] } = useQuery({
     queryKey: ["admin-categories"],
