@@ -112,7 +112,7 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         title: form.title,
         description: form.description,
         slug: form.slug || slugify(form.title),
-        category_id: form.category_id || null,
+        category_id: categoryIds[0] || null,
         preview_url,
         file_path,
         external_url,
@@ -127,13 +127,30 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         translations: form.translations,
       };
 
-      const { error } = isEdit
-        ? await supabase.from("artworks").update(payload).eq("id", editing.id)
-        : await supabase.from("artworks").insert(payload);
-      if (error) throw error;
+      let artworkId = editing?.id as string | undefined;
+      if (isEdit) {
+        const { error } = await supabase.from("artworks").update(payload).eq("id", editing.id);
+        if (error) throw error;
+      } else {
+        const { data: ins, error } = await supabase.from("artworks").insert(payload).select("id").single();
+        if (error) throw error;
+        artworkId = ins.id;
+      }
+
+      if (artworkId) {
+        await supabase.from("artwork_categories").delete().eq("artwork_id", artworkId);
+        if (categoryIds.length) {
+          const { error: linkErr } = await supabase
+            .from("artwork_categories")
+            .insert(categoryIds.map((cid) => ({ artwork_id: artworkId!, category_id: cid })));
+          if (linkErr) throw linkErr;
+        }
+      }
+
       toast.success(isEdit ? "Arte atualizada" : "Arte criada");
       qc.invalidateQueries({ queryKey: ["admin-artworks"] });
       onOpenChange(false);
+
     } catch (err: any) {
       toast.error(err.message ?? "Erro ao salvar");
     } finally {
