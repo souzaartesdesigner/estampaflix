@@ -207,6 +207,14 @@ function Importar() {
             artworkId = ins.id;
           }
 
+          // Multi-categorias
+          if (categoryIds.length) {
+            await supabase.from("artwork_categories").delete().eq("artwork_id", artworkId);
+            await supabase
+              .from("artwork_categories")
+              .insert(categoryIds.map((cid) => ({ artwork_id: artworkId, category_id: cid })));
+          }
+
           // Tags
           if (cTags >= 0 && row[cTags]) {
             const tagNames = row[cTags].split(",").map((s) => s.trim()).filter(Boolean).slice(0, 15);
