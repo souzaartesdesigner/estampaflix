@@ -34,11 +34,18 @@ export const homeQuery = queryOptions({
       (!b.starts_at || b.starts_at <= nowIso) && (!b.ends_at || b.ends_at >= nowIso);
 
     const cats = categories ?? [];
+    const artworkIdsForCategory = async (categoryId: string) => {
+      const { data } = await supabase.from("artwork_categories").select("artwork_id").eq("category_id", categoryId);
+      return Array.from(new Set((data ?? []).map((r: any) => r.artwork_id)));
+    };
+
     const catsWithSamples = await Promise.all(
       cats.map(async (c) => {
+        const ids = await artworkIdsForCategory(c.id);
+        if (ids.length === 0) return { ...c, samples: [], count: 0 };
         const [{ data: samples }, { count }] = await Promise.all([
-          supabase.from("artworks").select("id,preview_url").eq("is_published", true).eq("category_id", c.id).order("created_at", { ascending: false }).limit(4),
-          supabase.from("artworks").select("id", { count: "exact", head: true }).eq("is_published", true).eq("category_id", c.id),
+          supabase.from("artworks").select("id,preview_url").eq("is_published", true).in("id", ids).order("created_at", { ascending: false }).limit(4),
+          supabase.from("artworks").select("id", { count: "exact", head: true }).eq("is_published", true).in("id", ids),
         ]);
         return { ...c, samples: samples ?? [], count: count ?? 0 };
       })
@@ -49,17 +56,20 @@ export const homeQuery = queryOptions({
     const categorySections = sectionsList.filter((s) => s.section_type === "category" && s.category_id);
     const catItemsEntries = await Promise.all(
       categorySections.map(async (s) => {
+        const ids = await artworkIdsForCategory(s.category_id);
+        if (ids.length === 0) return [s.id, []] as const;
         const { data } = await supabase
           .from("artworks")
           .select(ARTWORK_COLS)
           .eq("is_published", true)
-          .eq("category_id", s.category_id)
+          .in("id", ids)
           .order("created_at", { ascending: false })
           .limit(s.item_limit ?? 8);
         return [s.id, data ?? []] as const;
       })
     );
     const categoryItems: Record<string, any[]> = Object.fromEntries(catItemsEntries);
+
 
     // Prefetch items for "manual"-typed sections (manual curation)
     const manualSections = sectionsList.filter((s) => s.section_type === "manual");
