@@ -56,7 +56,22 @@ function Artes() {
     onError: (e: any) => toast.error(e.message),
   });
 
+  const bulkAddCategory = useMutation({
+    mutationFn: async (categoryId: string) => {
+      const { error } = await (supabase.from("artwork_categories") as any).upsert(
+        selected.map((id) => ({ artwork_id: id, category_id: categoryId })),
+        { onConflict: "artwork_id,category_id" }
+      );
+      if (error) throw error;
+      // Define como principal quando a arte ainda não tem categoria principal
+      await (supabase.from("artworks") as any).update({ category_id: categoryId }).in("id", selected).is("category_id", null);
+    },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-artworks"] }); toast.success("Categoria adicionada"); setSelected([]); setBulkOpen(false); setBulkValue(""); setBulkAction(""); },
+    onError: (e: any) => toast.error(e.message),
+  });
+
   const bulkDelete = useMutation({
+
     mutationFn: async () => {
       const { error } = await supabase.from("artworks").delete().in("id", selected);
       if (error) throw error;
