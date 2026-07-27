@@ -93,6 +93,9 @@ export type Database = {
           is_trending: boolean
           preview_url: string
           price_cents: number
+          seo_description: string | null
+          seo_keyword: string | null
+          seo_title: string | null
           slug: string
           title: string
           translations: Json
@@ -117,6 +120,9 @@ export type Database = {
           is_trending?: boolean
           preview_url: string
           price_cents?: number
+          seo_description?: string | null
+          seo_keyword?: string | null
+          seo_title?: string | null
           slug: string
           title: string
           translations?: Json
@@ -141,6 +147,9 @@ export type Database = {
           is_trending?: boolean
           preview_url?: string
           price_cents?: number
+          seo_description?: string | null
+          seo_keyword?: string | null
+          seo_title?: string | null
           slug?: string
           title?: string
           translations?: Json
