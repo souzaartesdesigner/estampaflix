@@ -121,6 +121,7 @@ function Importar() {
       const cName = idx("Nome");
       const cPub = idx("Publicado");
       const cDesc = idx("Descrição");
+      const cShort = idx("Descrição curta");
       const cPrice = idx("Preço");
       const cSale = idx("Preço promocional");
       const cCats = idx("Categorias");
@@ -129,6 +130,12 @@ function Importar() {
       const cDlUrl = idx("URL do download 1");
       const cExtUrl = idx("URL externa");
       const cFeat = idx("Em destaque?");
+      // Yoast SEO (quando o CSV trouxer as metas)
+      const findCol = (needle: string) =>
+        header.findIndex((h) => h.toLowerCase().includes(needle));
+      const cSeoTitle = findCol("wpseo_title");
+      const cSeoDesc = findCol("wpseo_metadesc");
+      const cSeoKw = findCol("wpseo_focuskw");
 
       if (cName < 0) throw new Error("Coluna 'Nome' não encontrada");
 
@@ -164,13 +171,28 @@ function Importar() {
           const regular = cPrice >= 0 ? parsePriceToCents(row[cPrice]) : 0;
           const price_cents = sale > 0 ? sale : regular;
 
-          const preview_url = (cImg >= 0 ? row[cImg] : "").split(",")[0].trim();
+          // Images: 1st = preview, others = gallery
+          const imageUrls = (cImg >= 0 ? row[cImg] : "")
+            .split(",")
+            .map((s) => s.trim())
+            .filter((s) => /^https?:\/\//i.test(s));
+          const preview_url = imageUrls[0] ?? "";
           if (!preview_url) throw new Error("Sem URL de imagem");
+          const gallery_urls = Array.from(new Set(imageUrls.slice(1))).slice(0, 12);
 
           const external_url = (cDlUrl >= 0 ? row[cDlUrl] : "").trim() || (cExtUrl >= 0 ? row[cExtUrl] : "").trim() || null;
 
           const is_published = cPub >= 0 ? (row[cPub] || "").trim() === "1" : publishAll;
           const is_featured = cFeat >= 0 ? (row[cFeat] || "").trim() === "1" : false;
+
+          // SEO (Yoast quando existir, senão gerado da descrição curta/longa)
+          const shortDesc = cShort >= 0 ? stripHtml(row[cShort] || "").replace(/\s+/g, " ").trim() : "";
+          const plainDesc = stripHtml(rawDesc).replace(/\s+/g, " ").trim();
+          const seo_title = (cSeoTitle >= 0 ? (row[cSeoTitle] || "").trim() : "") || `${title} — Estampa Flix`;
+          const seo_description =
+            (cSeoDesc >= 0 ? (row[cSeoDesc] || "").trim() : "") ||
+            (shortDesc || plainDesc || `${title}: arte digital em alta resolução para sublimação, DTF e estamparia com licença comercial.`);
+          const seo_keyword = (cSeoKw >= 0 ? (row[cSeoKw] || "").trim() : "") || title.toLowerCase();
 
           const baseSlug = slugify(title);
           // Check if already exists by slug
@@ -183,6 +205,10 @@ function Importar() {
             description,
             category_id,
             preview_url,
+            gallery_urls,
+            seo_title: seo_title.slice(0, 70),
+            seo_description: seo_description.slice(0, 160),
+            seo_keyword: seo_keyword.slice(0, 120),
             file_path: null as string | null,
             external_url,
             file_format:

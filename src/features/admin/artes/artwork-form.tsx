@@ -50,6 +50,9 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
     is_trending: editing?.is_trending ?? false,
     colors: (editing?.colors ?? []).join(","),
     gallery_urls: (editing?.gallery_urls ?? []) as string[],
+    seo_title: editing?.seo_title ?? "",
+    seo_description: editing?.seo_description ?? "",
+    seo_keyword: editing?.seo_keyword ?? "",
     translations: (editing?.translations ?? {}) as Record<string, { title?: string; description?: string }>,
   });
   const [categoryIds, setCategoryIds] = useState<string[]>(() => {
@@ -123,6 +126,9 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         is_trending: form.is_trending,
         colors: form.colors.split(",").map((s: string) => s.trim()).filter(Boolean),
         gallery_urls,
+        seo_title: form.seo_title?.trim() || null,
+        seo_description: form.seo_description?.trim() || null,
+        seo_keyword: form.seo_keyword?.trim() || null,
         translations: form.translations,
       };
 
@@ -245,6 +251,14 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
           <div className="grid gap-2 rounded-lg border border-border/60 p-4">
             <Label>Galeria (imagens secundárias)</Label>
             <Input type="file" accept="image/*" multiple onChange={(e) => setGalleryFiles(Array.from(e.target.files ?? []))} />
+            <Textarea
+              rows={2}
+              placeholder="Ou cole URLs de imagens, uma por linha"
+              value={(form.gallery_urls ?? []).join("\n")}
+              onChange={(e) =>
+                setForm({ ...form, gallery_urls: e.target.value.split("\n").map((s) => s.trim()).filter(Boolean) })
+              }
+            />
             {form.gallery_urls.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {form.gallery_urls.map((u: string, i: number) => (
@@ -260,6 +274,30 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
               </div>
             )}
           </div>
+
+          <div className="grid gap-2 rounded-lg border border-border/60 p-4">
+            <Label>SEO</Label>
+            <Input
+              value={form.seo_title}
+              onChange={(e) => setForm({ ...form, seo_title: e.target.value })}
+              placeholder="Título SEO (até 60 caracteres)"
+              maxLength={70}
+            />
+            <Input
+              value={form.seo_keyword}
+              onChange={(e) => setForm({ ...form, seo_keyword: e.target.value })}
+              placeholder="Frase-chave foco (ex.: arte para sublimação futebol)"
+            />
+            <Textarea
+              rows={2}
+              value={form.seo_description}
+              onChange={(e) => setForm({ ...form, seo_description: e.target.value })}
+              placeholder="Meta descrição (até 160 caracteres)"
+              maxLength={180}
+            />
+            <p className="text-xs text-muted-foreground">Se deixar vazio, o site gera automaticamente a partir do título e da descrição.</p>
+          </div>
+
 
           <div className="grid gap-3 rounded-lg border border-border/60 p-4">
             <Label>Traduções (opcional)</Label>
