@@ -110,7 +110,10 @@ function ArtworkPage() {
         </nav>
 
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-          <ArtworkGallery images={galleryImages} alt={trTitle} />
+          <div>
+            <ArtworkGallery images={galleryImages} alt={trTitle} />
+            <ProductInfoPanel artwork={artwork} />
+          </div>
           <ArtworkInfo artwork={artwork} title={trTitle} session={session} sub={sub} owned={owned} />
         </div>
 
