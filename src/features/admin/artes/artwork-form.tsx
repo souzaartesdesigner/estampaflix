@@ -50,6 +50,9 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
     is_trending: editing?.is_trending ?? false,
     colors: (editing?.colors ?? []).join(","),
     gallery_urls: (editing?.gallery_urls ?? []) as string[],
+    seo_title: editing?.seo_title ?? "",
+    seo_description: editing?.seo_description ?? "",
+    seo_keyword: editing?.seo_keyword ?? "",
     translations: (editing?.translations ?? {}) as Record<string, { title?: string; description?: string }>,
   });
   const [categoryIds, setCategoryIds] = useState<string[]>(() => {
