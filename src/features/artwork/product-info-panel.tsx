@@ -1,4 +1,4 @@
-import { Download, Hash, LayoutGrid, ShieldCheck, Zap } from "lucide-react";
+import { Download, FileType, Hash, LayoutGrid, ShieldCheck, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { formatDescription, formatLabel } from "./formats";
 
@@ -14,7 +14,7 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
 
   if (fmt) {
     rows.push({
-      icon: <span className="h-4 w-4 rounded-sm bg-primary/20" />,
+      icon: <FileType className="h-4 w-4" />,
       label: "Formato do arquivo",
       value: (
         <span className="flex flex-wrap items-center gap-2">
