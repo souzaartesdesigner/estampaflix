@@ -80,7 +80,7 @@ function Catalogo() {
 
       let query = supabase
         .from("artworks")
-        .select("id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count,category_id,colors,file_format,translations,artwork_tags(tag_id,tags(slug))")
+        .select("id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count,category_id,colors,file_format,translations,categories(id,name,slug,translations),artwork_categories(categories(id,name,slug,translations)),artwork_tags(tag_id,tags(slug))")
         .eq("is_published", true)
         .order("created_at", { ascending: false })
         .limit(60);
