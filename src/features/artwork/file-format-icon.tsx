@@ -1,9 +1,10 @@
 import { FileImage, FileText, FileType, Layers, PenTool, Shapes } from "lucide-react";
 import corelAsset from "@/assets/coreldraw.webp.asset.json";
+import { normalizeFormatKey } from "./formats";
 
 type Props = { format: string; className?: string };
 
-/** Marca textual para formatos com identidade forte (Corel, Photoshop, Illustrator). */
+/** Marca textual para formatos com identidade forte (Photoshop, Illustrator). */
 function BrandMark({ label, className }: { label: string; className?: string }) {
   return (
     <span
@@ -19,24 +20,35 @@ function BrandMark({ label, className }: { label: string; className?: string }) 
 }
 
 export function FileFormatIcon({ format, className = "h-4 w-4" }: Props) {
-  const f = (format || "").trim().toLowerCase().replace(/^\./, "");
+  const key = normalizeFormatKey(format);
 
-  if (f.includes("cdr") || f.includes("corel"))
-    return (
-      <img
-        src={corelAsset.url}
-        alt="CorelDRAW"
-        className="h-5 w-5 rounded-[4px] object-contain"
-        loading="lazy"
-      />
-    );
-  if (f.includes("psd") || f.includes("photoshop")) return <BrandMark label="Ps" />;
-  if (f.includes("ai") || f.includes("illustrator")) return <BrandMark label="Ai" />;
-  if (f.includes("eps")) return <PenTool className={className} />;
-  if (f.includes("svg")) return <Shapes className={className} />;
-  if (f.includes("pdf")) return <FileText className={className} />;
-  if (["png", "jpg", "jpeg", "webp", "gif", "tif", "tiff", "bmp"].some((x) => f.includes(x)))
-    return <FileImage className={className} />;
-  if (f.includes("zip") || f.includes("rar")) return <Layers className={className} />;
-  return <FileType className={className} />;
+  switch (key) {
+    case "cdr":
+      return (
+        <img
+          src={corelAsset.url}
+          alt="CorelDRAW"
+          className="h-5 w-5 rounded-[4px] object-contain"
+          loading="lazy"
+        />
+      );
+    case "psd":
+      return <BrandMark label="Ps" />;
+    case "ai":
+      return <BrandMark label="Ai" />;
+    case "eps":
+      return <PenTool className={className} />;
+    case "svg":
+      return <Shapes className={className} />;
+    case "pdf":
+      return <FileText className={className} />;
+    case "png":
+    case "jpg":
+    case "webp":
+      return <FileImage className={className} />;
+    case "zip":
+      return <Layers className={className} />;
+    default:
+      return <FileType className={className} />;
+  }
 }
