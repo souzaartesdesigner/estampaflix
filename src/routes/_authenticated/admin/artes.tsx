@@ -94,7 +94,7 @@ function Artes() {
       bulkUpdate.mutate({ price_cents: cents });
     } else if (bulkAction === "category") {
       if (!bulkValue) return toast.error("Selecione a categoria");
-      bulkUpdate.mutate({ category_id: bulkValue });
+      bulkAddCategory.mutate(bulkValue);
     } else if (bulkAction === "credit_cost") {
       const c = parseInt(bulkValue, 10);
       if (!Number.isFinite(c) || c < 0) return toast.error("Valor inválido");
