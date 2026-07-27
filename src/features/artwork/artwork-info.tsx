@@ -5,6 +5,7 @@ import { FavoriteButton } from "@/components/favorite-button";
 import { tField, useI18n } from "@/lib/i18n";
 import { ArtworkActions } from "./artwork-actions";
 import { FileFormatIcon } from "./file-format-icon";
+import { formatDescription } from "./formats";
 
 type Props = {
   artwork: any;
