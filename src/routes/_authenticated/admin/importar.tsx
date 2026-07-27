@@ -121,6 +121,7 @@ function Importar() {
       const cName = idx("Nome");
       const cPub = idx("Publicado");
       const cDesc = idx("Descrição");
+      const cShort = idx("Descrição curta");
       const cPrice = idx("Preço");
       const cSale = idx("Preço promocional");
       const cCats = idx("Categorias");
@@ -129,6 +130,12 @@ function Importar() {
       const cDlUrl = idx("URL do download 1");
       const cExtUrl = idx("URL externa");
       const cFeat = idx("Em destaque?");
+      // Yoast SEO (quando o CSV trouxer as metas)
+      const findCol = (needle: string) =>
+        header.findIndex((h) => h.toLowerCase().includes(needle));
+      const cSeoTitle = findCol("wpseo_title");
+      const cSeoDesc = findCol("wpseo_metadesc");
+      const cSeoKw = findCol("wpseo_focuskw");
 
       if (cName < 0) throw new Error("Coluna 'Nome' não encontrada");
 
