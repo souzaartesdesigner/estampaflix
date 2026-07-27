@@ -29,7 +29,7 @@ function Artes() {
   });
   const { data: categories = [] } = useQuery({
     queryKey: ["admin-categories"],
-    queryFn: async () => (await supabase.from("categories").select("id,name").order("name")).data ?? [],
+    queryFn: async () => (await supabase.from("categories").select("id,name,parent_id").order("name")).data ?? [],
   });
 
   const filtered = useMemo(() => {
