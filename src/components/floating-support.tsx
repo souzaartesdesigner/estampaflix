@@ -8,7 +8,7 @@ export function FloatingSupport() {
     <Link
       to="/suporte"
       aria-label={t("float.support")}
-      className="fixed bottom-3 right-3 z-[9999] transition-transform duration-300 hover:scale-110 sm:bottom-5 sm:right-5"
+      className="fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] left-3 z-40 transition-transform duration-300 hover:scale-110 sm:bottom-5 sm:right-5 sm:left-auto"
     >
       <img
         src={supportAsset.url}
@@ -17,7 +17,7 @@ export function FloatingSupport() {
         decoding="async"
         width={120}
         height={120}
-        className="h-[72px] w-[72px] cursor-pointer drop-shadow-[0_10px_30px_rgba(0,123,255,0.45)] sm:h-[96px] sm:w-[96px] md:h-[120px] md:w-[120px]"
+        className="h-14 w-14 cursor-pointer drop-shadow-[0_10px_30px_rgba(0,123,255,0.45)] sm:h-24 sm:w-24 md:h-[120px] md:w-[120px]"
       />
     </Link>
   );
