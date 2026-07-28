@@ -7,12 +7,11 @@ import { FilterGroup, FilterOption } from "./filter-group";
 type Props = {
   filters: CatalogSearch;
   categories: any[];
-  tags: any[];
   formats?: string[];
   onChange: (patch: Partial<CatalogSearch>) => void;
 };
 
-export function CatalogFilters({ filters, categories, tags, formats = [], onChange }: Props) {
+export function CatalogFilters({ filters, categories, formats = [], onChange }: Props) {
   const { t, lang } = useI18n();
 
 
@@ -69,29 +68,6 @@ export function CatalogFilters({ filters, categories, tags, formats = [], onChan
               </button>
 
             ))}
-          </div>
-        </FilterGroup>
-      )}
-
-
-
-      {tags.length > 0 && (
-        <FilterGroup title={t("catalog.tags")}>
-          <div className="flex flex-wrap gap-1">
-            {tags.slice(0, 20).map((tt: any) => {
-              const nm = tField(tt, "name", lang) || tt.name;
-              return (
-                <button
-                  key={tt.id}
-                  onClick={() => onChange({ tag: filters.tag === tt.slug ? undefined : tt.slug })}
-                  className={`rounded-full border px-2 py-0.5 text-xs transition-colors ${
-                    filters.tag === tt.slug ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"
-                  }`}
-                >
-                  {nm}
-                </button>
-              );
-            })}
           </div>
         </FilterGroup>
       )}

@@ -4,7 +4,6 @@ import { FORMAT_KEYS, normalizeFormatKey } from "@/features/artwork/formats";
 export const catalogSearchSchema = z.object({
   q: z.string().optional(),
   categoria: z.string().optional(),
-  tag: z.string().optional(),
   formato: z.string().optional(),
   cor: z.string().optional(),
 });
