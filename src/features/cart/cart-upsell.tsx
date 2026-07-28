@@ -1,10 +1,8 @@
 import { ArtworkCard } from "@/components/artwork-card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { formatBRL } from "@/lib/format";
 import { useCart } from "@/hooks/use-cart";
-import { Plus, Sparkles, Loader2, Check } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 
 type Suggestion = {
