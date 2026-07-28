@@ -64,6 +64,19 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
           )}
         </div>
         <FavoriteButton artworkId={artwork.id} size="sm" className="absolute right-2.5 top-2.5" />
+        <button
+          type="button"
+          disabled={inCart || cart.adding}
+          aria-label={inCart ? "No carrinho" : "Adicionar ao carrinho"}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!inCart) cart.add(artwork.id);
+          }}
+          className="absolute right-2.5 top-12 grid h-8 w-8 place-items-center rounded-full border border-border/60 bg-background/80 opacity-0 backdrop-blur transition-all hover:bg-background focus-visible:opacity-100 group-hover:opacity-100 disabled:opacity-100 disabled:border-primary/60 disabled:text-primary"
+        >
+          {inCart ? <Check className="h-4 w-4" /> : <ShoppingCart className="h-4 w-4" />}
+        </button>
       </div>
       <div className="flex flex-1 flex-col gap-1 p-3.5">
         <h3 className="text-sm font-semibold tracking-tight text-foreground/95 transition-colors group-hover:text-primary">
@@ -79,21 +92,8 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
             {formatBRL(artwork.price_cents)}
           </span>
         </div>
-        <Button
-          type="button"
-          size="sm"
-          disabled={inCart || cart.adding}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (!inCart) cart.add(artwork.id);
-          }}
-          className="mt-2 w-full gap-2 bg-[#121b28] text-foreground hover:bg-[#1a2740]"
-        >
-          {inCart ? <Check className="h-4 w-4" /> : <ShoppingCart className="h-4 w-4" />}
-          {inCart ? "No carrinho" : "Adicionar ao carrinho"}
-        </Button>
       </div>
+
     </Link>
   );
 }
