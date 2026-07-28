@@ -171,6 +171,41 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
           <div className="grid gap-2"><Label>Título</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required /></div>
           <div className="grid gap-2"><Label>Slug (URL)</Label><Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="deixe vazio para gerar automaticamente" /></div>
           <div className="grid gap-2"><Label>Descrição</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} /></div>
+
+          <div className="grid gap-3 rounded-lg border border-primary/40 bg-primary/5 p-4">
+            <Label className="text-primary">SEO (Google)</Label>
+            <div className="grid gap-1">
+              <Label className="text-xs text-muted-foreground">Título SEO</Label>
+              <Input
+                value={form.seo_title}
+                onChange={(e) => setForm({ ...form, seo_title: e.target.value })}
+                placeholder="Ex.: Arte Vetor Camisa Terceirão Pantera"
+                maxLength={70}
+              />
+              <span className="text-[11px] text-muted-foreground">{(form.seo_title ?? "").length}/60 caracteres recomendados</span>
+            </div>
+            <div className="grid gap-1">
+              <Label className="text-xs text-muted-foreground">Frase-chave foco</Label>
+              <Input
+                value={form.seo_keyword}
+                onChange={(e) => setForm({ ...form, seo_keyword: e.target.value })}
+                placeholder="Ex.: arte para sublimação futebol"
+              />
+            </div>
+            <div className="grid gap-1">
+              <Label className="text-xs text-muted-foreground">Meta descrição</Label>
+              <Textarea
+                rows={2}
+                value={form.seo_description}
+                onChange={(e) => setForm({ ...form, seo_description: e.target.value })}
+                placeholder="Resumo que aparece no Google (até 160 caracteres)"
+                maxLength={180}
+              />
+              <span className="text-[11px] text-muted-foreground">{(form.seo_description ?? "").length}/160 caracteres recomendados</span>
+            </div>
+            <p className="text-xs text-muted-foreground">Preenchido automaticamente na importação do CSV. Se ficar vazio, o site gera a partir do título e da descrição.</p>
+          </div>
+
           <div className="grid gap-2 rounded-lg border border-border/60 p-4">
             <Label>Categorias (múltiplas)</Label>
             <p className="text-xs text-muted-foreground">A primeira selecionada é a categoria principal. Marque quantas quiser.</p>
