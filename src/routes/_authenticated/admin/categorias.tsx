@@ -52,6 +52,16 @@ function Categorias() {
     mutationFn: async (id: string) => { const { error } = await supabase.from("categories").delete().eq("id", id); if (error) throw error; },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-categories-list"] }),
   });
+  const patch = useMutation({
+    mutationFn: async ({ id, values }: { id: string; values: any }) => {
+      const { error } = await supabase.from("categories").update(values).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-categories-list"] }),
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const featuredCount = (items as any[]).filter((c) => c.featured).length;
 
   function renderRow(c: any, isChild = false) {
     return (
