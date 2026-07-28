@@ -2,7 +2,7 @@ import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 const ARTWORK_COLS =
-  "id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count,translations";
+  "id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count,translations,categories!artworks_category_id_fkey(id,name,slug,translations),artwork_categories(categories(id,name,slug,translations))";
 
 export const homeQuery = queryOptions({
   queryKey: ["home-data"],
