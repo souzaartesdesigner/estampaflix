@@ -110,7 +110,13 @@ function Categorias() {
 
   return (
     <div>
-      <h1 className="mb-6 font-display text-2xl font-bold">Categorias</h1>
+      <h1 className="mb-1 font-display text-2xl font-bold">Categorias</h1>
+      <p className="mb-6 text-sm text-muted-foreground">
+        Marque em <strong>Destaque</strong> as categorias que aparecem no carrossel da home e use <strong>Ordem</strong> para definir a sequência.
+        {featuredCount === 0
+          ? " Nenhuma em destaque — a home está mostrando todas as categorias."
+          : ` ${featuredCount} categoria(s) em destaque.`}
+      </p>
       <form onSubmit={(e) => { e.preventDefault(); if (name.trim()) add.mutate(); }} className="mb-6 flex flex-wrap gap-2">
         <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nome da categoria" className="min-w-[200px] flex-1" />
         <Select value={parentId} onValueChange={setParentId}>
