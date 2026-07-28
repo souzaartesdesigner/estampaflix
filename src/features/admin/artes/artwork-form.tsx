@@ -310,28 +310,6 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
             )}
           </div>
 
-          <div className="grid gap-2 rounded-lg border border-border/60 p-4">
-            <Label>SEO</Label>
-            <Input
-              value={form.seo_title}
-              onChange={(e) => setForm({ ...form, seo_title: e.target.value })}
-              placeholder="Título SEO (até 60 caracteres)"
-              maxLength={70}
-            />
-            <Input
-              value={form.seo_keyword}
-              onChange={(e) => setForm({ ...form, seo_keyword: e.target.value })}
-              placeholder="Frase-chave foco (ex.: arte para sublimação futebol)"
-            />
-            <Textarea
-              rows={2}
-              value={form.seo_description}
-              onChange={(e) => setForm({ ...form, seo_description: e.target.value })}
-              placeholder="Meta descrição (até 160 caracteres)"
-              maxLength={180}
-            />
-            <p className="text-xs text-muted-foreground">Se deixar vazio, o site gera automaticamente a partir do título e da descrição.</p>
-          </div>
 
 
           <div className="grid gap-3 rounded-lg border border-border/60 p-4">
