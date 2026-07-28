@@ -56,7 +56,7 @@ function Dashboard() {
 
   const { data: favorites = [] } = useQuery({
     queryKey: ["favorites", user.id],
-    queryFn: async () => (await supabase.from("favorites").select("artwork_id, artworks(id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count,translations)").order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await supabase.from("favorites").select("artwork_id, artworks(id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count,translations,categories!artworks_category_id_fkey(id,name,slug,translations),artwork_categories(categories(id,name,slug,translations)))").order("created_at", { ascending: false })).data ?? [],
   });
 
   function translateOrderStatus(s: string) {
