@@ -61,15 +61,16 @@ export const Route = createFileRoute("/artes/$slug")({
     const keyword = ((loaderData as any).seo_keyword ?? "").trim() || loaderData.title.toLowerCase();
     return {
       meta: [
-        { title: seoTitle },
+        { title: pageTitle },
         { name: "description", content: description },
         { name: "keywords", content: keyword },
-        { property: "og:title", content: seoTitle },
+        { property: "og:title", content: pageTitle },
         { property: "og:description", content: description },
         { property: "og:image", content: loaderData.preview_url },
         { property: "og:type", content: "product" },
         { property: "og:url", content: url },
-        { name: "twitter:title", content: seoTitle },
+        { name: "twitter:title", content: pageTitle },
+
         { name: "twitter:description", content: description },
         { name: "twitter:image", content: loaderData.preview_url },
       ],
