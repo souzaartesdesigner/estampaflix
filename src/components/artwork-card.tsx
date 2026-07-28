@@ -83,20 +83,21 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
         </button>
       </div>
       <div className="flex flex-1 flex-col gap-1 p-3.5">
+        {cats.length > 0 && (
+          <span className="line-clamp-1 text-[11px] uppercase tracking-wide text-muted-foreground">
+            {tField(cats[0] as any, "name", lang) || cats[0]!.name}
+          </span>
+        )}
         <h3 className="text-sm font-semibold tracking-tight text-foreground/95 transition-colors group-hover:text-primary">
           {title}
         </h3>
-        <div className="mt-auto flex items-center justify-between gap-2 pt-2 text-xs">
+        <div className="mt-auto pt-2">
           <span className="font-display text-base font-bold tracking-tight text-foreground">
             {formatBRL(artwork.price_cents)}
           </span>
-          {cats.length > 0 && (
-            <span className="line-clamp-1 text-right text-[11px] text-muted-foreground">
-              {tField(cats[0] as any, "name", lang) || cats[0]!.name}
-            </span>
-          )}
         </div>
       </div>
+
 
     </Link>
   );
