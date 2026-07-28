@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,6 +34,7 @@ async function uploadFile(file: File, bucket: string, folder: string) {
 
 export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) {
   const qc = useQueryClient();
+  const router = useRouter();
   const isEdit = !!editing;
   const [form, setForm] = useState<any>({
     title: editing?.title ?? "",
@@ -134,8 +136,14 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
 
       let artworkId = editing?.id as string | undefined;
       if (isEdit) {
-        const { error } = await supabase.from("artworks").update(payload).eq("id", editing.id);
+        const { data: upd, error } = await supabase
+          .from("artworks")
+          .update(payload)
+          .eq("id", editing.id)
+          .select("id, seo_title, seo_description, seo_keyword")
+          .maybeSingle();
         if (error) throw error;
+        if (!upd) throw new Error("Não foi possível salvar (sem permissão de administrador).");
       } else {
         const { data: ins, error } = await supabase.from("artworks").insert(payload).select("id").single();
         if (error) throw error;
@@ -152,9 +160,12 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         }
       }
 
-      toast.success(isEdit ? "Arte atualizada" : "Arte criada");
-      qc.invalidateQueries({ queryKey: ["admin-artworks"] });
+      toast.success(isEdit ? "Arte atualizada (SEO salvo)" : "Arte criada");
+      await qc.invalidateQueries({ queryKey: ["admin-artworks"] });
+      qc.invalidateQueries();
+      router.invalidate();
       onOpenChange(false);
+
 
     } catch (err: any) {
       toast.error(err.message ?? "Erro ao salvar");
