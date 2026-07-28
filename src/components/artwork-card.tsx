@@ -3,7 +3,7 @@ import { formatBRL } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 
 import { FavoriteButton } from "./favorite-button";
-import { Button } from "@/components/ui/button";
+
 import { ShoppingCart, Check } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { useI18n, tField } from "@/lib/i18n";
