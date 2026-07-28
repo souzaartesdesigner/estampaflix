@@ -6,7 +6,6 @@ import { FavoriteButton } from "./favorite-button";
 
 import { ShoppingCart, Check } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { useI18n, tField } from "@/lib/i18n";
 
 export type ArtworkCardData = {
