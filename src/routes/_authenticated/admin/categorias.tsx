@@ -80,6 +80,24 @@ function Categorias() {
           </div>
         </td>
         <td className="px-4 py-3 text-muted-foreground">{c.slug}</td>
+        <td className="px-4 py-3">
+          <Switch
+            checked={!!c.featured}
+            onCheckedChange={(v) => patch.mutate({ id: c.id, values: { featured: v } })}
+            aria-label="Destacar na home"
+          />
+        </td>
+        <td className="px-4 py-3">
+          <Input
+            type="number"
+            defaultValue={c.sort_order ?? 0}
+            className="h-8 w-20"
+            onBlur={(e) => {
+              const v = Number(e.target.value) || 0;
+              if (v !== (c.sort_order ?? 0)) patch.mutate({ id: c.id, values: { sort_order: v } });
+            }}
+          />
+        </td>
         <td className="px-4 py-3 text-right">
           <Button size="icon" variant="ghost" onClick={() => setEditing(c)}><Pencil className="h-4 w-4" /></Button>
           <Button size="icon" variant="ghost" onClick={() => { if (confirm("Excluir categoria?")) del.mutate(c.id); }}><Trash2 className="h-4 w-4 text-destructive" /></Button>
@@ -87,6 +105,7 @@ function Categorias() {
       </tr>
     );
   }
+
 
   return (
     <div>
