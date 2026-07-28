@@ -23,7 +23,7 @@ export const homeQuery = queryOptions({
       supabase.from("artworks").select(ARTWORK_COLS).eq("is_published", true).order("created_at", { ascending: false }).limit(12),
       supabase.from("artworks").select(ARTWORK_COLS).eq("is_published", true).eq("is_trending", true).limit(8),
       supabase.from("artworks").select(ARTWORK_COLS).eq("is_published", true).order("download_count", { ascending: false }).limit(12),
-      supabase.from("categories").select("id,slug,name,cover_url,translations").order("sort_order").limit(12),
+      supabase.from("categories").select("id,slug,name,cover_url,translations,featured,sort_order").order("sort_order").order("name"),
       supabase.from("plans").select("*").eq("is_active", true).order("sort_order"),
       (supabase as any).from("home_sections").select("*").eq("is_active", true).order("sort_order"),
       (supabase as any).from("banners").select("*").eq("is_active", true).eq("position", "home_hero").order("sort_order"),
