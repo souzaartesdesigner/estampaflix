@@ -34,6 +34,7 @@ async function uploadFile(file: File, bucket: string, folder: string) {
 
 export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) {
   const qc = useQueryClient();
+  const router = useRouter();
   const isEdit = !!editing;
   const [form, setForm] = useState<any>({
     title: editing?.title ?? "",
