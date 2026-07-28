@@ -64,61 +64,10 @@ export function CartUpsell() {
           {t("cart.upsellTitle")}
         </h2>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {data.map((a) => {
-          const inCart = cart.contains(a.id);
-          return (
-            <div
-              key={a.id}
-              className="group flex flex-col overflow-hidden rounded-lg border border-border/50 bg-surface-2/40 transition hover:border-primary/50"
-            >
-              <Link
-                to="/artes/$slug"
-                params={{ slug: a.slug }}
-                className="relative block aspect-square overflow-hidden bg-surface-2"
-              >
-                <img
-                  src={a.preview_url}
-                  alt={a.title}
-                  loading="lazy"
-                  className="h-full w-full object-cover transition group-hover:scale-105"
-                />
-              </Link>
-              <div className="flex flex-1 flex-col gap-2 p-2.5">
-                <Link
-                  to="/artes/$slug"
-                  params={{ slug: a.slug }}
-                  className="line-clamp-2 text-xs font-medium leading-tight hover:text-primary sm:text-sm"
-                >
-                  {a.title}
-                </Link>
-                <div className="mt-auto flex items-center justify-between gap-2">
-                  <span className="text-xs font-bold text-primary sm:text-sm">
-                    {formatBRL(a.price_cents)}
-                  </span>
-                  <Button
-                    size="sm"
-                    variant={inCart ? "secondary" : "outline"}
-                    disabled={inCart || cart.adding}
-                    onClick={() => cart.add(a.id)}
-                    className="h-7 px-2 text-xs"
-                  >
-                    {cart.adding ? (
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                    ) : inCart ? (
-                      <Check className="h-3.5 w-3.5" />
-                    ) : (
-                      <>
-                        <Plus className="mr-1 h-3.5 w-3.5" />
-                        {t("cart.upsellAdd")}
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        {data.map((a) => (
+          <ArtworkCard key={a.id} artwork={a as any} />
+        ))}
       </div>
     </section>
   );
