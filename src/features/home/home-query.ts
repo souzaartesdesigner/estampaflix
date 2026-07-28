@@ -33,7 +33,11 @@ export const homeQuery = queryOptions({
     const filterWindow = (b: any) =>
       (!b.starts_at || b.starts_at <= nowIso) && (!b.ends_at || b.ends_at >= nowIso);
 
-    const cats = categories ?? [];
+    const allCats = (categories ?? []) as any[];
+    const seen = new Set<string>();
+    const uniqueCats = allCats.filter((c) => (seen.has(c.id) ? false : (seen.add(c.id), true)));
+    const featuredCats = uniqueCats.filter((c) => c.featured);
+    const cats = (featuredCats.length > 0 ? featuredCats : uniqueCats).slice(0, 12);
     const artworkIdsForCategory = async (categoryId: string) => {
       const { data } = await supabase.from("artwork_categories").select("artwork_id").eq("category_id", categoryId);
       return Array.from(new Set((data ?? []).map((r: any) => r.artwork_id)));
