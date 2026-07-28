@@ -109,7 +109,7 @@ function Catalogo() {
         >
           <div className="relative flex-1">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("catalog.searchPlaceholder")} className="pl-9" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("catalog.searchPlaceholder")} aria-label={t("catalog.searchPlaceholder")} className="pl-9" />
           </div>
           <Button type="submit" className="bg-gradient-brand text-brand-foreground">{t("catalog.search")}</Button>
         </form>
