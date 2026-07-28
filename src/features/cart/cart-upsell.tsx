@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { ArtworkCard } from "@/components/artwork-card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,11 @@ type Suggestion = {
   preview_url: string;
   price_cents: number;
   category_id: string | null;
+  is_featured?: boolean;
+  is_trending?: boolean;
+  translations?: any;
+  categories?: any;
+  artwork_categories?: any;
 };
 
 export function CartUpsell() {
@@ -31,7 +36,7 @@ export function CartUpsell() {
     queryFn: async (): Promise<Suggestion[]> => {
       let q = supabase
         .from("artworks")
-        .select("id,slug,title,preview_url,price_cents,category_id")
+        .select("id,slug,title,preview_url,price_cents,category_id,is_featured,is_trending,download_count,translations,categories!artworks_category_id_fkey(id,name,slug,translations),artwork_categories(categories(id,name,slug,translations))")
         .eq("is_published", true)
         .order("download_count", { ascending: false })
         .limit(8);
@@ -42,7 +47,7 @@ export function CartUpsell() {
       if (list.length < 4) {
         const { data: extra } = await supabase
           .from("artworks")
-          .select("id,slug,title,preview_url,price_cents,category_id")
+          .select("id,slug,title,preview_url,price_cents,category_id,is_featured,is_trending,download_count,translations,categories!artworks_category_id_fkey(id,name,slug,translations),artwork_categories(categories(id,name,slug,translations))")
           .eq("is_published", true)
           .not("id", "in", `(${[...cartIds, ...list.map((l) => l.id)].join(",") || "''"})`)
           .order("download_count", { ascending: false })
