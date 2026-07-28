@@ -18,7 +18,7 @@ export function RelatedArtworks({ categoryIds, currentId }: { categoryIds: strin
       if (ids.length === 0) return [];
       const { data } = await supabase
         .from("artworks")
-        .select("id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count,translations")
+        .select("id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count,translations,categories!artworks_category_id_fkey(id,name,slug,translations),artwork_categories(categories(id,name,slug,translations))")
         .eq("is_published", true)
         .in("id", ids)
         .order("download_count", { ascending: false })
