@@ -125,67 +125,82 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
       </div>
 
       <div className="mt-4 flex flex-col gap-2">
-        {session ? (
-          owned ? (
-            <>
-              <Button
-                onClick={() => downloadMut.mutate()}
-                disabled={downloadMut.isPending}
-                className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
-              >
-                <Download className="mr-2 h-4 w-4" />
-                {downloadMut.isPending ? t("product.downloading") : t("product.download")}
-              </Button>
-              <p className="text-xs text-success">{t("product.owned")}</p>
-            </>
-          ) : (
-            <>
-              <Button
-                onClick={() => (canDownload ? downloadMut.mutate() : setPlanDialogOpen(true))}
-                disabled={downloadMut.isPending}
-                className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
-              >
-                <Download className="mr-2 h-4 w-4" />
-                {downloadMut.isPending ? t("product.downloading") : canDownload ? `${t("product.download")} (${sub!.credits_remaining} ${t("product.creditsRemaining")})` : t("product.downloadWithPlan")}
-              </Button>
-              {!sub && (
-                <p className="text-center text-xs text-muted-foreground">
-                  {t("product.noSubscription")} <Link to="/planos" className="text-primary underline">{t("product.seePlans")}</Link>.
-                </p>
-              )}
-              {sub && !canDownload && (
-                <p className="text-center text-xs text-warning">
-                  {t("product.noCredits")} <Link to="/planos" className="text-primary underline">{t("product.upgrade")}</Link>.
-                </p>
-              )}
-              <Button
-                onClick={() => buyMut.mutate()}
-                disabled={buyMut.isPending}
-                size="lg"
-                className="bg-primary text-primary-foreground shadow-brand ring-1 ring-primary/40 hover:bg-primary/90"
-              >
-                {buyMut.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
-                {t("product.buyPix")} ({formatBRL(artwork.price_cents)})
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => (inCart ? navigate({ to: "/carrinho" }) : cart.add(artwork.id))}
-                disabled={cart.adding}
-                className="border-border/60 bg-cart text-foreground hover:bg-cart-hover hover:text-foreground"
-              >
-                {inCart ? (
-                  <><Check className="mr-2 h-4 w-4" /> {t("product.inCart")}</>
-                ) : (
-                  <><ShoppingCart className="mr-2 h-4 w-4" /> {t("product.addToCart")}</>
-                )}
-              </Button>
-
-            </>
-          )
+        {session && owned ? (
+          <>
+            <Button
+              onClick={() => downloadMut.mutate()}
+              disabled={downloadMut.isPending}
+              className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              {downloadMut.isPending ? t("product.downloading") : t("product.download")}
+            </Button>
+            <p className="text-xs text-success">{t("product.owned")}</p>
+          </>
         ) : (
-          <Button asChild className="bg-gradient-brand text-brand-foreground shadow-brand">
-            <Link to="/auth">{t("product.signInToDownload")}</Link>
-          </Button>
+          <>
+            <Button
+              onClick={() => (session && canDownload ? downloadMut.mutate() : setPlanDialogOpen(true))}
+              disabled={downloadMut.isPending}
+              className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              {downloadMut.isPending
+                ? t("product.downloading")
+                : session && canDownload
+                  ? `${t("product.download")} (${sub!.credits_remaining} ${t("product.creditsRemaining")})`
+                  : t("product.downloadWithPlan")}
+            </Button>
+            {session && !sub && (
+              <p className="text-center text-xs text-muted-foreground">
+                {t("product.noSubscription")}{" "}
+                <Link to="/planos" className="text-primary underline">
+                  {t("product.seePlans")}
+                </Link>
+                .
+              </p>
+            )}
+            {session && sub && !canDownload && (
+              <p className="text-center text-xs text-warning">
+                {t("product.noCredits")}{" "}
+                <Link to="/planos" className="text-primary underline">
+                  {t("product.upgrade")}
+                </Link>
+                .
+              </p>
+            )}
+
+            <Button
+              onClick={() => buyMut.mutate()}
+              disabled={buyMut.isPending}
+              size="lg"
+              className="bg-primary text-primary-foreground shadow-brand ring-1 ring-primary/40 hover:bg-primary/90"
+            >
+              {buyMut.isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Zap className="mr-2 h-4 w-4" />
+              )}
+              {t("product.buyPix")} ({formatBRL(artwork.price_cents)})
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={() => (inCart ? navigate({ to: "/carrinho" }) : cart.add(artwork.id))}
+              disabled={cart.adding}
+              className="border-border/60 bg-cart text-foreground hover:bg-cart-hover hover:text-foreground"
+            >
+              {inCart ? (
+                <>
+                  <Check className="mr-2 h-4 w-4" /> {t("product.inCart")}
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className="mr-2 h-4 w-4" /> {t("product.addToCart")}
+                </>
+              )}
+            </Button>
+          </>
         )}
       </div>
 
