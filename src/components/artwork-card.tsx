@@ -3,6 +3,9 @@ import { formatBRL } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 
 import { FavoriteButton } from "./favorite-button";
+import { Button } from "@/components/ui/button";
+import { ShoppingCart, Check } from "lucide-react";
+import { useCart } from "@/hooks/use-cart";
 import { useI18n, tField } from "@/lib/i18n";
 
 export type ArtworkCardData = {
@@ -21,6 +24,8 @@ export type ArtworkCardData = {
 
 export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
   const { t, lang } = useI18n();
+  const cart = useCart();
+  const inCart = cart.contains(artwork.id);
   const title = tField(artwork as any, "title", lang) || artwork.title;
   const cats = [
     ...(artwork.categories ? [artwork.categories] : []),
@@ -61,7 +66,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
         <FavoriteButton artworkId={artwork.id} size="sm" className="absolute right-2.5 top-2.5" />
       </div>
       <div className="flex flex-1 flex-col gap-1 p-3.5">
-        <h3 className="line-clamp-1 text-sm font-semibold tracking-tight text-foreground/95 transition-colors group-hover:text-primary">
+        <h3 className="text-sm font-semibold tracking-tight text-foreground/95 transition-colors group-hover:text-primary">
           {title}
         </h3>
         {cats.length > 0 && (
@@ -74,6 +79,20 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
             {formatBRL(artwork.price_cents)}
           </span>
         </div>
+        <Button
+          type="button"
+          size="sm"
+          disabled={inCart || cart.adding}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!inCart) cart.add(artwork.id);
+          }}
+          className="mt-2 w-full gap-2 bg-[#121b28] text-foreground hover:bg-[#1a2740]"
+        >
+          {inCart ? <Check className="h-4 w-4" /> : <ShoppingCart className="h-4 w-4" />}
+          {inCart ? "No carrinho" : "Adicionar ao carrinho"}
+        </Button>
       </div>
     </Link>
   );
