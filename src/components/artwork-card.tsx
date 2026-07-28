@@ -63,7 +63,11 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
             </Badge>
           )}
         </div>
-        <FavoriteButton artworkId={artwork.id} size="sm" className="absolute right-2.5 top-2.5" />
+        <FavoriteButton
+          artworkId={artwork.id}
+          size="sm"
+          className="absolute right-2.5 top-2.5 transition-opacity [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 [@media(hover:hover)]:focus-visible:opacity-100"
+        />
         <button
           type="button"
           disabled={inCart || cart.adding}
@@ -73,7 +77,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
             e.stopPropagation();
             if (!inCart) cart.add(artwork.id);
           }}
-          className="absolute right-2.5 top-12 grid h-8 w-8 place-items-center rounded-full border border-border/60 bg-background/80 opacity-0 backdrop-blur transition-all hover:bg-background focus-visible:opacity-100 group-hover:opacity-100 disabled:opacity-100 disabled:border-primary/60 disabled:text-primary"
+          className="absolute right-2.5 top-12 grid h-8 w-8 place-items-center rounded-full border border-border/60 bg-background/80 backdrop-blur transition-all hover:bg-background disabled:border-primary/60 disabled:text-primary [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:focus-visible:opacity-100 [@media(hover:hover)]:group-hover:opacity-100"
         >
           {inCart ? <Check className="h-4 w-4" /> : <ShoppingCart className="h-4 w-4" />}
         </button>
@@ -82,15 +86,15 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
         <h3 className="text-sm font-semibold tracking-tight text-foreground/95 transition-colors group-hover:text-primary">
           {title}
         </h3>
-        {cats.length > 0 && (
-          <p className="line-clamp-1 text-[11px] text-muted-foreground">
-            {cats.map((c) => tField(c as any, "name", lang) || c!.name).join(" · ")}
-          </p>
-        )}
-        <div className="mt-auto flex items-center justify-between pt-2 text-xs">
+        <div className="mt-auto flex items-center justify-between gap-2 pt-2 text-xs">
           <span className="font-display text-base font-bold tracking-tight text-foreground">
             {formatBRL(artwork.price_cents)}
           </span>
+          {cats.length > 0 && (
+            <span className="line-clamp-1 text-right text-[11px] text-muted-foreground">
+              {tField(cats[0] as any, "name", lang) || cats[0]!.name}
+            </span>
+          )}
         </div>
       </div>
 
