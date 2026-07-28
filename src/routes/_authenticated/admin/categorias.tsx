@@ -126,7 +126,7 @@ function Categorias() {
       </form>
       <div className="overflow-hidden rounded-xl border border-border/60">
         <table className="w-full text-sm">
-          <thead className="bg-surface-2 text-xs uppercase text-muted-foreground"><tr><th className="px-4 py-3 text-left">Imagem</th><th className="px-4 py-3 text-left">Nome</th><th className="px-4 py-3 text-left">Slug</th><th></th></tr></thead>
+          <thead className="bg-surface-2 text-xs uppercase text-muted-foreground"><tr><th className="px-4 py-3 text-left">Imagem</th><th className="px-4 py-3 text-left">Nome</th><th className="px-4 py-3 text-left">Slug</th><th className="px-4 py-3 text-left">Destaque</th><th className="px-4 py-3 text-left">Ordem</th><th></th></tr></thead>
           <tbody>
             {parents.flatMap((p: any) => [
               renderRow(p),
