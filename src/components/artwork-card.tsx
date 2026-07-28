@@ -82,21 +82,22 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
           {inCart ? <Check className="h-4 w-4" /> : <ShoppingCart className="h-4 w-4" />}
         </button>
       </div>
-      <div className="flex flex-1 flex-col gap-1 p-3.5">
-        {cats.length > 0 && (
-          <span className="line-clamp-1 text-[11px] uppercase tracking-wide text-muted-foreground">
-            {tField(cats[0] as any, "name", lang) || cats[0]!.name}
-          </span>
-        )}
+      <div className="flex flex-1 flex-col items-center gap-1 p-3.5 text-center">
         <h3 className="text-sm font-semibold tracking-tight text-foreground/95 transition-colors group-hover:text-primary">
           {title}
         </h3>
+        {cats.length > 0 && (
+          <span className="line-clamp-2 text-[11px] text-muted-foreground">
+            {cats.map((c) => tField(c as any, "name", lang) || c!.name).join(" · ")}
+          </span>
+        )}
         <div className="mt-auto pt-2">
           <span className="font-display text-base font-bold tracking-tight text-foreground">
             {formatBRL(artwork.price_cents)}
           </span>
         </div>
       </div>
+
 
 
     </Link>
