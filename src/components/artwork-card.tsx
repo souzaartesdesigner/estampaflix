@@ -83,7 +83,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
         </button>
       </div>
       <div className="flex flex-1 flex-col items-center gap-1 p-3.5 text-center">
-        <h3 className="line-clamp-2 text-sm font-semibold tracking-tight text-foreground/95 transition-colors group-hover:text-primary md:line-clamp-none">
+        <h3 className="line-clamp-3 text-sm font-semibold tracking-tight text-foreground/95 transition-colors group-hover:text-primary md:line-clamp-none">
           {title}
         </h3>
         <div className="mt-auto flex w-full flex-col items-center gap-1 pt-2 md:flex-row md:items-center md:justify-between md:gap-2 md:text-left">
