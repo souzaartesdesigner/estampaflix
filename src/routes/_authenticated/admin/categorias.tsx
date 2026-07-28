@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { Trash2, Pencil, ImageIcon, CornerDownRight } from "lucide-react";
 import { slugify } from "@/lib/format";
@@ -52,6 +53,16 @@ function Categorias() {
     mutationFn: async (id: string) => { const { error } = await supabase.from("categories").delete().eq("id", id); if (error) throw error; },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-categories-list"] }),
   });
+  const patch = useMutation({
+    mutationFn: async ({ id, values }: { id: string; values: any }) => {
+      const { error } = await supabase.from("categories").update(values).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-categories-list"] }),
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const featuredCount = (items as any[]).filter((c) => c.featured).length;
 
   function renderRow(c: any, isChild = false) {
     return (
@@ -70,6 +81,24 @@ function Categorias() {
           </div>
         </td>
         <td className="px-4 py-3 text-muted-foreground">{c.slug}</td>
+        <td className="px-4 py-3">
+          <Switch
+            checked={!!c.featured}
+            onCheckedChange={(v) => patch.mutate({ id: c.id, values: { featured: v } })}
+            aria-label="Destacar na home"
+          />
+        </td>
+        <td className="px-4 py-3">
+          <Input
+            type="number"
+            defaultValue={c.sort_order ?? 0}
+            className="h-8 w-20"
+            onBlur={(e) => {
+              const v = Number(e.target.value) || 0;
+              if (v !== (c.sort_order ?? 0)) patch.mutate({ id: c.id, values: { sort_order: v } });
+            }}
+          />
+        </td>
         <td className="px-4 py-3 text-right">
           <Button size="icon" variant="ghost" onClick={() => setEditing(c)}><Pencil className="h-4 w-4" /></Button>
           <Button size="icon" variant="ghost" onClick={() => { if (confirm("Excluir categoria?")) del.mutate(c.id); }}><Trash2 className="h-4 w-4 text-destructive" /></Button>
@@ -78,9 +107,16 @@ function Categorias() {
     );
   }
 
+
   return (
     <div>
-      <h1 className="mb-6 font-display text-2xl font-bold">Categorias</h1>
+      <h1 className="mb-1 font-display text-2xl font-bold">Categorias</h1>
+      <p className="mb-6 text-sm text-muted-foreground">
+        Marque em <strong>Destaque</strong> as categorias que aparecem no carrossel da home e use <strong>Ordem</strong> para definir a sequência.
+        {featuredCount === 0
+          ? " Nenhuma em destaque — a home está mostrando todas as categorias."
+          : ` ${featuredCount} categoria(s) em destaque.`}
+      </p>
       <form onSubmit={(e) => { e.preventDefault(); if (name.trim()) add.mutate(); }} className="mb-6 flex flex-wrap gap-2">
         <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Nome da categoria" className="min-w-[200px] flex-1" />
         <Select value={parentId} onValueChange={setParentId}>
@@ -96,7 +132,7 @@ function Categorias() {
       </form>
       <div className="overflow-hidden rounded-xl border border-border/60">
         <table className="w-full text-sm">
-          <thead className="bg-surface-2 text-xs uppercase text-muted-foreground"><tr><th className="px-4 py-3 text-left">Imagem</th><th className="px-4 py-3 text-left">Nome</th><th className="px-4 py-3 text-left">Slug</th><th></th></tr></thead>
+          <thead className="bg-surface-2 text-xs uppercase text-muted-foreground"><tr><th className="px-4 py-3 text-left">Imagem</th><th className="px-4 py-3 text-left">Nome</th><th className="px-4 py-3 text-left">Slug</th><th className="px-4 py-3 text-left">Destaque</th><th className="px-4 py-3 text-left">Ordem</th><th></th></tr></thead>
           <tbody>
             {parents.flatMap((p: any) => [
               renderRow(p),

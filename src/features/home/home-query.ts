@@ -23,7 +23,7 @@ export const homeQuery = queryOptions({
       supabase.from("artworks").select(ARTWORK_COLS).eq("is_published", true).order("created_at", { ascending: false }).limit(12),
       supabase.from("artworks").select(ARTWORK_COLS).eq("is_published", true).eq("is_trending", true).limit(8),
       supabase.from("artworks").select(ARTWORK_COLS).eq("is_published", true).order("download_count", { ascending: false }).limit(12),
-      supabase.from("categories").select("id,slug,name,cover_url,translations").order("sort_order").limit(12),
+      supabase.from("categories").select("id,slug,name,cover_url,translations,featured,sort_order").order("sort_order").order("name"),
       supabase.from("plans").select("*").eq("is_active", true).order("sort_order"),
       (supabase as any).from("home_sections").select("*").eq("is_active", true).order("sort_order"),
       (supabase as any).from("banners").select("*").eq("is_active", true).eq("position", "home_hero").order("sort_order"),
@@ -33,7 +33,11 @@ export const homeQuery = queryOptions({
     const filterWindow = (b: any) =>
       (!b.starts_at || b.starts_at <= nowIso) && (!b.ends_at || b.ends_at >= nowIso);
 
-    const cats = categories ?? [];
+    const allCats = (categories ?? []) as any[];
+    const seen = new Set<string>();
+    const uniqueCats = allCats.filter((c) => (seen.has(c.id) ? false : (seen.add(c.id), true)));
+    const featuredCats = uniqueCats.filter((c) => c.featured);
+    const cats = (featuredCats.length > 0 ? featuredCats : uniqueCats).slice(0, 12);
     const artworkIdsForCategory = async (categoryId: string) => {
       const { data } = await supabase.from("artwork_categories").select("artwork_id").eq("category_id", categoryId);
       return Array.from(new Set((data ?? []).map((r: any) => r.artwork_id)));
