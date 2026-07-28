@@ -32,28 +32,42 @@ export const Route = createFileRoute("/artes/$slug")({
   head: ({ params, loaderData }) => {
     if (!loaderData) return { meta: [{ title: "Arte não encontrada" }, { name: "robots", content: "noindex" }] };
     const url = `https://estampaflix.com/artes/${params.slug}`;
+    const clamp = (s: string, max: number) => {
+      const t = s.trim();
+      if (t.length <= max) return t;
+      const cut = t.slice(0, max);
+      const i = cut.lastIndexOf(" ");
+      return `${(i > max * 0.6 ? cut.slice(0, i) : cut).replace(/[,;:.\-\s]+$/, "")}…`;
+    };
     const plainDesc = (loaderData.description ?? "")
       .replace(/<[^>]+>/g, " ")
+      .replace(/\\n/g, " ")
+      .replace(/&nbsp;/gi, " ")
+      // remove o aviso padrão repetido em todos os produtos importados
+      .replace(/ATEN[ÇC][ÃA]O:[\s\S]*?download direto na sua conta\.?/i, " ")
       .replace(/\s+/g, " ")
       .trim();
     const fallback = `${loaderData.title} — arte digital em alta resolução (300 DPI) para sublimação, DTF e estamparia, com licença comercial na Estampa Flix.`;
     const seoDesc = ((loaderData as any).seo_description ?? "").trim();
-    const description = seoDesc || (plainDesc.length >= 50 ? plainDesc.slice(0, 300) : fallback);
-    const seoTitle = ((loaderData as any).seo_title ?? "").trim() || `${loaderData.title} — Estampa Flix`;
-    const keyword = ((loaderData as any).seo_keyword ?? "").trim();
+    const description = clamp(seoDesc || (plainDesc.length >= 50 ? plainDesc : fallback), 158);
+    const seoTitle = clamp(((loaderData as any).seo_title ?? "").trim() || `${loaderData.title} — Estampa Flix`, 65);
+    const keyword = ((loaderData as any).seo_keyword ?? "").trim() || loaderData.title.toLowerCase();
     return {
       meta: [
         { title: seoTitle },
         { name: "description", content: description },
-        ...(keyword ? [{ name: "keywords", content: keyword }] : []),
+        { name: "keywords", content: keyword },
         { property: "og:title", content: seoTitle },
-        { property: "og:description", content: description.slice(0, 200) },
+        { property: "og:description", content: description },
         { property: "og:image", content: loaderData.preview_url },
         { property: "og:type", content: "product" },
         { property: "og:url", content: url },
+        { name: "twitter:title", content: seoTitle },
+        { name: "twitter:description", content: description },
         { name: "twitter:image", content: loaderData.preview_url },
       ],
       links: [{ rel: "canonical", href: url }],
+
       scripts: [
         {
           type: "application/ld+json",
