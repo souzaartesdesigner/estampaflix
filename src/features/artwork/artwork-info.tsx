@@ -66,7 +66,7 @@ export function ArtworkInfo({ artwork, title, session, sub, owned }: Props) {
 
       {tags.length > 0 && (
         <div>
-          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("product.tags")}</h3>
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("product.tags")}</h2>
           <div className="flex flex-wrap gap-1">
             {tags.map((tg: any) => (
               <Link key={tg.id} to="/catalogo" search={{ tag: tg.slug } as any}>
