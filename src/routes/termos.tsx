@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site-layout";
+import { CmsPage } from "@/components/cms-page";
 
 export const Route = createFileRoute("/termos")({
   head: () => ({
@@ -21,9 +22,8 @@ export const Route = createFileRoute("/termos")({
 function TermsPage() {
   return (
     <SiteLayout>
-      <article className="mx-auto max-w-3xl px-4 py-16 text-sm leading-relaxed text-muted-foreground">
-        <h1 className="mb-2 font-display text-3xl font-bold text-foreground">Termos de Uso</h1>
-        <p className="mb-8 text-xs">Última atualização: {new Date().toLocaleDateString("pt-BR")}</p>
+      <CmsPage contentKey="page_termos" defaultTitle="Termos de Uso">
+        <>
 
         <p className="mb-6">
           Ao criar uma conta ou realizar uma compra no Estampa Flix, você concorda integralmente com estes Termos de Uso.
@@ -77,7 +77,8 @@ function TermsPage() {
 
         <h2 className="mb-2 mt-8 font-display text-xl font-semibold text-foreground">11. Lei aplicável e foro</h2>
         <p>Estes Termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro do domicílio do consumidor para dirimir eventuais controvérsias.</p>
-      </article>
+      </>
+      </CmsPage>
     </SiteLayout>
   );
 }

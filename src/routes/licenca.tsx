@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site-layout";
+import { CmsPage } from "@/components/cms-page";
 
 export const Route = createFileRoute("/licenca")({
   head: () => ({
@@ -21,9 +22,8 @@ export const Route = createFileRoute("/licenca")({
 function LicensePage() {
   return (
     <SiteLayout>
-      <article className="mx-auto max-w-3xl px-4 py-16 text-sm leading-relaxed text-muted-foreground">
-        <h1 className="mb-2 font-display text-3xl font-bold text-foreground">Licença de Uso Comercial</h1>
-        <p className="mb-8 text-xs">Última atualização: {new Date().toLocaleDateString("pt-BR")}</p>
+      <CmsPage contentKey="page_licenca" defaultTitle="Licença de Uso Comercial">
+        <>
 
         <p className="mb-6">
           Toda arte digital baixada no Estampa Flix — seja através de créditos da assinatura ou de compra avulsa via Pix —
@@ -94,7 +94,8 @@ function LicensePage() {
           <a href="/suporte" className="text-primary underline">página de suporte</a> antes de utilizar a arte de forma
           duvidosa — respondemos rapidamente e ajudamos você a operar dentro dos limites da licença.
         </p>
-      </article>
+      </>
+      </CmsPage>
     </SiteLayout>
   );
 }
