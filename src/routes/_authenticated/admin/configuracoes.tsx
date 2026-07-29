@@ -20,6 +20,7 @@ function Configuracoes() {
   const [form, setForm] = useState<any>({});
   const [logoUploading, setLogoUploading] = useState(false);
   const [faviconUploading, setFaviconUploading] = useState(false);
+  const [ogUploading, setOgUploading] = useState(false);
 
   useEffect(() => { if (settings) setForm(settings); }, [settings]);
 
@@ -32,18 +33,21 @@ function Configuracoes() {
     onError: (e: any) => toast.error(e.message),
   });
 
-  async function upload(file: File, kind: "logo" | "favicon") {
-    const setter = kind === "logo" ? setLogoUploading : setFaviconUploading;
+  const FIELD_BY_KIND = { logo: "logo_url", favicon: "favicon_url", og: "og_image_url" } as const;
+
+  async function upload(file: File, kind: "logo" | "favicon" | "og") {
+    const setter = kind === "logo" ? setLogoUploading : kind === "favicon" ? setFaviconUploading : setOgUploading;
     setter(true);
     try {
       const path = `settings/${kind}-${Date.now()}-${file.name}`;
       const { error } = await supabase.storage.from("artwork-previews").upload(path, file, { upsert: true });
       if (error) throw error;
       const { data } = supabase.storage.from("artwork-previews").getPublicUrl(path);
-      setForm((f: any) => ({ ...f, [kind === "logo" ? "logo_url" : "favicon_url"]: data.publicUrl }));
+      setForm((f: any) => ({ ...f, [FIELD_BY_KIND[kind]]: data.publicUrl }));
       toast.success("Imagem carregada");
     } catch (e: any) { toast.error(e.message); } finally { setter(false); }
   }
+
 
   const set = (k: string) => (e: any) => setForm((f: any) => ({ ...f, [k]: e.target?.value ?? e }));
 
