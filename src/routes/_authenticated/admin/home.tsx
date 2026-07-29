@@ -111,7 +111,15 @@ function SortableSection({ s, categories, onUpdate, onRemove }: any) {
     <div ref={setNodeRef} style={style} className="rounded-lg border border-border/60 bg-surface-2 p-3">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <button {...attributes} {...listeners} className="cursor-grab text-muted-foreground hover:text-foreground"><GripVertical className="h-4 w-4" /></button>
-        <Input value={s.title} onChange={(e) => onUpdate({ title: e.target.value })} className="sm:w-64" />
+        <div className="flex flex-col gap-1 sm:w-64">
+          <Input value={s.title} onChange={(e) => onUpdate({ title: e.target.value })} placeholder="Título da seção" />
+          <Input
+            value={s.subtitle ?? ""}
+            onChange={(e) => onUpdate({ subtitle: e.target.value })}
+            placeholder="Subtítulo (opcional)"
+            className="h-8 text-xs"
+          />
+        </div>
         <Select value={s.section_type} onValueChange={(v) => onUpdate({ section_type: v })}>
           <SelectTrigger className="sm:w-56"><SelectValue /></SelectTrigger>
           <SelectContent>{Object.entries(TYPES).map(([k, v]) => <SelectItem key={k} value={k}>{v}</SelectItem>)}</SelectContent>
