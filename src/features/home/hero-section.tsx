@@ -3,9 +3,12 @@ import { ArrowRight, Check, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { tField, useI18n } from "@/lib/i18n";
+import { useSiteContent } from "@/hooks/use-site-content";
 
 export function HeroSection({ recent }: { recent: any[] }) {
   const { t, lang } = useI18n();
+  const heroCms = useSiteContent("home_hero");
+  const ctaCms = useSiteContent("home_cta");
   return (
     <section className="relative overflow-hidden">
       <div aria-hidden className="pointer-events-none absolute inset-0">
