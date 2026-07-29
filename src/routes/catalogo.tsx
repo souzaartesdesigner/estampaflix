@@ -81,7 +81,13 @@ function Catalogo() {
         .order("created_at", { ascending: false })
         .limit(60);
 
-      if (filters.q) query = query.ilike("title", `%${filters.q}%`);
+      if (filters.q) {
+        const term = filters.q.trim();
+        const isCode = /^[0-9a-fA-F]{4,8}$/.test(term);
+        query = isCode
+          ? query.or(`product_code.ilike.${term.toUpperCase()}%,title.ilike.%${term}%`)
+          : query.ilike("title", `%${term}%`);
+      }
       if (artworkIdsFilter) query = query.in("id", artworkIdsFilter);
       if (filters.formato) query = query.eq("file_format", filters.formato);
       if (filters.cor) query = query.contains("colors", [filters.cor]);
