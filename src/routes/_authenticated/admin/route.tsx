@@ -29,6 +29,7 @@ const NAV = [
   { to: "/admin/vendas", label: "Vendas", icon: ShoppingBag },
   { to: "/admin/planos", label: "Planos", icon: CreditCard },
   { to: "/admin/blog", label: "Blog", icon: FileText },
+  { to: "/admin/avaliacoes", label: "Avaliações", icon: Star },
   { to: "/admin/suporte", label: "Suporte", icon: MessageCircle },
   { to: "/admin/emails", label: "E-mails", icon: Mail },
   { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
