@@ -15,6 +15,23 @@ export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
+        let settings: any = null;
+        try {
+          const { data } = await (supabase as any)
+            .from("site_settings")
+            .select("sitemap_enabled, sitemap_extra_paths")
+            .eq("id", true)
+            .maybeSingle();
+          settings = data;
+        } catch {}
+
+        if (settings && settings.sitemap_enabled === false) {
+          return new Response(
+            `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n</urlset>`,
+            { headers: { "Content-Type": "application/xml", "Cache-Control": "public, max-age=300" } },
+          );
+        }
+
         const entries: SitemapEntry[] = [
           { path: "/", changefreq: "weekly", priority: "1.0" },
           { path: "/catalogo", changefreq: "daily", priority: "0.9" },
@@ -25,6 +42,12 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/termos", changefreq: "yearly", priority: "0.3" },
           { path: "/privacidade", changefreq: "yearly", priority: "0.3" },
         ];
+
+        for (const raw of String(settings?.sitemap_extra_paths ?? "").split("\n")) {
+          const p = raw.trim();
+          if (!p || !p.startsWith("/")) continue;
+          entries.push({ path: p, changefreq: "monthly", priority: "0.5" });
+        }
 
         try {
           const { data: categories } = await supabase.from("categories").select("slug");
@@ -38,14 +61,16 @@ export const Route = createFileRoute("/sitemap.xml")({
         } catch {}
 
         try {
-          const { data: artworks } = await supabase
+          const { data: artworks } = await (supabase as any)
             .from("artworks")
-            .select("slug, updated_at")
+            .select("slug, updated_at, noindex")
             .eq("is_published", true);
           for (const a of artworks ?? []) {
+            if (a.noindex) continue;
             entries.push({ path: `/artes/${a.slug}`, lastmod: a.updated_at, changefreq: "weekly", priority: "0.6" });
           }
         } catch {}
+
 
         try {
           const { data: posts } = await supabase
