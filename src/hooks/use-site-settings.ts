@@ -21,6 +21,16 @@ export type SiteSettings = {
   promo_banner_enabled: boolean;
   promo_banner_text: string | null;
   promo_banner_link: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
+  seo_keywords: string | null;
+  og_title: string | null;
+  og_description: string | null;
+  og_image_url: string | null;
+  head_scripts: string | null;
+  robots_txt: string | null;
+  sitemap_enabled: boolean;
+  sitemap_extra_paths: string | null;
 };
 
 const DEFAULTS: SiteSettings = {
@@ -43,6 +53,16 @@ const DEFAULTS: SiteSettings = {
   promo_banner_enabled: false,
   promo_banner_text: null,
   promo_banner_link: null,
+  seo_title: null,
+  seo_description: null,
+  seo_keywords: null,
+  og_title: null,
+  og_description: null,
+  og_image_url: null,
+  head_scripts: null,
+  robots_txt: null,
+  sitemap_enabled: true,
+  sitemap_extra_paths: null,
 };
 
 export function useSiteSettings() {

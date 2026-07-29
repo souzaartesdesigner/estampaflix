@@ -1,4 +1,4 @@
-import { Download, FileType, Hash, LayoutGrid, ShieldCheck, Zap } from "lucide-react";
+import { BookOpen, Download, FileType, Hash, LayoutGrid, Maximize, Ruler, ShieldCheck, Wrench, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { formatDescription, formatLabel } from "./formats";
 import { FileFormatIcon } from "./file-format-icon";
@@ -53,11 +53,36 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
   }
 
 
+  if (artwork.resolution) {
+    rows.push({ icon: <Maximize className="h-4 w-4" />, label: "Resolução", value: artwork.resolution });
+  }
+  if (artwork.dimensions) {
+    rows.push({ icon: <Ruler className="h-4 w-4" />, label: "Dimensões", value: artwork.dimensions });
+  }
+  if (artwork.tech_specs) {
+    rows.push({
+      icon: <Wrench className="h-4 w-4" />,
+      label: "Especificações técnicas",
+      value: <span className="whitespace-pre-line">{artwork.tech_specs}</span>,
+    });
+  }
+
   rows.push({ icon: <Zap className="h-4 w-4" />, label: "Entrega", value: "Download imediato após a compra" });
+
+  if (artwork.usage_instructions) {
+    rows.push({
+      icon: <BookOpen className="h-4 w-4" />,
+      label: "Instruções de uso",
+      value: <span className="whitespace-pre-line">{artwork.usage_instructions}</span>,
+    });
+  }
+
   rows.push({
     icon: <ShieldCheck className="h-4 w-4" />,
     label: "Licença",
-    value: (
+    value: artwork.license_text ? (
+      <span className="whitespace-pre-line">{artwork.license_text}</span>
+    ) : (
       <Link to="/licenca" className="text-primary hover:underline">
         Licença de uso comercial
       </Link>

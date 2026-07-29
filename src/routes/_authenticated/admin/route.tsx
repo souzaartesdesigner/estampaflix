@@ -32,6 +32,7 @@ const NAV = [
   { to: "/admin/avaliacoes", label: "Avaliações", icon: Star },
   { to: "/admin/suporte", label: "Suporte", icon: MessageCircle },
   { to: "/admin/emails", label: "E-mails", icon: Mail },
+  { to: "/admin/conteudos", label: "Conteúdos", icon: FileText },
   { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ];
 

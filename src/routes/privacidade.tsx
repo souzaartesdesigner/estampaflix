@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site-layout";
+import { CmsPage } from "@/components/cms-page";
 
 export const Route = createFileRoute("/privacidade")({
   head: () => ({
@@ -21,9 +22,8 @@ export const Route = createFileRoute("/privacidade")({
 function PrivacyPage() {
   return (
     <SiteLayout>
-      <article className="mx-auto max-w-3xl px-4 py-16 text-sm leading-relaxed text-muted-foreground">
-        <h1 className="mb-2 font-display text-3xl font-bold text-foreground">Política de Privacidade</h1>
-        <p className="mb-8 text-xs">Última atualização: {new Date().toLocaleDateString("pt-BR")}</p>
+      <CmsPage contentKey="page_privacidade" defaultTitle="Política de Privacidade">
+        <>
 
         <p className="mb-6">
           O Estampa Flix ("nós", "nosso") respeita a sua privacidade e está comprometido em proteger seus dados pessoais.
@@ -69,7 +69,8 @@ function PrivacyPage() {
 
         <h2 className="mb-2 mt-8 font-display text-xl font-semibold text-foreground">9. Alterações nesta política</h2>
         <p>Podemos atualizar esta política periodicamente. A data da última atualização estará sempre indicada no topo desta página. Alterações significativas serão comunicadas por e-mail ou aviso no site.</p>
-      </article>
+      </>
+      </CmsPage>
     </SiteLayout>
   );
 }

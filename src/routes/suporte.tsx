@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site-layout";
+import { useSiteContent } from "@/hooks/use-site-content";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -54,6 +56,7 @@ const schema = z.object({
 
 function Suporte() {
   const { t } = useI18n();
+  const cms = useSiteContent("page_suporte");
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [loading, setLoading] = useState(false);
 
@@ -85,8 +88,15 @@ function Suporte() {
     <SiteLayout>
       <div className="mx-auto w-full max-w-5xl px-4 py-12">
         <header className="mb-10 text-center">
-          <h1 className="font-display text-4xl font-black">{t("support.title")}</h1>
-          <p className="mt-2 text-muted-foreground">{t("support.subtitle")}</p>
+          <h1 className="font-display text-4xl font-black">{cms?.title || t("support.title")}</h1>
+          {cms?.content ? (
+            <div
+              className="mx-auto mt-2 max-w-2xl text-muted-foreground [&_a]:text-primary [&_a]:underline [&_p]:mb-2"
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(cms.content) }}
+            />
+          ) : (
+            <p className="mt-2 text-muted-foreground">{t("support.subtitle")}</p>
+          )}
         </header>
 
         <div className="grid gap-10 lg:grid-cols-2">

@@ -22,7 +22,7 @@ export const Route = createFileRoute("/artes/$slug")({
   loader: async ({ params }) => {
     const { data } = await supabase
       .from("artworks")
-      .select("id,slug,title,description,category_id,preview_url,file_path,file_format,colors,price_cents,is_published,is_featured,is_trending,download_count,view_count,created_at,updated_at,credit_cost,gallery_urls,translations,featured_order,seo_title,seo_description,seo_keyword,product_code, categories!artworks_category_id_fkey(name,slug), artwork_categories(categories(id,name,slug)), artwork_tags(tags(id,name,slug))")
+      .select("id,slug,title,description,category_id,preview_url,file_path,file_format,colors,price_cents,is_published,is_featured,is_trending,download_count,view_count,created_at,updated_at,credit_cost,gallery_urls,translations,featured_order,seo_title,seo_description,seo_keyword,product_code,alt_text,noindex,tech_specs,resolution,dimensions,usage_instructions,license_text, categories!artworks_category_id_fkey(name,slug), artwork_categories(categories(id,name,slug)), artwork_tags(tags(id,name,slug))")
       .eq("slug", params.slug)
       .eq("is_published", true)
       .maybeSingle();
@@ -59,11 +59,13 @@ export const Route = createFileRoute("/artes/$slug")({
     const pageTitle = seoTitle.length <= 45 ? `${seoTitle} — Estampa Flix` : seoTitle;
 
     const keyword = ((loaderData as any).seo_keyword ?? "").trim() || loaderData.title.toLowerCase();
+    const noindex = !!(loaderData as any).noindex;
     return {
       meta: [
         { title: pageTitle },
         { name: "description", content: description },
         { name: "keywords", content: keyword },
+        { name: "robots", content: noindex ? "noindex,nofollow" : "index,follow" },
         { property: "og:title", content: pageTitle },
         { property: "og:description", content: description },
         { property: "og:image", content: loaderData.preview_url },
@@ -138,7 +140,7 @@ function ArtworkPage() {
 
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
           <div>
-            <ArtworkGallery images={galleryImages} alt={trTitle} />
+            <ArtworkGallery images={galleryImages} alt={(artwork as any).alt_text?.trim() || trTitle} />
             <ProductInfoPanel artwork={artwork} />
           </div>
           <ArtworkInfo artwork={artwork} title={trTitle} session={session} sub={sub} owned={owned} />

@@ -75,60 +75,152 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+/**
+ * Converte um snippet colado no admin (Google Analytics / Tag Manager)
+ * em entradas de <script> aceitas pelo head() do TanStack Router.
+ */
+function parseHeadScripts(raw: string): Array<Record<string, any>> {
+  const out: Array<Record<string, any>> = [];
+  const re = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
+  let m: RegExpExecArray | null;
+  let found = false;
+  while ((m = re.exec(raw))) {
+    found = true;
+    const attrs = m[1] ?? "";
+    const body = (m[2] ?? "").trim();
+    const src = /\bsrc\s*=\s*["']([^"']+)["']/i.exec(attrs)?.[1];
+    const entry: Record<string, any> = {};
+    if (src) entry.src = src;
+    if (/\basync\b/i.test(attrs)) entry.async = true;
+    if (/\bdefer\b/i.test(attrs)) entry.defer = true;
+    if (body) entry.children = body;
+    if (entry.src || entry.children) out.push(entry);
+  }
+  if (!found && raw.trim()) out.push({ children: raw.trim() });
+  return out;
+}
+
+const FALLBACK_TITLE = "Estampa Flix — Artes digitais para sublimação e DTF";
+const FALLBACK_DESC =
+  "Milhares de artes digitais em alta qualidade (300 DPI) para sublimação, DTF e estamparia. Assine e baixe novas estampas todo mês com licença comercial.";
+const FALLBACK_OG_IMAGE =
+  "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8a36e287-6af7-46bc-9720-aead028ba808/id-preview-91e266b7--bb6fa90b-8f5d-47be-8009-cbab5c7a45fa.lovable.app-1784641090696.png";
+
+type RootSeo = {
+  siteName: string;
+  title: string;
+  description: string;
+  keywords: string | null;
+  ogTitle: string;
+  ogDescription: string;
+  ogImage: string;
+  favicon: string;
+  gsc: string | null;
+  headScripts: string | null;
+};
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Estampa Flix — Artes digitais para sublimação e DTF" },
-      { name: "description", content: "Milhares de artes digitais em alta qualidade (300 DPI) para sublimação, DTF e estamparia. Assine e baixe novas estampas todo mês com licença comercial." },
-      { property: "og:title", content: "Estampa Flix — Artes digitais para sublimação e DTF" },
-      { property: "og:description", content: "Milhares de artes digitais em alta qualidade (300 DPI) para sublimação, DTF e estamparia. Assine e baixe novas estampas todo mês com licença comercial." },
-      { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "Estampa Flix" },
-      { property: "og:url", content: "https://estampaflix.com/" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Estampa Flix — Artes digitais para sublimação e DTF" },
-      { name: "twitter:description", content: "Milhares de artes digitais em alta qualidade (300 DPI) para sublimação, DTF e estamparia. Assine e baixe novas estampas todo mês com licença comercial." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8a36e287-6af7-46bc-9720-aead028ba808/id-preview-91e266b7--bb6fa90b-8f5d-47be-8009-cbab5c7a45fa.lovable.app-1784641090696.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8a36e287-6af7-46bc-9720-aead028ba808/id-preview-91e266b7--bb6fa90b-8f5d-47be-8009-cbab5c7a45fa.lovable.app-1784641090696.png" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "preconnect", href: "https://tkzkespxrbgudujvuecq.supabase.co", crossOrigin: "anonymous" },
-      { rel: "dns-prefetch", href: "https://tkzkespxrbgudujvuecq.supabase.co" },
-      { rel: "dns-prefetch", href: "https://estampaflix.com" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Sora:wght@700;800&display=swap" },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-    ],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@graph": [
-            {
-              "@type": "Organization",
-              name: "Estampa Flix",
-              url: "https://estampaflix.com/",
-            },
-            {
-              "@type": "WebSite",
-              name: "Estampa Flix",
-              url: "https://estampaflix.com/",
-              potentialAction: {
-                "@type": "SearchAction",
-                target: "https://estampaflix.com/catalogo?q={search_term_string}",
-                "query-input": "required name=search_term_string",
+  loader: async (): Promise<RootSeo> => {
+    let s: any = null;
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data } = await (supabase as any)
+        .from("site_settings")
+        .select(
+          "site_name, favicon_url, seo_title, seo_description, seo_keywords, og_title, og_description, og_image_url, head_scripts, google_search_console_id",
+        )
+        .eq("id", true)
+        .maybeSingle();
+      s = data;
+    } catch {}
+
+    const title = (s?.seo_title ?? "").trim() || FALLBACK_TITLE;
+    const description = (s?.seo_description ?? "").trim() || FALLBACK_DESC;
+    return {
+      siteName: (s?.site_name ?? "").trim() || "Estampa Flix",
+      title,
+      description,
+      keywords: (s?.seo_keywords ?? "").trim() || null,
+      ogTitle: (s?.og_title ?? "").trim() || title,
+      ogDescription: (s?.og_description ?? "").trim() || description,
+      ogImage: (s?.og_image_url ?? "").trim() || FALLBACK_OG_IMAGE,
+      favicon: (s?.favicon_url ?? "").trim() || "/favicon.ico",
+      gsc: (s?.google_search_console_id ?? "").trim() || null,
+      headScripts: (s?.head_scripts ?? "").trim() || null,
+    };
+  },
+  head: ({ loaderData }) => {
+    const d: RootSeo = loaderData ?? {
+      siteName: "Estampa Flix",
+      title: FALLBACK_TITLE,
+      description: FALLBACK_DESC,
+      keywords: null,
+      ogTitle: FALLBACK_TITLE,
+      ogDescription: FALLBACK_DESC,
+      ogImage: FALLBACK_OG_IMAGE,
+      favicon: "/favicon.ico",
+      gsc: null,
+      headScripts: null,
+    };
+
+    return {
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { title: d.title },
+        { name: "description", content: d.description },
+        ...(d.keywords ? [{ name: "keywords", content: d.keywords }] : []),
+        ...(d.gsc ? [{ name: "google-site-verification", content: d.gsc }] : []),
+        { property: "og:title", content: d.ogTitle },
+        { property: "og:description", content: d.ogDescription },
+        { property: "og:type", content: "website" },
+        { property: "og:site_name", content: d.siteName },
+        { property: "og:url", content: "https://estampaflix.com/" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: d.ogTitle },
+        { name: "twitter:description", content: d.ogDescription },
+        { property: "og:image", content: d.ogImage },
+        { name: "twitter:image", content: d.ogImage },
+      ],
+      links: [
+        { rel: "stylesheet", href: appCss },
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+        { rel: "preconnect", href: "https://tkzkespxrbgudujvuecq.supabase.co", crossOrigin: "anonymous" },
+        { rel: "dns-prefetch", href: "https://tkzkespxrbgudujvuecq.supabase.co" },
+        { rel: "dns-prefetch", href: "https://estampaflix.com" },
+        { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Sora:wght@700;800&display=swap" },
+        { rel: "icon", href: d.favicon },
+      ],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Organization",
+                name: d.siteName,
+                url: "https://estampaflix.com/",
+                logo: d.ogImage,
               },
-            },
-          ],
-        }),
-      },
-    ],
-  }),
+              {
+                "@type": "WebSite",
+                name: d.siteName,
+                url: "https://estampaflix.com/",
+                potentialAction: {
+                  "@type": "SearchAction",
+                  target: "https://estampaflix.com/catalogo?q={search_term_string}",
+                  "query-input": "required name=search_term_string",
+                },
+              },
+            ],
+          }),
+        },
+        ...(d.headScripts ? parseHeadScripts(d.headScripts) : []),
+      ],
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,

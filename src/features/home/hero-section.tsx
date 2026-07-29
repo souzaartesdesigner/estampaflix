@@ -3,9 +3,12 @@ import { ArrowRight, Check, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { tField, useI18n } from "@/lib/i18n";
+import { useSiteContent } from "@/hooks/use-site-content";
 
 export function HeroSection({ recent }: { recent: any[] }) {
   const { t, lang } = useI18n();
+  const heroCms = useSiteContent("home_hero");
+  const ctaCms = useSiteContent("home_cta");
   return (
     <section className="relative overflow-hidden">
       <div aria-hidden className="pointer-events-none absolute inset-0">
@@ -26,21 +29,28 @@ export function HeroSection({ recent }: { recent: any[] }) {
             <Sparkles className="h-3 w-3" /> {t("home.badge")}
           </Badge>
           <h1 className="font-display text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-            {t("home.heroTitle1")}{" "}
-            <span className="text-gradient-brand">{t("home.heroTitleHighlight")}</span>{" "}
-            {t("home.heroTitle2")}
+            {heroCms?.title ? (
+              heroCms.title
+            ) : (
+              <>
+                {t("home.heroTitle1")}{" "}
+                <span className="text-gradient-brand">{t("home.heroTitleHighlight")}</span>{" "}
+                {t("home.heroTitle2")}
+              </>
+            )}
           </h1>
           <p className="max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg md:text-xl">
-            {t("home.heroSubtitle")}
+            {heroCms?.content || t("home.heroSubtitle")}
           </p>
           <div className="mt-2 flex flex-wrap gap-3">
             <Button asChild size="lg" className="h-12 rounded-full bg-gradient-brand px-6 text-brand-foreground shadow-brand transition-transform hover:-translate-y-0.5 hover:opacity-95">
-              <Link to="/planos">{t("home.ctaPlans")} <ArrowRight className="ml-2 h-4 w-4" /></Link>
+              <Link to="/planos">{ctaCms?.title || t("home.ctaPlans")} <ArrowRight className="ml-2 h-4 w-4" /></Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="h-12 rounded-full border-border/60 bg-background/30 px-6 backdrop-blur transition-colors hover:border-primary/50 hover:bg-primary/10">
-              <Link to="/catalogo">{t("home.ctaCatalog")}</Link>
+              <Link to="/catalogo">{ctaCms?.content || t("home.ctaCatalog")}</Link>
             </Button>
           </div>
+
           <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
             <span className="flex items-center gap-2"><Check className="h-4 w-4 text-success" /> {t("home.check1")}</span>
             <span className="flex items-center gap-2"><Check className="h-4 w-4 text-success" /> {t("home.check2")}</span>

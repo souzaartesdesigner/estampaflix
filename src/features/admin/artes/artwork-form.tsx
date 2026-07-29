@@ -55,6 +55,13 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
     seo_title: editing?.seo_title ?? "",
     seo_description: editing?.seo_description ?? "",
     seo_keyword: editing?.seo_keyword ?? "",
+    alt_text: editing?.alt_text ?? "",
+    noindex: editing?.noindex ?? false,
+    tech_specs: editing?.tech_specs ?? "",
+    resolution: editing?.resolution ?? "",
+    dimensions: editing?.dimensions ?? "",
+    usage_instructions: editing?.usage_instructions ?? "",
+    license_text: editing?.license_text ?? "",
     translations: (editing?.translations ?? {}) as Record<string, { title?: string; description?: string }>,
   });
   const [categoryIds, setCategoryIds] = useState<string[]>(() => {
@@ -146,6 +153,13 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         seo_title: form.seo_title?.trim() || null,
         seo_description: form.seo_description?.trim() || null,
         seo_keyword: form.seo_keyword?.trim() || null,
+        alt_text: form.alt_text?.trim() || null,
+        noindex: !!form.noindex,
+        tech_specs: form.tech_specs?.trim() || null,
+        resolution: form.resolution?.trim() || null,
+        dimensions: form.dimensions?.trim() || null,
+        usage_instructions: form.usage_instructions?.trim() || null,
+        license_text: form.license_text?.trim() || null,
         translations: form.translations,
       };
 
@@ -229,8 +243,47 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
               />
               <span className="text-[11px] text-muted-foreground">{(form.seo_description ?? "").length}/160 caracteres recomendados</span>
             </div>
+            <div className="grid gap-1">
+              <Label className="text-xs text-muted-foreground">Texto alternativo das imagens (alt)</Label>
+              <Input
+                value={form.alt_text}
+                onChange={(e) => setForm({ ...form, alt_text: e.target.value })}
+                placeholder="Descreva a imagem para leitores de tela e para o Google"
+              />
+            </div>
+            <label className="flex items-center gap-2 text-sm">
+              <Switch checked={!!form.noindex} onCheckedChange={(v) => setForm({ ...form, noindex: v })} />
+              Não indexar esta arte no Google (noindex)
+            </label>
             <p className="text-xs text-muted-foreground">Preenchido automaticamente na importação do CSV. Se ficar vazio, o site gera a partir do título e da descrição.</p>
           </div>
+
+          <div className="grid gap-3 rounded-lg border border-border/60 p-4">
+            <Label>Detalhes da arte</Label>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-1">
+                <Label className="text-xs text-muted-foreground">Resolução</Label>
+                <Input value={form.resolution} onChange={(e) => setForm({ ...form, resolution: e.target.value })} placeholder="Ex.: 300 DPI" />
+              </div>
+              <div className="grid gap-1">
+                <Label className="text-xs text-muted-foreground">Dimensões</Label>
+                <Input value={form.dimensions} onChange={(e) => setForm({ ...form, dimensions: e.target.value })} placeholder="Ex.: 4000 x 4000 px" />
+              </div>
+            </div>
+            <div className="grid gap-1">
+              <Label className="text-xs text-muted-foreground">Especificações técnicas</Label>
+              <Textarea rows={2} value={form.tech_specs} onChange={(e) => setForm({ ...form, tech_specs: e.target.value })} placeholder="Ex.: Arquivo vetorial editável, camadas separadas, fontes convertidas" />
+            </div>
+            <div className="grid gap-1">
+              <Label className="text-xs text-muted-foreground">Instruções de uso da estampa</Label>
+              <Textarea rows={3} value={form.usage_instructions} onChange={(e) => setForm({ ...form, usage_instructions: e.target.value })} placeholder="Ex.: Indicada para sublimação em poliéster e DTF em algodão." />
+            </div>
+            <div className="grid gap-1">
+              <Label className="text-xs text-muted-foreground">Licença aplicável (opcional)</Label>
+              <Textarea rows={2} value={form.license_text} onChange={(e) => setForm({ ...form, license_text: e.target.value })} placeholder="Deixe vazio para usar a licença comercial padrão do site." />
+            </div>
+          </div>
+
 
           <div className="grid gap-2 rounded-lg border border-border/60 p-4">
             <Label>Categorias (múltiplas)</Label>

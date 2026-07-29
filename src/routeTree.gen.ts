@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as SuporteRouteImport } from './routes/suporte'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PlanosRouteImport } from './routes/planos'
@@ -38,6 +39,7 @@ import { Route as AuthenticatedAdminImportarRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminHomeRouteImport } from './routes/_authenticated/admin/home'
 import { Route as AuthenticatedAdminEmailsRouteImport } from './routes/_authenticated/admin/emails'
 import { Route as AuthenticatedAdminCuponsRouteImport } from './routes/_authenticated/admin/cupons'
+import { Route as AuthenticatedAdminConteudosRouteImport } from './routes/_authenticated/admin/conteudos'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin/configuracoes'
 import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_authenticated/admin/categorias'
 import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin/blog'
@@ -65,6 +67,11 @@ const SuporteRoute = SuporteRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -203,6 +210,12 @@ const AuthenticatedAdminCuponsRoute =
     path: '/cupons',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminConteudosRoute =
+  AuthenticatedAdminConteudosRouteImport.update({
+    id: '/conteudos',
+    path: '/conteudos',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminConfiguracoesRoute =
   AuthenticatedAdminConfiguracoesRouteImport.update({
     id: '/configuracoes',
@@ -285,6 +298,7 @@ export interface FileRoutesByFullPath {
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/suporte': typeof SuporteRoute
   '/termos': typeof TermosRoute
@@ -302,6 +316,7 @@ export interface FileRoutesByFullPath {
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
   '/admin/cupons': typeof AuthenticatedAdminCuponsRoute
   '/admin/emails': typeof AuthenticatedAdminEmailsRoute
   '/admin/home': typeof AuthenticatedAdminHomeRoute
@@ -328,6 +343,7 @@ export interface FileRoutesByTo {
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/suporte': typeof SuporteRoute
   '/termos': typeof TermosRoute
@@ -344,6 +360,7 @@ export interface FileRoutesByTo {
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
   '/admin/cupons': typeof AuthenticatedAdminCuponsRoute
   '/admin/emails': typeof AuthenticatedAdminEmailsRoute
   '/admin/home': typeof AuthenticatedAdminHomeRoute
@@ -372,6 +389,7 @@ export interface FileRoutesById {
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/suporte': typeof SuporteRoute
   '/termos': typeof TermosRoute
@@ -389,6 +407,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/_authenticated/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/_authenticated/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
   '/_authenticated/admin/cupons': typeof AuthenticatedAdminCuponsRoute
   '/_authenticated/admin/emails': typeof AuthenticatedAdminEmailsRoute
   '/_authenticated/admin/home': typeof AuthenticatedAdminHomeRoute
@@ -417,6 +436,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/privacidade'
     | '/reset-password'
+    | '/robots.txt'
     | '/sitemap.xml'
     | '/suporte'
     | '/termos'
@@ -434,6 +454,7 @@ export interface FileRouteTypes {
     | '/admin/blog'
     | '/admin/categorias'
     | '/admin/configuracoes'
+    | '/admin/conteudos'
     | '/admin/cupons'
     | '/admin/emails'
     | '/admin/home'
@@ -460,6 +481,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/privacidade'
     | '/reset-password'
+    | '/robots.txt'
     | '/sitemap.xml'
     | '/suporte'
     | '/termos'
@@ -476,6 +498,7 @@ export interface FileRouteTypes {
     | '/admin/blog'
     | '/admin/categorias'
     | '/admin/configuracoes'
+    | '/admin/conteudos'
     | '/admin/cupons'
     | '/admin/emails'
     | '/admin/home'
@@ -503,6 +526,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/privacidade'
     | '/reset-password'
+    | '/robots.txt'
     | '/sitemap.xml'
     | '/suporte'
     | '/termos'
@@ -520,6 +544,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/blog'
     | '/_authenticated/admin/categorias'
     | '/_authenticated/admin/configuracoes'
+    | '/_authenticated/admin/conteudos'
     | '/_authenticated/admin/cupons'
     | '/_authenticated/admin/emails'
     | '/_authenticated/admin/home'
@@ -548,6 +573,7 @@ export interface RootRouteChildren {
   PlanosRoute: typeof PlanosRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SuporteRoute: typeof SuporteRoute
   TermosRoute: typeof TermosRoute
@@ -584,6 +610,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -768,6 +801,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCuponsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/conteudos': {
+      id: '/_authenticated/admin/conteudos'
+      path: '/conteudos'
+      fullPath: '/admin/conteudos'
+      preLoaderRoute: typeof AuthenticatedAdminConteudosRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/configuracoes': {
       id: '/_authenticated/admin/configuracoes'
       path: '/configuracoes'
@@ -870,6 +910,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
   AuthenticatedAdminCategoriasRoute: typeof AuthenticatedAdminCategoriasRoute
   AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
+  AuthenticatedAdminConteudosRoute: typeof AuthenticatedAdminConteudosRoute
   AuthenticatedAdminCuponsRoute: typeof AuthenticatedAdminCuponsRoute
   AuthenticatedAdminEmailsRoute: typeof AuthenticatedAdminEmailsRoute
   AuthenticatedAdminHomeRoute: typeof AuthenticatedAdminHomeRoute
@@ -892,6 +933,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
     AuthenticatedAdminCategoriasRoute: AuthenticatedAdminCategoriasRoute,
     AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
+    AuthenticatedAdminConteudosRoute: AuthenticatedAdminConteudosRoute,
     AuthenticatedAdminCuponsRoute: AuthenticatedAdminCuponsRoute,
     AuthenticatedAdminEmailsRoute: AuthenticatedAdminEmailsRoute,
     AuthenticatedAdminHomeRoute: AuthenticatedAdminHomeRoute,
@@ -934,6 +976,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlanosRoute: PlanosRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SuporteRoute: SuporteRoute,
   TermosRoute: TermosRoute,
