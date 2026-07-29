@@ -606,6 +606,7 @@ export type Database = {
           item_limit: number
           section_type: string
           sort_order: number
+          subtitle: string | null
           title: string
           updated_at: string
         }
@@ -617,6 +618,7 @@ export type Database = {
           item_limit?: number
           section_type: string
           sort_order?: number
+          subtitle?: string | null
           title: string
           updated_at?: string
         }
@@ -628,6 +630,7 @@ export type Database = {
           item_limit?: number
           section_type?: string
           sort_order?: number
+          subtitle?: string | null
           title?: string
           updated_at?: string
         }
