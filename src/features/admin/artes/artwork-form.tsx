@@ -153,6 +153,13 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         seo_title: form.seo_title?.trim() || null,
         seo_description: form.seo_description?.trim() || null,
         seo_keyword: form.seo_keyword?.trim() || null,
+        alt_text: form.alt_text?.trim() || null,
+        noindex: !!form.noindex,
+        tech_specs: form.tech_specs?.trim() || null,
+        resolution: form.resolution?.trim() || null,
+        dimensions: form.dimensions?.trim() || null,
+        usage_instructions: form.usage_instructions?.trim() || null,
+        license_text: form.license_text?.trim() || null,
         translations: form.translations,
       };
 
