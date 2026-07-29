@@ -75,6 +75,31 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+/**
+ * Converte um snippet colado no admin (Google Analytics / Tag Manager)
+ * em entradas de <script> aceitas pelo head() do TanStack Router.
+ */
+function parseHeadScripts(raw: string): Array<Record<string, any>> {
+  const out: Array<Record<string, any>> = [];
+  const re = /<script\b([^>]*)>([\s\S]*?)<\/script>/gi;
+  let m: RegExpExecArray | null;
+  let found = false;
+  while ((m = re.exec(raw))) {
+    found = true;
+    const attrs = m[1] ?? "";
+    const body = (m[2] ?? "").trim();
+    const src = /\bsrc\s*=\s*["']([^"']+)["']/i.exec(attrs)?.[1];
+    const entry: Record<string, any> = {};
+    if (src) entry.src = src;
+    if (/\basync\b/i.test(attrs)) entry.async = true;
+    if (/\bdefer\b/i.test(attrs)) entry.defer = true;
+    if (body) entry.children = body;
+    if (entry.src || entry.children) out.push(entry);
+  }
+  if (!found && raw.trim()) out.push({ children: raw.trim() });
+  return out;
+}
+
 const FALLBACK_TITLE = "Estampa Flix — Artes digitais para sublimação e DTF";
 const FALLBACK_DESC =
   "Milhares de artes digitais em alta qualidade (300 DPI) para sublimação, DTF e estamparia. Assine e baixe novas estampas todo mês com licença comercial.";
