@@ -98,15 +98,67 @@ function Configuracoes() {
         </TabsContent>
 
         <TabsContent value="seo" className="space-y-4">
+          <Section title="SEO global (páginas sem SEO próprio)">
+            <div className="grid gap-4">
+              <Field label="Meta title padrão">
+                <Input value={form.seo_title ?? ""} onChange={set("seo_title")} maxLength={70} placeholder="Estampa Flix — Artes digitais para sublimação e DTF" />
+                <span className="mt-1 block text-[11px] text-muted-foreground">{(form.seo_title ?? "").length}/60 caracteres recomendados</span>
+              </Field>
+              <Field label="Meta description padrão">
+                <Textarea rows={2} maxLength={200} value={form.seo_description ?? ""} onChange={set("seo_description")} placeholder="Resumo do site que aparece no Google (até 160 caracteres)" />
+                <span className="mt-1 block text-[11px] text-muted-foreground">{(form.seo_description ?? "").length}/160 caracteres recomendados</span>
+              </Field>
+              <Field label="Palavras-chave gerais (separadas por vírgula)">
+                <Input value={form.seo_keywords ?? ""} onChange={set("seo_keywords")} placeholder="artes para sublimação, estampas dtf, arquivos png 300dpi" />
+              </Field>
+            </div>
+          </Section>
+
+          <Section title="Compartilhamento social (Open Graph)">
+            <div className="grid gap-4">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field label="Título de compartilhamento"><Input value={form.og_title ?? ""} onChange={set("og_title")} placeholder="Deixe vazio para usar o meta title" /></Field>
+                <Field label="Descrição de compartilhamento"><Input value={form.og_description ?? ""} onChange={set("og_description")} placeholder="Deixe vazio para usar a meta description" /></Field>
+              </div>
+              <ImageField label="Imagem de compartilhamento (1200x630)" url={form.og_image_url} onFile={(f: File) => upload(f, "og")} uploading={ogUploading} onClear={() => setForm((s: any) => ({ ...s, og_image_url: null }))} />
+              <Field label="Ou cole a URL da imagem"><Input value={form.og_image_url ?? ""} onChange={set("og_image_url")} placeholder="https://..." /></Field>
+              <p className="text-xs text-muted-foreground">As redes sociais guardam a última imagem lida — a troca pode demorar a aparecer nos links já compartilhados.</p>
+            </div>
+          </Section>
+
           <Section title="Analytics & rastreamento">
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Google Analytics 4 ID"><Input value={form.ga4_measurement_id ?? ""} onChange={set("ga4_measurement_id")} placeholder="G-XXXXXXX" /></Field>
               <Field label="Meta Pixel ID"><Input value={form.meta_pixel_id ?? ""} onChange={set("meta_pixel_id")} placeholder="123456789012345" /></Field>
-              <Field label="Google Search Console"><Input value={form.google_search_console_id ?? ""} onChange={set("google_search_console_id")} placeholder="Meta content" /></Field>
+              <Field label="Google Search Console (verificação)"><Input value={form.google_search_console_id ?? ""} onChange={set("google_search_console_id")} placeholder="Conteúdo da meta tag" /></Field>
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">Os códigos são injetados automaticamente no head do site.</p>
+            <div className="mt-4">
+              <Field label="Scripts do head (Google Analytics / Tag Manager)">
+                <Textarea rows={6} className="font-mono text-xs" value={form.head_scripts ?? ""} onChange={set("head_scripts")} placeholder={"<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-XXXX\"></script>\n<script>window.dataLayer=window.dataLayer||[];...</script>"} />
+              </Field>
+              <p className="mt-2 text-xs text-muted-foreground">Cole o código completo fornecido pelo Google. Ele é injetado no head de todas as páginas.</p>
+            </div>
+          </Section>
+
+          <Section title="Indexação — robots.txt e sitemap">
+            <div className="grid gap-4">
+              <Field label="Conteúdo do robots.txt">
+                <Textarea rows={10} className="font-mono text-xs" value={form.robots_txt ?? ""} onChange={set("robots_txt")} placeholder={"User-agent: *\nAllow: /\n\nDisallow: /admin\n\nSitemap: https://estampaflix.com/sitemap.xml"} />
+              </Field>
+              <p className="text-xs text-muted-foreground">Vazio = usa o padrão do site. Veja o resultado em <a className="text-primary underline" href="/robots.txt" target="_blank" rel="noreferrer">/robots.txt</a>.</p>
+
+              <div className="flex items-center gap-3">
+                <Switch checked={form.sitemap_enabled !== false} onCheckedChange={(v) => setForm((f: any) => ({ ...f, sitemap_enabled: v }))} />
+                <Label>Gerar sitemap.xml automaticamente</Label>
+              </div>
+              <Field label="Endereços extras no sitemap (um por linha, começando com /)">
+                <Textarea rows={4} className="font-mono text-xs" value={form.sitemap_extra_paths ?? ""} onChange={set("sitemap_extra_paths")} placeholder={"/promocoes\n/parceiros"} />
+              </Field>
+              <p className="text-xs text-muted-foreground">O sitemap já inclui automaticamente home, catálogo, planos, blog, categorias, artes publicadas (exceto as marcadas como "não indexar") e posts.  Veja em <a className="text-primary underline" href="/sitemap.xml" target="_blank" rel="noreferrer">/sitemap.xml</a>.</p>
+            </div>
           </Section>
         </TabsContent>
+
 
         <TabsContent value="footer" className="space-y-4">
           <Section title="Rodapé & informações legais">
