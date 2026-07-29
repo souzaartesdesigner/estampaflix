@@ -217,7 +217,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             ],
           }),
         },
-        ...(d.headScripts ? [{ children: extractInlineScript(d.headScripts) }] : []),
+        ...(d.headScripts ? parseHeadScripts(d.headScripts) : []),
       ],
     };
   },
