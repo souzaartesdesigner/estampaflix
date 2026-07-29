@@ -145,7 +145,11 @@ export const createPixOrder = createServerFn({ method: "POST" })
       .single();
     if (ordErr) throw new Error(ordErr.message);
 
+    const { sendOrderCreatedEmail } = await import("@/lib/order-emails.server");
+    await sendOrderCreatedEmail(order.id);
+
     return {
+
       orderId: order.id,
       qrCode,
       qrCodeBase64,
@@ -195,7 +199,10 @@ export const checkPixOrder = createServerFn({ method: "POST" })
             if (order.items) {
               await supabaseAdmin.from("cart_items").delete().eq("user_id", userId);
             }
+            const { sendOrderPaidEmail } = await import("@/lib/order-emails.server");
+            await sendOrderPaidEmail(order.id);
             return { ...order, status: "paid" as const };
+
           }
           if (["cancelled", "rejected", "refunded"].includes(mp.status)) {
             const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

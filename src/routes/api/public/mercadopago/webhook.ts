@@ -127,9 +127,13 @@ export const Route = createFileRoute("/api/public/mercadopago/webhook")({
                   .eq("id", coupon.id);
               }
             }
+
+            const { sendOrderPaidEmail } = await import("@/lib/order-emails.server");
+            await sendOrderPaidEmail(orderRow.id);
           }
 
           return new Response("ok");
+
         } catch (e) {
           console.error("MP webhook error:", e);
           return new Response("error", { status: 500 });
