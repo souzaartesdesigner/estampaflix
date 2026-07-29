@@ -1,30 +1,34 @@
 import { useSiteSettings } from "@/hooks/use-site-settings";
+import { useSiteContent } from "@/hooks/use-site-content";
 import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 
 export function PromoBanner() {
   const { data } = useSiteSettings();
+  const cms = useSiteContent("header_notice");
+  const text = cms?.title || data?.promo_banner_text || "";
+  const link = cms?.content || data?.promo_banner_link || "";
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const key = `promo-dismissed-${data?.promo_banner_text ?? ""}`;
+      const key = `promo-dismissed-${text}`;
       setDismissed(sessionStorage.getItem(key) === "1");
     }
-  }, [data?.promo_banner_text]);
+  }, [text]);
 
-  if (!data?.promo_banner_enabled || !data.promo_banner_text || dismissed) return null;
+  if (!data?.promo_banner_enabled || !text || dismissed) return null;
 
   const content = (
     <>
-      <span className="flex-1 text-center">{data.promo_banner_text}</span>
+      <span className="flex-1 text-center">{text}</span>
       <button
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
           setDismissed(true);
           if (typeof window !== "undefined") {
-            sessionStorage.setItem(`promo-dismissed-${data.promo_banner_text}`, "1");
+            sessionStorage.setItem(`promo-dismissed-${text}`, "1");
           }
         }}
         className="p-1 opacity-80 hover:opacity-100"
@@ -37,8 +41,8 @@ export function PromoBanner() {
 
   const className = "flex items-center gap-2 bg-gradient-brand px-4 py-2 text-xs font-medium text-brand-foreground sm:text-sm";
 
-  if (data.promo_banner_link) {
-    return <a href={data.promo_banner_link} className={className}>{content}</a>;
+  if (link) {
+    return <a href={link} className={className}>{content}</a>;
   }
   return <div className={className}>{content}</div>;
 }
