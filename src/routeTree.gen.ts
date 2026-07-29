@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as SuporteRouteImport } from './routes/suporte'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PlanosRouteImport } from './routes/planos'
@@ -65,6 +66,11 @@ const SuporteRoute = SuporteRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -285,6 +291,7 @@ export interface FileRoutesByFullPath {
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/suporte': typeof SuporteRoute
   '/termos': typeof TermosRoute
@@ -328,6 +335,7 @@ export interface FileRoutesByTo {
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/suporte': typeof SuporteRoute
   '/termos': typeof TermosRoute
@@ -372,6 +380,7 @@ export interface FileRoutesById {
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/suporte': typeof SuporteRoute
   '/termos': typeof TermosRoute
@@ -417,6 +426,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/privacidade'
     | '/reset-password'
+    | '/robots.txt'
     | '/sitemap.xml'
     | '/suporte'
     | '/termos'
@@ -460,6 +470,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/privacidade'
     | '/reset-password'
+    | '/robots.txt'
     | '/sitemap.xml'
     | '/suporte'
     | '/termos'
@@ -503,6 +514,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/privacidade'
     | '/reset-password'
+    | '/robots.txt'
     | '/sitemap.xml'
     | '/suporte'
     | '/termos'
@@ -548,6 +560,7 @@ export interface RootRouteChildren {
   PlanosRoute: typeof PlanosRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SuporteRoute: typeof SuporteRoute
   TermosRoute: typeof TermosRoute
@@ -584,6 +597,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -934,6 +954,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlanosRoute: PlanosRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SuporteRoute: SuporteRoute,
   TermosRoute: TermosRoute,
