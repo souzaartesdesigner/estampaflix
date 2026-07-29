@@ -21,14 +21,26 @@ function ReviewsAdmin() {
 
   const { data: rows = [] } = useQuery({
     queryKey: ["admin-reviews"],
-    queryFn: async () =>
-      ((
-        await (supabase as any)
-          .from("reviews")
-          .select("id,rating,comment,is_approved,is_verified,created_at,user_id,artwork_id,profiles(full_name,email),artworks(title,slug)")
-          .order("created_at", { ascending: false })
-      ).data ?? []),
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("reviews")
+        .select("id,rating,comment,is_approved,is_verified,created_at,user_id,artwork_id,artworks(title,slug)")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      const reviews = data ?? [];
+      const ids = [...new Set(reviews.map((r: any) => r.user_id).filter(Boolean))];
+      let profileMap: Record<string, any> = {};
+      if (ids.length) {
+        const { data: profiles } = await (supabase as any)
+          .from("profiles")
+          .select("id,full_name,email")
+          .in("id", ids);
+        profileMap = Object.fromEntries((profiles ?? []).map((p: any) => [p.id, p]));
+      }
+      return reviews.map((r: any) => ({ ...r, profiles: profileMap[r.user_id] ?? null }));
+    },
   });
+
 
   const filtered = rows.filter((r: any) => (tab === "pending" ? !r.is_approved : r.is_approved));
 
