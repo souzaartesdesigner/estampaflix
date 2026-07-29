@@ -40,6 +40,7 @@ export const CONTENT_KEYS: ContentKeyDef[] = [
     label: "Aviso do cabeçalho",
     titleLabel: "Texto do aviso",
     contentLabel: "Link (opcional)",
+    hint: 'Aparece na faixa do topo. Ative a faixa em Configurações → "Banner topo".',
   },
   {
     key: "footer",
