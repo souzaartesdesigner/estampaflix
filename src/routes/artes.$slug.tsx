@@ -59,11 +59,13 @@ export const Route = createFileRoute("/artes/$slug")({
     const pageTitle = seoTitle.length <= 45 ? `${seoTitle} — Estampa Flix` : seoTitle;
 
     const keyword = ((loaderData as any).seo_keyword ?? "").trim() || loaderData.title.toLowerCase();
+    const noindex = !!(loaderData as any).noindex;
     return {
       meta: [
         { title: pageTitle },
         { name: "description", content: description },
         { name: "keywords", content: keyword },
+        { name: "robots", content: noindex ? "noindex,nofollow" : "index,follow" },
         { property: "og:title", content: pageTitle },
         { property: "og:description", content: description },
         { property: "og:image", content: loaderData.preview_url },
