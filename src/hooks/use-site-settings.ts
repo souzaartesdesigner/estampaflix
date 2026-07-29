@@ -53,6 +53,16 @@ const DEFAULTS: SiteSettings = {
   promo_banner_enabled: false,
   promo_banner_text: null,
   promo_banner_link: null,
+  seo_title: null,
+  seo_description: null,
+  seo_keywords: null,
+  og_title: null,
+  og_description: null,
+  og_image_url: null,
+  head_scripts: null,
+  robots_txt: null,
+  sitemap_enabled: true,
+  sitemap_extra_paths: null,
 };
 
 export function useSiteSettings() {
