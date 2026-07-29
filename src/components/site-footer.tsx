@@ -1,11 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
 import { useSiteSettings } from "@/hooks/use-site-settings";
+import { useSiteContent } from "@/hooks/use-site-content";
 import logoAsset from "@/assets/estampa-flix-logo.png.asset.json";
 
 export function SiteFooter() {
   const { t } = useI18n();
   const { data: settings } = useSiteSettings();
+  const cms = useSiteContent("footer");
   const logoUrl = settings?.logo_url || logoAsset.url;
   const siteName = settings?.site_name || "Estampa Flix";
   return (
@@ -15,7 +17,7 @@ export function SiteFooter() {
           <div className="flex items-center gap-2 font-display text-lg font-bold">
             <img src={logoUrl} alt={siteName} className="h-10 w-auto max-w-[180px] object-contain" />
           </div>
-          <p className="mt-3 text-sm text-muted-foreground">{t("footer.tagline")}</p>
+          <p className="mt-3 text-sm text-muted-foreground">{cms?.title || settings?.footer_text || t("footer.tagline")}</p>
         </div>
         <div>
           <h4 className="text-sm font-semibold">{t("footer.navigation")}</h4>
@@ -43,7 +45,7 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-border/40 py-4 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Estampa Flix — {t("footer.copyright")}
+        {cms?.content || `© ${new Date().getFullYear()} ${siteName} — ${t("footer.copyright")}`}
       </div>
     </footer>
   );
