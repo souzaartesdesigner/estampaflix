@@ -140,7 +140,7 @@ function ArtworkPage() {
 
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
           <div>
-            <ArtworkGallery images={galleryImages} alt={trTitle} />
+            <ArtworkGallery images={galleryImages} alt={(artwork as any).alt_text?.trim() || trTitle} />
             <ProductInfoPanel artwork={artwork} />
           </div>
           <ArtworkInfo artwork={artwork} title={trTitle} session={session} sub={sub} owned={owned} />
