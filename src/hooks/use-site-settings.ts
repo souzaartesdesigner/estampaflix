@@ -21,6 +21,16 @@ export type SiteSettings = {
   promo_banner_enabled: boolean;
   promo_banner_text: string | null;
   promo_banner_link: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
+  seo_keywords: string | null;
+  og_title: string | null;
+  og_description: string | null;
+  og_image_url: string | null;
+  head_scripts: string | null;
+  robots_txt: string | null;
+  sitemap_enabled: boolean;
+  sitemap_extra_paths: string | null;
 };
 
 const DEFAULTS: SiteSettings = {
