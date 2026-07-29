@@ -76,11 +76,13 @@ export type Database = {
       }
       artworks: {
         Row: {
+          alt_text: string | null
           category_id: string | null
           colors: string[] | null
           created_at: string
           credit_cost: number
           description: string | null
+          dimensions: string | null
           download_count: number
           external_url: string | null
           featured_order: number
@@ -91,24 +93,31 @@ export type Database = {
           is_featured: boolean
           is_published: boolean
           is_trending: boolean
+          license_text: string | null
+          noindex: boolean
           preview_url: string
           price_cents: number
           product_code: string | null
+          resolution: string | null
           seo_description: string | null
           seo_keyword: string | null
           seo_title: string | null
           slug: string
+          tech_specs: string | null
           title: string
           translations: Json
           updated_at: string
+          usage_instructions: string | null
           view_count: number
         }
         Insert: {
+          alt_text?: string | null
           category_id?: string | null
           colors?: string[] | null
           created_at?: string
           credit_cost?: number
           description?: string | null
+          dimensions?: string | null
           download_count?: number
           external_url?: string | null
           featured_order?: number
@@ -119,24 +128,31 @@ export type Database = {
           is_featured?: boolean
           is_published?: boolean
           is_trending?: boolean
+          license_text?: string | null
+          noindex?: boolean
           preview_url: string
           price_cents?: number
           product_code?: string | null
+          resolution?: string | null
           seo_description?: string | null
           seo_keyword?: string | null
           seo_title?: string | null
           slug: string
+          tech_specs?: string | null
           title: string
           translations?: Json
           updated_at?: string
+          usage_instructions?: string | null
           view_count?: number
         }
         Update: {
+          alt_text?: string | null
           category_id?: string | null
           colors?: string[] | null
           created_at?: string
           credit_cost?: number
           description?: string | null
+          dimensions?: string | null
           download_count?: number
           external_url?: string | null
           featured_order?: number
@@ -147,16 +163,21 @@ export type Database = {
           is_featured?: boolean
           is_published?: boolean
           is_trending?: boolean
+          license_text?: string | null
+          noindex?: boolean
           preview_url?: string
           price_cents?: number
           product_code?: string | null
+          resolution?: string | null
           seo_description?: string | null
           seo_keyword?: string | null
           seo_title?: string | null
           slug?: string
+          tech_specs?: string | null
           title?: string
           translations?: Json
           updated_at?: string
+          usage_instructions?: string | null
           view_count?: number
         }
         Relationships: [
@@ -864,6 +885,30 @@ export type Database = {
           },
         ]
       }
+      site_content: {
+        Row: {
+          content: string | null
+          created_at: string
+          key: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          key: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          key?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           facebook_url: string | null
@@ -871,17 +916,27 @@ export type Database = {
           footer_text: string | null
           ga4_measurement_id: string | null
           google_search_console_id: string | null
+          head_scripts: string | null
           id: boolean
           instagram_url: string | null
           legal_business_name: string | null
           legal_document: string | null
           logo_url: string | null
           meta_pixel_id: string | null
+          og_description: string | null
+          og_image_url: string | null
+          og_title: string | null
           primary_color: string | null
           promo_banner_enabled: boolean
           promo_banner_link: string | null
           promo_banner_text: string | null
+          robots_txt: string | null
+          seo_description: string | null
+          seo_keywords: string | null
+          seo_title: string | null
           site_name: string
+          sitemap_enabled: boolean
+          sitemap_extra_paths: string | null
           support_email: string | null
           tagline: string | null
           tiktok_url: string | null
@@ -894,17 +949,27 @@ export type Database = {
           footer_text?: string | null
           ga4_measurement_id?: string | null
           google_search_console_id?: string | null
+          head_scripts?: string | null
           id?: boolean
           instagram_url?: string | null
           legal_business_name?: string | null
           legal_document?: string | null
           logo_url?: string | null
           meta_pixel_id?: string | null
+          og_description?: string | null
+          og_image_url?: string | null
+          og_title?: string | null
           primary_color?: string | null
           promo_banner_enabled?: boolean
           promo_banner_link?: string | null
           promo_banner_text?: string | null
+          robots_txt?: string | null
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
           site_name?: string
+          sitemap_enabled?: boolean
+          sitemap_extra_paths?: string | null
           support_email?: string | null
           tagline?: string | null
           tiktok_url?: string | null
@@ -917,17 +982,27 @@ export type Database = {
           footer_text?: string | null
           ga4_measurement_id?: string | null
           google_search_console_id?: string | null
+          head_scripts?: string | null
           id?: boolean
           instagram_url?: string | null
           legal_business_name?: string | null
           legal_document?: string | null
           logo_url?: string | null
           meta_pixel_id?: string | null
+          og_description?: string | null
+          og_image_url?: string | null
+          og_title?: string | null
           primary_color?: string | null
           promo_banner_enabled?: boolean
           promo_banner_link?: string | null
           promo_banner_text?: string | null
+          robots_txt?: string | null
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
           site_name?: string
+          sitemap_enabled?: boolean
+          sitemap_extra_paths?: string | null
           support_email?: string | null
           tagline?: string | null
           tiktok_url?: string | null
