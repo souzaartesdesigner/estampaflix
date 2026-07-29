@@ -1078,6 +1078,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_get_artwork_external_url: {
+        Args: { _artwork_id: string }
+        Returns: string
+      }
       consume_download: {
         Args: { _artwork_id: string }
         Returns: {

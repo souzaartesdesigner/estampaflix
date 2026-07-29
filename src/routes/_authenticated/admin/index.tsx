@@ -13,7 +13,7 @@ function Overview() {
     queryKey: ["admin-overview"],
     queryFn: async () => {
       const [{ count: artworks }, { count: users }, { data: orders }, { count: support }, { data: subs }] = await Promise.all([
-        supabase.from("artworks").select("*", { count: "exact", head: true }),
+        supabase.from("artworks").select("id", { count: "exact", head: true }),
         supabase.from("profiles").select("*", { count: "exact", head: true }),
         supabase.from("orders").select("amount_cents,status").eq("status", "paid"),
         supabase.from("support_messages").select("*", { count: "exact", head: true }).eq("status", "new"),

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -43,7 +43,7 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
     category_id: editing?.category_id ?? "",
     preview_url: editing?.preview_url ?? "",
     file_path: editing?.file_path ?? "",
-    external_url: editing?.external_url ?? "",
+    external_url: "",
     file_format: editing?.file_format ?? "png",
     price_cents: editing?.price_cents ?? 990,
     credit_cost: editing?.credit_cost ?? 1,
@@ -64,8 +64,23 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
     return Array.from(all);
   });
   const [sourceType, setSourceType] = useState<"upload" | "external">(
-    editing?.external_url ? "external" : "upload"
+    editing && !editing.file_path ? "external" : "upload"
   );
+
+  // O link externo não é legível na tabela pública; só admins podem obtê-lo via RPC.
+  useEffect(() => {
+    if (!isEdit || !editing?.id) return;
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase.rpc("admin_get_artwork_external_url", { _artwork_id: editing.id });
+      if (cancelled || !data) return;
+      setForm((f: any) => ({ ...f, external_url: data as string }));
+      setSourceType("external");
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isEdit, editing?.id]);
   const [previewFile, setPreviewFile] = useState<File | null>(null);
   const [artFile, setArtFile] = useState<File | null>(null);
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);

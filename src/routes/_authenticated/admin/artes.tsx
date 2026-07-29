@@ -25,7 +25,7 @@ function Artes() {
 
   const { data: artworks = [] } = useQuery({
     queryKey: ["admin-artworks"],
-    queryFn: async () => (await supabase.from("artworks").select("*, categories!artworks_category_id_fkey(name), artwork_categories(category_id)").order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await supabase.from("artworks").select("id,slug,title,description,category_id,preview_url,file_path,file_format,colors,price_cents,is_published,is_featured,is_trending,download_count,view_count,created_at,updated_at,credit_cost,gallery_urls,translations,featured_order,seo_title,seo_description,seo_keyword,product_code, categories!artworks_category_id_fkey(name), artwork_categories(category_id)").order("created_at", { ascending: false })).data ?? [],
   });
   const { data: categories = [] } = useQuery({
     queryKey: ["admin-categories"],

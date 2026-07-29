@@ -46,7 +46,7 @@ function Dashboard() {
 
   const { data: downloads = [] } = useQuery({
     queryKey: ["my-downloads", user.id],
-    queryFn: async () => (await supabase.from("downloads").select("*, artworks(id,slug,title,preview_url,file_path,external_url,translations)").order("last_downloaded_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await supabase.from("downloads").select("*, artworks(id,slug,title,preview_url,file_path,translations)").order("last_downloaded_at", { ascending: false })).data ?? [],
   });
 
   const { data: orders = [] } = useQuery({
@@ -72,22 +72,27 @@ function Dashboard() {
     return map[s] ?? s;
   }
 
-  async function redownload(art: { file_path: string | null; external_url: string | null; title: string }) {
+  async function redownload(art: { id: string; file_path: string | null; title: string }) {
     try {
-      if (art.external_url) {
-        window.open(art.external_url, "_blank", "noopener,noreferrer");
+      // O link externo nunca é exposto na tabela pública: só a RPC valida a posse e o devolve.
+      const { data, error } = await supabase.rpc("consume_download", { _artwork_id: art.id });
+      if (error) throw error;
+      const row: any = Array.isArray(data) ? data[0] : data;
+      if (row?.external_url) {
+        window.open(row.external_url as string, "_blank", "noopener,noreferrer");
         return;
       }
-      if (!art.file_path) {
+      const path = row?.file_path ?? art.file_path;
+      if (!path) {
         toast.error(t("account.errFileUnavailable"));
         return;
       }
-      const { data, error } = await supabase.storage
+      const { data: signed, error: sErr } = await supabase.storage
         .from("artwork-files")
-        .createSignedUrl(art.file_path, 60, { download: art.title });
-      if (error || !data?.signedUrl) throw error ?? new Error("Falha ao gerar link");
+        .createSignedUrl(path, 60, { download: art.title });
+      if (sErr || !signed?.signedUrl) throw sErr ?? new Error("Falha ao gerar link");
       const a = document.createElement("a");
-      a.href = data.signedUrl;
+      a.href = signed.signedUrl;
       a.rel = "noopener";
       document.body.appendChild(a);
       a.click();
@@ -96,6 +101,7 @@ function Dashboard() {
       toast.error(e?.message ?? t("account.errDownload"));
     }
   }
+
 
   return (
     <SiteLayout>
