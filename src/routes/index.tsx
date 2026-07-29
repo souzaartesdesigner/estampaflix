@@ -64,7 +64,7 @@ function Home() {
         if (data.featured.length === 0) return null;
         return (
           <section key={s.id} className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-8">
-            <SectionTitle title={s.title || t("home.featuredTitle")} subtitle={t("home.featuredSubtitle")} />
+            <SectionTitle title={s.title || t("home.featuredTitle")} subtitle={s.subtitle ?? t("home.featuredSubtitle")} />
             <ArtGrid items={data.featured.slice(0, limit)} emptyMsg={t("home.emptyGrid")} />
           </section>
         );
@@ -74,7 +74,7 @@ function Home() {
           <section key={s.id} className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-8">
             <SectionTitle
               title={s.title || t("home.trendingTitle")}
-              subtitle={t("home.trendingSubtitle")}
+              subtitle={s.subtitle ?? t("home.trendingSubtitle")}
               icon={<Zap className="h-5 w-5 text-brand-2" />}
             />
             <ArtGrid items={data.popular.slice(0, limit)} emptyMsg={t("home.emptyGrid")} />
@@ -85,7 +85,7 @@ function Home() {
           <section key={s.id} className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-8">
             <SectionTitle
               title={s.title || t("home.recentTitle")}
-              subtitle={t("home.recentSubtitle")}
+              subtitle={s.subtitle ?? t("home.recentSubtitle")}
               cta={{ to: "/catalogo", label: t("home.viewAll") }}
             />
             <ArtGrid items={data.recent.slice(0, limit)} emptyMsg={t("home.emptyGrid")} />
@@ -96,7 +96,7 @@ function Home() {
         if (items.length === 0) return null;
         return (
           <section key={s.id} className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-8">
-            <SectionTitle title={s.title || "Categoria"} cta={{ to: "/catalogo", label: t("home.viewAll") }} />
+            <SectionTitle title={s.title || "Categoria"} subtitle={s.subtitle ?? undefined} cta={{ to: "/catalogo", label: t("home.viewAll") }} />
             <ArtGrid items={items.slice(0, limit)} emptyMsg={t("home.emptyGrid")} />
           </section>
         );
@@ -106,7 +106,7 @@ function Home() {
         if (items.length === 0) return null;
         return (
           <section key={s.id} className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-8">
-            <SectionTitle title={s.title || "Seleção"} subtitle={t("home.featuredSubtitle")} />
+            <SectionTitle title={s.title || "Seleção"} subtitle={s.subtitle ?? t("home.featuredSubtitle")} />
             <ArtGrid items={items.slice(0, s.item_limit ?? 8)} emptyMsg={t("home.emptyGrid")} />
           </section>
         );
