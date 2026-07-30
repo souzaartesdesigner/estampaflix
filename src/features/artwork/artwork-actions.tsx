@@ -34,6 +34,18 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
   const cart = useCart();
   const inCart = cart.contains(artwork.id);
   const canDownload = !!sub && (sub.credits_remaining ?? 0) > 0;
+  const isFree = artwork.license_type === "free";
+  const hasActiveSub = !!sub;
+  const { data: freeToday = 0 } = useQuery({
+    queryKey: ["free-downloads-today", session?.user?.id],
+    enabled: !!session && isFree && !hasActiveSub,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("free_downloads_today");
+      if (error) return 0;
+      return Number(data ?? 0);
+    },
+  });
+  const freeLimitReached = isFree && !!session && !hasActiveSub && freeToday >= 5 && !owned;
   const [planDialogOpen, setPlanDialogOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const shareUrl = typeof window !== "undefined" ? window.location.href : `https://estampaflix.com/artes/${artwork.slug}`;
@@ -67,6 +79,7 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
     },
     onSuccess: (res) => {
       qc.invalidateQueries({ queryKey: ["my-subscription"] });
+      qc.invalidateQueries({ queryKey: ["free-downloads-today"] });
       if (res.kind === "external") {
         window.open(res.url, "_blank", "noopener,noreferrer");
       } else {
@@ -82,7 +95,8 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
     },
     onError: (err: any) => {
       const msg = err.message || "";
-      if (msg.includes("no_credits")) toast.error(t("product.errNoCredits"));
+      if (msg.includes("daily_limit_reached")) toast.error("Você atingiu o limite de 5 downloads gratuitos hoje. Assine um plano para downloads ilimitados.");
+      else if (msg.includes("no_credits")) toast.error(t("product.errNoCredits"));
       else if (msg.includes("no_active_subscription")) toast.error(t("product.errNoSub"));
       else if (msg.includes("not_authenticated")) { toast.error(t("product.errLogin")); navigate({ to: "/auth" }); }
       else toast.error(msg || t("account.errDownload"));
@@ -121,11 +135,40 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
       {header}
 
       <div className="mt-4 flex items-baseline gap-2">
-        <span className="text-3xl font-black">{formatBRL(artwork.price_cents)}</span>
+        <span className="text-3xl font-black">{isFree ? "Grátis" : formatBRL(artwork.price_cents)}</span>
       </div>
 
       <div className="mt-4 flex flex-col gap-2">
-        {session && owned ? (
+        {isFree && !owned ? (
+          <>
+            <Button
+              onClick={() => {
+                if (!session) { navigate({ to: "/auth" }); return; }
+                if (freeLimitReached) { setPlanDialogOpen(true); return; }
+                downloadMut.mutate();
+              }}
+              disabled={downloadMut.isPending}
+              className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              {downloadMut.isPending ? t("product.downloading") : "Baixar grátis"}
+            </Button>
+            {!session ? (
+              <p className="text-center text-xs text-muted-foreground">
+                Faça login para baixar esta arte gratuita.
+              </p>
+            ) : hasActiveSub ? (
+              <p className="text-center text-xs text-success">Downloads gratuitos ilimitados com sua assinatura.</p>
+            ) : (
+              <p className={`text-center text-xs ${freeLimitReached ? "text-warning" : "text-muted-foreground"}`}>
+                {freeLimitReached
+                  ? "Limite diário atingido (5/5)."
+                  : `${freeToday}/5 downloads gratuitos usados hoje.`}{" "}
+                <Link to="/planos" className="text-primary underline">{t("product.seePlans")}</Link>
+              </p>
+            )}
+          </>
+        ) : session && owned ? (
           <>
             <Button
               onClick={() => downloadMut.mutate()}

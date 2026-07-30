@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { tField, useI18n } from "@/lib/i18n";
-import { type CatalogSearch } from "./catalog-constants";
+import { LICENSES, type CatalogSearch } from "./catalog-constants";
 import { FileFormatIcon } from "@/features/artwork/file-format-icon";
 import { FilterGroup, FilterOption } from "./filter-group";
 
@@ -36,7 +36,26 @@ export function CatalogFilters({ filters, categories, formats = [], onChange }: 
 
   return (
     <>
+      <FilterGroup title="Licença">
+        <div className="space-y-1">
+          <FilterOption
+            label="Todas as licenças"
+            active={!filters.licenca}
+            onClick={() => onChange({ licenca: undefined })}
+          />
+          {LICENSES.map((l) => (
+            <FilterOption
+              key={l.value}
+              label={l.label}
+              active={filters.licenca === l.value}
+              onClick={() => onChange({ licenca: filters.licenca === l.value ? undefined : (l.value as any) })}
+            />
+          ))}
+        </div>
+      </FilterGroup>
+
       <FilterGroup title={t("catalog.categories")}>
+
         <div className="space-y-1">
           {orderedCategories.map(({ cat: c, depth }) => {
             const nm = tField(c as any, "name", lang) || c.name;

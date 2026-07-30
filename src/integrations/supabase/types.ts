@@ -94,6 +94,7 @@ export type Database = {
           is_published: boolean
           is_trending: boolean
           license_text: string | null
+          license_type: string
           noindex: boolean
           preview_url: string
           price_cents: number
@@ -129,6 +130,7 @@ export type Database = {
           is_published?: boolean
           is_trending?: boolean
           license_text?: string | null
+          license_type?: string
           noindex?: boolean
           preview_url: string
           price_cents?: number
@@ -164,6 +166,7 @@ export type Database = {
           is_published?: boolean
           is_trending?: boolean
           license_text?: string | null
+          license_type?: string
           noindex?: boolean
           preview_url?: string
           price_cents?: number
@@ -458,6 +461,38 @@ export type Database = {
           uses_count?: number
         }
         Relationships: []
+      }
+      daily_downloads: {
+        Row: {
+          artwork_id: string
+          created_at: string
+          downloaded_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          artwork_id: string
+          created_at?: string
+          downloaded_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          artwork_id?: string
+          created_at?: string
+          downloaded_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_downloads_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artworks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       downloads: {
         Row: {
@@ -1172,6 +1207,7 @@ export type Database = {
           was_new: boolean
         }[]
       }
+      free_downloads_today: { Args: never; Returns: number }
       grant_order_downloads: { Args: { _order_id: string }; Returns: undefined }
       has_purchased_or_downloaded: {
         Args: { _artwork_id: string; _user_id: string }

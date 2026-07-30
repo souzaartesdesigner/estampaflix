@@ -76,7 +76,7 @@ function Catalogo() {
 
       let query = supabase
         .from("artworks")
-        .select("id,slug,title,preview_url,price_cents,is_featured,is_trending,download_count,category_id,colors,file_format,translations,categories!artworks_category_id_fkey(id,name,slug,translations),artwork_categories(categories(id,name,slug,translations))")
+        .select("id,slug,title,preview_url,price_cents,license_type,is_featured,is_trending,download_count,category_id,colors,file_format,translations,categories!artworks_category_id_fkey(id,name,slug,translations),artwork_categories(categories(id,name,slug,translations))")
         .eq("is_published", true)
         .order("created_at", { ascending: false })
         .limit(60);
@@ -89,6 +89,7 @@ function Catalogo() {
           : query.ilike("title", `%${term}%`);
       }
       if (artworkIdsFilter) query = query.in("id", artworkIdsFilter);
+      if (filters.licenca) query = query.eq("license_type", filters.licenca);
       if (filters.formato) query = query.eq("file_format", filters.formato);
       if (filters.cor) query = query.contains("colors", [filters.cor]);
       const { data } = await query;

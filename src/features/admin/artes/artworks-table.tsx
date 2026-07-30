@@ -23,6 +23,7 @@ export function ArtworksTable({ artworks, onEdit, onDelete, selected, onToggle, 
             <th className="w-10 px-3 py-3"><Checkbox checked={allSelected} onCheckedChange={onToggleAll} /></th>
             <th className="px-4 py-3 text-left">Arte</th>
             <th className="px-4 py-3 text-left">Categoria</th>
+            <th className="px-4 py-3 text-left">Licença</th>
             <th className="px-4 py-3 text-left">Preço</th>
             <th className="px-4 py-3 text-left">Status</th>
             <th className="px-4 py-3"></th>
@@ -39,6 +40,13 @@ export function ArtworksTable({ artworks, onEdit, onDelete, selected, onToggle, 
                 </div>
               </td>
               <td className="px-4 py-3 text-muted-foreground">{a.categories?.name ?? "—"}</td>
+              <td className="px-4 py-3">
+                {a.license_type === "free" ? (
+                  <Badge className="border-0 bg-success text-background">Gratuito</Badge>
+                ) : (
+                  <Badge className="border-0 bg-gradient-brand text-brand-foreground">Premium</Badge>
+                )}
+              </td>
               <td className="px-4 py-3">{formatBRL(a.price_cents)}</td>
               <td className="px-4 py-3">
                 {a.is_published ? <Badge>Publicada</Badge> : <Badge variant="secondary">Rascunho</Badge>}
@@ -52,7 +60,7 @@ export function ArtworksTable({ artworks, onEdit, onDelete, selected, onToggle, 
             </tr>
           ))}
           {artworks.length === 0 && (
-            <tr><td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">Nenhuma arte cadastrada.</td></tr>
+            <tr><td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">Nenhuma arte cadastrada.</td></tr>
           )}
         </tbody>
       </table>

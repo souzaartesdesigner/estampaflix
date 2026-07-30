@@ -6,7 +6,13 @@ export const catalogSearchSchema = z.object({
   categoria: z.string().optional(),
   formato: z.string().optional(),
   cor: z.string().optional(),
+  licenca: z.enum(["free", "premium"]).optional(),
 });
+
+export const LICENSES = [
+  { value: "free", label: "Gratuitas (Free)" },
+  { value: "premium", label: "Premium" },
+] as const;
 
 export type CatalogSearch = z.infer<typeof catalogSearchSchema>;
 
