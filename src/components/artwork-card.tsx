@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { FavoriteButton } from "./favorite-button";
 
-import { ShoppingCart, Check } from "lucide-react";
+import { ShoppingCart, Check, Crown, Gift } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { useI18n, tField } from "@/lib/i18n";
 
@@ -36,7 +36,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
     <Link
       to="/artes/$slug"
       params={{ slug: artwork.slug }}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-card shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-brand"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-card shadow-card transition-colors duration-300 hover:border-primary/50"
     >
       <div className="relative aspect-square overflow-hidden bg-surface-2">
         {artwork.preview_url ? (
@@ -47,16 +47,28 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
             decoding="async"
             width={400}
             height={400}
-            className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.08]"
+            className="h-full w-full object-cover"
           />
         ) : (
           <div className="grid h-full place-items-center text-muted-foreground">{t("card.noImage")}</div>
         )}
         <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5">
           {artwork.license_type === "free" ? (
-            <Badge className="border-0 bg-success text-background shadow-glow">GRÁTIS</Badge>
+            <span
+              aria-label="Arte gratuita"
+              title="Arte gratuita"
+              className="grid h-7 w-7 place-items-center rounded-full bg-success text-background"
+            >
+              <Gift className="h-4 w-4" />
+            </span>
           ) : (
-            <Badge className="border-0 bg-gradient-brand text-brand-foreground shadow-glow">PREMIUM</Badge>
+            <span
+              aria-label="Arte premium"
+              title="Arte premium"
+              className="grid h-7 w-7 place-items-center rounded-full bg-gradient-brand text-brand-foreground"
+            >
+              <Crown className="h-4 w-4" />
+            </span>
           )}
           {artwork.is_featured && (
             <Badge variant="secondary" className="bg-background/70 backdrop-blur-md">
