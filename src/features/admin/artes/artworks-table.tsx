@@ -23,6 +23,7 @@ export function ArtworksTable({ artworks, onEdit, onDelete, selected, onToggle, 
             <th className="w-10 px-3 py-3"><Checkbox checked={allSelected} onCheckedChange={onToggleAll} /></th>
             <th className="px-4 py-3 text-left">Arte</th>
             <th className="px-4 py-3 text-left">Categoria</th>
+            <th className="px-4 py-3 text-left">Licença</th>
             <th className="px-4 py-3 text-left">Preço</th>
             <th className="px-4 py-3 text-left">Status</th>
             <th className="px-4 py-3"></th>
