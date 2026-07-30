@@ -152,7 +152,10 @@ function ArtworkPage() {
 
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
           <div>
-            <ArtworkGallery images={galleryImages} alt={(artwork as any).alt_text?.trim() || trTitle} />
+            <ArtworkGallery
+              images={galleryImages}
+              alt={(artwork as any).alt_text?.trim() || `Estampa editável ${trTitle} - Estampa Flix`}
+            />
             <ProductInfoPanel artwork={artwork} />
           </div>
           <ArtworkInfo artwork={artwork} title={trTitle} session={session} sub={sub} owned={owned} />
