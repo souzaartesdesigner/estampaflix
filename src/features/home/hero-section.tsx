@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { tField, useI18n } from "@/lib/i18n";
 import { useSiteContent } from "@/hooks/use-site-content";
+import { SmartImage } from "@/components/smart-image";
+
 
 export function HeroSection({ recent }: { recent: any[] }) {
   const { t, lang } = useI18n();
@@ -68,16 +70,19 @@ export function HeroSection({ recent }: { recent: any[] }) {
                 }`}
                 style={{ transform: `translateY(${(i % 3) * 14}px)` }}
               >
-                <img
+                <SmartImage
                   src={a.preview_url}
                   alt={tField(a as any, "title", lang) || a.title}
-                  className="h-full w-full object-cover"
+                  widths={[200, 320, 400]}
+                  fallbackWidth={320}
+                  sizes="200px"
+                  priority={i === 0}
                   loading={i < 3 ? "eager" : "lazy"}
-                  fetchPriority={i === 0 ? "high" : undefined}
-                  decoding="async"
+                  className="h-full w-full object-cover"
                   width={400}
                   height={400}
                 />
+
               </div>
             ))}
           </div>

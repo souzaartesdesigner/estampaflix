@@ -4,6 +4,9 @@ import { SiteLayout } from "@/components/site-layout";
 import { formatDate } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { useI18n, tField } from "@/lib/i18n";
+import { SmartImage } from "@/components/smart-image";
+import { HERO_WIDTHS } from "@/lib/image-cdn";
+
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ params }) => {
@@ -83,7 +86,7 @@ function Post() {
         </header>
         {post.cover_url && (
           <div className="my-8 overflow-hidden rounded-2xl border border-border/60">
-            <img src={post.cover_url} alt={title} loading="eager" fetchPriority="high" decoding="async" className="w-full" />
+            <SmartImage src={post.cover_url} alt={title} widths={HERO_WIDTHS} fallbackWidth={960} sizes="(max-width: 900px) 100vw, 860px" priority className="w-full" />
           </div>
         )}
         <div className="prose prose-invert max-w-none whitespace-pre-wrap text-foreground/90 leading-relaxed">
