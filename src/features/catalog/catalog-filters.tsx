@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { tField, useI18n } from "@/lib/i18n";
-import { type CatalogSearch } from "./catalog-constants";
+import { LICENSES, type CatalogSearch } from "./catalog-constants";
 import { FileFormatIcon } from "@/features/artwork/file-format-icon";
 import { FilterGroup, FilterOption } from "./filter-group";
 
