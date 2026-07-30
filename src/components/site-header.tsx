@@ -134,27 +134,9 @@ export function SiteHeader() {
             </Button>
           )}
           {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <User className="h-4 w-4" /> <span className="hidden sm:inline">{user.email?.split("@")[0]}</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel className="truncate">{user.email}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild><Link to="/minha-conta">{t("nav.myAccount")}</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/carrinho">{t("nav.cart")}</Link></DropdownMenuItem>
-                {isAdmin && (
-                  <DropdownMenuItem asChild>
-                    <Link to="/admin"><ShieldCheck className="mr-2 h-4 w-4" /> {t("nav.admin")}</Link>
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={signOut}><LogOut className="mr-2 h-4 w-4" /> {t("nav.signOut")}</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <UserNav user={user as any} isAdmin={isAdmin} />
           ) : (
+
             <>
               <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
                 <Link to="/auth">{t("nav.signIn")}</Link>
