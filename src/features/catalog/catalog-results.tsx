@@ -35,7 +35,7 @@ export function CatalogResults({ filters, artworks, isLoading, onRemoveFilter }:
         </div>
       )}
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="aspect-square animate-pulse rounded-xl bg-surface" />
           ))}
@@ -45,7 +45,7 @@ export function CatalogResults({ filters, artworks, isLoading, onRemoveFilter }:
           {t("catalog.empty")}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
           {artworks.map((a: any) => <ArtworkCard key={a.id} artwork={a} />)}
         </div>
       )}
