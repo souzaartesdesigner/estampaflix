@@ -69,7 +69,7 @@ function Planos() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-3 py-8 sm:px-4 sm:py-12">
+      <section ref={plansRef} className="mx-auto w-full max-w-6xl scroll-mt-24 px-3 py-8 sm:px-4 sm:py-12">
         <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {plans.map((plan, idx) => (
             <div
