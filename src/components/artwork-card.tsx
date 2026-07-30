@@ -57,7 +57,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
             <span
               aria-label="Arte gratuita"
               title="Arte gratuita"
-              className="grid h-7 w-7 place-items-center rounded-full bg-success text-background"
+              className="grid h-7 w-7 place-items-center rounded-full bg-success text-foreground"
             >
               <Gift className="h-4 w-4" />
             </span>
