@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LogOut, Menu, Search, ShieldCheck, ShoppingCart, User } from "lucide-react";
+import { UserNav } from "@/components/user-nav";
 import logoAsset from "@/assets/estampa-flix-logo.png.asset.json";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
