@@ -17,16 +17,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useQueryClient } from "@tanstack/react-query";
 
+const TABS = ["downloads", "favorites", "subscription", "orders", "profile"] as const;
+
 export const Route = createFileRoute("/_authenticated/minha-conta")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    tab: TABS.includes(search.tab as any) ? (search.tab as (typeof TABS)[number]) : undefined,
+  }),
   head: () => ({ meta: [{ title: "Minha conta — Estampa Flix" }, { name: "robots", content: "noindex" }] }),
   component: Dashboard,
 });
 
 function Dashboard() {
   const { user } = Route.useRouteContext() as { user: any };
+  const { tab } = Route.useSearch();
   const portalFn = useServerFn(createBillingPortalSession);
   const [portalLoading, setPortalLoading] = useState(false);
   const { t, lang } = useI18n();
+
 
   async function openPortal() {
     setPortalLoading(true);
