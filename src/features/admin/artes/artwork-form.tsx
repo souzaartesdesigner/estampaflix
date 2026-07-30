@@ -47,6 +47,7 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
     file_format: editing?.file_format ?? "png",
     price_cents: editing?.price_cents ?? 990,
     credit_cost: editing?.credit_cost ?? 1,
+    license_type: editing?.license_type ?? "premium",
     is_published: editing?.is_published ?? true,
     is_featured: editing?.is_featured ?? false,
     is_trending: editing?.is_trending ?? false,
@@ -145,6 +146,7 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         file_format: normalizeFormat(form.file_format) || null,
         price_cents: Number(form.price_cents),
         credit_cost: Number(form.credit_cost),
+        license_type: form.license_type === "free" ? "free" : "premium",
         is_published: form.is_published,
         is_featured: form.is_featured,
         is_trending: form.is_trending,
@@ -409,6 +411,18 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
                 />
               </div>
             ))}
+          </div>
+
+          <div>
+            <Label>Tipo de licença</Label>
+            <select
+              className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+              value={form.license_type}
+              onChange={(e) => setForm({ ...form, license_type: e.target.value })}
+            >
+              <option value="premium">Premium (venda / créditos)</option>
+              <option value="free">Grátis (limite de 5/dia sem assinatura)</option>
+            </select>
           </div>
 
           <div className="flex flex-wrap gap-6">

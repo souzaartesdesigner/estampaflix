@@ -89,6 +89,7 @@ function Catalogo() {
           : query.ilike("title", `%${term}%`);
       }
       if (artworkIdsFilter) query = query.in("id", artworkIdsFilter);
+      if (filters.licenca) query = query.eq("license_type", filters.licenca);
       if (filters.formato) query = query.eq("file_format", filters.formato);
       if (filters.cor) query = query.contains("colors", [filters.cor]);
       const { data } = await query;
