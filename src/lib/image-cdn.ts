@@ -19,11 +19,18 @@ export type ImageFormat = "avif" | "webp" | "origin";
 /** O proxy atual ainda não expõe AVIF; manter a lista facilita ligar depois. */
 export const ENABLED_FORMATS: ImageFormat[] = ["webp"];
 
-/** Larguras responsivas padrão (px). */
-export const CARD_WIDTHS = [200, 320, 400, 600, 800];
-export const HERO_WIDTHS = [640, 960, 1280, 1600, 1920];
-export const DETAIL_WIDTHS = [400, 600, 800, 1200, 1600];
-export const THUMB_WIDTHS = [96, 160, 240];
+/**
+ * Larguras responsivas padrão (px).
+ *
+ * Menos variantes = mais acertos no cache do CDN. Cada largura inédita obriga o
+ * proxy a buscar o original (~1,5 s); já em cache a resposta cai para ~50 ms.
+ * Por isso mantemos poucas larguras bem espaçadas por contexto de uso.
+ */
+export const CARD_WIDTHS = [400, 800];
+export const HERO_WIDTHS = [640, 1280, 1920];
+export const DETAIL_WIDTHS = [800, 1600];
+export const THUMB_WIDTHS = [160];
+
 
 /** Só transformamos URLs http(s) públicas e absolutas. */
 export function canTransform(src: string | null | undefined): src is string {
