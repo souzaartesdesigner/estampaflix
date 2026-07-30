@@ -82,12 +82,16 @@ function Catalogo() {
         .limit(60);
 
       if (filters.q) {
-        const term = filters.q.trim();
-        const isCode = /^[0-9a-fA-F]{4,8}$/.test(term);
-        query = isCode
-          ? query.or(`product_code.ilike.${term.toUpperCase()}%,title.ilike.%${term}%`)
-          : query.ilike("title", `%${term}%`);
+        // Sanitiza a busca: remove caracteres usados na sintaxe de filtro do PostgREST
+        const term = filters.q.trim().slice(0, 80).replace(/[,()*\\"']/g, " ").trim();
+        if (term) {
+          const isCode = /^[0-9a-fA-F]{4,8}$/.test(term);
+          query = isCode
+            ? query.or(`product_code.ilike.${term.toUpperCase()}%,title.ilike.%${term}%`)
+            : query.ilike("title", `%${term}%`);
+        }
       }
+
       if (artworkIdsFilter) query = query.in("id", artworkIdsFilter);
       if (filters.licenca) query = query.eq("license_type", filters.licenca);
       if (filters.formato) query = query.eq("file_format", filters.formato);
