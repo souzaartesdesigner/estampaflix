@@ -60,7 +60,7 @@ export function ArtworksTable({ artworks, onEdit, onDelete, selected, onToggle, 
             </tr>
           ))}
           {artworks.length === 0 && (
-            <tr><td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">Nenhuma arte cadastrada.</td></tr>
+            <tr><td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">Nenhuma arte cadastrada.</td></tr>
           )}
         </tbody>
       </table>
