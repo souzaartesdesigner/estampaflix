@@ -127,6 +127,10 @@ function Planos() {
           </div>
         </div>
       </section>
+
+      <PlansLanding
+        onScrollToPlans={() => plansRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+      />
     </SiteLayout>
   );
 }
