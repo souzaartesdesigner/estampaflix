@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
-import { LayoutDashboard, Palette, Tag, FolderOpen, Users, ShoppingBag, FileText, MessageCircle, CreditCard, Upload, TicketPercent, BarChart3, Settings, Home, Image as ImageIcon, Mail, Star } from "lucide-react";
+import { LayoutDashboard, Palette, Tag, FolderOpen, Users, ShoppingBag, FileText, MessageCircle, CreditCard, Upload, TicketPercent, BarChart3, Settings, Home, Image as ImageIcon, Mail, Star, Search } from "lucide-react";
 import { useRouterState } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -33,6 +33,7 @@ const NAV = [
   { to: "/admin/suporte", label: "Suporte", icon: MessageCircle },
   { to: "/admin/emails", label: "E-mails", icon: Mail },
   { to: "/admin/conteudos", label: "Conteúdos", icon: FileText },
+  { to: "/admin/seo-check", label: "SEO Check", icon: Search },
   { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ];
 

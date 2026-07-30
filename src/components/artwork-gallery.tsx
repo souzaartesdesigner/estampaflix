@@ -78,7 +78,7 @@ export function ArtworkGallery({ images, alt, showWatermark = true }: Props) {
                   i === idx ? "border-primary" : "border-border/50 hover:border-border"
                 }`}
               >
-                <img src={src} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+                <img src={src} alt={`${alt} — imagem ${i + 1}`} loading="lazy" decoding="async" className="h-full w-full object-cover" />
               </button>
             ))}
           </div>

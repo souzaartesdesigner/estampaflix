@@ -51,12 +51,18 @@ export const Route = createFileRoute("/artes/$slug")({
     const seoDesc = ((loaderData as any).seo_description ?? "").trim();
     const description = clamp(seoDesc || (plainDesc.length >= 50 ? plainDesc : fallback), 158);
     const rawTitle = ((loaderData as any).seo_title ?? "").trim() || loaderData.title;
-    // só acrescenta a marca quando couber sem truncar
+    // só acrescenta o complemento quando couber sem truncar
     const seoTitle = clamp(
       rawTitle.replace(/\s*[—-]\s*Estampa Flix\s*$/i, "").trim(),
       60,
     );
-    const pageTitle = seoTitle.length <= 45 ? `${seoTitle} — Estampa Flix` : seoTitle;
+    const suffix = " - Download de Estampa Editável | Estampa Flix";
+    const pageTitle =
+      seoTitle.length + suffix.length <= 70
+        ? `${seoTitle}${suffix}`
+        : seoTitle.length <= 45
+          ? `${seoTitle} — Estampa Flix`
+          : seoTitle;
 
     const keyword = ((loaderData as any).seo_keyword ?? "").trim() || loaderData.title.toLowerCase();
     const noindex = !!(loaderData as any).noindex;
@@ -85,17 +91,23 @@ export const Route = createFileRoute("/artes/$slug")({
             "@context": "https://schema.org",
             "@type": "Product",
             name: loaderData.title,
-            image: loaderData.preview_url,
+            image: [loaderData.preview_url, ...(((loaderData as any).gallery_urls ?? []) as string[])].filter(Boolean),
             description,
-            sku: loaderData.slug,
+            sku: (loaderData as any).product_code || loaderData.slug,
+            category: (loaderData as any).categories?.name ?? undefined,
             brand: { "@type": "Brand", name: "Estampa Flix" },
             offers: {
               "@type": "Offer",
               url,
               priceCurrency: "BRL",
-              price: (Number(loaderData.price_cents ?? 0) / 100).toFixed(2),
+              price:
+                (loaderData as any).license_type === "free"
+                  ? "0.00"
+                  : (Number(loaderData.price_cents ?? 0) / 100).toFixed(2),
               availability: "https://schema.org/InStock",
+              itemCondition: "https://schema.org/NewCondition",
             },
+
           }),
         },
         {
@@ -140,7 +152,10 @@ function ArtworkPage() {
 
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
           <div>
-            <ArtworkGallery images={galleryImages} alt={(artwork as any).alt_text?.trim() || trTitle} />
+            <ArtworkGallery
+              images={galleryImages}
+              alt={(artwork as any).alt_text?.trim() || `Estampa editável ${trTitle} - Estampa Flix`}
+            />
             <ProductInfoPanel artwork={artwork} />
           </div>
           <ArtworkInfo artwork={artwork} title={trTitle} session={session} sub={sub} owned={owned} />

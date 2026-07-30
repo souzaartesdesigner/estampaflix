@@ -42,7 +42,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
         {artwork.preview_url ? (
           <img
             src={artwork.preview_url}
-            alt={title}
+            alt={`Estampa editável ${title} - Estampa Flix`}
             loading="lazy"
             decoding="async"
             width={400}
