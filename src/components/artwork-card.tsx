@@ -102,7 +102,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
             <span className="hidden md:order-2 md:block" />
           )}
           <span className="font-display text-base font-bold tracking-tight text-foreground md:order-1 md:shrink-0">
-            {formatBRL(artwork.price_cents)}
+            {artwork.license_type === "free" ? "Grátis" : formatBRL(artwork.price_cents)}
           </span>
         </div>
       </div>
