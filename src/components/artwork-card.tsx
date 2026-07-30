@@ -47,7 +47,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
             decoding="async"
             width={400}
             height={400}
-            className="h-full w-full object-cover transition-transform duration-[600ms] ease-out group-hover:scale-[1.08]"
+            className="h-full w-full object-cover"
           />
         ) : (
           <div className="grid h-full place-items-center text-muted-foreground">{t("card.noImage")}</div>
