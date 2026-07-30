@@ -58,9 +58,12 @@ export function transformedUrl(src: string, opts: TransformOptions): string {
     params.set("h", String(opts.height));
     params.set("fit", "cover");
   }
-  params.set("q", String(opts.quality ?? 78));
+  params.set("q", String(opts.quality ?? 74));
   // Nunca ampliar acima do tamanho original.
   params.set("we", "");
+  // Cache longo no CDN: evita reprocessar a imagem a cada visita.
+  params.set("maxage", "1y");
+
   const format = opts.format ?? ENABLED_FORMATS[0];
   if (format && format !== "origin") params.set("output", format);
   return `${CDN_ORIGIN}?${params.toString()}`;
