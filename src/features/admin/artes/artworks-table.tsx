@@ -40,6 +40,13 @@ export function ArtworksTable({ artworks, onEdit, onDelete, selected, onToggle, 
                 </div>
               </td>
               <td className="px-4 py-3 text-muted-foreground">{a.categories?.name ?? "—"}</td>
+              <td className="px-4 py-3">
+                {a.license_type === "free" ? (
+                  <Badge className="border-0 bg-success text-background">Gratuito</Badge>
+                ) : (
+                  <Badge className="border-0 bg-gradient-brand text-brand-foreground">Premium</Badge>
+                )}
+              </td>
               <td className="px-4 py-3">{formatBRL(a.price_cents)}</td>
               <td className="px-4 py-3">
                 {a.is_published ? <Badge>Publicada</Badge> : <Badge variant="secondary">Rascunho</Badge>}
