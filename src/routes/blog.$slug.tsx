@@ -4,6 +4,9 @@ import { SiteLayout } from "@/components/site-layout";
 import { formatDate } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { useI18n, tField } from "@/lib/i18n";
+import { SmartImage } from "@/components/smart-image";
+import { HERO_WIDTHS } from "@/lib/image-cdn";
+
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: async ({ params }) => {
