@@ -17,7 +17,9 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PlanosRouteImport } from './routes/planos'
 import { Route as LicencaRouteImport } from './routes/licenca'
+import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as DownloadsRouteImport } from './routes/downloads'
+import { Route as CobrancaRouteImport } from './routes/cobranca'
 import { Route as CatalogoRouteImport } from './routes/catalogo'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -95,9 +97,19 @@ const LicencaRoute = LicencaRouteImport.update({
   path: '/licenca',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FavoritosRoute = FavoritosRouteImport.update({
+  id: '/favoritos',
+  path: '/favoritos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DownloadsRoute = DownloadsRouteImport.update({
   id: '/downloads',
   path: '/downloads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CobrancaRoute = CobrancaRouteImport.update({
+  id: '/cobranca',
+  path: '/cobranca',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CatalogoRoute = CatalogoRouteImport.update({
@@ -300,7 +312,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/catalogo': typeof CatalogoRoute
+  '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
+  '/favoritos': typeof FavoritosRoute
   '/licenca': typeof LicencaRoute
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -346,7 +360,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/catalogo': typeof CatalogoRoute
+  '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
+  '/favoritos': typeof FavoritosRoute
   '/licenca': typeof LicencaRoute
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -393,7 +409,9 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/catalogo': typeof CatalogoRoute
+  '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
+  '/favoritos': typeof FavoritosRoute
   '/licenca': typeof LicencaRoute
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -441,7 +459,9 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/catalogo'
+    | '/cobranca'
     | '/downloads'
+    | '/favoritos'
     | '/licenca'
     | '/planos'
     | '/privacidade'
@@ -487,7 +507,9 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/catalogo'
+    | '/cobranca'
     | '/downloads'
+    | '/favoritos'
     | '/licenca'
     | '/planos'
     | '/privacidade'
@@ -533,7 +555,9 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/catalogo'
+    | '/cobranca'
     | '/downloads'
+    | '/favoritos'
     | '/licenca'
     | '/planos'
     | '/privacidade'
@@ -581,7 +605,9 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   CatalogoRoute: typeof CatalogoRoute
+  CobrancaRoute: typeof CobrancaRoute
   DownloadsRoute: typeof DownloadsRoute
+  FavoritosRoute: typeof FavoritosRoute
   LicencaRoute: typeof LicencaRoute
   PlanosRoute: typeof PlanosRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
@@ -660,11 +686,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LicencaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/favoritos': {
+      id: '/favoritos'
+      path: '/favoritos'
+      fullPath: '/favoritos'
+      preLoaderRoute: typeof FavoritosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/downloads': {
       id: '/downloads'
       path: '/downloads'
       fullPath: '/downloads'
       preLoaderRoute: typeof DownloadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cobranca': {
+      id: '/cobranca'
+      path: '/cobranca'
+      fullPath: '/cobranca'
+      preLoaderRoute: typeof CobrancaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/catalogo': {
@@ -992,7 +1032,9 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   CatalogoRoute: CatalogoRoute,
+  CobrancaRoute: CobrancaRoute,
   DownloadsRoute: DownloadsRoute,
+  FavoritosRoute: FavoritosRoute,
   LicencaRoute: LicencaRoute,
   PlanosRoute: PlanosRoute,
   PrivacidadeRoute: PrivacidadeRoute,

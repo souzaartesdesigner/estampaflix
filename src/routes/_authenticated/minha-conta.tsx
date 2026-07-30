@@ -124,7 +124,7 @@ function Dashboard() {
           <StatCard icon={<Download className="h-5 w-5" />} label={t("account.downloadedCount")} value={String(downloads.length)} />
         </div>
 
-        <Tabs defaultValue="downloads">
+        <Tabs defaultValue={tab ?? "downloads"} key={tab ?? "downloads"}>
           <TabsList className="flex w-full overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <TabsTrigger value="downloads" className="shrink-0">{t("account.tabDownloads")}</TabsTrigger>
             <TabsTrigger value="favorites" className="shrink-0">{t("account.tabFavorites")}</TabsTrigger>
