@@ -1,6 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { SmartImage } from "@/components/smart-image";
+import { HERO_WIDTHS } from "@/lib/image-cdn";
+
 
 export function HeroBanners({ banners }: { banners: any[] }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -49,14 +52,17 @@ export function HeroBanners({ banners }: { banners: any[] }) {
           {banners.map((b) => {
             const content = (
               <div className="relative aspect-[21/9] w-full overflow-hidden bg-surface-2 sm:aspect-[21/8]">
-                <img
+                <SmartImage
                   src={b.image_url}
                   alt={b.title || ""}
+                  widths={HERO_WIDTHS}
+                  fallbackWidth={1280}
+                  sizes="(max-width: 768px) 100vw, 1200px"
+                  quality={72}
+                  priority
                   className="h-full w-full object-cover"
-                  loading="eager"
-                  fetchPriority="high"
-                  decoding="async"
                 />
+
                 {(b.title || b.subtitle || b.cta_label) && (
                   <div className="absolute inset-0 flex flex-col justify-end gap-2 bg-gradient-to-t from-background/80 via-background/20 to-transparent p-6 sm:p-10">
                     {b.title && <h3 className="font-display text-2xl font-black sm:text-4xl">{b.title}</h3>}
