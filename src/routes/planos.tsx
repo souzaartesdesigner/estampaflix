@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { PlansLanding } from "@/features/plans/plans-landing";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site-layout";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ function Planos() {
   const { data: plans } = useSuspenseQuery(plansQuery);
   const checkoutFn = useServerFn(createCheckoutSession);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const plansRef = useRef<HTMLDivElement | null>(null);
   const { t } = useI18n();
 
   async function handleSubscribe(planId: string) {
@@ -67,7 +69,7 @@ function Planos() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-3 py-8 sm:px-4 sm:py-12">
+      <section ref={plansRef} className="mx-auto w-full max-w-6xl scroll-mt-24 px-3 py-8 sm:px-4 sm:py-12">
         <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {plans.map((plan, idx) => (
             <div
@@ -125,6 +127,10 @@ function Planos() {
           </div>
         </div>
       </section>
+
+      <PlansLanding
+        onScrollToPlans={() => plansRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+      />
     </SiteLayout>
   );
 }
