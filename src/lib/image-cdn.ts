@@ -19,11 +19,18 @@ export type ImageFormat = "avif" | "webp" | "origin";
 /** O proxy atual ainda não expõe AVIF; manter a lista facilita ligar depois. */
 export const ENABLED_FORMATS: ImageFormat[] = ["webp"];
 
-/** Larguras responsivas padrão (px). */
-export const CARD_WIDTHS = [200, 320, 400, 600, 800];
-export const HERO_WIDTHS = [640, 960, 1280, 1600, 1920];
-export const DETAIL_WIDTHS = [400, 600, 800, 1200, 1600];
-export const THUMB_WIDTHS = [96, 160, 240];
+/**
+ * Larguras responsivas padrão (px).
+ *
+ * Menos variantes = mais acertos no cache do CDN. Cada largura inédita obriga o
+ * proxy a buscar o original (~1,5 s); já em cache a resposta cai para ~50 ms.
+ * Por isso mantemos poucas larguras bem espaçadas por contexto de uso.
+ */
+export const CARD_WIDTHS = [400, 800];
+export const HERO_WIDTHS = [640, 1280, 1920];
+export const DETAIL_WIDTHS = [800, 1600];
+export const THUMB_WIDTHS = [160];
+
 
 /** Só transformamos URLs http(s) públicas e absolutas. */
 export function canTransform(src: string | null | undefined): src is string {
@@ -51,9 +58,12 @@ export function transformedUrl(src: string, opts: TransformOptions): string {
     params.set("h", String(opts.height));
     params.set("fit", "cover");
   }
-  params.set("q", String(opts.quality ?? 78));
+  params.set("q", String(opts.quality ?? 74));
   // Nunca ampliar acima do tamanho original.
   params.set("we", "");
+  // Cache longo no CDN: evita reprocessar a imagem a cada visita.
+  params.set("maxage", "1y");
+
   const format = opts.format ?? ENABLED_FORMATS[0];
   if (format && format !== "origin") params.set("output", format);
   return `${CDN_ORIGIN}?${params.toString()}`;
