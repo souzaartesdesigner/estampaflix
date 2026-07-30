@@ -66,6 +66,7 @@ export function buildSrcSet(
 ): string | undefined {
   if (!canTransform(src)) return undefined;
   return widths
-    .map((w) => `${transformedUrl(src, { ...opts, width: w, height: opts.height ? Math.round(opts.height * (w / widths[0])) : undefined })} ${w}w`)
+    .map((w) => `${transformedUrl(src, { ...opts, width: w })} ${w}w`)
     .join(", ");
+
 }
