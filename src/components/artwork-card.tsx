@@ -55,7 +55,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
         <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5">
           {artwork.license_type === "free" ? (
             <Badge
-              className="grid h-7 w-7 place-items-center rounded-full border border-border/60 bg-muted/90 p-0 text-muted-foreground shadow-sm backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+              className="grid h-7 w-7 place-items-center rounded-full border border-brand-2/40 bg-surface/90 p-0 text-brand-2 shadow-sm backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:text-brand-2"
               aria-label="Grátis"
               title="Grátis"
             >
@@ -63,7 +63,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
             </Badge>
           ) : (
             <Badge
-              className="grid h-7 w-7 place-items-center rounded-full border border-yellow-600/40 bg-gradient-to-br from-yellow-300 to-amber-500 p-0 text-amber-950 shadow-glow transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
+              className="grid h-7 w-7 place-items-center rounded-full border border-primary/40 bg-surface/90 p-0 text-primary shadow-glow backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
               aria-label="Premium"
               title="Premium"
             >
