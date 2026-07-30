@@ -91,17 +91,23 @@ export const Route = createFileRoute("/artes/$slug")({
             "@context": "https://schema.org",
             "@type": "Product",
             name: loaderData.title,
-            image: loaderData.preview_url,
+            image: [loaderData.preview_url, ...(((loaderData as any).gallery_urls ?? []) as string[])].filter(Boolean),
             description,
-            sku: loaderData.slug,
+            sku: (loaderData as any).product_code || loaderData.slug,
+            category: (loaderData as any).categories?.name ?? undefined,
             brand: { "@type": "Brand", name: "Estampa Flix" },
             offers: {
               "@type": "Offer",
               url,
               priceCurrency: "BRL",
-              price: (Number(loaderData.price_cents ?? 0) / 100).toFixed(2),
+              price:
+                (loaderData as any).license_type === "free"
+                  ? "0.00"
+                  : (Number(loaderData.price_cents ?? 0) / 100).toFixed(2),
               availability: "https://schema.org/InStock",
+              itemCondition: "https://schema.org/NewCondition",
             },
+
           }),
         },
         {
