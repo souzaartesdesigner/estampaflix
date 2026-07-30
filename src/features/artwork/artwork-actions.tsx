@@ -135,7 +135,7 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
       {header}
 
       <div className="mt-4 flex items-baseline gap-2">
-        <span className="text-3xl font-black">{formatBRL(artwork.price_cents)}</span>
+        <span className="text-3xl font-black">{isFree ? "Grátis" : formatBRL(artwork.price_cents)}</span>
       </div>
 
       <div className="mt-4 flex flex-col gap-2">
