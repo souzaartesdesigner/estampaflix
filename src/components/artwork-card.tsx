@@ -53,8 +53,13 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
           <div className="grid h-full place-items-center text-muted-foreground">{t("card.noImage")}</div>
         )}
         <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5">
+          {artwork.license_type === "free" ? (
+            <Badge className="border-0 bg-success text-background shadow-glow">GRÁTIS</Badge>
+          ) : (
+            <Badge className="border-0 bg-gradient-brand text-brand-foreground shadow-glow">PREMIUM</Badge>
+          )}
           {artwork.is_featured && (
-            <Badge className="border-0 bg-gradient-brand text-brand-foreground shadow-glow">
+            <Badge variant="secondary" className="bg-background/70 backdrop-blur-md">
               {t("card.featured")}
             </Badge>
           )}
@@ -64,6 +69,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
             </Badge>
           )}
         </div>
+
         <FavoriteButton
           artworkId={artwork.id}
           size="sm"
