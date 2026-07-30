@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { FavoriteButton } from "./favorite-button";
 
-import { ShoppingCart, Check } from "lucide-react";
+import { ShoppingCart, Check, Crown, Gift } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { useI18n, tField } from "@/lib/i18n";
 
@@ -54,9 +54,21 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
         )}
         <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5">
           {artwork.license_type === "free" ? (
-            <Badge className="border-0 bg-success text-background shadow-glow">GRÁTIS</Badge>
+            <Badge
+              className="grid h-7 w-7 place-items-center rounded-full border-0 bg-success p-0 text-background shadow-glow"
+              aria-label="Grátis"
+              title="Grátis"
+            >
+              <Gift className="h-3.5 w-3.5" />
+            </Badge>
           ) : (
-            <Badge className="border-0 bg-gradient-brand text-brand-foreground shadow-glow">PREMIUM</Badge>
+            <Badge
+              className="grid h-7 w-7 place-items-center rounded-full border-0 bg-gradient-brand p-0 text-brand-foreground shadow-glow"
+              aria-label="Premium"
+              title="Premium"
+            >
+              <Crown className="h-3.5 w-3.5" />
+            </Badge>
           )}
           {artwork.is_featured && (
             <Badge variant="secondary" className="bg-background/70 backdrop-blur-md">
