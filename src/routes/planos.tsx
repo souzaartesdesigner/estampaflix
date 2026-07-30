@@ -39,6 +39,7 @@ function Planos() {
   const { data: plans } = useSuspenseQuery(plansQuery);
   const checkoutFn = useServerFn(createCheckoutSession);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const plansRef = useRef<HTMLDivElement | null>(null);
   const { t } = useI18n();
 
   async function handleSubscribe(planId: string) {
