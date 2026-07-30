@@ -37,6 +37,7 @@ import { Route as AuthenticatedAdminVendasRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin/usuarios'
 import { Route as AuthenticatedAdminTagsRouteImport } from './routes/_authenticated/admin/tags'
 import { Route as AuthenticatedAdminSuporteRouteImport } from './routes/_authenticated/admin/suporte'
+import { Route as AuthenticatedAdminSeoCheckRouteImport } from './routes/_authenticated/admin/seo-check'
 import { Route as AuthenticatedAdminPlanosRouteImport } from './routes/_authenticated/admin/planos'
 import { Route as AuthenticatedAdminImportarRouteImport } from './routes/_authenticated/admin/importar'
 import { Route as AuthenticatedAdminHomeRouteImport } from './routes/_authenticated/admin/home'
@@ -199,6 +200,12 @@ const AuthenticatedAdminSuporteRoute =
     path: '/suporte',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminSeoCheckRoute =
+  AuthenticatedAdminSeoCheckRouteImport.update({
+    id: '/seo-check',
+    path: '/seo-check',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminPlanosRoute =
   AuthenticatedAdminPlanosRouteImport.update({
     id: '/planos',
@@ -343,6 +350,7 @@ export interface FileRoutesByFullPath {
   '/admin/home': typeof AuthenticatedAdminHomeRoute
   '/admin/importar': typeof AuthenticatedAdminImportarRoute
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
+  '/admin/seo-check': typeof AuthenticatedAdminSeoCheckRoute
   '/admin/suporte': typeof AuthenticatedAdminSuporteRoute
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
@@ -390,6 +398,7 @@ export interface FileRoutesByTo {
   '/admin/home': typeof AuthenticatedAdminHomeRoute
   '/admin/importar': typeof AuthenticatedAdminImportarRoute
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
+  '/admin/seo-check': typeof AuthenticatedAdminSeoCheckRoute
   '/admin/suporte': typeof AuthenticatedAdminSuporteRoute
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
@@ -440,6 +449,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/home': typeof AuthenticatedAdminHomeRoute
   '/_authenticated/admin/importar': typeof AuthenticatedAdminImportarRoute
   '/_authenticated/admin/planos': typeof AuthenticatedAdminPlanosRoute
+  '/_authenticated/admin/seo-check': typeof AuthenticatedAdminSeoCheckRoute
   '/_authenticated/admin/suporte': typeof AuthenticatedAdminSuporteRoute
   '/_authenticated/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
@@ -490,6 +500,7 @@ export interface FileRouteTypes {
     | '/admin/home'
     | '/admin/importar'
     | '/admin/planos'
+    | '/admin/seo-check'
     | '/admin/suporte'
     | '/admin/tags'
     | '/admin/usuarios'
@@ -537,6 +548,7 @@ export interface FileRouteTypes {
     | '/admin/home'
     | '/admin/importar'
     | '/admin/planos'
+    | '/admin/seo-check'
     | '/admin/suporte'
     | '/admin/tags'
     | '/admin/usuarios'
@@ -586,6 +598,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/home'
     | '/_authenticated/admin/importar'
     | '/_authenticated/admin/planos'
+    | '/_authenticated/admin/seo-check'
     | '/_authenticated/admin/suporte'
     | '/_authenticated/admin/tags'
     | '/_authenticated/admin/usuarios'
@@ -826,6 +839,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSuporteRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/seo-check': {
+      id: '/_authenticated/admin/seo-check'
+      path: '/seo-check'
+      fullPath: '/admin/seo-check'
+      preLoaderRoute: typeof AuthenticatedAdminSeoCheckRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/planos': {
       id: '/_authenticated/admin/planos'
       path: '/planos'
@@ -976,6 +996,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminHomeRoute: typeof AuthenticatedAdminHomeRoute
   AuthenticatedAdminImportarRoute: typeof AuthenticatedAdminImportarRoute
   AuthenticatedAdminPlanosRoute: typeof AuthenticatedAdminPlanosRoute
+  AuthenticatedAdminSeoCheckRoute: typeof AuthenticatedAdminSeoCheckRoute
   AuthenticatedAdminSuporteRoute: typeof AuthenticatedAdminSuporteRoute
   AuthenticatedAdminTagsRoute: typeof AuthenticatedAdminTagsRoute
   AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
@@ -999,6 +1020,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminHomeRoute: AuthenticatedAdminHomeRoute,
     AuthenticatedAdminImportarRoute: AuthenticatedAdminImportarRoute,
     AuthenticatedAdminPlanosRoute: AuthenticatedAdminPlanosRoute,
+    AuthenticatedAdminSeoCheckRoute: AuthenticatedAdminSeoCheckRoute,
     AuthenticatedAdminSuporteRoute: AuthenticatedAdminSuporteRoute,
     AuthenticatedAdminTagsRoute: AuthenticatedAdminTagsRoute,
     AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,

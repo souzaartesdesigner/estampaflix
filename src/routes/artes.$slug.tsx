@@ -51,12 +51,18 @@ export const Route = createFileRoute("/artes/$slug")({
     const seoDesc = ((loaderData as any).seo_description ?? "").trim();
     const description = clamp(seoDesc || (plainDesc.length >= 50 ? plainDesc : fallback), 158);
     const rawTitle = ((loaderData as any).seo_title ?? "").trim() || loaderData.title;
-    // só acrescenta a marca quando couber sem truncar
+    // só acrescenta o complemento quando couber sem truncar
     const seoTitle = clamp(
       rawTitle.replace(/\s*[—-]\s*Estampa Flix\s*$/i, "").trim(),
       60,
     );
-    const pageTitle = seoTitle.length <= 45 ? `${seoTitle} — Estampa Flix` : seoTitle;
+    const suffix = " - Download de Estampa Editável | Estampa Flix";
+    const pageTitle =
+      seoTitle.length + suffix.length <= 70
+        ? `${seoTitle}${suffix}`
+        : seoTitle.length <= 45
+          ? `${seoTitle} — Estampa Flix`
+          : seoTitle;
 
     const keyword = ((loaderData as any).seo_keyword ?? "").trim() || loaderData.title.toLowerCase();
     const noindex = !!(loaderData as any).noindex;
