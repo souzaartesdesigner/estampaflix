@@ -14,6 +14,7 @@ export type ArtworkCardData = {
   title: string;
   preview_url: string;
   price_cents: number;
+  license_type?: string | null;
   is_featured?: boolean;
   is_trending?: boolean;
   download_count?: number | null;
