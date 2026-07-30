@@ -1,6 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { formatBRL } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
+import { SmartImage } from "@/components/smart-image";
+import { CARD_WIDTHS } from "@/lib/image-cdn";
+
+
 
 import { FavoriteButton } from "./favorite-button";
 
@@ -40,15 +44,17 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
     >
       <div className="relative aspect-square overflow-hidden bg-surface-2">
         {artwork.preview_url ? (
-          <img
+          <SmartImage
             src={artwork.preview_url}
             alt={`Estampa editável ${title} - Estampa Flix`}
-            loading="lazy"
-            decoding="async"
+            widths={CARD_WIDTHS}
+            fallbackWidth={400}
+            sizes="(max-width: 640px) 92vw, (max-width: 768px) 46vw, (max-width: 1280px) 31vw, 300px"
             width={400}
             height={400}
             className="h-full w-full object-cover"
           />
+
         ) : (
           <div className="grid h-full place-items-center text-muted-foreground">{t("card.noImage")}</div>
         )}

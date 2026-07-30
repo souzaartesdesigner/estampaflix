@@ -2,6 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, ZoomIn, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { SmartImage } from "@/components/smart-image";
+import { DETAIL_WIDTHS, THUMB_WIDTHS } from "@/lib/image-cdn";
+
 
 type Props = {
   images: string[];
@@ -26,15 +29,17 @@ export function ArtworkGallery({ images, alt, showWatermark = true }: Props) {
         {/* Main image */}
         <div className="group relative overflow-hidden rounded-2xl border border-border/60 bg-surface">
           <div className="relative aspect-square">
-            <img
+            <SmartImage
               src={current}
               alt={alt}
-              loading="eager"
-              fetchPriority="high"
-              decoding="async"
+              widths={DETAIL_WIDTHS}
+              fallbackWidth={800}
+              sizes="(max-width: 1024px) 94vw, 640px"
+              priority
               className="h-full w-full cursor-zoom-in object-cover transition-transform duration-300 group-hover:scale-105"
               onClick={() => setZoomOpen(true)}
             />
+
             <button
               type="button"
               onClick={() => setZoomOpen(true)}
@@ -78,7 +83,7 @@ export function ArtworkGallery({ images, alt, showWatermark = true }: Props) {
                   i === idx ? "border-primary" : "border-border/50 hover:border-border"
                 }`}
               >
-                <img src={src} alt={`${alt} — imagem ${i + 1}`} loading="lazy" decoding="async" className="h-full w-full object-cover" />
+                <SmartImage src={src} alt={`${alt} — imagem ${i + 1}`} widths={THUMB_WIDTHS} fallbackWidth={160} sizes="64px" width={64} height={64} className="h-full w-full object-cover" />
               </button>
             ))}
           </div>
