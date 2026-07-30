@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Check, Sparkles } from "lucide-react";
+import { Check, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatBRL } from "@/lib/format";
@@ -38,7 +38,7 @@ export function PlansSection({ plans }: { plans: any[] }) {
                 <span className="text-sm text-muted-foreground">{t("plans.perMonth")}</span>
               </div>
               <div className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary ring-1 ring-primary/20">
-                <Sparkles className="h-3 w-3" /> {plan.monthly_credits} {t("plans.downloadsPerMonth")}
+                <Zap className="h-3 w-3" /> {plan.monthly_credits} {t("plans.downloadsPerMonth")}
               </div>
               <ul className="mt-6 flex flex-1 flex-col gap-2.5 text-sm">
                 {(plan.features as string[]).map((f: string) => (
