@@ -33,6 +33,7 @@ const NAV = [
   { to: "/admin/suporte", label: "Suporte", icon: MessageCircle },
   { to: "/admin/emails", label: "E-mails", icon: Mail },
   { to: "/admin/conteudos", label: "Conteúdos", icon: FileText },
+  { to: "/admin/seo-check", label: "SEO Check", icon: Search },
   { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
 ];
 
