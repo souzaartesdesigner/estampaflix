@@ -78,8 +78,9 @@ function Suporte() {
   const [loading, setLoading] = useState(false);
 
   const whatsappNumber = normalizeWhatsApp(settings?.whatsapp);
+  const whatsappText = settings?.whatsapp_message?.trim() || t("support.whatsappDefaultMessage");
   const whatsappHref = whatsappNumber
-    ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(t("support.whatsappDefaultMessage"))}`
+    ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappText)}`
     : null;
 
   const FAQ = [
