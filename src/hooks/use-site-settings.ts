@@ -9,6 +9,7 @@ export type SiteSettings = {
   primary_color: string | null;
   support_email: string | null;
   whatsapp: string | null;
+  whatsapp_message: string | null;
   instagram_url: string | null;
   facebook_url: string | null;
   tiktok_url: string | null;
@@ -41,6 +42,7 @@ const DEFAULTS: SiteSettings = {
   primary_color: "#007bff",
   support_email: null,
   whatsapp: null,
+  whatsapp_message: null,
   instagram_url: null,
   facebook_url: null,
   tiktok_url: null,
