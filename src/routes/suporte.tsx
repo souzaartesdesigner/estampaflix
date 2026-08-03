@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site-layout";
 import { useSiteContent } from "@/hooks/use-site-content";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 import { sanitizeHtml } from "@/lib/sanitize-html";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -13,6 +14,21 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { Mail, MessageCircle } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+
+function WhatsAppIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 5.834h-.004c-1.587 0-3.13-.426-4.48-1.229l-.322-.191-3.34.876.892-3.257-.209-.332a5.908 5.908 0 0 1-.899-3.158c0-3.282 2.672-5.954 5.955-5.954 1.591 0 3.086.62 4.208 1.746a5.909 5.909 0 0 1 1.746 4.208c0 3.282-2.672 5.954-5.954 5.954m0-13.37a7.418 7.418 0 0 0-7.416 7.416 7.36 7.36 0 0 0 1.108 3.92l-1.108 4.04 4.133-1.085a7.418 7.418 0 0 0 3.283.762 7.418 7.418 0 0 0 7.416-7.416 7.418 7.418 0 0 0-7.416-7.416z" />
+    </svg>
+  );
+}
+
+function normalizeWhatsApp(raw: string | null | undefined) {
+  if (!raw) return null;
+  const digits = raw.replace(/\D/g, "");
+  if (digits.length < 8) return null;
+  return digits.startsWith("55") ? digits : `55${digits}`;
+}
 
 export const Route = createFileRoute("/suporte")({
   head: () => ({
@@ -57,8 +73,14 @@ const schema = z.object({
 function Suporte() {
   const { t } = useI18n();
   const cms = useSiteContent("page_suporte");
+  const { data: settings } = useSiteSettings();
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [loading, setLoading] = useState(false);
+
+  const whatsappNumber = normalizeWhatsApp(settings?.whatsapp);
+  const whatsappHref = whatsappNumber
+    ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(t("support.whatsappDefaultMessage"))}`
+    : null;
 
   const FAQ = [
     { q: t("support.faq1q"), a: t("support.faq1a") },
@@ -100,7 +122,7 @@ function Suporte() {
         </header>
 
         <div className="grid gap-10 lg:grid-cols-2">
-          <div>
+          <div className="space-y-6">
             <h2 className="mb-4 font-display text-2xl font-bold"><MessageCircle className="mr-2 inline h-5 w-5 text-primary" /> {t("support.contactTitle")}</h2>
             <form onSubmit={submit} className="space-y-4 rounded-2xl border border-border/60 bg-card p-6">
               <div className="grid gap-2">
@@ -123,6 +145,22 @@ function Suporte() {
                 <Mail className="mr-2 h-4 w-4" /> {loading ? t("support.sending") : t("support.send")}
               </Button>
             </form>
+
+            {whatsappHref && (
+              <div className="rounded-2xl border border-border/60 bg-card p-6">
+                <h3 className="mb-2 font-display text-lg font-bold">{t("support.whatsappTitle")}</h3>
+                <p className="mb-4 text-sm text-muted-foreground">{t("support.whatsappBody")}</p>
+                <a
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-3 font-semibold text-white transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <WhatsAppIcon className="h-5 w-5" />
+                  {t("support.whatsappButton")}
+                </a>
+              </div>
+            )}
           </div>
 
           <div>
