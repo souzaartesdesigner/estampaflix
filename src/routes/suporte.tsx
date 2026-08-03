@@ -73,8 +73,14 @@ const schema = z.object({
 function Suporte() {
   const { t } = useI18n();
   const cms = useSiteContent("page_suporte");
+  const { data: settings } = useSiteSettings();
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [loading, setLoading] = useState(false);
+
+  const whatsappNumber = normalizeWhatsApp(settings?.whatsapp);
+  const whatsappHref = whatsappNumber
+    ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(t("support.whatsappDefaultMessage"))}`
+    : null;
 
   const FAQ = [
     { q: t("support.faq1q"), a: t("support.faq1a") },
@@ -116,7 +122,7 @@ function Suporte() {
         </header>
 
         <div className="grid gap-10 lg:grid-cols-2">
-          <div>
+          <div className="space-y-6">
             <h2 className="mb-4 font-display text-2xl font-bold"><MessageCircle className="mr-2 inline h-5 w-5 text-primary" /> {t("support.contactTitle")}</h2>
             <form onSubmit={submit} className="space-y-4 rounded-2xl border border-border/60 bg-card p-6">
               <div className="grid gap-2">
@@ -139,6 +145,22 @@ function Suporte() {
                 <Mail className="mr-2 h-4 w-4" /> {loading ? t("support.sending") : t("support.send")}
               </Button>
             </form>
+
+            {whatsappHref && (
+              <div className="rounded-2xl border border-border/60 bg-card p-6">
+                <h3 className="mb-2 font-display text-lg font-bold">{t("support.whatsappTitle")}</h3>
+                <p className="mb-4 text-sm text-muted-foreground">{t("support.whatsappBody")}</p>
+                <a
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-3 font-semibold text-white transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <WhatsAppIcon className="h-5 w-5" />
+                  {t("support.whatsappButton")}
+                </a>
+              </div>
+            )}
           </div>
 
           <div>
