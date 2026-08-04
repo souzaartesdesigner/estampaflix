@@ -12,4 +12,7 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  // Pin the Cloudflare compatibility date: from 2026-08-04 the runtime rejects
+  // deployments that still declare the (now default) `nodejs_compat` flag.
+  nitro: { compatibilityDate: "2026-07-01" } as never,
 });
