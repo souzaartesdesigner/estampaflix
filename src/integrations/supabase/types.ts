@@ -977,6 +977,7 @@ export type Database = {
           tiktok_url: string | null
           updated_at: string
           whatsapp: string | null
+          whatsapp_message: string | null
         }
         Insert: {
           facebook_url?: string | null
@@ -1010,6 +1011,7 @@ export type Database = {
           tiktok_url?: string | null
           updated_at?: string
           whatsapp?: string | null
+          whatsapp_message?: string | null
         }
         Update: {
           facebook_url?: string | null
@@ -1043,6 +1045,7 @@ export type Database = {
           tiktok_url?: string | null
           updated_at?: string
           whatsapp?: string | null
+          whatsapp_message?: string | null
         }
         Relationships: []
       }

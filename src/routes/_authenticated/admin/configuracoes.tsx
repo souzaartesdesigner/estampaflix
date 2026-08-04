@@ -94,6 +94,7 @@ function Configuracoes() {
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="E-mail de suporte"><Input type="email" value={form.support_email ?? ""} onChange={set("support_email")} placeholder="suporte@exemplo.com" /></Field>
               <Field label="WhatsApp"><Input value={form.whatsapp ?? ""} onChange={set("whatsapp")} placeholder="+55 11 90000-0000" /></Field>
+              <Field label="Mensagem pré-preenchida do WhatsApp"><Input value={form.whatsapp_message ?? ""} onChange={set("whatsapp_message")} placeholder="Olá! Vim pelo site e gostaria de tirar uma dúvida." /></Field>
               <Field label="Instagram (URL)"><Input value={form.instagram_url ?? ""} onChange={set("instagram_url")} placeholder="https://instagram.com/…" /></Field>
               <Field label="Facebook (URL)"><Input value={form.facebook_url ?? ""} onChange={set("facebook_url")} placeholder="https://facebook.com/…" /></Field>
               <Field label="TikTok (URL)"><Input value={form.tiktok_url ?? ""} onChange={set("tiktok_url")} placeholder="https://tiktok.com/@…" /></Field>
