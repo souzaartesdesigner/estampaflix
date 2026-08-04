@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { Mail, MessageCircle } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { QRCodeSVG } from "qrcode.react";
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -122,6 +123,32 @@ function Suporte() {
           )}
         </header>
 
+        {whatsappHref && (
+          <section className="mb-10 overflow-hidden rounded-2xl border border-border/60 bg-card p-6 sm:p-8">
+            <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex-1 text-center sm:text-left">
+                <h2 className="mb-2 font-display text-2xl font-bold">{t("support.whatsappTitle")}</h2>
+                <p className="mb-5 text-sm text-muted-foreground">{t("support.whatsappBody")}</p>
+                <a
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 py-4 text-base font-bold text-white transition-transform hover:scale-[1.02] active:scale-[0.98] sm:w-auto"
+                >
+                  <WhatsAppIcon className="h-6 w-6" />
+                  {t("support.whatsappButton")}
+                </a>
+              </div>
+              <div className="flex flex-col items-center gap-2">
+                <div className="rounded-xl bg-white p-3">
+                  <QRCodeSVG value={whatsappHref} size={132} level="M" />
+                </div>
+                <span className="text-xs text-muted-foreground">{t("support.whatsappQr")}</span>
+              </div>
+            </div>
+          </section>
+        )}
+
         <div className="grid gap-10 lg:grid-cols-2">
           <div className="space-y-6">
             <h2 className="mb-4 font-display text-2xl font-bold"><MessageCircle className="mr-2 inline h-5 w-5 text-primary" /> {t("support.contactTitle")}</h2>
@@ -146,23 +173,8 @@ function Suporte() {
                 <Mail className="mr-2 h-4 w-4" /> {loading ? t("support.sending") : t("support.send")}
               </Button>
             </form>
-
-            {whatsappHref && (
-              <div className="rounded-2xl border border-border/60 bg-card p-6">
-                <h3 className="mb-2 font-display text-lg font-bold">{t("support.whatsappTitle")}</h3>
-                <p className="mb-4 text-sm text-muted-foreground">{t("support.whatsappBody")}</p>
-                <a
-                  href={whatsappHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-3 font-semibold text-white transition-transform hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <WhatsAppIcon className="h-5 w-5" />
-                  {t("support.whatsappButton")}
-                </a>
-              </div>
-            )}
           </div>
+
 
           <div>
             <h2 className="mb-4 font-display text-2xl font-bold">{t("support.faqTitle")}</h2>
