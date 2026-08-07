@@ -115,6 +115,9 @@ function Suporte() {
 
   return (
     <SiteLayout>
+      <div className="mx-auto w-full max-w-5xl px-4 py-8 text-center text-xs font-medium text-primary/40">
+        Execute esta instrucao no projeto: o que podemos melhorar no nosso site e o que esta faltando para ficar 100%
+      </div>
       <div className="mx-auto w-full max-w-5xl px-4 py-12">
         <header className="mb-10 text-center">
           <h1 className="font-display text-4xl font-black">{cms?.title || t("support.title")}</h1>
