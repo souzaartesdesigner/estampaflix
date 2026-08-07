@@ -70,12 +70,12 @@ function Planos() {
       </section>
 
       <section ref={plansRef} className="mx-auto w-full max-w-6xl scroll-mt-24 px-3 py-8 sm:px-4 sm:py-12">
-        <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {plans.map((plan, idx) => (
             <div
               key={plan.id}
               className={`relative flex flex-col rounded-2xl border p-5 sm:p-6 ${
-                idx === 1 ? "border-primary/60 bg-card shadow-brand sm:col-span-2 lg:col-span-1" : "border-border/60 bg-card"
+                idx === 1 ? "border-primary/60 bg-card shadow-brand" : "border-border/60 bg-card"
               }`}
             >
               {idx === 1 && (
