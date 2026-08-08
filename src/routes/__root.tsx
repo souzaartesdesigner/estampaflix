@@ -144,7 +144,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       ogTitle: (s?.og_title ?? "").trim() || title,
       ogDescription: (s?.og_description ?? "").trim() || description,
       ogImage: (s?.og_image_url ?? "").trim() || FALLBACK_OG_IMAGE,
-      favicon: (s?.favicon_url ?? "").trim() || "/favicon.ico",
+      favicon: (s?.favicon_url ?? "").trim() || "/favicon.png",
       gsc: (s?.google_search_console_id ?? "").trim() || null,
       headScripts: (s?.head_scripts ?? "").trim() || null,
     };
@@ -158,7 +158,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       ogTitle: FALLBACK_TITLE,
       ogDescription: FALLBACK_DESC,
       ogImage: FALLBACK_OG_IMAGE,
-      favicon: "/favicon.ico",
+      favicon: "/favicon.png",
       gsc: null,
       headScripts: null,
     };
@@ -192,7 +192,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { rel: "dns-prefetch", href: "https://tkzkespxrbgudujvuecq.supabase.co" },
         { rel: "dns-prefetch", href: "https://estampaflix.com" },
         { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Sora:wght@700;800&display=swap" },
-        { rel: "icon", href: d.favicon },
+        { rel: "icon", type: "image/png", href: d.favicon },
       ],
       scripts: [
         {
