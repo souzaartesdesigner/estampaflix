@@ -158,7 +158,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       ogTitle: FALLBACK_TITLE,
       ogDescription: FALLBACK_DESC,
       ogImage: FALLBACK_OG_IMAGE,
-      favicon: "/favicon.ico",
+      favicon: "/favicon.png",
       gsc: null,
       headScripts: null,
     };
