@@ -41,6 +41,11 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/licenca", changefreq: "yearly", priority: "0.4" },
           { path: "/termos", changefreq: "yearly", priority: "0.3" },
           { path: "/privacidade", changefreq: "yearly", priority: "0.3" },
+          { path: "/auth", changefreq: "yearly", priority: "0.2" },
+          { path: "/reset-password", changefreq: "yearly", priority: "0.2" },
+          { path: "/carrinho", changefreq: "monthly", priority: "0.4" },
+          { path: "/minha-conta", changefreq: "monthly", priority: "0.4" },
+          { path: "/pagamento/sucesso", changefreq: "yearly", priority: "0.3" },
         ];
 
         for (const raw of String(settings?.sitemap_extra_paths ?? "").split("\n")) {
