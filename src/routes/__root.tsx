@@ -144,7 +144,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       ogTitle: (s?.og_title ?? "").trim() || title,
       ogDescription: (s?.og_description ?? "").trim() || description,
       ogImage: (s?.og_image_url ?? "").trim() || FALLBACK_OG_IMAGE,
-      favicon: (s?.favicon_url ?? "").trim() || "/favicon.ico",
+      favicon: (s?.favicon_url ?? "").trim() || "/favicon.png",
       gsc: (s?.google_search_console_id ?? "").trim() || null,
       headScripts: (s?.head_scripts ?? "").trim() || null,
     };
