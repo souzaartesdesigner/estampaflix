@@ -111,6 +111,7 @@ export function SiteHeader() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder={t("search.placeholder")}
+              aria-label={t("search.placeholder")}
               className="w-full rounded-full border border-border/60 bg-surface/50 py-2.5 pl-10 pr-4 text-sm outline-none ring-0 transition-all placeholder:text-muted-foreground/70 focus:border-primary/60 focus:bg-surface focus:ring-2 focus:ring-primary/20"
             />
           </div>
@@ -164,6 +165,7 @@ export function SiteHeader() {
                     value={q}
                     onChange={(e) => setQ(e.target.value)}
                     placeholder={t("search.placeholder")}
+                    aria-label={t("search.placeholder")}
                     className="w-full rounded-full border border-border/60 bg-surface/50 py-2 pl-9 pr-3 text-sm outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
