@@ -9,7 +9,9 @@ import { EmailChangeEmail } from '@/lib/email-templates/email-change'
 import { ReauthenticationEmail } from '@/lib/email-templates/reauthentication'
 
 // Configuration
-const SITE_NAME = "estampaflix"
+const SITE_NAME = "Estampa Flix"
+// Endereço remetente exibido para o cliente
+const FROM_ADDRESS = "contato"
 const SENDER_DOMAIN = "notify.estampaflix.com"
 const ROOT_DOMAIN = "estampaflix.com"
 const FROM_DOMAIN = "estampaflix.com"
@@ -19,12 +21,12 @@ const SITE_URL = `https://${ROOT_DOMAIN}`
 // owns only the email decisions: subjects, templates, and per-type props.
 const handler = createAuthEmailHandler({
   apiKey: process.env.LOVABLE_API_KEY!,
-  from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
+  from: `${SITE_NAME} <${FROM_ADDRESS}@${FROM_DOMAIN}>`,
   senderDomain: SENDER_DOMAIN,
   sendUrl: process.env.LOVABLE_SEND_URL,
   emails: {
     signup: {
-      subject: 'Confirm your email',
+      subject: 'Confirme seu e-mail — Estampa Flix',
       render: (data) =>
         React.createElement(SignupEmail, {
           siteName: SITE_NAME,
@@ -34,7 +36,7 @@ const handler = createAuthEmailHandler({
         }),
     },
     invite: {
-      subject: "You've been invited",
+      subject: 'Você foi convidado para a Estampa Flix',
       render: (data) =>
         React.createElement(InviteEmail, {
           siteName: SITE_NAME,
@@ -43,7 +45,7 @@ const handler = createAuthEmailHandler({
         }),
     },
     magiclink: {
-      subject: 'Your login link',
+      subject: 'Seu link de acesso — Estampa Flix',
       render: (data) =>
         React.createElement(MagicLinkEmail, {
           siteName: SITE_NAME,
@@ -51,7 +53,7 @@ const handler = createAuthEmailHandler({
         }),
     },
     recovery: {
-      subject: 'Reset your password',
+      subject: 'Redefinir sua senha — Estampa Flix',
       render: (data) =>
         React.createElement(RecoveryEmail, {
           siteName: SITE_NAME,
@@ -59,7 +61,7 @@ const handler = createAuthEmailHandler({
         }),
     },
     email_change: {
-      subject: 'Confirm your new email',
+      subject: 'Confirme seu novo e-mail — Estampa Flix',
       render: (data) =>
         React.createElement(EmailChangeEmail, {
           siteName: SITE_NAME,
@@ -70,7 +72,7 @@ const handler = createAuthEmailHandler({
         }),
     },
     reauthentication: {
-      subject: 'Your verification code',
+      subject: 'Seu código de verificação — Estampa Flix',
       render: (data) =>
         React.createElement(ReauthenticationEmail, { token: data.token ?? '' }),
     },
