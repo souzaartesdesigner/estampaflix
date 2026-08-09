@@ -175,7 +175,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { property: "og:description", content: d.ogDescription },
         { property: "og:type", content: "website" },
         { property: "og:site_name", content: d.siteName },
-        { property: "og:url", content: "https://estampaflix.com/" },
+        
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: d.ogTitle },
         { name: "twitter:description", content: d.ogDescription },
