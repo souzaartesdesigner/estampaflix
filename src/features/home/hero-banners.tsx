@@ -65,7 +65,7 @@ export function HeroBanners({ banners }: { banners: any[] }) {
 
                 {(b.title || b.subtitle || b.cta_label) && (
                   <div className="absolute inset-0 flex flex-col justify-end gap-2 bg-gradient-to-t from-background/80 via-background/20 to-transparent p-6 sm:p-10">
-                    {b.title && <h3 className="font-display text-2xl font-black sm:text-4xl">{b.title}</h3>}
+                    {b.title && <h2 className="font-display text-2xl font-black sm:text-4xl">{b.title}</h2>}
                     {b.subtitle && <p className="max-w-2xl text-sm text-muted-foreground sm:text-base">{b.subtitle}</p>}
                     {b.cta_label && (
                       <span className="mt-1 inline-flex w-fit rounded-full bg-gradient-brand px-4 py-2 text-sm font-semibold text-brand-foreground shadow-brand">
