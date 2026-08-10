@@ -66,16 +66,17 @@ export const trackEvent = ({ action, category, label, value, currency = "BRL", .
  * Track when a user views a product
  */
 export const trackViewItem = (artwork: any) => {
+  const price = (artwork.price_cents ?? 0) / 100;
   trackEvent({
     action: "view_item",
     currency: "BRL",
-    value: (artwork.price_cents ?? 0) / 100,
+    value: price,
     items: [
       {
         item_id: artwork.id,
         item_name: artwork.title,
         item_category: artwork.categories?.name || artwork.artwork_categories?.[0]?.categories?.name,
-        price: (artwork.price_cents ?? 0) / 100,
+        price: price,
         quantity: 1,
       },
     ],
@@ -86,16 +87,17 @@ export const trackViewItem = (artwork: any) => {
  * Track when a user adds a product to the cart
  */
 export const trackAddToCart = (artwork: any) => {
+  const price = (artwork.price_cents ?? 0) / 100;
   trackEvent({
     action: "add_to_cart",
     currency: "BRL",
-    value: (artwork.price_cents ?? 0) / 100,
+    value: price,
     items: [
       {
         item_id: artwork.id,
         item_name: artwork.title,
         item_category: artwork.categories?.name || artwork.artwork_categories?.[0]?.categories?.name,
-        price: (artwork.price_cents ?? 0) / 100,
+        price: price,
         quantity: 1,
       },
     ],
