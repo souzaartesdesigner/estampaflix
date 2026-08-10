@@ -117,6 +117,7 @@ type RootSeo = {
       favicon: string;
       gsc: string | null;
       ga4: string | null;
+      metaPixelId: string | null;
       headScripts: string | null;
     };
 
@@ -148,6 +149,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       favicon: (s?.favicon_url ?? "").trim() || "/favicon.png",
       gsc: (s?.google_search_console_id ?? "").trim() || null,
       ga4: (s?.ga4_measurement_id ?? "").trim() || null,
+      metaPixelId: (s as any)?.meta_pixel_id || null,
       headScripts: (s?.head_scripts ?? "").trim() || null,
     };
   },
@@ -163,6 +165,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       favicon: "/favicon.png",
       gsc: null,
       ga4: null,
+      metaPixelId: null,
       headScripts: null,
     };
 
@@ -233,7 +236,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
-                gtag('config', '${d.ga4}');
+                gtag('config', '${d.ga4}', { 'debug_mode': true });
+              `,
+              },
+            ]
+          : []),
+        ...(d.metaPixelId
+          ? [
+              {
+                children: `
+                !function(f,b,e,v,n,t,s)
+                {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+                n.queue=[];t=b.createElement(e);t.async=!0;
+                t.src=v;s=b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t,s)}(window, document,'script',
+                'https://connect.facebook.net/en_US/fbevents.js');
+                fbq('init', '${d.metaPixelId}');
+                fbq('track', 'PageView');
               `,
               },
             ]
