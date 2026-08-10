@@ -34,47 +34,7 @@ export const trackEvent = ({ action, category, label, value, currency = "BRL", .
       currency: currency,
     });
 
-    // Fallback direct GA4 if still present
-    if ((window as any).gtag) {
-      (window as any).gtag("event", action, {
-        event_category: category,
-        event_label: label,
-        value: value,
-        currency: currency,
-        ...rest,
-      });
-    }
 
-    // Meta Pixel
-    if ((window as any).fbq) {
-      const fbEventMap: Record<string, string> = {
-        view_item: "ViewContent",
-        add_to_cart: "AddToCart",
-        begin_checkout: "InitiateCheckout",
-        purchase: "Purchase",
-      };
-
-      const fbEventName = fbEventMap[action];
-      if (fbEventName) {
-        const fbParams: any = {
-          currency: currency,
-          value: value,
-        };
-
-        if (rest.items && rest.items.length > 0) {
-          fbParams.content_ids = rest.items.map((i: any) => i.item_id);
-          fbParams.content_type = "product";
-          fbParams.content_name = rest.items[0].item_name;
-          fbParams.content_category = rest.items[0].item_category;
-        }
-
-        if (action === "purchase") {
-          fbParams.order_id = rest.transaction_id;
-        }
-
-        (window as any).fbq("track", fbEventName, fbParams);
-      }
-    }
 
     // Google Ads Conversion (Purchase only via DataLayer)
     if (action === "purchase") {
