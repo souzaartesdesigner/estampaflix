@@ -103,6 +103,7 @@ export function UserMenuContent({ user, isAdmin, isMobile = false, closeMobileMe
       <div className={`flex flex-col gap-1 ${isMobile ? "mt-2" : ""}`}>
         <Link 
           to="/minha-conta" 
+          search={{ tab: 'downloads' } as any}
           onClick={handleLinkClick}
           className={`flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-muted ${isMobile ? "text-foreground" : "text-sm"}`}
         >
