@@ -26,10 +26,10 @@ export const ENABLED_FORMATS: ImageFormat[] = ["webp"];
  * proxy a buscar o original (~1,5 s); já em cache a resposta cai para ~50 ms.
  * Por isso mantemos poucas larguras bem espaçadas por contexto de uso.
  */
-export const CARD_WIDTHS = [400, 800];
-export const HERO_WIDTHS = [640, 1280, 1920];
-export const DETAIL_WIDTHS = [800, 1600];
-export const THUMB_WIDTHS = [160];
+export const CARD_WIDTHS = [480, 960, 1200];
+export const HERO_WIDTHS = [800, 1600, 2400];
+export const DETAIL_WIDTHS = [1000, 2000];
+export const THUMB_WIDTHS = [240, 480];
 
 
 /** Só transformamos URLs http(s) públicas e absolutas. */
@@ -58,7 +58,7 @@ export function transformedUrl(src: string, opts: TransformOptions): string {
     params.set("h", String(opts.height));
     params.set("fit", "cover");
   }
-  params.set("q", String(opts.quality ?? 74));
+  params.set("q", String(opts.quality ?? 88));
   // Nunca ampliar acima do tamanho original.
   params.set("we", "");
   // Cache longo no CDN: evita reprocessar a imagem a cada visita.

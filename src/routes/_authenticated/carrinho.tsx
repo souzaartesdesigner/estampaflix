@@ -136,7 +136,7 @@ function CartPage() {
               >
                 {checkoutMut.isPending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t("cart.generatingPix")}</> : t("cart.checkoutPix")}
               </Button>
-              <Button variant="ghost" className="mt-2 w-full" onClick={() => cart.clear()}>{t("cart.clear")}</Button>
+              <Button variant="ghost" className="mt-2 w-full text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors" onClick={() => cart.clear()}>{t("cart.clear")}</Button>
             </aside>
           </div>
         )}
