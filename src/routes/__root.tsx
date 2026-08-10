@@ -117,6 +117,8 @@ type RootSeo = {
       favicon: string;
       gsc: string | null;
       ga4: string | null;
+      googleAdsId: string | null;
+      googleAdsPurchaseLabel: string | null;
       metaPixelId: string | null;
       headScripts: string | null;
     };
@@ -129,7 +131,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       const { data } = await (supabase as any)
         .from("site_settings")
         .select(
-          "site_name, favicon_url, seo_title, seo_description, seo_keywords, og_title, og_description, og_image_url, head_scripts, google_search_console_id, ga4_measurement_id",
+          "site_name, favicon_url, seo_title, seo_description, seo_keywords, og_title, og_description, og_image_url, head_scripts, google_search_console_id, ga4_measurement_id, google_ads_id, google_ads_purchase_label",
         )
         .eq("id", true)
         .maybeSingle();
@@ -149,6 +151,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       favicon: (s?.favicon_url ?? "").trim() || "/favicon.png",
       gsc: (s?.google_search_console_id ?? "").trim() || null,
       ga4: (s?.ga4_measurement_id ?? "").trim() || null,
+      googleAdsId: (s?.google_ads_id ?? "").trim() || null,
+      googleAdsPurchaseLabel: (s?.google_ads_purchase_label ?? "").trim() || null,
       metaPixelId: (s as any)?.meta_pixel_id || null,
       headScripts: (s?.head_scripts ?? "").trim() || null,
     };
@@ -165,6 +169,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       favicon: "/favicon.png",
       gsc: null,
       ga4: null,
+      googleAdsId: null,
+      googleAdsPurchaseLabel: null,
       metaPixelId: null,
       headScripts: null,
     };
@@ -237,6 +243,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
                 gtag('config', '${d.ga4}', { 'debug_mode': true });
+              `,
+              },
+            ]
+          : []),
+        ...(d.googleAdsId
+          ? [
+              {
+                src: `https://www.googletagmanager.com/gtag/js?id=${d.googleAdsId}`,
+                async: true,
+              },
+              {
+                children: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${d.googleAdsId}');
+                // Armazenar IDs para uso no analytics.ts
+                window.__GOOGLE_ADS_ID = '${d.googleAdsId}';
+                window.__GOOGLE_ADS_PURCHASE_LABEL = '${d.googleAdsPurchaseLabel || ""}';
               `,
               },
             ]

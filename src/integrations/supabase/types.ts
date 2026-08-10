@@ -950,6 +950,8 @@ export type Database = {
           favicon_url: string | null
           footer_text: string | null
           ga4_measurement_id: string | null
+          google_ads_id: string | null
+          google_ads_purchase_label: string | null
           google_search_console_id: string | null
           head_scripts: string | null
           id: boolean
@@ -984,6 +986,8 @@ export type Database = {
           favicon_url?: string | null
           footer_text?: string | null
           ga4_measurement_id?: string | null
+          google_ads_id?: string | null
+          google_ads_purchase_label?: string | null
           google_search_console_id?: string | null
           head_scripts?: string | null
           id?: boolean
@@ -1018,6 +1022,8 @@ export type Database = {
           favicon_url?: string | null
           footer_text?: string | null
           ga4_measurement_id?: string | null
+          google_ads_id?: string | null
+          google_ads_purchase_label?: string | null
           google_search_console_id?: string | null
           head_scripts?: string | null
           id?: boolean
