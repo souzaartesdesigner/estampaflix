@@ -135,9 +135,12 @@ function Configuracoes() {
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="Google Analytics 4 ID"><Input value={form.ga4_measurement_id ?? ""} onChange={set("ga4_measurement_id")} placeholder="G-XXXXXXX" /></Field>
               <Field label="Meta Pixel ID"><Input value={form.meta_pixel_id ?? ""} onChange={set("meta_pixel_id")} placeholder="123456789012345" /></Field>
+              <Field label="Google Ads ID (Conversion ID)"><Input value={form.google_ads_id ?? ""} onChange={set("google_ads_id")} placeholder="AW-123456789" /></Field>
+              <Field label="Google Ads Purchase Label"><Input value={form.google_ads_purchase_label ?? ""} onChange={set("google_ads_purchase_label")} placeholder="AbC-D_eFgHiJkLmNoPq" /></Field>
               <Field label="Google Search Console (verificação)"><Input value={form.google_search_console_id ?? ""} onChange={set("google_search_console_id")} placeholder="Conteúdo da meta tag" /></Field>
             </div>
             <div className="mt-4">
+
               <Field label="Scripts do head (Google Analytics / Tag Manager)">
                 <Textarea rows={6} className="font-mono text-xs" value={form.head_scripts ?? ""} onChange={set("head_scripts")} placeholder={"<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-XXXX\"></script>\n<script>window.dataLayer=window.dataLayer||[];...</script>"} />
               </Field>
