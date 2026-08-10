@@ -42,23 +42,7 @@ function AdminLayout() {
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
-      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-4 px-3 py-4 sm:px-4 sm:py-6 lg:flex-row lg:gap-6 lg:py-8">
-        <aside className="lg:w-56 lg:shrink-0">
-          <div className="rounded-xl border border-border/60 bg-card p-2 lg:sticky lg:top-24">
-            <div className="hidden px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground lg:block">Painel Admin</div>
-            <nav className="flex gap-1 overflow-x-auto lg:mt-1 lg:flex-col lg:gap-0.5 lg:overflow-visible [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {NAV.map((item) => {
-                const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
-                const Icon = item.icon;
-                return (
-                  <Link key={item.to} to={item.to} className={`flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-sm transition-colors lg:shrink ${active ? "bg-primary/10 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
-                    <Icon className="h-4 w-4" /> {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-        </aside>
+      <div className="mx-auto w-full max-w-7xl flex-1 px-3 py-4 sm:px-4 sm:py-6 lg:py-8">
         <main className="min-w-0 flex-1"><Outlet /></main>
       </div>
     </div>
