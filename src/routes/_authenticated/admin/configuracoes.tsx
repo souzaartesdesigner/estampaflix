@@ -146,7 +146,10 @@ function Configuracoes() {
               <Field label="Scripts do head (Google Analytics / Tag Manager)">
                 <Textarea rows={6} className="font-mono text-xs" value={form.head_scripts ?? ""} onChange={set("head_scripts")} placeholder={"<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-XXXX\"></script>\n<script>window.dataLayer=window.dataLayer||[];...</script>"} />
               </Field>
-              <p className="mt-2 text-xs text-muted-foreground">Cole o código completo fornecido pelo Google. Ele é injetado no head de todas as páginas.</p>
+              <Field label="Scripts do body (Tag Manager noscript)">
+                <Textarea rows={4} className="font-mono text-xs" value={form.body_scripts ?? ""} onChange={set("body_scripts")} placeholder={"<noscript><iframe src=\"https://www.googletagmanager.com/ns.html?id=GTM-XXXX\" ...></iframe></noscript>"} />
+              </Field>
+              <p className="mt-2 text-xs text-muted-foreground">Cole o código completo fornecido pelo Google. Eles são injetados no head e logo após a abertura do body em todas as páginas.</p>
             </div>
           </Section>
 

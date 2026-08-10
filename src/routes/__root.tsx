@@ -121,6 +121,7 @@ type RootSeo = {
       googleAdsPurchaseLabel: string | null;
       metaPixelId: string | null;
       headScripts: string | null;
+      bodyScripts: string | null;
     };
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
@@ -131,7 +132,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       const { data } = await (supabase as any)
         .from("site_settings")
         .select(
-          "site_name, favicon_url, seo_title, seo_description, seo_keywords, og_title, og_description, og_image_url, head_scripts, google_search_console_id, ga4_measurement_id, google_ads_id, google_ads_purchase_label",
+          "site_name, favicon_url, seo_title, seo_description, seo_keywords, og_title, og_description, og_image_url, head_scripts, body_scripts, google_search_console_id, ga4_measurement_id, google_ads_id, google_ads_purchase_label",
         )
         .eq("id", true)
         .maybeSingle();
@@ -155,6 +156,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       googleAdsPurchaseLabel: (s?.google_ads_purchase_label ?? "").trim() || null,
       metaPixelId: (s as any)?.meta_pixel_id || null,
       headScripts: (s?.head_scripts ?? "").trim() || null,
+      bodyScripts: (s?.body_scripts ?? "").trim() || null,
     };
   },
   head: ({ loaderData }) => {
@@ -173,6 +175,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       googleAdsPurchaseLabel: null,
       metaPixelId: null,
       headScripts: null,
+      bodyScripts: null,
     };
 
     return {
@@ -276,6 +279,9 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        {loaderData?.bodyScripts && (
+          <div dangerouslySetInnerHTML={{ __html: loaderData.bodyScripts }} />
+        )}
         {children}
         <Scripts />
       </body>
