@@ -22,7 +22,7 @@ function Sucesso() {
             <Link to="/catalogo">Explorar catálogo</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to="/minha-conta">Minha conta</Link>
+            <Link to="/minha-conta" search={{ tab: "profile" }}>Minha conta</Link>
           </Button>
         </div>
         <p className="mt-6 text-xs text-muted-foreground">
