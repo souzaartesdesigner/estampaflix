@@ -222,6 +222,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             ],
           }),
         },
+        ...(d.ga4
+          ? [
+              {
+                src: `https://www.googletagmanager.com/gtag/js?id=${d.ga4}`,
+                async: true,
+              },
+              {
+                children: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${d.ga4}');
+              `,
+              },
+            ]
+          : []),
         ...(d.headScripts ? parseHeadScripts(d.headScripts) : []),
       ],
     };
