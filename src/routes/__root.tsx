@@ -234,16 +234,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             ],
           }),
         },
-        ...(d.googleAdsId && !d.ga4
-          ? [
-              {
-                children: `
-                window.__GOOGLE_ADS_ID = '${d.googleAdsId}';
-                window.__GOOGLE_ADS_PURCHASE_LABEL = '${d.googleAdsPurchaseLabel || ""}';
-              `,
-              },
-            ]
-          : []),
         ...(d.metaPixelId
           ? [
               {
