@@ -946,6 +946,7 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          body_scripts: string | null
           facebook_url: string | null
           favicon_url: string | null
           footer_text: string | null
@@ -982,6 +983,7 @@ export type Database = {
           whatsapp_message: string | null
         }
         Insert: {
+          body_scripts?: string | null
           facebook_url?: string | null
           favicon_url?: string | null
           footer_text?: string | null
@@ -1018,6 +1020,7 @@ export type Database = {
           whatsapp_message?: string | null
         }
         Update: {
+          body_scripts?: string | null
           facebook_url?: string | null
           favicon_url?: string | null
           footer_text?: string | null
