@@ -233,7 +233,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
-                gtag('config', '${d.ga4}');
+                gtag('config', '${d.ga4}', { 'debug_mode': true });
               `,
               },
             ]
