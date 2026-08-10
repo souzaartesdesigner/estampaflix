@@ -73,6 +73,7 @@ export function SiteHeader() {
     navigate({ to: "/catalogo", search: { q: q || undefined } as any });
   }
 
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-xl">
       <PromoBanner />
@@ -151,7 +152,7 @@ export function SiteHeader() {
           )}
 
 
-          <Sheet>
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="lg:hidden">
                 <Menu className="h-5 w-5" />
@@ -167,7 +168,7 @@ export function SiteHeader() {
                   />
                 </div>
 
-                <form onSubmit={submitSearch}>
+                <form onSubmit={(e) => { submitSearch(e); setIsOpen(false); }}>
                   <div className="relative">
                     <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <input
@@ -188,6 +189,7 @@ export function SiteHeader() {
                     <Link
                       key={item.to}
                       to={item.to}
+                      onClick={() => setIsOpen(false)}
                       className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted"
                     >
                       {item.label}
@@ -200,14 +202,19 @@ export function SiteHeader() {
                     <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
                       Minha conta
                     </h3>
-                    <UserMenuContent user={user as any} isAdmin={isAdmin} isMobile />
+                    <UserMenuContent 
+                      user={user as any} 
+                      isAdmin={isAdmin} 
+                      isMobile 
+                      closeMobileMenu={() => setIsOpen(false)} 
+                    />
                   </div>
                 ) : (
                   <div className="flex flex-col gap-3 px-2 pt-2">
-                    <Button asChild variant="outline" className="w-full justify-start">
+                    <Button asChild variant="outline" className="w-full justify-start" onClick={() => setIsOpen(false)}>
                       <Link to="/auth">{t("nav.signIn")}</Link>
                     </Button>
-                    <Button asChild className="w-full bg-gradient-brand text-brand-foreground shadow-brand">
+                    <Button asChild className="w-full bg-gradient-brand text-brand-foreground shadow-brand" onClick={() => setIsOpen(false)}>
                       <Link to="/planos">{t("nav.subscribe")}</Link>
                     </Button>
                   </div>
