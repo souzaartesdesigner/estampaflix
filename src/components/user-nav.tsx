@@ -112,7 +112,8 @@ export function UserMenuContent({ user, isAdmin, isMobile = false, closeMobileMe
         </Link>
 
         <Link 
-          to="/cobranca" 
+          to="/minha-conta" 
+          search={{ tab: 'subscription' } as any}
           onClick={handleLinkClick}
           className={`flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-muted ${isMobile ? "text-foreground" : "text-sm"}`}
         >
@@ -121,7 +122,8 @@ export function UserMenuContent({ user, isAdmin, isMobile = false, closeMobileMe
         </Link>
 
         <Link 
-          to="/downloads" 
+          to="/minha-conta" 
+          search={{ tab: 'downloads' } as any}
           onClick={handleLinkClick}
           className={`flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-muted ${isMobile ? "text-foreground" : "text-sm"}`}
         >
@@ -133,7 +135,8 @@ export function UserMenuContent({ user, isAdmin, isMobile = false, closeMobileMe
         </Link>
 
         <Link 
-          to="/favoritos" 
+          to="/minha-conta" 
+          search={{ tab: 'favorites' } as any}
           onClick={handleLinkClick}
           className={`flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-muted ${isMobile ? "text-foreground" : "text-sm"}`}
         >
