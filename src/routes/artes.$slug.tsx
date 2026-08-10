@@ -17,6 +17,8 @@ import {
   useArtworkSession,
   useMySubscription,
 } from "@/features/artwork/artwork-actions";
+import { useEffect } from "react";
+import { trackViewItem } from "@/lib/analytics";
 
 export const Route = createFileRoute("/artes/$slug")({
   loader: async ({ params }) => {
@@ -140,6 +142,12 @@ function ArtworkPage() {
   const { data: session } = useArtworkSession();
   const { data: sub } = useMySubscription(session?.user.id);
   const { data: owned } = useArtworkOwnership(session?.user.id, artwork.id);
+
+  useEffect(() => {
+    if (artwork) {
+      trackViewItem(artwork);
+    }
+  }, [artwork]);
 
   return (
     <SiteLayout>

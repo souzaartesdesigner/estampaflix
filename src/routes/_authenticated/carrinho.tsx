@@ -12,6 +12,8 @@ import { Trash2, ShoppingBag, Loader2, Tag, X, Check } from "lucide-react";
 import { toast } from "sonner";
 import { useI18n } from "@/lib/i18n";
 import { CartUpsell } from "@/features/cart/cart-upsell";
+import { useEffect } from "react";
+import { trackBeginCheckout } from "@/lib/analytics";
 
 export const Route = createFileRoute("/_authenticated/carrinho")({
   head: () => ({ meta: [{ title: "Carrinho — Estampa Flix" }, { name: "robots", content: "noindex" }] }),
@@ -24,6 +26,12 @@ function CartPage() {
   const createPix = useServerFn(createPixOrder);
   const validateCoupon = useServerFn(validateCouponFn);
   const { t } = useI18n();
+
+  useEffect(() => {
+    if (cart.items.length > 0) {
+      trackBeginCheckout(cart.items, cart.total);
+    }
+  }, [cart.items.length, cart.total]);
 
   const [couponInput, setCouponInput] = useState("");
   const [applied, setApplied] = useState<{ code: string; discountCents: number } | null>(null);

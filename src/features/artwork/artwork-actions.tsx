@@ -229,7 +229,7 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
 
             <Button
               variant="outline"
-              onClick={() => (inCart ? navigate({ to: "/carrinho" }) : cart.add(artwork.id))}
+              onClick={() => (inCart ? navigate({ to: "/carrinho" }) : cart.add(artwork))}
               disabled={cart.adding}
               className="border-border/60 bg-cart text-foreground hover:bg-cart-hover hover:text-foreground"
             >
