@@ -128,7 +128,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       const { data } = await (supabase as any)
         .from("site_settings")
         .select(
-          "site_name, favicon_url, seo_title, seo_description, seo_keywords, og_title, og_description, og_image_url, head_scripts, google_search_console_id",
+          "site_name, favicon_url, seo_title, seo_description, seo_keywords, og_title, og_description, og_image_url, head_scripts, google_search_console_id, ga4_measurement_id",
         )
         .eq("id", true)
         .maybeSingle();
@@ -147,6 +147,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       ogImage: (s?.og_image_url ?? "").trim() || FALLBACK_OG_IMAGE,
       favicon: (s?.favicon_url ?? "").trim() || "/favicon.png",
       gsc: (s?.google_search_console_id ?? "").trim() || null,
+      ga4: (s?.ga4_measurement_id ?? "").trim() || null,
       headScripts: (s?.head_scripts ?? "").trim() || null,
     };
   },
@@ -161,6 +162,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       ogImage: FALLBACK_OG_IMAGE,
       favicon: "/favicon.png",
       gsc: null,
+      ga4: null,
       headScripts: null,
     };
 
