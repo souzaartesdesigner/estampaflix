@@ -108,10 +108,11 @@ export const trackAddToCart = (artwork: any) => {
  * Track when a user starts the checkout process
  */
 export const trackBeginCheckout = (items: any[], totalCents: number) => {
+  const value = totalCents / 100;
   trackEvent({
     action: "begin_checkout",
     currency: "BRL",
-    value: totalCents / 100,
+    value: value,
     items: items.map((it) => ({
       item_id: it.artwork_id || it.id,
       item_name: it.artworks?.title || it.title,
@@ -125,11 +126,12 @@ export const trackBeginCheckout = (items: any[], totalCents: number) => {
  * Track a successful purchase
  */
 export const trackPurchase = (orderId: string, items: any[], totalCents: number) => {
+  const value = totalCents / 100;
   trackEvent({
     action: "purchase",
     transaction_id: orderId,
     currency: "BRL",
-    value: totalCents / 100,
+    value: value,
     items: items.map((it) => ({
       item_id: it.artwork_id || it.id,
       item_name: it.artworks?.title || it.title,
