@@ -151,6 +151,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       favicon: (s?.favicon_url ?? "").trim() || "/favicon.png",
       gsc: (s?.google_search_console_id ?? "").trim() || null,
       ga4: (s?.ga4_measurement_id ?? "").trim() || null,
+      googleAdsId: (s?.google_ads_id ?? "").trim() || null,
+      googleAdsPurchaseLabel: (s?.google_ads_purchase_label ?? "").trim() || null,
       metaPixelId: (s as any)?.meta_pixel_id || null,
       headScripts: (s?.head_scripts ?? "").trim() || null,
     };
@@ -167,6 +169,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       favicon: "/favicon.png",
       gsc: null,
       ga4: null,
+      googleAdsId: null,
+      googleAdsPurchaseLabel: null,
       metaPixelId: null,
       headScripts: null,
     };
