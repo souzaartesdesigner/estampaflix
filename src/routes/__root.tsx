@@ -117,6 +117,8 @@ type RootSeo = {
       favicon: string;
       gsc: string | null;
       ga4: string | null;
+      googleAdsId: string | null;
+      googleAdsPurchaseLabel: string | null;
       metaPixelId: string | null;
       headScripts: string | null;
     };
