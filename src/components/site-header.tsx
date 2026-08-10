@@ -158,7 +158,7 @@ export function SiteHeader() {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-80 overflow-y-auto">
+            <SheetContent side="right" className="w-[85%] max-w-[320px] overflow-y-auto">
               <div className="flex flex-col gap-6 py-4">
                 <div className="flex shrink-0 items-center justify-center py-2">
                   <img
