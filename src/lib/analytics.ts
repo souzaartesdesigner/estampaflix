@@ -59,6 +59,21 @@ export const trackEvent = ({ action, category, label, value, currency = "BRL", .
         (window as any).fbq("track", fbEventName, fbParams);
       }
     }
+
+    // Google Ads Conversion (Purchase only)
+    if (action === "purchase" && (window as any).gtag && (window as any).__GOOGLE_ADS_ID) {
+      const adsId = (window as any).__GOOGLE_ADS_ID;
+      const purchaseLabel = (window as any).__GOOGLE_ADS_PURCHASE_LABEL;
+
+      if (purchaseLabel) {
+        (window as any).gtag("event", "conversion", {
+          send_to: `${adsId}/${purchaseLabel}`,
+          value: value,
+          currency: currency,
+          transaction_id: rest.transaction_id,
+        });
+      }
+    }
   }
 };
 
