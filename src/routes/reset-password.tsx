@@ -77,7 +77,7 @@ function Reset() {
       return toast.error(error.message);
     }
     toast.success("Senha atualizada com sucesso!");
-    navigate({ to: "/minha-conta" });
+    navigate({ to: "/minha-conta", search: { tab: "profile" } });
   }
 
   return (
