@@ -65,7 +65,7 @@ export function UserMenuContent({ user, isAdmin, isMobile = false, closeMobileMe
     .join("")
     .toUpperCase();
 
-  const downloadsBadge = sub ? "Ilimitado" : `${todayCount} / 5 hoje`;
+  const downloadsBadge = sub ? `${sub.credits_remaining} créditos` : `${todayCount} / 5 hoje`;
 
   const whatsappRaw = settings?.whatsapp ?? "";
   const whatsappHref = whatsappRaw

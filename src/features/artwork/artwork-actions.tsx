@@ -191,7 +191,7 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
               {downloadMut.isPending
                 ? t("product.downloading")
                 : session && canDownload
-                  ? `${t("product.download")} (${sub!.credits_remaining} ${t("product.creditsRemaining")})`
+                  ? `${t("product.download")} (${artwork.credit_cost ?? 1} ${t("product.creditsRemaining")})`
                   : t("product.downloadWithPlan")}
             </Button>
             {session && !sub && (
