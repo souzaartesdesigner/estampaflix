@@ -131,7 +131,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       const { data } = await (supabase as any)
         .from("site_settings")
         .select(
-          "site_name, favicon_url, seo_title, seo_description, seo_keywords, og_title, og_description, og_image_url, head_scripts, google_search_console_id, ga4_measurement_id",
+          "site_name, favicon_url, seo_title, seo_description, seo_keywords, og_title, og_description, og_image_url, head_scripts, google_search_console_id, ga4_measurement_id, google_ads_id, google_ads_purchase_label",
         )
         .eq("id", true)
         .maybeSingle();
