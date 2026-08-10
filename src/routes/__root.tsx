@@ -114,10 +114,11 @@ type RootSeo = {
   ogTitle: string;
   ogDescription: string;
   ogImage: string;
-  favicon: string;
-  gsc: string | null;
-  headScripts: string | null;
-};
+      favicon: string;
+      gsc: string | null;
+      ga4: string | null;
+      headScripts: string | null;
+    };
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   loader: async (): Promise<RootSeo> => {
