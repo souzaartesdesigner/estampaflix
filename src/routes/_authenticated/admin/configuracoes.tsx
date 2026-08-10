@@ -132,11 +132,9 @@ function Configuracoes() {
           </Section>
 
           <Section title="Analytics & rastreamento (Google Tag Manager recomendado)">
+            <p className="mb-4 text-sm text-muted-foreground">O rastreamento agora é feito exclusivamente via Google Tag Manager. Use os campos abaixo para injetar os scripts.</p>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="GTM ID (ou GA4 ID se não usar GTM)"><Input value={form.ga4_measurement_id ?? ""} onChange={set("ga4_measurement_id")} placeholder="GTM-XXXXXXX ou G-XXXXXXX" /></Field>
-              <Field label="Meta Pixel ID"><Input value={form.meta_pixel_id ?? ""} onChange={set("meta_pixel_id")} placeholder="123456789012345" /></Field>
-              <Field label="Google Ads ID (Conversion ID)"><Input value={form.google_ads_id ?? ""} onChange={set("google_ads_id")} placeholder="AW-123456789" /></Field>
-              <Field label="Google Ads Purchase Label"><Input value={form.google_ads_purchase_label ?? ""} onChange={set("google_ads_purchase_label")} placeholder="AbC-D_eFgHiJkLmNoPq" /></Field>
+              <Field label="GTM ID (Referência)"><Input value={form.ga4_measurement_id ?? ""} onChange={set("ga4_measurement_id")} placeholder="GTM-594LSV6J" /></Field>
             </div>
             <div className="mt-4">
               <Field label="Google Search Console (verificação)"><Input value={form.google_search_console_id ?? ""} onChange={set("google_search_console_id")} placeholder="Conteúdo da meta tag" /></Field>

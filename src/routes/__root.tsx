@@ -132,7 +132,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       const { data } = await (supabase as any)
         .from("site_settings")
         .select(
-          "site_name, favicon_url, seo_title, seo_description, seo_keywords, og_title, og_description, og_image_url, head_scripts, body_scripts, google_search_console_id, ga4_measurement_id, google_ads_id, google_ads_purchase_label",
+          "site_name, favicon_url, seo_title, seo_description, seo_keywords, og_title, og_description, og_image_url, head_scripts, body_scripts, google_search_console_id, ga4_measurement_id, google_ads_id, google_ads_purchase_label, meta_pixel_id",
         )
         .eq("id", true)
         .maybeSingle();
@@ -234,24 +234,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             ],
           }),
         },
-        ...(d.metaPixelId
-          ? [
-              {
-                children: `
-                !function(f,b,e,v,n,t,s)
-                {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-                n.queue=[];t=b.createElement(e);t.async=!0;
-                t.src=v;s=b.getElementsByTagName(e)[0];
-                s.parentNode.insertBefore(t,s)}(window, document,'script',
-                'https://connect.facebook.net/en_US/fbevents.js');
-                fbq('init', '${d.metaPixelId}');
-                fbq('track', 'PageView');
-              `,
-              },
-            ]
-          : []),
         ...(d.headScripts ? parseHeadScripts(d.headScripts) : []),
       ],
     };
