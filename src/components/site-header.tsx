@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LogOut, Menu, Search, ShieldCheck, ShoppingCart, User } from "lucide-react";
-import { UserNav } from "@/components/user-nav";
+import { UserMenuContent, UserNav } from "@/components/user-nav";
 import logoAsset from "@/assets/estampa-flix-logo.png.asset.json";
 
 import {
@@ -157,25 +157,61 @@ export function SiteHeader() {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-72">
-              <form onSubmit={submitSearch} className="mt-8">
-                <div className="relative">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <input
-                    value={q}
-                    onChange={(e) => setQ(e.target.value)}
-                    placeholder={t("search.placeholder")}
-                    aria-label={t("search.placeholder")}
-                    className="w-full rounded-full border border-border/60 bg-surface/50 py-2 pl-9 pr-3 text-sm outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20"
+            <SheetContent side="right" className="w-80 overflow-y-auto">
+              <div className="flex flex-col gap-6 py-4">
+                <div className="flex shrink-0 items-center justify-center py-2">
+                  <img
+                    src={settings?.logo_url || logoAsset.url}
+                    alt={settings?.site_name ?? "Estampa Flix"}
+                    className="h-9 w-auto object-contain"
                   />
                 </div>
-              </form>
-              <div className="mt-6 flex flex-col gap-1">
-                {NAV.map((item) => (
-                  <Link key={item.to} to={item.to} className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted">
-                    {item.label}
-                  </Link>
-                ))}
+
+                <form onSubmit={submitSearch}>
+                  <div className="relative">
+                    <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                      value={q}
+                      onChange={(e) => setQ(e.target.value)}
+                      placeholder={t("search.placeholder")}
+                      aria-label={t("search.placeholder")}
+                      className="w-full rounded-full border border-border/60 bg-surface/50 py-2 pl-9 pr-3 text-sm outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20"
+                    />
+                  </div>
+                </form>
+
+                <div className="flex flex-col gap-1">
+                  <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                    Navegação
+                  </h3>
+                  {NAV.map((item) => (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+
+                {user ? (
+                  <div className="flex flex-col gap-1">
+                    <h3 className="px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                      Minha conta
+                    </h3>
+                    <UserMenuContent user={user as any} isAdmin={isAdmin} isMobile />
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-3 px-2 pt-2">
+                    <Button asChild variant="outline" className="w-full justify-start">
+                      <Link to="/auth">{t("nav.signIn")}</Link>
+                    </Button>
+                    <Button asChild className="w-full bg-gradient-brand text-brand-foreground shadow-brand">
+                      <Link to="/planos">{t("nav.subscribe")}</Link>
+                    </Button>
+                  </div>
+                )}
               </div>
             </SheetContent>
           </Sheet>

@@ -64,7 +64,7 @@ function PixCheckoutPage() {
       const slug = (data as any)?.artworks?.slug;
       const t = setTimeout(() => {
         if (slug) navigate({ to: "/artes/$slug", params: { slug } });
-        else navigate({ to: "/minha-conta" });
+        else navigate({ to: "/minha-conta", search: { tab: "orders" } });
       }, 1800);
       return () => clearTimeout(t);
     }

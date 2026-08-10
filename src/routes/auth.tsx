@@ -31,7 +31,7 @@ function Auth() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/minha-conta" });
+      if (data.session) navigate({ to: "/minha-conta", search: { tab: "profile" } });
     });
   }, [navigate]);
 
@@ -42,7 +42,7 @@ function Auth() {
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Bem-vindo de volta!");
-    navigate({ to: "/minha-conta" });
+        navigate({ to: "/minha-conta", search: { tab: "profile" } });
   }
 
   async function signUp(e: React.FormEvent) {
