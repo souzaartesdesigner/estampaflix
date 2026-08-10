@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { formatBRL } from "@/lib/format";
 import { Copy, Check, Clock, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { trackPurchase } from "@/lib/analytics";
 
 export const Route = createFileRoute("/pagamento/pix/$orderId")({
   head: () => ({
@@ -62,6 +63,14 @@ function PixCheckoutPage() {
     if (status === "paid") {
       toast.success("Pagamento confirmado! Sua arte foi liberada.");
       const slug = (data as any)?.artworks?.slug;
+      
+      // Track purchase
+      if (data) {
+        const orderData = data as any;
+        const items = orderData.items ? orderData.items : (orderData.artworks ? [orderData.artworks] : []);
+        trackPurchase(orderId, items, orderData.amount_cents || 0);
+      }
+
       const t = setTimeout(() => {
         if (slug) navigate({ to: "/artes/$slug", params: { slug } });
         else navigate({ to: "/minha-conta", search: { tab: "orders" } });

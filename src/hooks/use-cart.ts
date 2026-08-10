@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { trackAddToCart } from "@/lib/analytics";
 
 export type CartItem = {
   id: string;
@@ -42,16 +43,21 @@ export function useCart() {
   });
 
   const addMut = useMutation({
-    mutationFn: async (artworkId: string) => {
+    mutationFn: async (artwork: any) => {
+      const artworkId = typeof artwork === "string" ? artwork : artwork.id;
       if (!uid) throw new Error("not_authenticated");
       const { error } = await supabase
         .from("cart_items")
         .insert({ user_id: uid, artwork_id: artworkId });
       if (error && !String(error.message).includes("duplicate")) throw error;
+      return artwork;
     },
-    onSuccess: () => {
+    onSuccess: (artwork) => {
       qc.invalidateQueries({ queryKey: ["cart", uid] });
       toast.success("Adicionado ao carrinho");
+      if (typeof artwork !== "string") {
+        trackAddToCart(artwork);
+      }
     },
     onError: (e: any) => {
       if (e?.message === "not_authenticated") {

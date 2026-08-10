@@ -100,7 +100,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            if (!inCart) cart.add(artwork.id);
+            if (!inCart) cart.add(artwork as any);
           }}
           className="absolute right-2.5 top-12 grid h-8 w-8 place-items-center rounded-full border border-border/60 bg-background/80 backdrop-blur transition-all hover:bg-background disabled:border-primary/60 disabled:text-primary [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:focus-visible:opacity-100 [@media(hover:hover)]:group-hover:opacity-100"
         >
