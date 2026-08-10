@@ -273,6 +273,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const loaderData = Route.useLoaderData();
+  
   return (
     <html lang="pt-BR">
       <head>
