@@ -247,6 +247,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               },
             ]
           : []),
+        ...(d.googleAdsId
+          ? [
+              {
+                src: `https://www.googletagmanager.com/gtag/js?id=${d.googleAdsId}`,
+                async: true,
+              },
+              {
+                children: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${d.googleAdsId}');
+                // Armazenar IDs para uso no analytics.ts
+                window.__GOOGLE_ADS_ID = '${d.googleAdsId}';
+                window.__GOOGLE_ADS_PURCHASE_LABEL = '${d.googleAdsPurchaseLabel || ""}';
+              `,
+              },
+            ]
+          : []),
         ...(d.metaPixelId
           ? [
               {
