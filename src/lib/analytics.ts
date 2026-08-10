@@ -18,7 +18,23 @@ interface GtagEventProps {
  */
 export const trackEvent = ({ action, category, label, value, currency = "BRL", ...rest }: GtagEventProps) => {
   if (typeof window !== "undefined") {
-    // GA4
+    // DataLayer (GTM / GA4)
+    const dataLayer = (window as any).dataLayer || [];
+    dataLayer.push({
+      event: action,
+      ecommerce: {
+        currency: currency,
+        value: value,
+        items: rest.items,
+        ...rest,
+      },
+      event_category: category,
+      event_label: label,
+      value: value,
+      currency: currency,
+    });
+
+    // Fallback direct GA4 if still present
     if ((window as any).gtag) {
       (window as any).gtag("event", action, {
         event_category: category,

@@ -231,35 +231,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             ],
           }),
         },
-        ...(d.ga4
+        ...(d.googleAdsId && !d.ga4
           ? [
               {
-                src: `https://www.googletagmanager.com/gtag/js?id=${d.ga4}`,
-                async: true,
-              },
-              {
                 children: `
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${d.ga4}', { 'debug_mode': true });
-              `,
-              },
-            ]
-          : []),
-        ...(d.googleAdsId
-          ? [
-              {
-                src: `https://www.googletagmanager.com/gtag/js?id=${d.googleAdsId}`,
-                async: true,
-              },
-              {
-                children: `
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', '${d.googleAdsId}');
-                // Armazenar IDs para uso no analytics.ts
                 window.__GOOGLE_ADS_ID = '${d.googleAdsId}';
                 window.__GOOGLE_ADS_PURCHASE_LABEL = '${d.googleAdsPurchaseLabel || ""}';
               `,
