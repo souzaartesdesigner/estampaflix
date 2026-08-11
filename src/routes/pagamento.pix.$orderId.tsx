@@ -63,18 +63,23 @@ function PixCheckoutPage() {
 
   useEffect(() => {
     if (status === "paid" && data && !purchaseTracked) {
-      toast.success("Pagamento confirmado! Sua arte foi liberada.");
+      console.log("Pagamento confirmado, iniciando redirecionamento...");
+      setPurchaseTracked(true);
       
       const orderData = data as any;
       const items = orderData.items ? orderData.items : (orderData.artworks ? [orderData.artworks] : []);
       trackPurchase(orderId, items, orderData.amount_cents || 0);
-      setPurchaseTracked(true);
 
-      const t = setTimeout(() => {
-        // Redireciona sempre para a aba de downloads após compra com sucesso
-        navigate({ to: "/minha-conta", search: { tab: "downloads" } });
-      }, 1800);
-      return () => clearTimeout(t);
+      toast.success("Pagamento confirmado! Redirecionando...", {
+        duration: 3000,
+      });
+
+      // Redireciona imediatamente
+      navigate({ 
+        to: "/minha-conta", 
+        search: { tab: "downloads" },
+        replace: true 
+      });
     }
   }, [status, data, orderId, navigate, purchaseTracked]);
 
