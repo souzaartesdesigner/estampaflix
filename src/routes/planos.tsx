@@ -12,6 +12,7 @@ import { createCheckoutSession } from "@/lib/stripe.functions";
 import { toast } from "sonner";
 import { Check, Zap, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { trackBeginCheckout } from "@/lib/analytics";
 
 const plansQuery = queryOptions({
   queryKey: ["plans"],

@@ -18,6 +18,7 @@ import { createPixOrder } from "@/lib/mercadopago.functions";
 import { useCart } from "@/hooks/use-cart";
 import { formatBRL } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
+import { trackBeginCheckout } from "@/lib/analytics";
 
 type Props = {
   artwork: any;

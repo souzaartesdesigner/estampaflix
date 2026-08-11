@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { formatBRL } from "@/lib/format";
 import { Copy, Check, Clock, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { trackPurchase } from "@/lib/analytics";
+import { trackPurchase, trackBeginCheckout } from "@/lib/analytics";
 
 export const Route = createFileRoute("/pagamento/pix/$orderId")({
   head: () => ({
