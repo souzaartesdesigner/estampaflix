@@ -60,6 +60,7 @@ function PixCheckoutPage() {
   }, [expiresAt, now]);
 
   const [checkoutTracked, setCheckoutTracked] = useState(false);
+  const [purchaseTracked, setPurchaseTracked] = useState(false);
 
   useEffect(() => {
     if (status === "pending" && data && !checkoutTracked) {
@@ -71,17 +72,22 @@ function PixCheckoutPage() {
   }, [status, data, checkoutTracked]);
 
   useEffect(() => {
-    if (status === "paid") {
+    if (status === "paid" && data && !purchaseTracked) {
       toast.success("Pagamento confirmado! Sua arte foi liberada.");
       const slug = (data as any)?.artworks?.slug;
       
+      const orderData = data as any;
+      const items = orderData.items ? orderData.items : (orderData.artworks ? [orderData.artworks] : []);
+      trackPurchase(orderId, items, orderData.amount_cents || 0);
+      setPurchaseTracked(true);
+
       const t = setTimeout(() => {
         if (slug) navigate({ to: "/artes/$slug", params: { slug } });
         else navigate({ to: "/minha-conta", search: { tab: "orders" } });
       }, 1800);
       return () => clearTimeout(t);
     }
-  }, [status, data, navigate]);
+  }, [status, data, orderId, navigate, purchaseTracked]);
 
   const qrCode = (data as any)?.pix_qr_code as string | undefined;
   const qrCodeBase64 = (data as any)?.pix_qr_code_base64 as string | undefined;

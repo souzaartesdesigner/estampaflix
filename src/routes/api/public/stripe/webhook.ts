@@ -1,5 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+// Purchase tracking for subscriptions is usually handled client-side after successful redirect 
+// or server-side if using Server-Side GTM. In this project we use window.dataLayer.
+// The purchase event will be triggered on the success page after Stripe redirect.
+
 export const Route = createFileRoute("/api/public/stripe/webhook")({
   server: {
     handlers: {
