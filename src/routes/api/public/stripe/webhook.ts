@@ -66,6 +66,7 @@ export const Route = createFileRoute("/api/public/stripe/webhook")({
                   user_id: userId,
                   plan_id: planId,
                   stripe_subscription_id: subscriptionId,
+                  stripe_checkout_session_id: session.id, // Store session ID for easier client-side lookup
                   status: mapStatus(sub.status),
                   credits_remaining: credits,
                   current_period_start: new Date((sub as any).current_period_start * 1000).toISOString(),
