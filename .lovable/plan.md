@@ -5,26 +5,24 @@ type: feature
 ---
 
 # Problemas Identificados
-1. **Travamento no Redirecionamento**: O `useEffect` no componente `PixCheckoutPage` (`src/routes/pagamento.pix.$orderId.tsx`) não está processando corretamente a transição de estado após o pagamento ser confirmado via polling, ou o estado `status` não está sendo atualizado de forma reativa pelo TanStack Query no momento esperado.
-2. **Atribuição Incorreta de Downloads**: A função `grant_order_downloads` no PostgreSQL (`supabase/migrations/20260718142421_...sql`) insere registros na tabela `downloads` usando o `user_id` do pedido, mas as RLS policies ou a lógica de chamada podem estar permitindo efeitos colaterais. O usuário relatou que o download "vem para a conta do admin", o que sugere que o admin ganha acesso ao item ou a visualização de downloads está misturada. No entanto, a causa mais provável é que o admin está testando e a função SQL está funcionando corretamente para o `user_id` do pedido, mas talvez o redirecionamento ou a visualização no admin dê a entender que o download é dele.
-3. **Segurança**: A função `grant_order_downloads` é `SECURITY DEFINER`, o que é correto para contornar RLS ao liberar downloads, mas precisamos garantir que ela só seja executada por quem tem permissão e para o usuário correto.
+1. **Travamento no Redirecionamento**: O redirecionamento na página de checkout Pix não está sendo disparado de forma confiável após a confirmação do pagamento.
+2. **Atribuição Incorreta de Downloads**: Ao marcar um pedido como pago no admin, a arte está sendo liberada para o administrador em vez do cliente (ou o administrador está vendo os downloads do cliente).
 
 # Plano de Ação
-1. **Correção do Redirecionamento**:
-   - Ajustar `src/routes/pagamento.pix.$orderId.tsx` para garantir que o redirecionamento ocorra assim que o polling detectar `status === 'paid'`.
-   - Adicionar logs de depuração client-side para rastrear a mudança de status.
-   - Garantir que o `navigate` use a rota absoluta e a aba correta.
+1. **Página de Checkout Pix (`src/routes/pagamento.pix.$orderId.tsx`)**:
+   - Refatorar a lógica de monitoramento de status para garantir que o redirecionamento ocorra imediatamente após a detecção do status `paid`.
+   - Melhorar o tratamento do estado de polling para evitar loops ou estados inconsistentes.
 
-2. **Correção da Lógica de Download**:
-   - Revisar a função `grant_order_downloads` para garantir que ela não tenha ambiguidades de contexto.
-   - No painel admin (`src/routes/_authenticated/admin/pedidos.$id.tsx`), verificar a chamada do RPC.
-   - Investigar por que o admin "ganha" o download. Se o admin clica em "Marcar como pago", a função libera para o `user_id` do pedido. Se o admin *também* vê esse download em sua própria conta, pode haver um bug na query de exibição de downloads na página do usuário (`/minha-conta`) que não filtra corretamente pelo `auth.uid()` ou o cache está sujo.
+2. **Administração de Pedidos (`src/routes/_authenticated/admin/pedidos.$id.tsx`)**:
+   - Verificar se a chamada RPC `grant_order_downloads` está passando os parâmetros corretos.
+   - Investigar se há algum conflito de sessão ou cache que faça o admin ver os downloads liberados como se fossem seus.
 
-3. **Verificação de RLS e Queries**:
-   - Verificar a política de SELECT na tabela `public.downloads`.
-   - Verificar a query na aba de downloads do usuário.
+3. **Função de Banco de Dados (`grant_order_downloads`)**:
+   - Garantir que a função SQL use explicitamente o `user_id` da tabela `orders` e não dependa de contextos de sessão que possam ser confundidos (como `auth.uid()` se usado incorretamente dentro da lógica de inserção).
 
-# Arquivos a serem modificados
-- `src/routes/pagamento.pix.$orderId.tsx`
-- `src/routes/_authenticated/admin/pedidos.$id.tsx`
-- `src/lib/mercadopago.functions.ts` (para garantir retorno consistente de status)
+4. **Visualização de Downloads (`src/routes/_authenticated/minha-conta.tsx` ou similar)**:
+   - Verificar se a query que lista as artes para download filtra rigorosamente pelo `auth.uid()` do usuário logado.
+
+# Validação
+- Simular fluxos de confirmação de pagamento.
+- Verificar a liberação de artes no banco de dados para IDs específicos de usuários.
