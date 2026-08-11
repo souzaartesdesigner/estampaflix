@@ -53,7 +53,7 @@ function Dashboard() {
 
   const { data: downloads = [] } = useQuery({
     queryKey: ["my-downloads", user.id],
-    queryFn: async () => (await supabase.from("downloads").select("*, artworks(id,slug,title,preview_url,file_path,translations)").order("last_downloaded_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await supabase.from("downloads").select("*, artworks(id,slug,title,preview_url,file_path,translations)").eq("user_id", user.id).order("last_downloaded_at", { ascending: false })).data ?? [],
   });
 
   const { data: orders = [] } = useQuery({
