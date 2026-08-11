@@ -50,6 +50,15 @@ function Planos() {
         window.location.href = `/auth?redirect=${encodeURIComponent("/planos")}`;
         return;
       }
+      const plan = plans.find(p => p.id === planId);
+      if (plan) {
+        trackBeginCheckout([{
+          item_id: plan.id,
+          item_name: plan.name,
+          price: plan.price_cents / 100,
+          quantity: 1
+        }], plan.price_cents);
+      }
       const { url } = await checkoutFn({ data: { planId } });
       if (url) window.location.href = url;
       else throw new Error(t("plans.checkoutUrlMissing"));

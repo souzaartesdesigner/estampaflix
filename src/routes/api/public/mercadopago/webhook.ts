@@ -3,6 +3,8 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 const MP_API = "https://api.mercadopago.com";
 
+import { trackPurchase } from "@/lib/analytics";
+
 export const Route = createFileRoute("/api/public/mercadopago/webhook")({
   server: {
     handlers: {
@@ -130,6 +132,12 @@ export const Route = createFileRoute("/api/public/mercadopago/webhook")({
 
             const { sendOrderPaidEmail } = await import("@/lib/order-emails.server");
             await sendOrderPaidEmail(orderRow.id);
+
+            // Track purchase server-side (for GTM/GA4 if it works with Server-Side GTM, 
+            // but here we are pushing to window.dataLayer on client side usually.
+            // Since this is a server function, we can't push to window.dataLayer.
+            // But the request asked to maintain strictly to payment approval.
+            // We'll keep the client-side trackPurchase for Pix as it happens when status changes to 'paid'.
           }
 
           return new Response("ok");
