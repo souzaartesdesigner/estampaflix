@@ -51,9 +51,17 @@ function OrderDetail() {
 
   const markPaid = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("orders").update({ status: "paid", paid_at: new Date().toISOString() }).eq("id", id);
-      if (error) throw error;
-      const { error: rpcErr } = await supabase.rpc("grant_order_downloads", { _order_id: id });
+      // Primeiro atualiza o status para pago
+      const { error: updateErr } = await supabase.from("orders").update({ 
+        status: "paid", 
+        paid_at: new Date().toISOString() 
+      }).eq("id", id);
+      if (updateErr) throw updateErr;
+
+      // Chama a RPC para liberar os downloads para o CLIENTE do pedido
+      const { error: rpcErr } = await supabase.rpc("grant_order_downloads", { 
+        _order_id: id 
+      });
       if (rpcErr) throw rpcErr;
     },
     onSuccess: () => { toast.success("Pedido marcado como pago e downloads liberados"); qc.invalidateQueries({ queryKey: ["admin-order", id] }); },
