@@ -27,11 +27,6 @@ function CartPage() {
   const validateCoupon = useServerFn(validateCouponFn);
   const { t } = useI18n();
 
-  useEffect(() => {
-    if (cart.items.length > 0) {
-      trackBeginCheckout(cart.items, cart.total);
-    }
-  }, [cart.items.length, cart.total]);
 
   const [couponInput, setCouponInput] = useState("");
   const [applied, setApplied] = useState<{ code: string; discountCents: number } | null>(null);
@@ -65,6 +60,7 @@ function CartPage() {
 
   const checkoutMut = useMutation({
     mutationFn: async () => {
+      trackBeginCheckout(cart.items, cart.total);
       return await createPix({ data: { cartCheckout: true, couponCode: applied?.code ?? null } });
     },
     onSuccess: (r) => navigate({ to: "/pagamento/pix/$orderId", params: { orderId: r.orderId } }),

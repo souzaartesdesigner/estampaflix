@@ -18,6 +18,7 @@ import { createPixOrder } from "@/lib/mercadopago.functions";
 import { useCart } from "@/hooks/use-cart";
 import { formatBRL } from "@/lib/format";
 import { useI18n } from "@/lib/i18n";
+import { trackBeginCheckout } from "@/lib/analytics";
 
 type Props = {
   artwork: any;
@@ -110,6 +111,7 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
         navigate({ to: "/auth" });
         throw new Error("not_authenticated");
       }
+      trackBeginCheckout([artwork], artwork.price_cents);
       return await createPix({ data: { artworkId: artwork.id } });
     },
     onSuccess: (res) => {

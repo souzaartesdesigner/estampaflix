@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { formatBRL } from "@/lib/format";
 import { Copy, Check, Clock, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { trackPurchase } from "@/lib/analytics";
+import { trackPurchase, trackBeginCheckout } from "@/lib/analytics";
 
 export const Route = createFileRoute("/pagamento/pix/$orderId")({
   head: () => ({
@@ -59,17 +59,27 @@ function PixCheckoutPage() {
     return `${m}:${s.toString().padStart(2, "0")}`;
   }, [expiresAt, now]);
 
+  const [checkoutTracked, setCheckoutTracked] = useState(false);
+  const [purchaseTracked, setPurchaseTracked] = useState(false);
+
   useEffect(() => {
-    if (status === "paid") {
+    if (status === "pending" && data && !checkoutTracked) {
+      const orderData = data as any;
+      const items = orderData.items ? orderData.items : (orderData.artworks ? [orderData.artworks] : []);
+      trackBeginCheckout(items, orderData.amount_cents || 0);
+      setCheckoutTracked(true);
+    }
+  }, [status, data, checkoutTracked]);
+
+  useEffect(() => {
+    if (status === "paid" && data && !purchaseTracked) {
       toast.success("Pagamento confirmado! Sua arte foi liberada.");
       const slug = (data as any)?.artworks?.slug;
       
-      // Track purchase
-      if (data) {
-        const orderData = data as any;
-        const items = orderData.items ? orderData.items : (orderData.artworks ? [orderData.artworks] : []);
-        trackPurchase(orderId, items, orderData.amount_cents || 0);
-      }
+      const orderData = data as any;
+      const items = orderData.items ? orderData.items : (orderData.artworks ? [orderData.artworks] : []);
+      trackPurchase(orderId, items, orderData.amount_cents || 0);
+      setPurchaseTracked(true);
 
       const t = setTimeout(() => {
         if (slug) navigate({ to: "/artes/$slug", params: { slug } });
@@ -77,7 +87,7 @@ function PixCheckoutPage() {
       }, 1800);
       return () => clearTimeout(t);
     }
-  }, [status, data, navigate]);
+  }, [status, data, orderId, navigate, purchaseTracked]);
 
   const qrCode = (data as any)?.pix_qr_code as string | undefined;
   const qrCodeBase64 = (data as any)?.pix_qr_code_base64 as string | undefined;

@@ -12,6 +12,7 @@ import { createCheckoutSession } from "@/lib/stripe.functions";
 import { toast } from "sonner";
 import { Check, Zap, Loader2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { trackBeginCheckout } from "@/lib/analytics";
 
 const plansQuery = queryOptions({
   queryKey: ["plans"],
@@ -49,6 +50,15 @@ function Planos() {
       if (!userData.user) {
         window.location.href = `/auth?redirect=${encodeURIComponent("/planos")}`;
         return;
+      }
+      const plan = plans.find(p => p.id === planId);
+      if (plan) {
+        trackBeginCheckout([{
+          item_id: plan.id,
+          item_name: plan.name,
+          price: plan.price_cents / 100,
+          quantity: 1
+        }], plan.price_cents);
       }
       const { url } = await checkoutFn({ data: { planId } });
       if (url) window.location.href = url;
