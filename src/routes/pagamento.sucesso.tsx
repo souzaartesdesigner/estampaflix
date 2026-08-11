@@ -25,24 +25,16 @@ function Sucesso() {
     queryFn: async () => {
       // Small delay to ensure webhook processed
       await new Promise(r => setTimeout(r, 2000));
-      const { data } = await supabase
+      
+      const { data: userSub } = await supabase
         .from("subscriptions")
         .select("*, plans(*)")
-        .eq("stripe_checkout_session_id", session_id)
+        .eq("status", "active")
+        .order('created_at', { ascending: false })
+        .limit(1)
         .maybeSingle();
       
-      if (!data) {
-        // Fallback: just get the latest active sub for this user
-        const { data: userSub } = await supabase
-          .from("subscriptions")
-          .select("*, plans(*)")
-          .eq("status", "active")
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        return userSub;
-      }
-      return data;
+      return userSub;
     }
   });
 
