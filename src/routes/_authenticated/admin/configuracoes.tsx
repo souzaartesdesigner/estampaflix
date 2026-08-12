@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Save, Upload as UploadIcon, Palette, Phone, Search as SearchIcon, FileText } from "lucide-react";
+import { Save, Upload as UploadIcon, Palette, Phone, Search as SearchIcon, FileText, Zap } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/configuracoes")({ component: Configuracoes });
 
