@@ -35,8 +35,8 @@ export const Route = createFileRoute("/catalogo")({
     }
     return null;
   },
-  head: ({ deps, context }) => {
-    const filters = (deps as any).search as CatalogSearch;
+  head: ({ loaderDeps, context }) => {
+    const filters = (loaderDeps as any).search as CatalogSearch;
     const catSlug = filters.categoria;
     
     // Tentar pegar do cache se disponível
