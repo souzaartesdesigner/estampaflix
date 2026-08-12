@@ -37,35 +37,51 @@ function normalizeWhatsApp(raw: string | null | undefined) {
 }
 
 export const Route = createFileRoute("/suporte")({
-  head: () => ({
-    meta: [
-      { title: "Suporte e perguntas frequentes — Estampa Flix" },
-      { name: "description", content: "Tire dúvidas sobre assinatura, créditos, licença comercial e downloads na Estampa Flix, ou fale com nosso time pelo formulário de contato." },
-      { property: "og:title", content: "Suporte — Estampa Flix" },
-      { property: "og:description", content: "Perguntas frequentes sobre planos, créditos e licença de uso, além de canal direto com a equipe da Estampa Flix." },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://estampaflix.com/suporte" },
-      { name: "keywords", content: "suporte estampa flix, dúvidas sublimação, como baixar artes, licença comercial" },
-    ],
-    links: [{ rel: "canonical", href: "https://estampaflix.com/suporte" }],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: [
-            { "@type": "Question", name: "Como funciona a assinatura?", acceptedAnswer: { "@type": "Answer", text: "Você escolhe um plano (Lite, Pro ou Plus), ganha créditos mensais para baixar as artes que quiser e a assinatura renova automaticamente todo mês." } },
-            { "@type": "Question", name: "Posso usar as artes comercialmente?", acceptedAnswer: { "@type": "Answer", text: "Sim. Todos os planos incluem licença de uso comercial e você pode aplicar em produtos que vender." } },
-            { "@type": "Question", name: "Downloads repetidos consomem créditos?", acceptedAnswer: { "@type": "Answer", text: "Não. Se você já baixou uma arte antes, pode baixar de novo pelo seu histórico sem gastar novos créditos." } },
-            { "@type": "Question", name: "E se eu ficar sem créditos no meio do mês?", acceptedAnswer: { "@type": "Answer", text: "Você pode fazer upgrade para um plano maior a qualquer momento, ou comprar artes avulsas." } },
-            { "@type": "Question", name: "Como cancelo minha assinatura?", acceptedAnswer: { "@type": "Answer", text: "Pela sua área do cliente em Minha Assinatura, com um clique. Sem burocracia." } },
-            { "@type": "Question", name: "Qual a qualidade dos arquivos?", acceptedAnswer: { "@type": "Answer", text: "Todas as artes vêm em alta resolução (300 DPI), prontas para sublimação, DTF e impressão profissional." } },
-          ],
-        }),
+  loader: async ({ context }) => {
+    const settings = await context.queryClient.ensureQueryData({
+      queryKey: ["site-settings"],
+      queryFn: async () => {
+        const { data } = await (supabase as any).from("site_settings").select("*").eq("id", true).maybeSingle();
+        return data;
       },
-    ],
-  }),
+    });
+    return { settings };
+  },
+  head: ({ loaderData }) => {
+    const settings = (loaderData as any)?.settings;
+    const title = "Suporte e perguntas frequentes — Estampa Flix";
+    const description = "Tire dúvidas sobre assinatura, créditos, licença comercial e downloads na Estampa Flix, ou fale com nosso time pelo formulário de contato.";
+    
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: "Suporte — Estampa Flix" },
+        { property: "og:description", content: "Perguntas frequentes sobre planos, créditos e licença de uso, além de canal direto com a equipe da Estampa Flix." },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: "https://estampaflix.com/suporte" },
+        { name: "keywords", content: "suporte estampa flix, dúvidas sublimação, como baixar artes, licença comercial" },
+      ],
+      links: [{ rel: "canonical", href: "https://estampaflix.com/suporte" }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              { "@type": "Question", name: "Como funciona a assinatura?", acceptedAnswer: { "@type": "Answer", text: "Você escolhe um plano (Lite, Pro ou Plus), ganha créditos mensais para baixar as artes que quiser e a assinatura renova automaticamente todo mês." } },
+              { "@type": "Question", name: "Posso usar as artes comercialmente?", acceptedAnswer: { "@type": "Answer", text: "Sim. Todos os planos incluem licença de uso comercial e você pode aplicar em produtos que vender." } },
+              { "@type": "Question", name: "Downloads repetidos consomem créditos?", acceptedAnswer: { "@type": "Answer", text: "Não. Se você já baixou uma arte antes, pode baixar de novo pelo seu histórico sem gastar novos créditos." } },
+              { "@type": "Question", name: "E se eu ficar sem créditos no meio do mês?", acceptedAnswer: { "@type": "Answer", text: "Você pode fazer upgrade para um plano maior a qualquer momento, ou comprar artes avulsas." } },
+              { "@type": "Question", name: "Como cancelo minha assinatura?", acceptedAnswer: { "@type": "Answer", text: "Pela sua área do cliente em Minha Assinatura, com um clique. Sem burocracia." } },
+              { "@type": "Question", name: "Qual a qualidade dos arquivos?", acceptedAnswer: { "@type": "Answer", text: "Todas as artes vêm em alta resolução (300 DPI), prontas para sublimação, DTF e impressão profissional." } },
+            ],
+          }),
+        },
+      ],
+    };
+  },
   component: Suporte,
 });
 
