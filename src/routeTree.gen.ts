@@ -33,7 +33,6 @@ import { Route as AuthenticatedCarrinhoRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as PagamentoPixOrderIdRouteImport } from './routes/pagamento.pix.$orderId'
-import { Route as ApiPublicTmpSetGscRouteImport } from './routes/api/public/tmp-set-gsc'
 import { Route as AuthenticatedAdminVendasRouteImport } from './routes/_authenticated/admin/vendas'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin/usuarios'
 import { Route as AuthenticatedAdminTagsRouteImport } from './routes/_authenticated/admin/tags'
@@ -176,11 +175,6 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
 const PagamentoPixOrderIdRoute = PagamentoPixOrderIdRouteImport.update({
   id: '/pagamento/pix/$orderId',
   path: '/pagamento/pix/$orderId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicTmpSetGscRoute = ApiPublicTmpSetGscRouteImport.update({
-  id: '/api/public/tmp-set-gsc',
-  path: '/api/public/tmp-set-gsc',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminVendasRoute =
@@ -361,7 +355,6 @@ export interface FileRoutesByFullPath {
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/admin/vendas': typeof AuthenticatedAdminVendasRoute
-  '/api/public/tmp-set-gsc': typeof ApiPublicTmpSetGscRoute
   '/pagamento/pix/$orderId': typeof PagamentoPixOrderIdRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
@@ -410,7 +403,6 @@ export interface FileRoutesByTo {
   '/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/admin/vendas': typeof AuthenticatedAdminVendasRoute
-  '/api/public/tmp-set-gsc': typeof ApiPublicTmpSetGscRoute
   '/pagamento/pix/$orderId': typeof PagamentoPixOrderIdRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
@@ -462,7 +454,6 @@ export interface FileRoutesById {
   '/_authenticated/admin/tags': typeof AuthenticatedAdminTagsRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/_authenticated/admin/vendas': typeof AuthenticatedAdminVendasRoute
-  '/api/public/tmp-set-gsc': typeof ApiPublicTmpSetGscRoute
   '/pagamento/pix/$orderId': typeof PagamentoPixOrderIdRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/pedidos/$id': typeof AuthenticatedAdminPedidosIdRoute
@@ -514,7 +505,6 @@ export interface FileRouteTypes {
     | '/admin/tags'
     | '/admin/usuarios'
     | '/admin/vendas'
-    | '/api/public/tmp-set-gsc'
     | '/pagamento/pix/$orderId'
     | '/admin/'
     | '/admin/pedidos/$id'
@@ -563,7 +553,6 @@ export interface FileRouteTypes {
     | '/admin/tags'
     | '/admin/usuarios'
     | '/admin/vendas'
-    | '/api/public/tmp-set-gsc'
     | '/pagamento/pix/$orderId'
     | '/admin'
     | '/admin/pedidos/$id'
@@ -614,7 +603,6 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/tags'
     | '/_authenticated/admin/usuarios'
     | '/_authenticated/admin/vendas'
-    | '/api/public/tmp-set-gsc'
     | '/pagamento/pix/$orderId'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/pedidos/$id'
@@ -645,7 +633,6 @@ export interface RootRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
   PagamentoSucessoRoute: typeof PagamentoSucessoRoute
   BlogIndexRoute: typeof BlogIndexRoute
-  ApiPublicTmpSetGscRoute: typeof ApiPublicTmpSetGscRoute
   PagamentoPixOrderIdRoute: typeof PagamentoPixOrderIdRoute
   ApiPublicMercadopagoWebhookRoute: typeof ApiPublicMercadopagoWebhookRoute
   ApiPublicStripeWebhookRoute: typeof ApiPublicStripeWebhookRoute
@@ -822,13 +809,6 @@ declare module '@tanstack/react-router' {
       path: '/pagamento/pix/$orderId'
       fullPath: '/pagamento/pix/$orderId'
       preLoaderRoute: typeof PagamentoPixOrderIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/tmp-set-gsc': {
-      id: '/api/public/tmp-set-gsc'
-      path: '/api/public/tmp-set-gsc'
-      fullPath: '/api/public/tmp-set-gsc'
-      preLoaderRoute: typeof ApiPublicTmpSetGscRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/vendas': {
@@ -1089,7 +1069,6 @@ const rootRouteChildren: RootRouteChildren = {
   BlogSlugRoute: BlogSlugRoute,
   PagamentoSucessoRoute: PagamentoSucessoRoute,
   BlogIndexRoute: BlogIndexRoute,
-  ApiPublicTmpSetGscRoute: ApiPublicTmpSetGscRoute,
   PagamentoPixOrderIdRoute: PagamentoPixOrderIdRoute,
   ApiPublicMercadopagoWebhookRoute: ApiPublicMercadopagoWebhookRoute,
   ApiPublicStripeWebhookRoute: ApiPublicStripeWebhookRoute,
