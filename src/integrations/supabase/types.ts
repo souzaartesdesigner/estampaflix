@@ -317,6 +317,7 @@ export type Database = {
       }
       categories: {
         Row: {
+          cover_alt: string | null
           cover_url: string | null
           created_at: string
           description: string | null
@@ -324,11 +325,16 @@ export type Database = {
           id: string
           name: string
           parent_id: string | null
+          seo_description: string | null
+          seo_footer_text: string | null
+          seo_keyword: string | null
+          seo_title: string | null
           slug: string
           sort_order: number
           translations: Json
         }
         Insert: {
+          cover_alt?: string | null
           cover_url?: string | null
           created_at?: string
           description?: string | null
@@ -336,11 +342,16 @@ export type Database = {
           id?: string
           name: string
           parent_id?: string | null
+          seo_description?: string | null
+          seo_footer_text?: string | null
+          seo_keyword?: string | null
+          seo_title?: string | null
           slug: string
           sort_order?: number
           translations?: Json
         }
         Update: {
+          cover_alt?: string | null
           cover_url?: string | null
           created_at?: string
           description?: string | null
@@ -348,6 +359,10 @@ export type Database = {
           id?: string
           name?: string
           parent_id?: string | null
+          seo_description?: string | null
+          seo_footer_text?: string | null
+          seo_keyword?: string | null
+          seo_title?: string | null
           slug?: string
           sort_order?: number
           translations?: Json
