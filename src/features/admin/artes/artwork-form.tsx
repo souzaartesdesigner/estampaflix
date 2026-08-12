@@ -9,8 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
-import { slugify } from "@/lib/format";
+import { slugify, brlToCents, centsToBRLInput } from "@/lib/format";
 import { FORMAT_SUGGESTIONS, normalizeFormat } from "@/features/catalog/catalog-constants";
+
 
 
 type Props = {
@@ -45,7 +46,7 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
     file_path: editing?.file_path ?? "",
     external_url: "",
     file_format: editing?.file_format ?? "png",
-    price_cents: editing?.price_cents ?? 990,
+    price_brl: centsToBRLInput(editing?.price_cents ?? 990),
     credit_cost: editing?.credit_cost ?? 1,
     license_type: editing?.license_type ?? "premium",
     is_published: editing?.is_published ?? true,
@@ -59,8 +60,7 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
     alt_text: editing?.alt_text ?? "",
     noindex: editing?.noindex ?? false,
     tech_specs: editing?.tech_specs ?? "",
-    resolution: editing?.resolution ?? "",
-    dimensions: editing?.dimensions ?? "",
+
     usage_instructions: editing?.usage_instructions ?? "",
     license_text: editing?.license_text ?? "",
     translations: (editing?.translations ?? {}) as Record<string, { title?: string; description?: string }>,
@@ -144,13 +144,14 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         file_path,
         external_url,
         file_format: normalizeFormat(form.file_format) || null,
-        price_cents: Number(form.price_cents),
+        price_cents: brlToCents(form.price_brl),
+
         credit_cost: Number(form.credit_cost),
         license_type: form.license_type === "free" ? "free" : "premium",
         is_published: form.is_published,
         is_featured: form.is_featured,
         is_trending: form.is_trending,
-        colors: form.colors.split(",").map((s: string) => s.trim()).filter(Boolean),
+        colors: [],
         gallery_urls,
         seo_title: form.seo_title?.trim() || null,
         seo_description: form.seo_description?.trim() || null,
@@ -158,10 +159,11 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         alt_text: form.alt_text?.trim() || null,
         noindex: !!form.noindex,
         tech_specs: form.tech_specs?.trim() || null,
-        resolution: form.resolution?.trim() || null,
-        dimensions: form.dimensions?.trim() || null,
+        resolution: null,
+        dimensions: null,
         usage_instructions: form.usage_instructions?.trim() || null,
         license_text: form.license_text?.trim() || null,
+
         translations: form.translations,
       };
 
@@ -262,16 +264,6 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
 
           <div className="grid gap-3 rounded-lg border border-border/60 p-4">
             <Label>Detalhes da arte</Label>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="grid gap-1">
-                <Label className="text-xs text-muted-foreground">Resolução</Label>
-                <Input value={form.resolution} onChange={(e) => setForm({ ...form, resolution: e.target.value })} placeholder="Ex.: 300 DPI" />
-              </div>
-              <div className="grid gap-1">
-                <Label className="text-xs text-muted-foreground">Dimensões</Label>
-                <Input value={form.dimensions} onChange={(e) => setForm({ ...form, dimensions: e.target.value })} placeholder="Ex.: 4000 x 4000 px" />
-              </div>
-            </div>
             <div className="grid gap-1">
               <Label className="text-xs text-muted-foreground">Especificações técnicas</Label>
               <Textarea rows={2} value={form.tech_specs} onChange={(e) => setForm({ ...form, tech_specs: e.target.value })} placeholder="Ex.: Arquivo vetorial editável, camadas separadas, fontes convertidas" />
@@ -285,6 +277,7 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
               <Textarea rows={2} value={form.license_text} onChange={(e) => setForm({ ...form, license_text: e.target.value })} placeholder="Deixe vazio para usar a licença comercial padrão do site." />
             </div>
           </div>
+
 
 
           <div className="grid gap-2 rounded-lg border border-border/60 p-4">
@@ -332,9 +325,9 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
 
           </div>
           <div className="grid grid-cols-3 gap-4">
-            <div className="grid gap-2"><Label>Preço (centavos)</Label><Input type="number" value={form.price_cents} onChange={(e) => setForm({ ...form, price_cents: e.target.value })} required /></div>
+            <div className="grid gap-2"><Label>Preço (R$)</Label><Input value={form.price_brl} onChange={(e) => setForm({ ...form, price_brl: e.target.value })} placeholder="Ex: 15,00" required /></div>
             <div className="grid gap-2"><Label>Custo em créditos</Label><Input type="number" min={0} value={form.credit_cost} onChange={(e) => setForm({ ...form, credit_cost: e.target.value })} required /></div>
-            <div className="grid gap-2"><Label>Cores (vírgula)</Label><Input value={form.colors} onChange={(e) => setForm({ ...form, colors: e.target.value })} placeholder="black,white,red" /></div>
+
           </div>
           <div className="grid gap-2">
             <Label>Imagem de preview (upload ou URL)</Label>

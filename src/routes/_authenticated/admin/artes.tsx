@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { brlToCents } from "@/lib/format";
+
 import { ArtworkForm } from "@/features/admin/artes/artwork-form";
 import { ArtworksTable } from "@/features/admin/artes/artworks-table";
 
@@ -25,7 +27,7 @@ function Artes() {
 
   const { data: artworks = [] } = useQuery({
     queryKey: ["admin-artworks"],
-    queryFn: async () => (await supabase.from("artworks").select("id,slug,title,description,category_id,preview_url,file_path,file_format,colors,price_cents,license_type,is_published,is_featured,is_trending,download_count,view_count,created_at,updated_at,credit_cost,gallery_urls,translations,featured_order,seo_title,seo_description,seo_keyword,product_code,alt_text,noindex,tech_specs,resolution,dimensions,usage_instructions,license_text, categories!artworks_category_id_fkey(name), artwork_categories(category_id)").order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => (await supabase.from("artworks").select("id,slug,title,description,category_id,preview_url,file_path,file_format,colors,price_cents,license_type,is_published,is_featured,is_trending,download_count,view_count,created_at,updated_at,credit_cost,gallery_urls,translations,featured_order,seo_title,seo_description,seo_keyword,product_code,alt_text,noindex,tech_specs,usage_instructions,license_text, categories!artworks_category_id_fkey(name), artwork_categories(category_id)").order("created_at", { ascending: false })).data ?? [],
   });
   const { data: categories = [] } = useQuery({
     queryKey: ["admin-categories"],
@@ -89,9 +91,10 @@ function Artes() {
 
   function applyBulk() {
     if (bulkAction === "price") {
-      const cents = Math.round(parseFloat(bulkValue.replace(",", ".")) * 100);
-      if (!Number.isFinite(cents) || cents < 0) return toast.error("Preço inválido");
+      const cents = brlToCents(bulkValue);
+      if (cents < 0) return toast.error("Preço inválido");
       bulkUpdate.mutate({ price_cents: cents });
+
     } else if (bulkAction === "category") {
       if (!bulkValue) return toast.error("Selecione a categoria");
       bulkAddCategory.mutate(bulkValue);

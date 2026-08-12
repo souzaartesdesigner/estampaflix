@@ -1,13 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { formatBRL, formatDate } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Eye, Search, ShoppingBag, CreditCard, TrendingUp, Clock } from "lucide-react";
+import { Eye, Search, ShoppingBag, CreditCard, TrendingUp, Clock, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+
 
 export const Route = createFileRoute("/_authenticated/admin/vendas")({ component: Vendas });
 
@@ -20,7 +22,9 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 function Vendas() {
+  const qc = useQueryClient();
   const [q, setQ] = useState("");
+
   const [status, setStatus] = useState<string>("all");
   const [provider, setProvider] = useState<string>("all");
   const [tab, setTab] = useState<"orders" | "subs">("orders");
@@ -72,11 +76,33 @@ function Vendas() {
   const subRev = subs.filter((s: any) => s.status === "active").reduce((a: number, b: any) => a + (b.plans?.price_cents ?? 0), 0);
   const avgTicket = paidOrders.length ? Math.round(orderRev / paidOrders.length) : 0;
 
+  const cleanup = useMutation({
+    mutationFn: async () => {
+      const resp = await fetch("/api/public/orders/cleanup-expired", { method: "POST" });
+      if (!resp.ok) throw new Error("Falha ao limpar pedidos");
+      return resp.json();
+    },
+    onSuccess: () => {
+      toast.success("Pedidos expirados foram cancelados");
+      qc.invalidateQueries({ queryKey: ["admin-sales-v2"] });
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-display text-2xl font-bold">Pedidos & Vendas</h1>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => cleanup.mutate()}
+          disabled={cleanup.isPending}
+        >
+          <Trash2 className="mr-2 h-4 w-4" /> Limpar PIX Expirados
+        </Button>
       </div>
+
 
       <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Metric icon={<ShoppingBag className="h-4 w-4" />} label="Receita avulsa" value={formatBRL(orderRev)} />

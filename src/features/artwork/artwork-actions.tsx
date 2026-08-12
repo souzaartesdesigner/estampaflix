@@ -14,6 +14,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { useUserSubscription } from "@/hooks/use-user-subscription";
+
+
 import { createPixOrder } from "@/lib/mercadopago.functions";
 import { useCart } from "@/hooks/use-cart";
 import { formatBRL } from "@/lib/format";
@@ -79,7 +82,8 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
       return { url: signed.signedUrl, credits: row.credits_remaining, was_new: row.was_new, kind: "file" as const };
     },
     onSuccess: (res) => {
-      qc.invalidateQueries({ queryKey: ["my-subscription"] });
+      qc.invalidateQueries({ queryKey: ["user-subscription"] });
+
       qc.invalidateQueries({ queryKey: ["free-downloads-today"] });
       if (res.kind === "external") {
         window.open(res.url, "_blank", "noopener,noreferrer");
@@ -324,20 +328,9 @@ export function useArtworkSession() {
 }
 
 export function useMySubscription(userId: string | undefined) {
-  return useQuery({
-    queryKey: ["my-subscription", userId],
-    enabled: !!userId,
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("subscriptions")
-        .select("credits_remaining,status,current_period_end,plans(name,tier)")
-        .eq("user_id", userId!)
-        .eq("status", "active")
-        .maybeSingle();
-      return data;
-    },
-  });
+  return useUserSubscription(userId);
 }
+
 
 export function useArtworkOwnership(userId: string | undefined, artworkId: string) {
   return useQuery({
