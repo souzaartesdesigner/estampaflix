@@ -21,6 +21,7 @@ function Configuracoes() {
   const [logoUploading, setLogoUploading] = useState(false);
   const [faviconUploading, setFaviconUploading] = useState(false);
   const [ogUploading, setOgUploading] = useState(false);
+  const [homeOgUploading, setHomeOgUploading] = useState(false);
 
   useEffect(() => { if (settings) setForm(settings); }, [settings]);
 
@@ -33,10 +34,10 @@ function Configuracoes() {
     onError: (e: any) => toast.error(e.message),
   });
 
-  const FIELD_BY_KIND = { logo: "logo_url", favicon: "favicon_url", og: "og_image_url" } as const;
+  const FIELD_BY_KIND = { logo: "logo_url", favicon: "favicon_url", og: "og_image_url", home_og: "home_og_image_url" } as const;
 
-  async function upload(file: File, kind: "logo" | "favicon" | "og") {
-    const setter = kind === "logo" ? setLogoUploading : kind === "favicon" ? setFaviconUploading : setOgUploading;
+  async function upload(file: File, kind: "logo" | "favicon" | "og" | "home_og") {
+    const setter = kind === "logo" ? setLogoUploading : kind === "favicon" ? setFaviconUploading : kind === "og" ? setOgUploading : setHomeOgUploading;
     setter(true);
     try {
       const path = `settings/${kind}-${Date.now()}-${file.name}`;
@@ -166,6 +167,48 @@ function Configuracoes() {
                 <Textarea rows={4} className="font-mono text-xs" value={form.sitemap_extra_paths ?? ""} onChange={set("sitemap_extra_paths")} placeholder={"/promocoes\n/parceiros"} />
               </Field>
               <p className="text-xs text-muted-foreground">O sitemap já inclui automaticamente home, catálogo, planos, blog, categorias, artes publicadas (exceto as marcadas como "não indexar") e posts.  Veja em <a className="text-primary underline" href="/sitemap.xml" target="_blank" rel="noreferrer">/sitemap.xml</a>.</p>
+            </div>
+          </Section>
+
+          <Section title="SEO de Páginas Estáticas">
+            <div className="space-y-6">
+              <div className="rounded-lg border border-border/40 bg-muted/30 p-4">
+                <h3 className="mb-3 font-medium text-sm flex items-center gap-2">
+                  <Palette className="h-4 w-4 text-primary" /> Página Inicial (Home)
+                </h3>
+                <div className="grid gap-4">
+                  <Field label="Meta title da Home">
+                    <Input value={form.home_seo_title ?? ""} onChange={set("home_seo_title")} placeholder="Título personalizado para a home" />
+                  </Field>
+                  <Field label="Meta description da Home">
+                    <Textarea rows={2} value={form.home_seo_description ?? ""} onChange={set("home_seo_description")} placeholder="Descrição personalizada para a home" />
+                  </Field>
+                  <ImageField 
+                    label="Imagem Open Graph da Home (1200x630)" 
+                    url={form.home_og_image_url} 
+                    onFile={(f: File) => upload(f, "home_og")} 
+                    uploading={homeOgUploading} 
+                    onClear={() => setForm((s: any) => ({ ...s, home_og_image_url: null }))} 
+                  />
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-border/40 bg-muted/30 p-4">
+                <h3 className="mb-3 font-medium text-sm flex items-center gap-2">
+                  <Zap className="h-4 w-4 text-primary" /> Página de Planos
+                </h3>
+                <div className="grid gap-4">
+                  <Field label="Meta title dos Planos">
+                    <Input value={form.plans_seo_title ?? ""} onChange={set("plans_seo_title")} placeholder="Título personalizado para a página de planos" />
+                  </Field>
+                  <Field label="Meta description dos Planos">
+                    <Textarea rows={2} value={form.plans_seo_description ?? ""} onChange={set("plans_seo_description")} placeholder="Descrição personalizada para a página de planos" />
+                  </Field>
+                  <Field label="Palavra-chave foco (Planos)">
+                    <Input value={form.plans_seo_keyword ?? ""} onChange={set("plans_seo_keyword")} placeholder="ex: assinatura artes sublimação" />
+                  </Field>
+                </div>
+              </div>
             </div>
           </Section>
         </TabsContent>

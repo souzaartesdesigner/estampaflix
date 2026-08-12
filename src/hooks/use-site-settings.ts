@@ -32,6 +32,12 @@ export type SiteSettings = {
   robots_txt: string | null;
   sitemap_enabled: boolean;
   sitemap_extra_paths: string | null;
+  home_seo_title: string | null;
+  home_seo_description: string | null;
+  home_og_image_url: string | null;
+  plans_seo_title: string | null;
+  plans_seo_description: string | null;
+  plans_seo_keyword: string | null;
 };
 
 const DEFAULTS: SiteSettings = {
@@ -65,6 +71,12 @@ const DEFAULTS: SiteSettings = {
   robots_txt: null,
   sitemap_enabled: true,
   sitemap_extra_paths: null,
+  home_seo_title: null,
+  home_seo_description: null,
+  home_og_image_url: null,
+  plans_seo_title: null,
+  plans_seo_description: null,
+  plans_seo_keyword: null,
 };
 
 export function useSiteSettings() {
