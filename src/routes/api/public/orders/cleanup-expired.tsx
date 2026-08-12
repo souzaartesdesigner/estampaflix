@@ -10,10 +10,11 @@ export const Route = createFileRoute("/api/public/orders/cleanup-expired")({
         
         const { data, error } = await supabaseAdmin
           .from("orders")
-          .update({ status: "canceled" })
+          .update({ status: "failed" })
           .eq("status", "pending")
           .lt("pix_expires_at", now)
           .select("id");
+
 
         if (error) {
           console.error("Cleanup error:", error);
