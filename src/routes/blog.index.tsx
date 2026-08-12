@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { SiteLayout } from "@/components/site-layout";
-import { formatDate } from "@/lib/format";
-import { useI18n, tField } from "@/lib/i18n";
+ import { supabase } from "@/integrations/supabase/client";
+ import { SiteLayout } from "@/components/site-layout";
+ import { formatDate } from "@/lib/format";
+ import { useI18n, tField } from "@/lib/i18n";
+ import { useSiteSettings } from "@/hooks/use-site-settings";
+
 
 const blogQuery = queryOptions({
   queryKey: ["blog-list"],
@@ -12,28 +14,25 @@ const blogQuery = queryOptions({
 
 export const Route = createFileRoute("/blog/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(blogQuery),
-  head: () => ({
-    meta: [
-      { title: "Blog de sublimação e estamparia — Estampa Flix" },
-      {
-        name: "description",
-        content:
-          "Dicas, tutoriais e novidades sobre sublimação, DTF e artes digitais: como imprimir, escolher tecidos, precificar e vender produtos personalizados.",
-      },
-      {
-        name: "keywords",
-        content: "blog sublimação, tutorial DTF, como sublimar, estamparia digital, artes digitais",
-      },
-      { property: "og:title", content: "Blog de sublimação e estamparia — Estampa Flix" },
-      {
-        property: "og:description",
-        content: "Tutoriais e novidades sobre sublimação, DTF e artes digitais para estamparia.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://estampaflix.com/blog" },
-    ],
-    links: [{ rel: "canonical", href: "https://estampaflix.com/blog" }],
-  }),
+  head: () => {
+    const { data: settings } = useSiteSettings();
+    const title = settings?.blog_seo_title || "Blog de sublimação e estamparia — Estampa Flix";
+    const description = settings?.blog_seo_description || "Dicas, tutoriais e novidades sobre sublimação, DTF e artes digitais: como imprimir, escolher tecidos, precificar e vender produtos personalizados.";
+    const keywords = settings?.blog_seo_keyword || "blog sublimação, tutorial DTF, como sublimar, estamparia digital, artes digitais";
+
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { name: "keywords", content: keywords },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: "https://estampaflix.com/blog" },
+      ],
+      links: [{ rel: "canonical", href: "https://estampaflix.com/blog" }],
+    };
+  },
   component: Blog,
 });
 

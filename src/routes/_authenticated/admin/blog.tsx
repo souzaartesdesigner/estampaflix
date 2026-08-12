@@ -70,6 +70,10 @@ function PostForm({ open, onOpenChange, editing }: any) {
     content: editing?.content ?? "",
     author_name: editing?.author_name ?? "Equipe",
     is_published: editing?.is_published ?? true,
+    seo_title: editing?.seo_title ?? "",
+    seo_description: editing?.seo_description ?? "",
+    seo_keyword: editing?.seo_keyword ?? "",
+    cover_alt: editing?.cover_alt ?? "",
   });
   const [busy, setBusy] = useState(false);
 
@@ -98,6 +102,27 @@ function PostForm({ open, onOpenChange, editing }: any) {
           <div className="grid gap-2"><Label>URL da capa</Label><Input value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} /></div>
           <div className="grid gap-2"><Label>Autor</Label><Input value={form.author_name} onChange={(e) => setForm({ ...form, author_name: e.target.value })} /></div>
           <div className="grid gap-2"><Label>Conteúdo</Label><Textarea value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={10} required /></div>
+          
+          <div className="mt-6 space-y-4 rounded-lg border border-border/40 bg-muted/30 p-4">
+            <h3 className="font-medium text-sm">Configurações de SEO</h3>
+            <div className="grid gap-2">
+              <Label>Meta Title</Label>
+              <Input value={form.seo_title} onChange={(e) => setForm({ ...form, seo_title: e.target.value })} placeholder="Deixe vazio para usar o título do post" />
+            </div>
+            <div className="grid gap-2">
+              <Label>Meta Description</Label>
+              <Textarea value={form.seo_description} onChange={(e) => setForm({ ...form, seo_description: e.target.value })} rows={2} placeholder="Deixe vazio para usar o resumo" />
+            </div>
+            <div className="grid gap-2">
+              <Label>Frase-chave Foco</Label>
+              <Input value={form.seo_keyword} onChange={(e) => setForm({ ...form, seo_keyword: e.target.value })} placeholder="ex: tutorial sublimação caneca" />
+            </div>
+            <div className="grid gap-2">
+              <Label>Texto Alt da Imagem</Label>
+              <Input value={form.cover_alt} onChange={(e) => setForm({ ...form, cover_alt: e.target.value })} placeholder="Descrição da imagem para acessibilidade e SEO" />
+            </div>
+          </div>
+
           <label className="flex items-center gap-2"><Switch checked={form.is_published} onCheckedChange={(v) => setForm({ ...form, is_published: v })} /> Publicado</label>
           <Button type="submit" disabled={busy} className="w-full bg-gradient-brand text-brand-foreground">{busy ? "Salvando..." : "Salvar"}</Button>
         </form>
