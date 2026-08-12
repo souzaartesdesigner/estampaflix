@@ -206,7 +206,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { rel: "dns-prefetch", href: "https://wsrv.nl" },
         { rel: "dns-prefetch", href: "https://tkzkespxrbgudujvuecq.supabase.co" },
         { rel: "dns-prefetch", href: "https://estampaflix.com" },
-        { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Sora:wght@700;800&display=swap" },
+        { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Sora:wght@700;800&display=swap&display=swap" },
 
         { rel: "icon", type: "image/png", href: d.favicon },
       ],
