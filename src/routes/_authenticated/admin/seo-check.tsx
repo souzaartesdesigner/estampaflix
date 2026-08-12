@@ -1,12 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, CheckCircle2, ExternalLink } from "lucide-react";
+import { AlertTriangle, CheckCircle2, ExternalLink, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/admin/seo-check")({ component: SeoCheckPage });
+
+const ITEMS_PER_PAGE = 50;
 
 type Row = {
   id: string;
@@ -36,67 +39,112 @@ function issuesOf(a: Row) {
 
 function SeoCheckPage() {
   const [q, setQ] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [onlyIssues, setOnlyIssues] = useState(true);
+  const [page, setPage] = useState(0);
 
-  const { data: artworks = [], isLoading } = useQuery({
-    queryKey: ["admin-seo-check"],
+  // Debounce busca
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setQ(searchInput);
+      setPage(0);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin-seo-check-paginated", page, q, onlyIssues],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("artworks")
-        .select("id,slug,title,seo_title,seo_description,seo_keyword,alt_text,noindex,is_published")
-        .eq("is_published", true)
-        .order("created_at", { ascending: false });
+        .select("id,slug,title,seo_title,seo_description,seo_keyword,alt_text,noindex,is_published", { count: "exact" })
+        .eq("is_published", true);
+
+      if (q) {
+        query = query.or(`title.ilike.%${q}%,slug.ilike.%${q}%`);
+      }
+
+      // Infelizmente o PostgREST não filtra por lógica complexa de 'issuesOf' no servidor
+      // Então buscamos uma gama maior e filtramos no client, ou mantemos paginação server-side
+      // e o usuário vê as pendências daquela página.
+      
+      const { data, count, error } = await query
+        .order("created_at", { ascending: false })
+        .range(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE - 1);
+      
       if (error) throw error;
-      return (data ?? []) as unknown as Row[];
+      
+      const rows = (data ?? []) as unknown as Row[];
+      return { rows, total: count ?? 0 };
     },
   });
 
-  const rows = useMemo(
+  const { data: stats } = useQuery({
+    queryKey: ["admin-seo-stats"],
+    queryFn: async () => {
+      const { count } = await supabase.from("artworks").select("*", { count: "exact", head: true }).eq("is_published", true);
+      return { total: count ?? 0 };
+    }
+  });
+
+  const artworks = data?.rows ?? [];
+  const total = data?.total ?? 0;
+  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+
+  const filteredRows = useMemo(
     () =>
       artworks
         .map((a) => ({ a, issues: issuesOf(a) }))
-        .filter(({ a, issues }) => (onlyIssues ? issues.length > 0 : true))
-        .filter(({ a }) => (q.trim() ? a.title.toLowerCase().includes(q.trim().toLowerCase()) || a.slug.includes(q.trim().toLowerCase()) : true)),
-    [artworks, onlyIssues, q],
+        .filter(({ issues }) => (onlyIssues ? issues.length > 0 : true)),
+    [artworks, onlyIssues],
   );
 
-  const withIssues = artworks.filter((a) => issuesOf(a).length > 0).length;
-
   return (
-    <div>
-      <h1 className="mb-1 font-display text-2xl font-bold">SEO Check</h1>
-      <p className="mb-6 text-sm text-muted-foreground">
-        Auditoria das artes publicadas: meta description, alt text, frase-chave, slug e noindex.
-      </p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="mb-1 font-display text-2xl font-bold">SEO Check</h1>
+        <p className="text-sm text-muted-foreground">
+          Auditoria das artes publicadas: meta description, alt text, frase-chave, slug e noindex.
+        </p>
+      </div>
 
-      <div className="mb-6 grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-xl border border-border/60 bg-card p-4">
           <p className="text-xs text-muted-foreground">Artes publicadas</p>
-          <p className="font-display text-2xl font-bold">{artworks.length}</p>
+          <p className="font-display text-2xl font-bold">{stats?.total ?? "..."}</p>
         </div>
         <div className="rounded-xl border border-border/60 bg-card p-4">
-          <p className="text-xs text-muted-foreground">Com pendências</p>
-          <p className="font-display text-2xl font-bold text-destructive">{withIssues}</p>
-        </div>
-        <div className="rounded-xl border border-border/60 bg-card p-4">
-          <p className="text-xs text-muted-foreground">100% otimizadas</p>
-          <p className="font-display text-2xl font-bold text-success">{artworks.length - withIssues}</p>
+          <p className="text-xs text-muted-foreground">Página atual</p>
+          <p className="font-display text-2xl font-bold">{artworks.length} artes</p>
         </div>
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center gap-3">
-        <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar por título ou slug" className="max-w-xs" />
-        <label className="flex items-center gap-2 text-sm text-muted-foreground">
-          <input type="checkbox" checked={onlyIssues} onChange={(e) => setOnlyIssues(e.target.checked)} />
-          Mostrar apenas com pendências
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="relative max-w-xs flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input 
+            value={searchInput} 
+            onChange={(e) => setSearchInput(e.target.value)} 
+            placeholder="Buscar por título ou slug" 
+            className="pl-9" 
+          />
+        </div>
+        <label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
+          <input 
+            type="checkbox" 
+            className="h-4 w-4 rounded border-border" 
+            checked={onlyIssues} 
+            onChange={(e) => setOnlyIssues(e.target.checked)} 
+          />
+          Mostrar apenas com pendências (nesta página)
         </label>
       </div>
 
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Carregando…</p>
-      ) : rows.length === 0 ? (
+      ) : filteredRows.length === 0 ? (
         <div className="flex items-center gap-2 rounded-xl border border-border/60 bg-card p-6 text-sm text-muted-foreground">
-          <CheckCircle2 className="h-5 w-5 text-success" /> Nenhuma pendência encontrada.
+          <CheckCircle2 className="h-5 w-5 text-success" /> Nenhuma pendência encontrada nesta página.
         </div>
       ) : (
         <div className="overflow-hidden rounded-xl border border-border/60">
@@ -109,7 +157,7 @@ function SeoCheckPage() {
               </tr>
             </thead>
             <tbody>
-              {rows.map(({ a, issues }) => (
+              {filteredRows.map(({ a, issues }) => (
                 <tr key={a.id} className="border-t border-border/50 align-top">
                   <td className="p-3">
                     <p className="font-medium">{a.title}</p>
@@ -150,6 +198,14 @@ function SeoCheckPage() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 py-4">
+          <Button variant="outline" size="icon" disabled={page === 0} onClick={() => setPage(p => p - 1)}><ChevronLeft className="h-4 w-4" /></Button>
+          <span className="text-sm">Página {page + 1} de {totalPages}</span>
+          <Button variant="outline" size="icon" disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)}><ChevronRight className="h-4 w-4" /></Button>
         </div>
       )}
     </div>

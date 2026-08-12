@@ -50,9 +50,9 @@ export const Route = createFileRoute("/artes/$slug")({
       .replace(/\s+/g, " ")
       .trim();
     const fallback = `${loaderData.title} — arte digital em alta resolução (300 DPI) para sublimação, DTF e estamparia, com licença comercial na Estampa Flix.`;
-    const seoDesc = ((loaderData as any).seo_description ?? "").trim();
+    const seoDesc = ((loaderData as any).seo_description ?? "").trim().replace(/%%title%%/gi, loaderData.title);
     const description = clamp(seoDesc || (plainDesc.length >= 50 ? plainDesc : fallback), 158);
-    const rawTitle = ((loaderData as any).seo_title ?? "").trim() || loaderData.title;
+    const rawTitle = ((loaderData as any).seo_title ?? "").trim().replace(/%%title%%/gi, loaderData.title) || loaderData.title;
     // só acrescenta o complemento quando couber sem truncar
     const seoTitle = clamp(
       rawTitle.replace(/\s*[—-]\s*Estampa Flix\s*$/i, "").trim(),

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { Plus, Trash2, Eye, EyeOff, Tag, DollarSign } from "lucide-react";
+import { useMemo, useState, useEffect } from "react";
+import { Plus, Trash2, Eye, EyeOff, Tag, DollarSign, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,37 +15,77 @@ import { ArtworksTable } from "@/features/admin/artes/artworks-table";
 
 export const Route = createFileRoute("/_authenticated/admin/artes")({ component: Artes });
 
+const ITEMS_PER_PAGE = 30;
+
 function Artes() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
   const [selected, setSelected] = useState<string[]>([]);
+  
+  // States para paginação e busca server-side
   const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [page, setPage] = useState(0);
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+
   const [bulkAction, setBulkAction] = useState<"" | "price" | "category" | "credit_cost">("");
   const [bulkValue, setBulkValue] = useState<string>("");
   const [bulkOpen, setBulkOpen] = useState(false);
 
-  const { data: artworks = [] } = useQuery({
-    queryKey: ["admin-artworks"],
-    queryFn: async () => (await supabase.from("artworks").select("id,slug,title,description,category_id,preview_url,file_path,file_format,colors,price_cents,license_type,is_published,is_featured,is_trending,download_count,view_count,created_at,updated_at,credit_cost,gallery_urls,translations,featured_order,seo_title,seo_description,seo_keyword,product_code,alt_text,noindex,tech_specs,usage_instructions,license_text, categories!artworks_category_id_fkey(name), artwork_categories(category_id)").order("created_at", { ascending: false })).data ?? [],
-  });
+  // Debounce para busca
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearch(searchInput);
+      setPage(0);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
   const { data: categories = [] } = useQuery({
     queryKey: ["admin-categories"],
     queryFn: async () => (await supabase.from("categories").select("id,name,parent_id").order("name")).data ?? [],
   });
 
-  const filtered = useMemo(() => {
-    if (!search) return artworks;
-    const t = search.toLowerCase();
-    return artworks.filter((a: any) => a.title?.toLowerCase().includes(t) || a.categories?.name?.toLowerCase().includes(t));
-  }, [artworks, search]);
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin-artworks-paginated", page, search, categoryFilter, statusFilter],
+    queryFn: async () => {
+      let query = supabase
+        .from("artworks")
+        .select("id,slug,title,description,category_id,preview_url,file_path,file_format,colors,price_cents,license_type,is_published,is_featured,is_trending,download_count,view_count,created_at,updated_at,credit_cost,gallery_urls,translations,featured_order,seo_title,seo_description,seo_keyword,product_code,alt_text,noindex,tech_specs,usage_instructions,license_text, categories!artworks_category_id_fkey(name), artwork_categories(category_id)", { count: "exact" });
+
+      if (search) {
+        query = query.or(`title.ilike.%${search}%,product_code.ilike.%${search}%`);
+      }
+
+      if (categoryFilter !== "all") {
+        query = query.eq("category_id", categoryFilter);
+      }
+
+      if (statusFilter !== "all") {
+        query = query.eq("is_published", statusFilter === "published");
+      }
+
+      const { data, count, error } = await query
+        .order("created_at", { ascending: false })
+        .range(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE - 1);
+
+      if (error) throw error;
+      return { artworks: data ?? [], total: count ?? 0 };
+    },
+  });
+
+  const artworks = data?.artworks ?? [];
+  const total = data?.total ?? 0;
+  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
   const del = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("artworks").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-artworks"] }); toast.success("Arte excluída"); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-artworks-paginated"] }); toast.success("Arte excluída"); },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -54,7 +94,7 @@ function Artes() {
       const { error } = await (supabase.from("artworks") as any).update(patch).in("id", selected);
       if (error) throw error;
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-artworks"] }); toast.success("Artes atualizadas"); setSelected([]); setBulkOpen(false); setBulkValue(""); setBulkAction(""); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-artworks-paginated"] }); toast.success("Artes atualizadas"); setSelected([]); setBulkOpen(false); setBulkValue(""); setBulkAction(""); },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -65,20 +105,18 @@ function Artes() {
         { onConflict: "artwork_id,category_id" }
       );
       if (error) throw error;
-      // Define como principal quando a arte ainda não tem categoria principal
       await (supabase.from("artworks") as any).update({ category_id: categoryId }).in("id", selected).is("category_id", null);
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-artworks"] }); toast.success("Categoria adicionada"); setSelected([]); setBulkOpen(false); setBulkValue(""); setBulkAction(""); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-artworks-paginated"] }); toast.success("Categoria adicionada"); setSelected([]); setBulkOpen(false); setBulkValue(""); setBulkAction(""); },
     onError: (e: any) => toast.error(e.message),
   });
 
   const bulkDelete = useMutation({
-
     mutationFn: async () => {
       const { error } = await supabase.from("artworks").delete().in("id", selected);
       if (error) throw error;
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-artworks"] }); toast.success("Artes excluídas"); setSelected([]); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-artworks-paginated"] }); toast.success("Artes excluídas"); setSelected([]); },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -86,7 +124,7 @@ function Artes() {
     setSelected((s) => s.includes(id) ? s.filter((x) => x !== id) : [...s, id]);
   }
   function toggleAll() {
-    setSelected((s) => s.length === filtered.length ? [] : filtered.map((a: any) => a.id));
+    setSelected((s) => s.length === artworks.length ? [] : artworks.map((a: any) => a.id));
   }
 
   function applyBulk() {
@@ -94,7 +132,6 @@ function Artes() {
       const cents = brlToCents(bulkValue);
       if (cents < 0) return toast.error("Preço inválido");
       bulkUpdate.mutate({ price_cents: cents });
-
     } else if (bulkAction === "category") {
       if (!bulkValue) return toast.error("Selecione a categoria");
       bulkAddCategory.mutate(bulkValue);
@@ -106,19 +143,48 @@ function Artes() {
   }
 
   return (
-    <div>
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-2xl font-bold">Artes</h1>
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="font-display text-2xl font-bold">Artes</h1>
+          <p className="text-sm text-muted-foreground">Gerencie o seu catálogo de artes ({total} produtos)</p>
+        </div>
         <div className="flex gap-2">
-          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar…" className="w-56" />
           <Button onClick={() => { setEditing(null); setOpen(true); }} className="bg-gradient-brand text-brand-foreground">
             <Plus className="mr-2 h-4 w-4" /> Nova arte
           </Button>
         </div>
       </div>
 
+      <div className="grid gap-4 md:grid-cols-4">
+        <div className="relative md:col-span-2">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input 
+            value={searchInput} 
+            onChange={(e) => setSearchInput(e.target.value)} 
+            placeholder="Buscar por título ou código do produto…" 
+            className="pl-9" 
+          />
+        </div>
+        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+          <SelectTrigger><Filter className="mr-2 h-4 w-4" /><SelectValue placeholder="Categoria" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todas as categorias</SelectItem>
+            {categories.map((c: any) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger><SelectValue placeholder="Status" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os status</SelectItem>
+            <SelectItem value="published">Publicado</SelectItem>
+            <SelectItem value="draft">Rascunho</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       {selected.length > 0 && (
-        <div className="mb-4 flex flex-wrap items-center gap-2 rounded-xl border border-primary/40 bg-primary/5 p-3">
+        <div className="flex flex-wrap items-center gap-2 rounded-xl border border-primary/40 bg-primary/5 p-3">
           <span className="text-sm font-medium">{selected.length} selecionadas</span>
           <div className="ml-auto flex flex-wrap gap-2">
             <Button size="sm" variant="outline" onClick={() => bulkUpdate.mutate({ is_published: true })}><Eye className="mr-1 h-3 w-3" /> Publicar</Button>
@@ -132,14 +198,25 @@ function Artes() {
         </div>
       )}
 
-      <ArtworksTable
-        artworks={filtered}
-        onEdit={(a) => { setEditing(a); setOpen(true); }}
-        onDelete={(id) => del.mutate(id)}
-        selected={selected}
-        onToggle={toggle}
-        onToggleAll={toggleAll}
-      />
+      <div className="relative">
+        {isLoading && <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/50 backdrop-blur-sm">Carregando...</div>}
+        <ArtworksTable
+          artworks={artworks}
+          onEdit={(a) => { setEditing(a); setOpen(true); }}
+          onDelete={(id) => del.mutate(id)}
+          selected={selected}
+          onToggle={toggle}
+          onToggleAll={toggleAll}
+        />
+      </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 py-4">
+          <Button variant="outline" size="icon" disabled={page === 0} onClick={() => setPage(p => p - 1)}><ChevronLeft className="h-4 w-4" /></Button>
+          <span className="text-sm">Página {page + 1} de {totalPages}</span>
+          <Button variant="outline" size="icon" disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)}><ChevronRight className="h-4 w-4" /></Button>
+        </div>
+      )}
 
       {open && (
         <ArtworkForm key={editing?.id ?? "new"} open={open} onOpenChange={setOpen} editing={editing} categories={categories} />

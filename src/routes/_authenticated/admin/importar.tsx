@@ -129,6 +129,7 @@ function Importar() {
       const cImg = idx("Imagens");
       const cDlUrl = idx("URL do download 1");
       const cExtUrl = idx("URL externa");
+      const cSku = idx("SKU"); 
       const cFeat = idx("Em destaque?");
       // Yoast SEO (quando o CSV trouxer as metas)
       const findCol = (needle: string) =>
@@ -146,6 +147,7 @@ function Importar() {
       for (let r = 0; r < data.length; r++) {
         const row = data[r];
         const title = (row[cName] || "").trim();
+        const product_code = cSku >= 0 ? (row[cSku] || "").trim() : "";
         try {
           if (!title) throw new Error("Nome vazio");
 
@@ -188,13 +190,16 @@ function Importar() {
           // SEO (Yoast quando existir, senão gerado da descrição curta/longa)
           const shortDesc = cShort >= 0 ? stripHtml(row[cShort] || "").replace(/\s+/g, " ").trim() : "";
           const plainDesc = stripHtml(rawDesc).replace(/\s+/g, " ").trim();
-          const seo_title = (cSeoTitle >= 0 ? (row[cSeoTitle] || "").trim() : "") || `${title} — Estampa Flix`;
-          const seo_description =
-            (cSeoDesc >= 0 ? (row[cSeoDesc] || "").trim() : "") ||
-            (shortDesc || plainDesc || `${title}: arte digital em alta resolução para sublimação, DTF e estamparia com licença comercial.`);
-          const seo_keyword = (cSeoKw >= 0 ? (row[cSeoKw] || "").trim() : "") || title.toLowerCase();
+          
+          const rawSeoTitle = (cSeoTitle >= 0 ? (row[cSeoTitle] || "").trim() : "") || "%%title%% — Estampa Flix";
+          const rawSeoDesc = (cSeoDesc >= 0 ? (row[cSeoDesc] || "").trim() : "") || (shortDesc || plainDesc || "%%title%%: arte digital em alta resolução para sublimação, DTF e estamparia com licença comercial.");
+          const rawSeoKw = (cSeoKw >= 0 ? (row[cSeoKw] || "").trim() : "") || "%%title%%";
 
-          const baseSlug = slugify(title);
+          const cleanSeoTitle = rawSeoTitle.replace(/%%title%%/gi, title);
+          const cleanSeoDesc = rawSeoDesc.replace(/%%title%%/gi, title);
+          const cleanSeoKw = rawSeoKw.replace(/%%title%%/gi, title);
+
+          const baseSlug = product_code ? slugify(`${title}-${product_code}`) : slugify(title);
           // Check if already exists by slug
           const { data: existing } = await supabase.from("artworks").select("id,slug").eq("slug", baseSlug).maybeSingle();
           const slug = existing?.slug ?? (await uniqueSlug(baseSlug));
@@ -206,9 +211,10 @@ function Importar() {
             category_id,
             preview_url,
             gallery_urls,
-            seo_title: seo_title.slice(0, 70),
-            seo_description: seo_description.slice(0, 160),
-            seo_keyword: seo_keyword.slice(0, 120),
+            product_code: product_code || null,
+            seo_title: cleanSeoTitle.slice(0, 70),
+            seo_description: cleanSeoDesc.slice(0, 160),
+            seo_keyword: cleanSeoKw.slice(0, 120),
             file_path: null as string | null,
             external_url,
             file_format:
