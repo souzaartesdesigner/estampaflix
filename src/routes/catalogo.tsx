@@ -35,38 +35,20 @@ export const Route = createFileRoute("/catalogo")({
     }
     return null;
   },
-  head: ({ loaderDeps, context }) => {
-    const filters = (loaderDeps as any).search as CatalogSearch;
-    const catSlug = filters.categoria;
+  head: (args) => {
+    // Acessar via search validado se disponível no contexto do TanStack Start
+    const search = (args as any).search as CatalogSearch;
+    const catSlug = search?.categoria;
     
-    // Tentar pegar do cache se disponível
-    const queryClient = (context as any).queryClient;
-    const category = catSlug ? queryClient?.getQueryData(["category-seo", catSlug]) as any : null;
-
-    const title = category?.seo_title || (category ? `${category.name} — Estampa Flix` : "Catálogo de artes digitais — Estampa Flix");
-    const description = category?.seo_description || "Explore milhares de artes digitais prontas para sublimação, DTF e estamparia. Filtre por categoria, formato e cor e baixe em alta resolução.";
-    const image = category?.cover_url;
-
-    const meta = [
-      { title },
-      { name: "description", content: description },
-      { property: "og:title", content: title },
-      { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: `https://estampaflix.com/catalogo${catSlug ? `?categoria=${catSlug}` : ""}` },
-    ];
-
-    if (image) {
-      meta.push({ property: "og:image", content: image } as any);
-      meta.push({ name: "twitter:image", content: image } as any);
-    }
-
-    if (category?.seo_keyword) {
-      meta.push({ name: "keywords", content: category.seo_keyword } as any);
-    }
-
     return {
-      meta,
+      meta: [
+        { title: catSlug ? `${catSlug.charAt(0).toUpperCase() + catSlug.slice(1)} — Estampa Flix` : "Catálogo de artes digitais — Estampa Flix" },
+        { name: "description", content: "Explore milhares de artes digitais prontas para sublimação, DTF e estamparia. Filtre por categoria, formato e cor e baixe em alta resolução." },
+        { property: "og:title", content: catSlug ? `${catSlug.charAt(0).toUpperCase() + catSlug.slice(1)} — Estampa Flix` : "Catálogo de artes digitais — Estampa Flix" },
+        { property: "og:description", content: "Milhares de artes em 300 DPI para sublimação e DTF. Filtre por categoria, formato e cor e baixe com licença comercial." },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: `https://estampaflix.com/catalogo${catSlug ? `?categoria=${catSlug}` : ""}` },
+      ],
       links: [{ rel: "canonical", href: `https://estampaflix.com/catalogo${catSlug ? `?categoria=${catSlug}` : ""}` }],
     };
   },
