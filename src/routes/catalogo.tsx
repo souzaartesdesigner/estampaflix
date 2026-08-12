@@ -26,7 +26,7 @@ export const Route = createFileRoute("/catalogo")({
         queryFn: async () => {
           const { data } = await supabase
             .from("categories")
-            .select("name, slug, seo_title, seo_description, seo_keyword, cover_url, cover_alt, seo_footer_text")
+            .select("name, slug, seo_title, seo_description, seo_keyword, cover_url, cover_alt")
             .eq("slug", catSlug)
             .maybeSingle();
           return data;
@@ -238,14 +238,6 @@ function Catalogo() {
           />
         </div>
 
-        {currentCategory?.seo_footer_text && (
-          <section className="mt-12 border-t border-border/40 pt-12">
-            <div 
-              className="prose prose-invert max-w-none text-sm text-muted-foreground"
-              dangerouslySetInnerHTML={{ __html: currentCategory.seo_footer_text }}
-            />
-          </section>
-        )}
       </div>
     </SiteLayout>
   );
