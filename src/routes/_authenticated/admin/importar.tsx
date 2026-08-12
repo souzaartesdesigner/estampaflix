@@ -129,6 +129,7 @@ function Importar() {
       const cImg = idx("Imagens");
       const cDlUrl = idx("URL do download 1");
       const cExtUrl = idx("URL externa");
+      const cSku = idx("SKU"); // Adicionando busca pelo SKU/Código do Produto
       const cFeat = idx("Em destaque?");
       // Yoast SEO (quando o CSV trouxer as metas)
       const findCol = (needle: string) =>
@@ -146,6 +147,7 @@ function Importar() {
       for (let r = 0; r < data.length; r++) {
         const row = data[r];
         const title = (row[cName] || "").trim();
+        const product_code = cSku >= 0 ? (row[cSku] || "").trim() : "";
         try {
           if (!title) throw new Error("Nome vazio");
 
@@ -206,9 +208,10 @@ function Importar() {
             category_id,
             preview_url,
             gallery_urls,
-            seo_title: seo_title.slice(0, 70),
-            seo_description: seo_description.slice(0, 160),
-            seo_keyword: seo_keyword.slice(0, 120),
+            product_code: product_code || null,
+            seo_title: cleanSeoTitle.slice(0, 70),
+            seo_description: cleanSeoDesc.slice(0, 160),
+            seo_keyword: cleanSeoKw.slice(0, 120),
             file_path: null as string | null,
             external_url,
             file_format:
