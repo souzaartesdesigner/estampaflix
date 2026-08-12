@@ -8,12 +8,14 @@ export function PromoBanner() {
   const cms = useSiteContent("header_notice");
   const text = cms?.title || data?.promo_banner_text || "";
   const link = cms?.content || data?.promo_banner_link || "";
-  const [dismissed, setDismissed] = useState(false);
+  const [dismissed, setDismissed] = useState(true); // Default to true to avoid hydration mismatch
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const key = `promo-dismissed-${text}`;
       setDismissed(sessionStorage.getItem(key) === "1");
+    } else {
+      setDismissed(false); // On server, we want to render it if enabled
     }
   }, [text]);
 
@@ -39,7 +41,7 @@ export function PromoBanner() {
     </>
   );
 
-  const className = "flex items-center gap-2 bg-gradient-brand px-4 py-2 text-xs font-medium text-brand-foreground sm:text-sm";
+  const className = "flex min-h-[44px] items-center gap-2 bg-gradient-brand px-4 py-2 text-xs font-medium text-brand-foreground sm:text-sm";
 
   if (link) {
     return <a href={link} className={className}>{content}</a>;

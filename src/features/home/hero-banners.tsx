@@ -98,17 +98,17 @@ export function HeroBanners({ banners }: { banners: any[] }) {
               type="button"
               aria-label="Anterior"
               onClick={() => scrollBy(-1)}
-              className="absolute left-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-primary shadow ring-1 ring-border/60 backdrop-blur hover:bg-primary hover:text-primary-foreground"
+              className="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-primary shadow ring-1 ring-border/60 backdrop-blur hover:bg-primary hover:text-primary-foreground sm:h-12 sm:w-12"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-6 w-6" />
             </button>
             <button
               type="button"
               aria-label="Próximo"
               onClick={() => scrollBy(1)}
-              className="absolute right-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-primary shadow ring-1 ring-border/60 backdrop-blur hover:bg-primary hover:text-primary-foreground"
+              className="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-background/80 text-primary shadow ring-1 ring-border/60 backdrop-blur hover:bg-primary hover:text-primary-foreground sm:h-12 sm:w-12"
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-6 w-6" />
             </button>
             <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
               {banners.map((_, i) => (

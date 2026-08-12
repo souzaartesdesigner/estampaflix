@@ -82,7 +82,7 @@ export function SiteHeader() {
           <img
             src={settings?.logo_url || logoAsset.url}
             alt={settings?.site_name ?? "Estampa Flix"}
-            className="h-[33px] w-auto max-w-[160px] object-contain sm:h-[37px] sm:max-w-[180px]"
+            className="h-[33px] w-[114px] object-contain sm:h-[37px] sm:w-[128px]"
           />
         </Link>
 

@@ -31,6 +31,7 @@ export function HeroSection({ recent }: { recent: any[] }) {
             <Zap className="h-3 w-3" /> {t("home.badge")}
           </Badge>
           <h1 className="font-display text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+
             {heroCms?.title ? (
               heroCms.title
             ) : (
