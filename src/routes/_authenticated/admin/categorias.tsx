@@ -294,16 +294,6 @@ function EditCategory({ category, allCategories, onClose }: { category: any; all
               />
             </div>
 
-            <div className="grid gap-2">
-              <Label>Texto SEO de Rodapé (HTML/Rich Text)</Label>
-              <Textarea 
-                value={form.seo_footer_text} 
-                onChange={(e) => setForm({ ...form, seo_footer_text: e.target.value })} 
-                placeholder="Texto explicativo longo para rankeamento..."
-                rows={5}
-              />
-              <p className="text-[10px] text-muted-foreground">Suporta parágrafos e títulos básicos para o robô do Google.</p>
-            </div>
           </div>
 
           <Button type="submit" disabled={busy} className="w-full bg-gradient-brand text-brand-foreground">{busy ? "Salvando..." : "Salvar"}</Button>
