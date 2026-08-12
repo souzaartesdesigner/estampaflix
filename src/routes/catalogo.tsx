@@ -16,18 +16,42 @@ import { CatalogResults } from "@/features/catalog/catalog-results";
 
 export const Route = createFileRoute("/catalogo")({
   validateSearch: (search) => catalogSearchSchema.parse(search),
-  head: () => ({
-    meta: [
-      { title: "Catálogo de artes digitais — Estampa Flix" },
-      { name: "description", content: "Explore milhares de artes digitais prontas para sublimação, DTF e estamparia. Filtre por categoria, formato e cor e baixe em alta resolução." },
-      { property: "og:title", content: "Catálogo de artes digitais — Estampa Flix" },
-      { property: "og:description", content: "Milhares de artes em 300 DPI para sublimação e DTF. Filtre por categoria, formato e cor e baixe com licença comercial." },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://estampaflix.com/catalogo" },
-      { name: "keywords", content: "catálogo de artes para sublimação, estampas digitais prontas, arte para camiseta, arte para caneca, artes DTF, download de estampas" },
-    ],
-    links: [{ rel: "canonical", href: "https://estampaflix.com/catalogo" }],
-  }),
+  loaderDeps: ({ search }) => ({ search }),
+  loader: async ({ context: { queryClient }, deps: { search } }) => {
+    const filters = search as CatalogSearch;
+    if (filters.categoria) {
+      const catSlug = filters.categoria;
+      await queryClient.ensureQueryData({
+        queryKey: ["category-seo", catSlug],
+        queryFn: async () => {
+          const { data } = await supabase
+            .from("categories")
+            .select("name, slug, seo_title, seo_description, seo_keyword, cover_url, cover_alt, seo_footer_text")
+            .eq("slug", catSlug)
+            .maybeSingle();
+          return data;
+        },
+      });
+    }
+    return null;
+  },
+  head: (args) => {
+    // Acessar via search validado se disponível no contexto do TanStack Start
+    const search = (args as any).search as CatalogSearch;
+    const catSlug = search?.categoria;
+    
+    return {
+      meta: [
+        { title: catSlug ? `${catSlug.charAt(0).toUpperCase() + catSlug.slice(1)} — Estampa Flix` : "Catálogo de artes digitais — Estampa Flix" },
+        { name: "description", content: "Explore milhares de artes digitais prontas para sublimação, DTF e estamparia. Filtre por categoria, formato e cor e baixe em alta resolução." },
+        { property: "og:title", content: catSlug ? `${catSlug.charAt(0).toUpperCase() + catSlug.slice(1)} — Estampa Flix` : "Catálogo de artes digitais — Estampa Flix" },
+        { property: "og:description", content: "Milhares de artes em 300 DPI para sublimação e DTF. Filtre por categoria, formato e cor e baixe com licença comercial." },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: `https://estampaflix.com/catalogo${catSlug ? `?categoria=${catSlug}` : ""}` },
+      ],
+      links: [{ rel: "canonical", href: `https://estampaflix.com/catalogo${catSlug ? `?categoria=${catSlug}` : ""}` }],
+    };
+  },
   component: Catalogo,
 });
 
@@ -37,6 +61,19 @@ function Catalogo() {
   const [q, setQ] = useState(search.q ?? "");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const { t } = useI18n();
+
+  const { data: currentCategory } = useQuery({
+    queryKey: ["category-seo", search.categoria],
+    enabled: !!search.categoria,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("categories")
+        .select("*")
+        .eq("slug", search.categoria!)
+        .maybeSingle();
+      return data;
+    },
+  });
 
   const { data: categories = [] } = useQuery({
     queryKey: ["categories"],
@@ -109,9 +146,60 @@ function Catalogo() {
   return (
     <SiteLayout>
       <div className="mx-auto w-full max-w-7xl px-3 py-6 sm:px-4 sm:py-8">
+        {currentCategory && (
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "CollectionPage",
+              "name": currentCategory.seo_title || currentCategory.name,
+              "description": currentCategory.seo_description || currentCategory.description,
+              "url": `https://estampaflix.com/catalogo?categoria=${currentCategory.slug}`,
+              "image": currentCategory.cover_url,
+              "breadcrumb": {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://estampaflix.com"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Catálogo",
+                    "item": "https://estampaflix.com/catalogo"
+                  },
+                  {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": currentCategory.name,
+                    "item": `https://estampaflix.com/catalogo?categoria=${currentCategory.slug}`
+                  }
+                ]
+              }
+            })}
+          </script>
+        )}
+
         <header className="mb-5 sm:mb-6">
-          <h1 className="font-display text-2xl font-bold sm:text-3xl md:text-4xl">{t("catalog.title")}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">{t("catalog.subtitle")}</p>
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h1 className="font-display text-2xl font-bold sm:text-3xl md:text-4xl">
+                {currentCategory?.name || t("catalog.title")}
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {currentCategory?.description || t("catalog.subtitle")}
+              </p>
+            </div>
+            {currentCategory?.cover_url && (
+              <img 
+                src={currentCategory.cover_url} 
+                alt={currentCategory.cover_alt || currentCategory.name} 
+                className="h-20 w-32 rounded-lg border border-border/40 object-cover shadow-lg md:h-24 md:w-40"
+              />
+            )}
+          </div>
         </header>
 
         <form
@@ -148,6 +236,15 @@ function Catalogo() {
             onRemoveFilter={(k) => update({ [k]: undefined } as any)}
           />
         </div>
+
+        {currentCategory?.seo_footer_text && (
+          <section className="mt-12 border-t border-border/40 pt-12">
+            <div 
+              className="prose prose-invert max-w-none text-sm text-muted-foreground"
+              dangerouslySetInnerHTML={{ __html: currentCategory.seo_footer_text }}
+            />
+          </section>
+        )}
       </div>
     </SiteLayout>
   );
