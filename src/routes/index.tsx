@@ -4,6 +4,7 @@ import { Zap } from "lucide-react";
 import { SiteLayout } from "@/components/site-layout";
 import { useI18n } from "@/lib/i18n";
 import { homeQuery } from "@/features/home/home-query";
+import { supabase } from "@/integrations/supabase/client";
 import { HeroSection } from "@/features/home/hero-section";
 import { HeroBanners } from "@/features/home/hero-banners";
 import { CategoriesCarousel } from "@/features/home/categories-carousel";
@@ -16,41 +17,61 @@ import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(homeQuery),
-  head: () => ({
-    meta: [
-      { title: "Estampa Flix — Artes digitais para sublimação e DTF" },
-      {
-        name: "description",
-        content:
-          "Baixe artes digitais em 300 DPI para sublimação, DTF e estamparia. Assinatura com créditos mensais, licença comercial vitalícia e novas estampas toda semana.",
-      },
-      {
-        name: "keywords",
-        content:
-          "artes para sublimação, estampas digitais, arte digital DTF, artes para camiseta, estampas prontas, arte para caneca, artes 300 dpi, licença comercial",
-      },
-      { property: "og:title", content: "Estampa Flix — Artes digitais para sublimação e DTF" },
-      {
-        property: "og:description",
-        content:
-          "Artes digitais em alta resolução para sublimação, DTF e estamparia, com licença comercial e novas estampas toda semana.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://estampaflix.com/" },
-      {
-        property: "og:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8a36e287-6af7-46bc-9720-aead028ba808/id-preview-91e266b7--bb6fa90b-8f5d-47be-8009-cbab5c7a45fa.lovable.app-1784641090696.png",
-      },
-      {
-        name: "twitter:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8a36e287-6af7-46bc-9720-aead028ba808/id-preview-91e266b7--bb6fa90b-8f5d-47be-8009-cbab5c7a45fa.lovable.app-1784641090696.png",
-      },
-    ],
+  head: ({ context }) => {
+    const settings = context.queryClient.getQueryData(["site-settings"]) as any;
+    const title = settings?.home_seo_title || "Estampa Flix — Artes digitais para sublimação e DTF";
+    const description = settings?.home_seo_description || "Baixe artes digitais em 300 DPI para sublimação, DTF e estamparia. Assinatura com créditos mensais, licença comercial vitalícia e novas estampas toda semana.";
+    const ogImage = settings?.home_og_image_url || settings?.og_image_url || "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8a36e287-6af7-46bc-9720-aead028ba808/id-preview-91e266b7--bb6fa90b-8f5d-47be-8009-cbab5c7a45fa.lovable.app-1784641090696.png";
 
-    links: [{ rel: "canonical", href: "https://estampaflix.com/" }],
-  }),
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { name: "keywords", content: settings?.seo_keywords || "artes para sublimação, estampas digitais, arte digital DTF" },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: "https://estampaflix.com/" },
+        { property: "og:image", content: ogImage },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+        { name: "twitter:image", content: ogImage },
+      ],
+      links: [{ rel: "canonical", href: "https://estampaflix.com/" }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Estampa Flix",
+            url: "https://estampaflix.com",
+            logo: settings?.logo_url || "https://estampaflix.com/logo.png",
+            contactPoint: {
+              "@type": "ContactPoint",
+              telephone: settings?.whatsapp || "",
+              contactType: "customer service",
+            },
+          }),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "Estampa Flix",
+            url: "https://estampaflix.com",
+            potentialAction: {
+              "@type": "SearchAction",
+              target: "https://estampaflix.com/catalogo?busca={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
+          }),
+        },
+      ],
+    };
+  },
   component: Home,
 });
 
