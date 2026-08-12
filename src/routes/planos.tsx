@@ -20,19 +20,61 @@ const plansQuery = queryOptions({
 });
 
 export const Route = createFileRoute("/planos")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(plansQuery),
-  head: () => ({
-    meta: [
-      { title: "Planos de assinatura — Estampa Flix" },
-      { name: "description", content: "Compare os planos Lite, Pro e Plus da Estampa Flix: créditos mensais para baixar artes digitais em alta resolução, licença comercial e cancelamento a qualquer momento." },
-      { property: "og:title", content: "Planos de assinatura — Estampa Flix" },
-      { property: "og:description", content: "Escolha entre Lite, Pro e Plus. Créditos mensais para baixar artes em 300 DPI com licença comercial. Cancele quando quiser." },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://estampaflix.com/planos" },
-      { name: "keywords", content: "assinatura de artes para sublimação, planos de estampas digitais, pacote de artes DTF, créditos para download" },
-    ],
-    links: [{ rel: "canonical", href: "https://estampaflix.com/planos" }],
-  }),
+  loader: async ({ context }) => {
+    const settings = await context.queryClient.ensureQueryData({
+      queryKey: ["site-settings"],
+      queryFn: async () => {
+        const { data } = await (supabase as any).from("site_settings").select("*").eq("id", true).maybeSingle();
+        return data;
+      },
+    });
+    const plans = await context.queryClient.ensureQueryData(plansQuery);
+    return { settings, plans };
+  },
+  head: ({ loaderData }) => {
+    const settings = (loaderData as any)?.settings;
+    const title = settings?.plans_seo_title || "Planos de assinatura — Estampa Flix";
+    const description = settings?.plans_seo_description || "Compare os planos Lite, Pro e Plus da Estampa Flix: créditos mensais para baixar artes digitais em alta resolução, licença comercial e cancelamento a qualquer momento.";
+    const keywords = settings?.plans_seo_keyword || settings?.seo_keywords || "assinatura de artes para sublimação, planos de estampas digitais, pacote de artes DTF, créditos para download";
+
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { name: "keywords", content: keywords },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: "https://estampaflix.com/planos" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+      ],
+      links: [{ rel: "canonical", href: "https://estampaflix.com/planos" }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: "Assinatura Estampa Flix",
+            description: "Acesso a biblioteca de artes digitais para sublimação e DTF.",
+            brand: {
+              "@type": "Brand",
+              name: "Estampa Flix",
+            },
+            offers: {
+              "@type": "AggregateOffer",
+              offerCount: "3",
+              lowPrice: "29.90",
+              highPrice: "99.90",
+              priceCurrency: "BRL",
+            },
+          }),
+        },
+      ],
+    };
+  },
   component: Planos,
 });
 

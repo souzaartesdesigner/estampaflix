@@ -970,6 +970,9 @@ export type Database = {
           google_ads_purchase_label: string | null
           google_search_console_id: string | null
           head_scripts: string | null
+          home_og_image_url: string | null
+          home_seo_description: string | null
+          home_seo_title: string | null
           id: boolean
           instagram_url: string | null
           legal_business_name: string | null
@@ -979,6 +982,9 @@ export type Database = {
           og_description: string | null
           og_image_url: string | null
           og_title: string | null
+          plans_seo_description: string | null
+          plans_seo_keyword: string | null
+          plans_seo_title: string | null
           primary_color: string | null
           promo_banner_enabled: boolean
           promo_banner_link: string | null
@@ -1007,6 +1013,9 @@ export type Database = {
           google_ads_purchase_label?: string | null
           google_search_console_id?: string | null
           head_scripts?: string | null
+          home_og_image_url?: string | null
+          home_seo_description?: string | null
+          home_seo_title?: string | null
           id?: boolean
           instagram_url?: string | null
           legal_business_name?: string | null
@@ -1016,6 +1025,9 @@ export type Database = {
           og_description?: string | null
           og_image_url?: string | null
           og_title?: string | null
+          plans_seo_description?: string | null
+          plans_seo_keyword?: string | null
+          plans_seo_title?: string | null
           primary_color?: string | null
           promo_banner_enabled?: boolean
           promo_banner_link?: string | null
@@ -1044,6 +1056,9 @@ export type Database = {
           google_ads_purchase_label?: string | null
           google_search_console_id?: string | null
           head_scripts?: string | null
+          home_og_image_url?: string | null
+          home_seo_description?: string | null
+          home_seo_title?: string | null
           id?: boolean
           instagram_url?: string | null
           legal_business_name?: string | null
@@ -1053,6 +1068,9 @@ export type Database = {
           og_description?: string | null
           og_image_url?: string | null
           og_title?: string | null
+          plans_seo_description?: string | null
+          plans_seo_keyword?: string | null
+          plans_seo_title?: string | null
           primary_color?: string | null
           promo_banner_enabled?: boolean
           promo_banner_link?: string | null
