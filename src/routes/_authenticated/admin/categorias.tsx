@@ -220,7 +220,7 @@ function EditCategory({ category, allCategories, onClose }: { category: any; all
 
   return (
     <Dialog open onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="max-w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>Editar categoria</DialogTitle></DialogHeader>
         <form onSubmit={submit} className="space-y-4">
           <div className="grid gap-2"><Label>Nome</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required /></div>
