@@ -7,7 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, type ReactNode, useMemo } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -207,6 +207,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { rel: "dns-prefetch", href: "https://tkzkespxrbgudujvuecq.supabase.co" },
         { rel: "dns-prefetch", href: "https://estampaflix.com" },
         { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Sora:wght@700;800&display=swap" },
+
         { rel: "icon", type: "image/png", href: d.favicon },
       ],
       scripts: [
@@ -265,6 +266,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const loaderData = Route.useLoaderData();
+
+  useEffect(() => {
+    if (loaderData?.ga4 || loaderData?.metaPixelId) {
+      import("@/lib/analytics-loader").then(m => {
+        m.loadAnalytics(loaderData.ga4, loaderData.metaPixelId);
+      });
+    }
+  }, [loaderData?.ga4, loaderData?.metaPixelId]);
 
   return (
     <QueryClientProvider client={queryClient}>

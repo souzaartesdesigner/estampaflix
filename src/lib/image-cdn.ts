@@ -31,6 +31,12 @@ export const HERO_WIDTHS = [800, 1600, 2400];
 export const DETAIL_WIDTHS = [1000, 2000];
 export const THUMB_WIDTHS = [240, 480];
 
+/** Breaking points for mobile optimization */
+export const MOBILE_BREAKPOINTS = {
+  card: 480,
+  thumb: 320,
+};
+
 
 /** Só transformamos URLs http(s) públicas e absolutas. */
 export function canTransform(src: string | null | undefined): src is string {
@@ -66,6 +72,8 @@ export function transformedUrl(src: string, opts: TransformOptions): string {
 
   const format = opts.format ?? ENABLED_FORMATS[0];
   if (format && format !== "origin") params.set("output", format);
+  else params.set("output", "webp"); // Force webp as default for performance
+
   return `${CDN_ORIGIN}?${params.toString()}`;
 }
 
