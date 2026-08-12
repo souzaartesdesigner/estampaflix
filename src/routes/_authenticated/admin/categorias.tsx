@@ -155,6 +155,11 @@ function EditCategory({ category, allCategories, onClose }: { category: any; all
     cover_url: category.cover_url ?? "",
     featured: category.featured ?? false,
     parent_id: category.parent_id ?? "none",
+    seo_title: category.seo_title ?? "",
+    seo_description: category.seo_description ?? "",
+    seo_keyword: category.seo_keyword ?? "",
+    seo_footer_text: category.seo_footer_text ?? "",
+    cover_alt: category.cover_alt ?? "",
   });
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
@@ -196,6 +201,11 @@ function EditCategory({ category, allCategories, onClose }: { category: any; all
         cover_url: cover_url || null,
         featured: form.featured,
         parent_id: form.parent_id === "none" ? null : form.parent_id,
+        seo_title: form.seo_title || null,
+        seo_description: form.seo_description || null,
+        seo_keyword: form.seo_keyword || null,
+        seo_footer_text: form.seo_footer_text || null,
+        cover_alt: form.cover_alt || null,
       }).eq("id", category.id);
       if (error) throw error;
       toast.success("Categoria atualizada");
@@ -235,6 +245,67 @@ function EditCategory({ category, allCategories, onClose }: { category: any; all
             <Input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
             <Input value={form.cover_url} onChange={(e) => setForm({ ...form, cover_url: e.target.value })} placeholder="ou cole uma URL https://..." />
           </div>
+
+          <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-4">
+            <h3 className="text-sm font-bold text-primary uppercase tracking-wider">Metadados de SEO</h3>
+            
+            <div className="grid gap-2">
+              <Label>Texto Alt da Imagem</Label>
+              <Input 
+                value={form.cover_alt} 
+                onChange={(e) => setForm({ ...form, cover_alt: e.target.value })} 
+                placeholder="Ex: Arte para sublimação de canecas de futebol"
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <div className="flex justify-between items-center">
+                <Label>Meta Title (Título SEO)</Label>
+                <span className="text-[10px] text-muted-foreground">{form.seo_title.length} caracteres</span>
+              </div>
+              <Input 
+                value={form.seo_title} 
+                onChange={(e) => setForm({ ...form, seo_title: e.target.value })} 
+                placeholder="Título para o Google"
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <div className="flex justify-between items-center">
+                <Label>Meta Description</Label>
+                <span className={`text-[10px] ${form.seo_description.length > 160 ? "text-destructive" : "text-muted-foreground"}`}>
+                  {form.seo_description.length}/160
+                </span>
+              </div>
+              <Textarea 
+                value={form.seo_description} 
+                onChange={(e) => setForm({ ...form, seo_description: e.target.value })} 
+                placeholder="Descrição resumida para o Google..."
+                rows={2}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label>Frase-chave Foco</Label>
+              <Input 
+                value={form.seo_keyword} 
+                onChange={(e) => setForm({ ...form, seo_keyword: e.target.value })} 
+                placeholder="Ex: artes para canecas, sublimação futebol"
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label>Texto SEO de Rodapé (HTML/Rich Text)</Label>
+              <Textarea 
+                value={form.seo_footer_text} 
+                onChange={(e) => setForm({ ...form, seo_footer_text: e.target.value })} 
+                placeholder="Texto explicativo longo para rankeamento..."
+                rows={5}
+              />
+              <p className="text-[10px] text-muted-foreground">Suporta parágrafos e títulos básicos para o robô do Google.</p>
+            </div>
+          </div>
+
           <Button type="submit" disabled={busy} className="w-full bg-gradient-brand text-brand-foreground">{busy ? "Salvando..." : "Salvar"}</Button>
         </form>
       </DialogContent>
