@@ -16,16 +16,28 @@ export function loadAnalytics(gaId: string | null, metaPixelId: string | null) {
     }
     
     if (metaPixelId && !(window as any).fbq) {
-      (function(f:any,b:any,e:any,v:any,n:any)
-      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];const t=b.createElement(e);t.async=!0;
-      t.src=v;const s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window,document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js'));
-      (window as any).fbq('init', metaPixelId);
-      (window as any).fbq('track', 'PageView');
+      const f = window as any;
+      const b = document;
+      const e = 'script';
+      const v = 'https://connect.facebook.net/en_US/fbevents.js';
+      
+      if (f.fbq) return;
+      const n = f.fbq = function() {
+        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+      } as any;
+      if (!f._fbq) f._fbq = n;
+      n.push = n;
+      n.loaded = !0;
+      n.version = '2.0';
+      n.queue = [];
+      const t = b.createElement(e) as any;
+      t.async = !0;
+      t.src = v;
+      const s = b.getElementsByTagName(e)[0];
+      if (s && s.parentNode) s.parentNode.insertBefore(t, s);
+      
+      f.fbq('init', metaPixelId);
+      f.fbq('track', 'PageView');
     }
   };
 
