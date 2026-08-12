@@ -16,7 +16,19 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-  loader: ({ context }) => context.queryClient.ensureQueryData(homeQuery),
+  loader: async ({ context }) => {
+    const settings = await context.queryClient.ensureQueryData({
+      queryKey: ["site-settings"],
+      queryFn: async () => {
+        const { data } = await (supabase as any).from("site_settings").select("*").eq("id", true).maybeSingle();
+        return data;
+      },
+    });
+    
+    await context.queryClient.ensureQueryData(homeQuery);
+    
+    return { settings };
+  },
   head: ({ loaderData }) => {
     const settings = (loaderData as any)?.settings;
     const title = settings?.home_seo_title || "Estampa Flix — Artes digitais para sublimação e DTF";
