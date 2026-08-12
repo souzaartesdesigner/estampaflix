@@ -38,6 +38,9 @@ export type SiteSettings = {
   plans_seo_title: string | null;
   plans_seo_description: string | null;
   plans_seo_keyword: string | null;
+  blog_seo_title: string | null;
+  blog_seo_description: string | null;
+  blog_seo_keyword: string | null;
 };
 
 const DEFAULTS: SiteSettings = {
@@ -77,6 +80,9 @@ const DEFAULTS: SiteSettings = {
   plans_seo_title: null,
   plans_seo_description: null,
   plans_seo_keyword: null,
+  blog_seo_title: null,
+  blog_seo_description: null,
+  blog_seo_keyword: null,
 };
 
 export function useSiteSettings() {

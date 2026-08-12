@@ -209,6 +209,23 @@ function Configuracoes() {
                   </Field>
                 </div>
               </div>
+
+              <div className="rounded-lg border border-border/40 bg-muted/30 p-4">
+                <h3 className="mb-3 font-medium text-sm flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-primary" /> Página do Blog (Listagem)
+                </h3>
+                <div className="grid gap-4">
+                  <Field label="Meta title do Blog">
+                    <Input value={form.blog_seo_title ?? ""} onChange={set("blog_seo_title")} placeholder="Título personalizado para a listagem do blog" />
+                  </Field>
+                  <Field label="Meta description do Blog">
+                    <Textarea rows={2} value={form.blog_seo_description ?? ""} onChange={set("blog_seo_description")} placeholder="Descrição personalizada para a listagem do blog" />
+                  </Field>
+                  <Field label="Palavra-chave foco (Blog)">
+                    <Input value={form.blog_seo_keyword ?? ""} onChange={set("blog_seo_keyword")} placeholder="ex: dicas sublimação estamparia" />
+                  </Field>
+                </div>
+              </div>
             </div>
           </Section>
         </TabsContent>

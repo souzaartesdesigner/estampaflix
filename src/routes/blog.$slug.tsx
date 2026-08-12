@@ -17,14 +17,19 @@ export const Route = createFileRoute("/blog/$slug")({
   head: ({ params, loaderData }) => {
     if (!loaderData) return { meta: [{ title: "Artigo não encontrado" }, { name: "robots", content: "noindex" }] };
     const url = `https://estampaflix.com/blog/${params.slug}`;
-    const description = (loaderData.excerpt && loaderData.excerpt.length >= 50)
+    
+    const title = loaderData.seo_title || `${loaderData.title} — Estampa Flix Blog`;
+    const description = loaderData.seo_description || (loaderData.excerpt && loaderData.excerpt.length >= 50
       ? loaderData.excerpt
-      : `${loaderData.title} — leia no blog da Estampa Flix dicas, tutoriais e novidades sobre sublimação, DTF e produção criativa.`;
+      : `${loaderData.title} — leia no blog da Estampa Flix dicas, tutoriais e novidades sobre sublimação, DTF e produção criativa.`);
+    const keywords = loaderData.seo_keyword || "";
+
     return {
       meta: [
-        { title: `${loaderData.title} — Estampa Flix Blog` },
+        { title },
         { name: "description", content: description },
-        { property: "og:title", content: loaderData.title },
+        { name: "keywords", content: keywords },
+        { property: "og:title", content: title },
         { property: "og:description", content: description.slice(0, 200) },
         { property: "og:image", content: loaderData.cover_url ?? "" },
         { property: "og:type", content: "article" },
@@ -36,14 +41,25 @@ export const Route = createFileRoute("/blog/$slug")({
           type: "application/ld+json",
           children: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "Article",
+            "@type": "BlogPosting",
             headline: loaderData.title,
+            alternativeHeadline: title,
             image: loaderData.cover_url ? [loaderData.cover_url] : undefined,
             datePublished: loaderData.published_at,
             dateModified: loaderData.updated_at,
             author: { "@type": "Person", name: loaderData.author_name },
-            publisher: { "@type": "Organization", name: "Estampa Flix" },
-            mainEntityOfPage: url,
+            publisher: { 
+              "@type": "Organization", 
+              name: "Estampa Flix",
+              logo: {
+                "@type": "ImageObject",
+                url: "https://estampaflix.com/favicon.png"
+              }
+            },
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": url
+            },
             description,
           }),
         },
@@ -86,7 +102,7 @@ function Post() {
         </header>
         {post.cover_url && (
           <div className="my-8 overflow-hidden rounded-2xl border border-border/60">
-            <SmartImage src={post.cover_url} alt={title} widths={HERO_WIDTHS} fallbackWidth={960} sizes="(max-width: 900px) 100vw, 860px" priority className="w-full" />
+            <SmartImage src={post.cover_url} alt={post.cover_alt || title} widths={HERO_WIDTHS} fallbackWidth={960} sizes="(max-width: 900px) 100vw, 860px" priority className="w-full" />
           </div>
         )}
         <div className="prose prose-invert max-w-none whitespace-pre-wrap text-foreground/90 leading-relaxed">
