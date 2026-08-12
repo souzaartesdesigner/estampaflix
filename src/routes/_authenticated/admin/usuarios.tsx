@@ -6,11 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatDate } from "@/lib/format";
 import { toast } from "sonner";
-import { Settings2, Plus, Trash2, Package, CreditCard, Search } from "lucide-react";
+import { Settings2, Plus, Trash2, Package, CreditCard, Search, UserPlus } from "lucide-react";
+import { adminCreateUser, adminDeleteUser } from "@/lib/admin-users.functions";
+
 
 export const Route = createFileRoute("/_authenticated/admin/usuarios")({ component: Users });
 
@@ -18,6 +20,8 @@ function Users() {
   const [selected, setSelected] = useState<any | null>(null);
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<"all" | "subscribers" | "admins" | "free">("all");
+  const [createOpen, setCreateOpen] = useState(false);
+
 
   const { data: rows = [] } = useQuery({
     queryKey: ["admin-users"],
@@ -46,7 +50,13 @@ function Users() {
 
   return (
     <div>
-      <h1 className="mb-6 font-display text-2xl font-bold">Usuários</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="font-display text-2xl font-bold">Usuários</h1>
+        <Button onClick={() => setCreateOpen(true)} className="bg-gradient-brand text-brand-foreground">
+          <UserPlus className="mr-2 h-4 w-4" /> Novo usuário
+        </Button>
+      </div>
+
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[240px]">
@@ -116,7 +126,12 @@ function Users() {
       {selected && (
         <ManageUserDialog user={selected} onClose={() => setSelected(null)} />
       )}
+
+      {createOpen && (
+        <CreateUserDialog open={createOpen} onOpenChange={setCreateOpen} />
+      )}
     </div>
+
   );
 }
 
@@ -301,3 +316,52 @@ function ManageUserDialog({ user, onClose }: { user: any; onClose: () => void })
     </Dialog>
   );
 }
+
+function CreateUserDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
+  const qc = useQueryClient();
+  const [form, setForm] = useState({ email: "", password: "", fullName: "", role: "user" as "user" | "admin" });
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      await adminCreateUser(form);
+      toast.success("Usuário criado com sucesso");
+      qc.invalidateQueries({ queryKey: ["admin-users"] });
+      onOpenChange(false);
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao criar usuário");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader><DialogTitle>Criar Novo Usuário</DialogTitle></DialogHeader>
+        <form onSubmit={submit} className="space-y-4">
+          <div className="grid gap-2"><Label>Nome Completo</Label><Input value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} required /></div>
+          <div className="grid gap-2"><Label>E-mail</Label><Input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required /></div>
+          <div className="grid gap-2"><Label>Senha Inicial</Label><Input type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required minLength={6} /></div>
+          <div className="grid gap-2">
+            <Label>Perfil</Label>
+            <Select value={form.role} onValueChange={(v: any) => setForm({ ...form, role: v })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="user">Usuário Comum</SelectItem>
+                <SelectItem value="admin">Administrador</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>Cancelar</Button>
+            <Button type="submit" disabled={busy} className="bg-gradient-brand text-brand-foreground">Criar Usuário</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+

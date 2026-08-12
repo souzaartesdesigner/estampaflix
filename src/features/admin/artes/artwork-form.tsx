@@ -159,10 +159,11 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         alt_text: form.alt_text?.trim() || null,
         noindex: !!form.noindex,
         tech_specs: form.tech_specs?.trim() || null,
-        resolution: form.resolution?.trim() || null,
-        dimensions: form.dimensions?.trim() || null,
+        resolution: null,
+        dimensions: null,
         usage_instructions: form.usage_instructions?.trim() || null,
         license_text: form.license_text?.trim() || null,
+
         translations: form.translations,
       };
 
