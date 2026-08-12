@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site-layout";
@@ -54,6 +54,61 @@ export const Route = createFileRoute("/catalogo")({
   },
   component: Catalogo,
 });
+
+function CategoryDescription({ 
+  description, 
+  seoDescription, 
+  defaultSubtitle 
+}: { 
+  description?: string | null; 
+  seoDescription?: string | null;
+  defaultSubtitle: string;
+}) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const textRef = useRef<HTMLParagraphElement>(null);
+
+  const content = seoDescription || description || defaultSubtitle;
+
+  useEffect(() => {
+    if (textRef.current) {
+      // Verifica se o texto ultrapassa 2-3 linhas
+      const isContentTruncated = textRef.current.scrollHeight > textRef.current.clientHeight;
+      setIsTruncated(isContentTruncated);
+    }
+  }, [content]);
+
+  return (
+    <div className="mt-1 max-w-2xl">
+      <p 
+        ref={textRef}
+        className={`text-sm text-muted-foreground transition-all duration-300 ${
+          !isExpanded ? "line-clamp-2 md:line-clamp-3" : ""
+        }`}
+      >
+        {content}
+      </p>
+      {isTruncated && !isExpanded && (
+        <button
+          type="button"
+          onClick={() => setIsExpanded(true)}
+          className="mt-1 text-xs font-medium text-brand hover:underline"
+        >
+          Ler descrição completa
+        </button>
+      )}
+      {isExpanded && (
+        <button
+          type="button"
+          onClick={() => setIsExpanded(false)}
+          className="mt-1 text-xs font-medium text-brand hover:underline"
+        >
+          Ver menos
+        </button>
+      )}
+    </div>
+  );
+}
 
 function Catalogo() {
   const search = Route.useSearch();
@@ -188,9 +243,11 @@ function Catalogo() {
               <h1 className="font-display text-2xl font-bold sm:text-3xl md:text-4xl">
                 {currentCategory?.name || t("catalog.title")}
               </h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {currentCategory?.description || t("catalog.subtitle")}
-              </p>
+              <CategoryDescription 
+                description={currentCategory?.description} 
+                seoDescription={currentCategory?.seo_description}
+                defaultSubtitle={t("catalog.subtitle")} 
+              />
             </div>
             {currentCategory?.cover_url && (
               <img 
