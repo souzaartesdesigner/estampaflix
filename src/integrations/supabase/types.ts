@@ -245,12 +245,16 @@ export type Database = {
         Row: {
           author_name: string
           content: string
+          cover_alt: string | null
           cover_url: string | null
           created_at: string
           excerpt: string | null
           id: string
           is_published: boolean
           published_at: string
+          seo_description: string | null
+          seo_keyword: string | null
+          seo_title: string | null
           slug: string
           title: string
           translations: Json
@@ -259,12 +263,16 @@ export type Database = {
         Insert: {
           author_name?: string
           content: string
+          cover_alt?: string | null
           cover_url?: string | null
           created_at?: string
           excerpt?: string | null
           id?: string
           is_published?: boolean
           published_at?: string
+          seo_description?: string | null
+          seo_keyword?: string | null
+          seo_title?: string | null
           slug: string
           title: string
           translations?: Json
@@ -273,12 +281,16 @@ export type Database = {
         Update: {
           author_name?: string
           content?: string
+          cover_alt?: string | null
           cover_url?: string | null
           created_at?: string
           excerpt?: string | null
           id?: string
           is_published?: boolean
           published_at?: string
+          seo_description?: string | null
+          seo_keyword?: string | null
+          seo_title?: string | null
           slug?: string
           title?: string
           translations?: Json
@@ -961,6 +973,9 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          blog_seo_description: string | null
+          blog_seo_keyword: string | null
+          blog_seo_title: string | null
           body_scripts: string | null
           facebook_url: string | null
           favicon_url: string | null
@@ -1004,6 +1019,9 @@ export type Database = {
           whatsapp_message: string | null
         }
         Insert: {
+          blog_seo_description?: string | null
+          blog_seo_keyword?: string | null
+          blog_seo_title?: string | null
           body_scripts?: string | null
           facebook_url?: string | null
           favicon_url?: string | null
@@ -1047,6 +1065,9 @@ export type Database = {
           whatsapp_message?: string | null
         }
         Update: {
+          blog_seo_description?: string | null
+          blog_seo_keyword?: string | null
+          blog_seo_title?: string | null
           body_scripts?: string | null
           facebook_url?: string | null
           favicon_url?: string | null
