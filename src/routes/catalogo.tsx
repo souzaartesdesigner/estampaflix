@@ -16,16 +16,18 @@ import { CatalogResults } from "@/features/catalog/catalog-results";
 
 export const Route = createFileRoute("/catalogo")({
   validateSearch: (search) => catalogSearchSchema.parse(search),
-  loader: async ({ context: { queryClient }, search }) => {
+  loaderDeps: ({ search }) => ({ search }),
+  loader: async ({ context: { queryClient }, deps: { search } }) => {
     const filters = search as CatalogSearch;
     if (filters.categoria) {
+      const catSlug = filters.categoria;
       await queryClient.ensureQueryData({
-        queryKey: ["category-seo", filters.categoria],
+        queryKey: ["category-seo", catSlug],
         queryFn: async () => {
           const { data } = await supabase
             .from("categories")
             .select("name, slug, seo_title, seo_description, seo_keyword, cover_url, cover_alt, seo_footer_text")
-            .eq("slug", filters.categoria)
+            .eq("slug", catSlug)
             .maybeSingle();
           return data;
         },
@@ -33,24 +35,39 @@ export const Route = createFileRoute("/catalogo")({
     }
     return null;
   },
-  head: ({ search, loaderData }) => {
-    const filters = search as CatalogSearch;
-    // Tentar pegar os dados da categoria se houver filtro
-    // Como o head() roda antes do useQuery do componente, usamos uma abordagem baseada no search
-    // No TanStack Start, podemos acessar o queryClient via context se configurado, 
-    // mas aqui vamos usar uma lógica simplificada que será complementada pelo loader se necessário.
+  head: ({ deps, context }) => {
+    const filters = (deps as any).search as CatalogSearch;
+    const catSlug = filters.categoria;
     
+    // Tentar pegar do cache se disponível
+    const queryClient = (context as any).queryClient;
+    const category = catSlug ? queryClient?.getQueryData(["category-seo", catSlug]) as any : null;
+
+    const title = category?.seo_title || (category ? `${category.name} — Estampa Flix` : "Catálogo de artes digitais — Estampa Flix");
+    const description = category?.seo_description || "Explore milhares de artes digitais prontas para sublimação, DTF e estamparia. Filtre por categoria, formato e cor e baixe em alta resolução.";
+    const image = category?.cover_url;
+
+    const meta = [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: `https://estampaflix.com/catalogo${catSlug ? `?categoria=${catSlug}` : ""}` },
+    ];
+
+    if (image) {
+      meta.push({ property: "og:image", content: image } as any);
+      meta.push({ name: "twitter:image", content: image } as any);
+    }
+
+    if (category?.seo_keyword) {
+      meta.push({ name: "keywords", content: category.seo_keyword } as any);
+    }
+
     return {
-      meta: [
-        { title: "Catálogo de artes digitais — Estampa Flix" },
-        { name: "description", content: "Explore milhares de artes digitais prontas para sublimação, DTF e estamparia. Filtre por categoria, formato e cor e baixe em alta resolução." },
-        { property: "og:title", content: "Catálogo de artes digitais — Estampa Flix" },
-        { property: "og:description", content: "Milhares de artes em 300 DPI para sublimação e DTF. Filtre por categoria, formato e cor e baixe com licença comercial." },
-        { property: "og:type", content: "website" },
-        { property: "og:url", content: `https://estampaflix.com/catalogo${filters.categoria ? `?categoria=${filters.categoria}` : ""}` },
-        { name: "keywords", content: "catálogo de artes para sublimação, estampas digitais prontas, arte para camiseta, arte para caneca, artes DTF, download de estampas" },
-      ],
-      links: [{ rel: "canonical", href: `https://estampaflix.com/catalogo${filters.categoria ? `?categoria=${filters.categoria}` : ""}` }],
+      meta,
+      links: [{ rel: "canonical", href: `https://estampaflix.com/catalogo${catSlug ? `?categoria=${catSlug}` : ""}` }],
     };
   },
   component: Catalogo,
