@@ -129,7 +129,7 @@ function Importar() {
       const cImg = idx("Imagens");
       const cDlUrl = idx("URL do download 1");
       const cExtUrl = idx("URL externa");
-      const cSku = idx("SKU"); // Adicionando busca pelo SKU/Código do Produto
+      const cSku = idx("SKU"); 
       const cFeat = idx("Em destaque?");
       // Yoast SEO (quando o CSV trouxer as metas)
       const findCol = (needle: string) =>
@@ -190,13 +190,16 @@ function Importar() {
           // SEO (Yoast quando existir, senão gerado da descrição curta/longa)
           const shortDesc = cShort >= 0 ? stripHtml(row[cShort] || "").replace(/\s+/g, " ").trim() : "";
           const plainDesc = stripHtml(rawDesc).replace(/\s+/g, " ").trim();
-          const seo_title = (cSeoTitle >= 0 ? (row[cSeoTitle] || "").trim() : "") || `${title} — Estampa Flix`;
-          const seo_description =
-            (cSeoDesc >= 0 ? (row[cSeoDesc] || "").trim() : "") ||
-            (shortDesc || plainDesc || `${title}: arte digital em alta resolução para sublimação, DTF e estamparia com licença comercial.`);
-          const seo_keyword = (cSeoKw >= 0 ? (row[cSeoKw] || "").trim() : "") || title.toLowerCase();
+          
+          const rawSeoTitle = (cSeoTitle >= 0 ? (row[cSeoTitle] || "").trim() : "") || "%%title%% — Estampa Flix";
+          const rawSeoDesc = (cSeoDesc >= 0 ? (row[cSeoDesc] || "").trim() : "") || (shortDesc || plainDesc || "%%title%%: arte digital em alta resolução para sublimação, DTF e estamparia com licença comercial.");
+          const rawSeoKw = (cSeoKw >= 0 ? (row[cSeoKw] || "").trim() : "") || "%%title%%";
 
-          const baseSlug = slugify(title);
+          const cleanSeoTitle = rawSeoTitle.replace(/%%title%%/gi, title);
+          const cleanSeoDesc = rawSeoDesc.replace(/%%title%%/gi, title);
+          const cleanSeoKw = rawSeoKw.replace(/%%title%%/gi, title);
+
+          const baseSlug = product_code ? slugify(`${title}-${product_code}`) : slugify(title);
           // Check if already exists by slug
           const { data: existing } = await supabase.from("artworks").select("id,slug").eq("slug", baseSlug).maybeSingle();
           const slug = existing?.slug ?? (await uniqueSlug(baseSlug));
