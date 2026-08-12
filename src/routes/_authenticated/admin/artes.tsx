@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { brlToCents } from "@/lib/format";
+
 import { ArtworkForm } from "@/features/admin/artes/artwork-form";
 import { ArtworksTable } from "@/features/admin/artes/artworks-table";
 
@@ -89,9 +91,10 @@ function Artes() {
 
   function applyBulk() {
     if (bulkAction === "price") {
-      const cents = Math.round(parseFloat(bulkValue.replace(",", ".")) * 100);
-      if (!Number.isFinite(cents) || cents < 0) return toast.error("Preço inválido");
+      const cents = brlToCents(bulkValue);
+      if (cents < 0) return toast.error("Preço inválido");
       bulkUpdate.mutate({ price_cents: cents });
+
     } else if (bulkAction === "category") {
       if (!bulkValue) return toast.error("Selecione a categoria");
       bulkAddCategory.mutate(bulkValue);
