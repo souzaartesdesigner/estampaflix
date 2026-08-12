@@ -8,11 +8,14 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserSubscription } from "@/hooks/use-user-subscription";
+
 
 import { createPixOrder } from "@/lib/mercadopago.functions";
 import { useCart } from "@/hooks/use-cart";
