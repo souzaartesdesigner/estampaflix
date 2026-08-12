@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { CreditCard, Download, Heart, LogOut, MessageCircle, Settings, ShieldCheck, User } from "lucide-react";
 import { useSiteSettings } from "@/hooks/use-site-settings";
+import { useUserSubscription } from "@/hooks/use-user-subscription";
+
 
 type Props = { user: { id: string; email?: string | null; user_metadata?: any }; isAdmin?: boolean };
 
@@ -30,18 +32,8 @@ export function UserMenuContent({ user, isAdmin, isMobile = false, closeMobileMe
       (await supabase.from("profiles").select("full_name, avatar_url, email").eq("id", user.id).maybeSingle()).data,
   });
 
-  const { data: sub } = useQuery({
-    queryKey: ["nav-subscription", user.id],
-    queryFn: async () =>
-      (
-        await supabase
-          .from("subscriptions")
-          .select("id, credits_remaining, status")
-          .eq("user_id", user.id)
-          .eq("status", "active")
-          .maybeSingle()
-      ).data,
-  });
+  const { data: sub } = useUserSubscription(user.id);
+
 
   const { data: todayCount = 0 } = useQuery({
     queryKey: ["nav-free-downloads", user.id],

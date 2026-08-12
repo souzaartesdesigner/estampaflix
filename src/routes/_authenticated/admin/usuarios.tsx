@@ -229,10 +229,32 @@ function ManageUserDialog({ user, onClose }: { user: any; onClose: () => void })
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Gerenciar {user.full_name ?? user.email}</DialogTitle>
-          <DialogDescription>{user.email}</DialogDescription>
+        <DialogHeader className="flex flex-row items-center justify-between">
+          <div>
+            <DialogTitle>Gerenciar {user.full_name ?? user.email}</DialogTitle>
+            <DialogDescription>{user.email}</DialogDescription>
+          </div>
+          <Button 
+            variant="destructive" 
+            size="sm" 
+            className="mr-8"
+            onClick={async () => {
+              if (confirm(`Excluir permanentemente o usuário ${user.email}? Esta ação não pode ser desfeita.`)) {
+                try {
+                  await adminDeleteUser({ data: { userId: user.id } });
+                  toast.success("Usuário excluído");
+                  invalidate();
+                  onClose();
+                } catch (err: any) {
+                  toast.error(err.message || "Erro ao excluir");
+                }
+              }
+            }}
+          >
+            <Trash2 className="mr-1 h-3 w-3" /> Excluir Conta
+          </Button>
         </DialogHeader>
+
 
         {/* Subscription */}
         <section className="rounded-lg border border-border/60 p-4">
@@ -326,7 +348,7 @@ function CreateUserDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
     e.preventDefault();
     setBusy(true);
     try {
-      await adminCreateUser(form);
+      await adminCreateUser({ data: form });
       toast.success("Usuário criado com sucesso");
       qc.invalidateQueries({ queryKey: ["admin-users"] });
       onOpenChange(false);
