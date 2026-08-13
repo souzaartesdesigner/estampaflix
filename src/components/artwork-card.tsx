@@ -25,6 +25,7 @@ export type ArtworkCardData = {
   translations?: any;
   categories?: { id?: string; name: string; slug: string; translations?: any } | null;
   artwork_categories?: Array<{ categories: { id?: string; name: string; slug: string; translations?: any } | null }> | null;
+  alt_text?: string | null;
 };
 
 export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
@@ -46,7 +47,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
         {artwork.preview_url ? (
           <SmartImage
             src={artwork.preview_url}
-            alt={`Estampa editável ${title} - Estampa Flix`}
+            alt={artwork.alt_text || ""}
             widths={CARD_WIDTHS}
             fallbackWidth={400}
             sizes="(max-width: 640px) 92vw, (max-width: 768px) 46vw, (max-width: 1280px) 31vw, 300px"

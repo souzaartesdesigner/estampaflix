@@ -166,7 +166,7 @@ function ArtworkPage() {
           <div>
             <ArtworkGallery
               images={galleryImages}
-              alt={(artwork as any).alt_text?.trim() || `Estampa editável ${trTitle} - Estampa Flix`}
+              alt={(artwork as any).alt_text || ""}
             />
             <ProductInfoPanel artwork={artwork} />
           </div>
