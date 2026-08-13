@@ -135,6 +135,7 @@ function Importar() {
       const cExtUrl = idx("URL externa");
       const cSku = idx("SKU"); 
       const cFeat = idx("Em destaque?");
+      const cAlt = idx("alt_text");
       // Yoast SEO (quando o CSV trouxer as metas)
       const findCol = (needle: string) =>
         header.findIndex((h) => h.toLowerCase().includes(needle));
