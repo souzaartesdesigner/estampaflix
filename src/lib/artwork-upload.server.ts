@@ -1,10 +1,10 @@
-import { supabase } from "@/integrations/supabase/client";
-
 /**
  * Downloads an image from an external URL and uploads it to Supabase Storage.
  * This is meant to be called from the server to bypass CORS issues.
  */
 export async function transferImageToStorage(url: string, bucket: string = "artwork-previews", folder: string = "imported"): Promise<string> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Failed to fetch image: ${response.statusText}`);
@@ -29,7 +29,8 @@ export async function transferImageToStorage(url: string, bucket: string = "artw
     const fileName = `${crypto.randomUUID()}.${ext}`;
     const filePath = `${folder}/${fileName}`;
 
-    const { error: uploadError } = await supabase.storage
+    // Using supabaseAdmin to bypass RLS for this operation
+    const { error: uploadError } = await supabaseAdmin.storage
       .from(bucket)
       .upload(filePath, blob, {
         contentType,
@@ -38,7 +39,7 @@ export async function transferImageToStorage(url: string, bucket: string = "artw
 
     if (uploadError) throw uploadError;
 
-    const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
+    const { data } = supabaseAdmin.storage.from(bucket).getPublicUrl(filePath);
     return data.publicUrl;
   } catch (error) {
     console.error("Error transferring image:", error);
