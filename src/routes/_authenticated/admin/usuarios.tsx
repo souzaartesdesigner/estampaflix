@@ -148,7 +148,7 @@ function ManageUserDialog({ user, onClose }: { user: any; onClose: () => void })
   // Artworks list (for granting)
   const { data: artworks = [] } = useQuery({
     queryKey: ["admin-artworks-select"],
-    queryFn: async () => (await supabase.from("artworks").select("id,title,slug").order("created_at", { ascending: false }).limit(500)).data ?? [],
+    queryFn: async () => (await supabase.from("artworks").select("id,title,slug,product_code").order("created_at", { ascending: false }).limit(50)).data ?? [],
   });
 
   // User's granted artworks (downloads + paid orders)
@@ -164,21 +164,51 @@ function ManageUserDialog({ user, onClose }: { user: any; onClose: () => void })
   const [credits, setCredits] = useState<number>(0);
   const [periodDays, setPeriodDays] = useState<number>(30);
   const [artworkId, setArtworkId] = useState<string>("");
+  const [artSearch, setArtSearch] = useState("");
+
+  const { data: searchResults = [] } = useQuery({
+    queryKey: ["admin-artworks-search", artSearch],
+    enabled: artSearch.length >= 2,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("artworks")
+        .select("id,title,product_code")
+        .or(`title.ilike.%${artSearch}%,product_code.ilike.%${artSearch}%`)
+        .limit(10);
+      return data ?? [];
+    },
+  });
 
   const grantArtwork = useMutation({
     mutationFn: async () => {
       if (!artworkId) throw new Error("Selecione uma arte");
-      const { error } = await supabase.from("orders").insert({
+      
+      // 1. Inserir o pedido manual
+      const { data: order, error: orderErr } = await supabase.from("orders").insert({
         user_id: user.id,
         artwork_id: artworkId,
         amount_cents: 0,
         status: "paid",
         provider: "manual",
         paid_at: new Date().toISOString(),
+      }).select("id").single();
+
+      if (orderErr) throw orderErr;
+
+      // 2. Chamar a RPC para garantir que vá para a tabela de downloads
+      const { error: rpcErr } = await supabase.rpc("grant_order_downloads", {
+        _order_id: order.id
       });
-      if (error) throw error;
+      
+      if (rpcErr) throw rpcErr;
     },
-    onSuccess: () => { toast.success("Arte concedida"); setArtworkId(""); qc.invalidateQueries({ queryKey: ["admin-user-granted", user.id] }); invalidate(); },
+    onSuccess: () => { 
+      toast.success("Arte concedida e liberada para download"); 
+      setArtworkId(""); 
+      setArtSearch("");
+      qc.invalidateQueries({ queryKey: ["admin-user-granted", user.id] }); 
+      invalidate(); 
+    },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -305,15 +335,48 @@ function ManageUserDialog({ user, onClose }: { user: any; onClose: () => void })
             <Package className="h-4 w-4 text-primary" />
             <h3 className="font-semibold">Artes concedidas</h3>
           </div>
-          <div className="mb-3 flex gap-2">
+          <div className="mb-3 space-y-2">
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input 
+                  placeholder="Pesquisar arte por título ou código..." 
+                  value={artSearch}
+                  onChange={(e) => setArtSearch(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </div>
+
             <Select value={artworkId} onValueChange={setArtworkId}>
-              <SelectTrigger className="flex-1"><SelectValue placeholder="Escolher arte para conceder" /></SelectTrigger>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={artSearch.length < 2 ? "Digite para pesquisar..." : "Selecione a arte nos resultados"} />
+              </SelectTrigger>
               <SelectContent>
-                {artworks.map((a: any) => <SelectItem key={a.id} value={a.id}>{a.title}</SelectItem>)}
+                {artSearch.length >= 2 ? (
+                  searchResults.length > 0 ? (
+                    searchResults.map((a: any) => (
+                      <SelectItem key={a.id} value={a.id}>
+                        {a.title} {a.product_code ? `(#${a.product_code})` : ""}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <div className="p-2 text-sm text-muted-foreground text-center">Nenhuma arte encontrada</div>
+                  )
+                ) : (
+                  artworks.slice(0, 20).map((a: any) => (
+                    <SelectItem key={a.id} value={a.id}>{a.title}</SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
-            <Button size="sm" onClick={() => grantArtwork.mutate()} disabled={grantArtwork.isPending || !artworkId}>
-              <Plus className="mr-1 h-3 w-3" /> Conceder
+
+            <Button 
+              className="w-full bg-gradient-brand text-brand-foreground" 
+              onClick={() => grantArtwork.mutate()} 
+              disabled={grantArtwork.isPending || !artworkId}
+            >
+              <Plus className="mr-1 h-3 w-3" /> Conceder Acesso à Arte
             </Button>
           </div>
           {granted.length === 0 ? (
