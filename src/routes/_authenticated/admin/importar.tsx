@@ -245,6 +245,7 @@ function Importar() {
             seo_title: cleanSeoTitle.slice(0, 70),
             seo_description: cleanSeoDesc.slice(0, 160),
             seo_keyword: cleanSeoKw.slice(0, 120),
+            alt_text: cAlt >= 0 ? (row[cAlt] || "").trim() || null : null,
             file_path: null,
             external_url,
             file_format:
