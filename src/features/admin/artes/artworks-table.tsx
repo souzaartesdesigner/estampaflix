@@ -36,7 +36,11 @@ export function ArtworksTable({ artworks, onEdit, onDelete, selected, onToggle, 
               <td className="px-4 py-3">
                 <div className="flex items-center gap-3">
                   <img src={a.preview_url} alt="" className="h-10 w-10 rounded object-cover" />
-                  <span>{a.title}</span>
+                  <div className="flex flex-col">
+                    <span className="font-medium">{a.title}</span>
+                    {a.product_code && <span className="text-xs text-muted-foreground">SKU: {a.product_code}</span>}
+                    <span className="text-[10px] text-muted-foreground/60">{a.slug}</span>
+                  </div>
                 </div>
               </td>
               <td className="px-4 py-3 text-muted-foreground">{a.categories?.name ?? "—"}</td>

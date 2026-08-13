@@ -126,12 +126,9 @@ function Catalogo() {
         .range(from, to);
 
       if (filters.q) {
-        const term = filters.q.trim().slice(0, 80).replace(/[,()*\\"']/g, " ").trim();
+        const term = filters.q.trim();
         if (term) {
-          const isCode = /^[0-9a-fA-F]{4,8}$/.test(term);
-          query = isCode
-            ? query.or(`product_code.ilike.${term.toUpperCase()}%,title.ilike.%${term}%`)
-            : query.ilike("title", `%${term}%`);
+          query = query.or(`product_code.ilike.${term}%,title.ilike.%${term}%`);
         }
       }
 
