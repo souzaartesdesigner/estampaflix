@@ -135,11 +135,13 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         if (!file_path) throw new Error("Envie o arquivo para download.");
       }
 
+      const slug = form.slug?.trim() || slugify(form.title);
+
       const payload = {
         title: form.title,
         product_code: form.product_code?.trim() || null,
         description: form.description,
-        slug: form.slug || slugify(form.title),
+        slug,
         category_id: categoryIds[0] || null,
         preview_url,
         file_path,
