@@ -209,8 +209,8 @@ function Importar() {
               const internalUrl = await processImage({ data: { url: gUrl, folder: "gallery" } });
               gallery_urls.push(internalUrl);
             } catch (imgErr) {
-              console.warn("Falha ao transferir imagem da galeria, usando URL original:", imgErr);
-              gallery_urls.push(gUrl);
+              console.warn("Falha ao transferir imagem da galeria, ignorando esta imagem:", imgErr);
+              // Não adicionamos a URL original para evitar hotlinking
             }
           }
 
