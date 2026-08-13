@@ -92,7 +92,7 @@ export function CatalogResults({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         {!isLoading && count > 0 && (
           <span className="text-sm text-muted-foreground">
             Mostrando {startRange}–{endRange} de {count.toLocaleString()} resultados
@@ -103,12 +103,13 @@ export function CatalogResults({
           <div className="flex flex-wrap items-center gap-2 text-sm">
             <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
             {activeFilters.map(([k, v]) => (
-              <Badge key={k} variant="secondary" className="gap-1">
+              <Badge key={k} variant="secondary" className="gap-1 px-2 py-1">
                 {String(v)}
                 <button
                   type="button"
                   aria-label={`${t("catalog.removeFilter")} ${String(v)}`}
                   onClick={() => onRemoveFilter(k)}
+                  className="rounded-full hover:bg-muted p-0.5 transition-colors"
                 >
                   <X className="h-3 w-3" />
                 </button>
