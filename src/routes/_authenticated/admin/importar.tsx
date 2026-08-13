@@ -149,9 +149,15 @@ function Importar() {
       setProgress({ done: 0, total: data.length, currentAction: "Lendo CSV..." });
       const logs: LogItem[] = [];
 
-      for (let r = 0; r < data.length; r++) {
-        const row = data[r];
-        const title = (row[cName] || "").trim();
+      // Processar em lotes pequenos para evitar sobrecarga ou timeouts do navegador,
+      // embora o processamento de imagem ocorra no servidor.
+      const BATCH_SIZE = 5;
+      for (let i = 0; i < data.length; i += BATCH_SIZE) {
+        const batch = data.slice(i, i + BATCH_SIZE);
+        
+        await Promise.all(batch.map(async (row, batchIdx) => {
+          const r = i + batchIdx;
+          const title = (row[cName] || "").trim();
         // Generate internal unique product_code if missing
         let product_code = cSku >= 0 ? (row[cSku] || "").trim() : "";
         if (!product_code) {
