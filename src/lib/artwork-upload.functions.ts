@@ -8,5 +8,5 @@ export const processExternalImage = createServerFn({ method: "POST" })
     folder: z.string().optional()
   }).parse(data))
   .handler(async ({ data }) => {
-    return await transferImageToStorage(data.url, "artwork-previews", data.folder || "imported");
+    return await transferImageToStorage(data.url, "product-images", data.folder || "imported");
   });
