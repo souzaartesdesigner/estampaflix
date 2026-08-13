@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -73,6 +74,7 @@ function Importar() {
   const [publishAll, setPublishAll] = useState(true);
   const [keepHtml, setKeepHtml] = useState(true);
   const [autoFormat, setAutoFormat] = useState(true);
+  const processImage = useServerFn(processExternalImage);
 
 
   async function ensureCategory(name: string): Promise<string | null> {
@@ -192,7 +194,7 @@ function Importar() {
           // Process Main Preview
           let preview_url = "";
           try {
-            preview_url = await processExternalImage({ url: rawImageUrls[0], folder: "arts" });
+            preview_url = await processImage({ data: { url: rawImageUrls[0], folder: "arts" } });
           } catch (imgErr) {
             console.warn("Falha ao transferir imagem principal, usando URL original:", imgErr);
             preview_url = rawImageUrls[0];
@@ -203,7 +205,7 @@ function Importar() {
           const rawGallery = Array.from(new Set(rawImageUrls.slice(1))).slice(0, 12);
           for (const gUrl of rawGallery) {
             try {
-              const internalUrl = await processExternalImage({ url: gUrl, folder: "gallery" });
+              const internalUrl = await processImage({ data: { url: gUrl, folder: "gallery" } });
               gallery_urls.push(internalUrl);
             } catch (imgErr) {
               console.warn("Falha ao transferir imagem da galeria, usando URL original:", imgErr);
