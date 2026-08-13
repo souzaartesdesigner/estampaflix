@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,8 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { slugify } from "@/lib/format";
 import { detectFormat } from "@/features/artwork/formats";
-import { Upload, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { Upload, CheckCircle2, AlertCircle, Loader2, Image as ImageIcon } from "lucide-react";
+import { processExternalImage } from "@/lib/artwork-upload.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/importar")({ component: Importar });
 
@@ -65,13 +67,14 @@ type LogItem = { title: string; status: "ok" | "error" | "skip"; message?: strin
 function Importar() {
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
-  const [progress, setProgress] = useState({ done: 0, total: 0 });
+  const [progress, setProgress] = useState({ done: 0, total: 0, currentAction: "" });
   const [log, setLog] = useState<LogItem[]>([]);
   const [defaultCreditCost, setDefaultCreditCost] = useState(1);
   const [defaultFormat, setDefaultFormat] = useState("cdr");
   const [publishAll, setPublishAll] = useState(true);
   const [keepHtml, setKeepHtml] = useState(true);
   const [autoFormat, setAutoFormat] = useState(true);
+  const processImage = useServerFn(processExternalImage);
 
 
   async function ensureCategory(name: string): Promise<string | null> {
@@ -142,7 +145,7 @@ function Importar() {
       if (cName < 0) throw new Error("Coluna 'Nome' não encontrada");
 
       const data = rows.slice(1);
-      setProgress({ done: 0, total: data.length });
+      setProgress({ done: 0, total: data.length, currentAction: "Lendo CSV..." });
       const logs: LogItem[] = [];
 
       for (let r = 0; r < data.length; r++) {
@@ -178,14 +181,37 @@ function Importar() {
           const regular = cPrice >= 0 ? parsePriceToCents(row[cPrice]) : 0;
           const price_cents = sale > 0 ? sale : regular;
 
-          // Images
-          const imageUrls = (cImg >= 0 ? row[cImg] : "")
+          // Images - Download and Transfer
+          setProgress(p => ({ ...p, currentAction: `Processando imagens (${r + 1}/${data.length})...` }));
+          
+          const rawImageUrls = (cImg >= 0 ? row[cImg] : "")
             .split(",")
             .map((s) => s.trim())
             .filter((s) => /^https?:\/\//i.test(s));
-          const preview_url = imageUrls[0] ?? "";
-          if (!preview_url) throw new Error("Sem URL de imagem");
-          const gallery_urls = Array.from(new Set(imageUrls.slice(1))).slice(0, 12);
+          
+          if (rawImageUrls.length === 0) throw new Error("Sem URL de imagem");
+
+          // Process Main Preview
+          let preview_url = "";
+          try {
+            preview_url = await processImage({ data: { url: rawImageUrls[0], folder: "arts" } });
+          } catch (imgErr) {
+            console.warn("Falha ao transferir imagem principal, usando URL original:", imgErr);
+            preview_url = rawImageUrls[0];
+          }
+
+          // Process Gallery
+          const gallery_urls: string[] = [];
+          const rawGallery = Array.from(new Set(rawImageUrls.slice(1))).slice(0, 12);
+          for (const gUrl of rawGallery) {
+            try {
+              const internalUrl = await processImage({ data: { url: gUrl, folder: "gallery" } });
+              gallery_urls.push(internalUrl);
+            } catch (imgErr) {
+              console.warn("Falha ao transferir imagem da galeria, usando URL original:", imgErr);
+              gallery_urls.push(gUrl);
+            }
+          }
 
           const external_url = (cDlUrl >= 0 ? row[cDlUrl] : "").trim() || (cExtUrl >= 0 ? row[cExtUrl] : "").trim() || null;
           const is_published = cPub >= 0 ? (row[cPub] || "").trim() === "1" : publishAll;
@@ -259,7 +285,7 @@ function Importar() {
         } catch (err: any) {
           logs.push({ title: title || `Linha ${r + 2}`, status: "error", message: err.message || String(err) });
         }
-        setProgress({ done: r + 1, total: data.length });
+        setProgress(p => ({ ...p, done: r + 1 }));
         setLog([...logs]);
       }
 
@@ -319,7 +345,7 @@ function Importar() {
 
         {progress.total > 0 && (
           <div className="text-sm text-muted-foreground">
-            Progresso: {progress.done} / {progress.total}
+            {progress.currentAction || "Progresso"}: {progress.done} / {progress.total}
             <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-muted">
               <div className="h-full bg-primary transition-all" style={{ width: `${(progress.done / progress.total) * 100}%` }} />
             </div>
