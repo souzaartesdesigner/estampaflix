@@ -50,7 +50,7 @@ export function HeroSection({ recent }: { recent: any[] }) {
               <Link to="/planos">{ctaCms?.title || t("home.ctaPlans")} <ArrowRight className="ml-2 h-4 w-4" /></Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="h-12 rounded-full border-border/60 bg-background/30 px-6 backdrop-blur transition-colors hover:border-primary/50 hover:bg-primary/10">
-              <Link to="/catalogo">{ctaCms?.content || t("home.ctaCatalog")}</Link>
+              <Link to="/catalogo" search={{ page: 1 }}>{ctaCms?.content || t("home.ctaCatalog")}</Link>
             </Button>
           </div>
 

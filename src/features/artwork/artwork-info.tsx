@@ -29,7 +29,7 @@ export function ArtworkInfo({ artwork, title, session, sub, owned }: Props) {
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs uppercase tracking-wider">
           {cats.map((c, i) => (
             <span key={c.slug} className="flex items-center gap-2">
-              <Link to="/catalogo" search={{ categoria: c.slug } as any} className="text-primary hover:underline">
+              <Link to="/catalogo" search={{ categoria: c.slug, page: 1 } as any} className="text-primary hover:underline">
                 {tField(c, "name", lang) || c.name}
               </Link>
               {i < cats.length - 1 && <span className="text-muted-foreground">·</span>}
@@ -69,7 +69,7 @@ export function ArtworkInfo({ artwork, title, session, sub, owned }: Props) {
           <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("product.tags")}</h2>
           <div className="flex flex-wrap gap-1">
             {tags.map((tg: any) => (
-              <Link key={tg.id} to="/catalogo" search={{ tag: tg.slug } as any}>
+              <Link key={tg.id} to="/catalogo" search={{ tag: tg.slug, page: 1 } as any}>
                 <Badge variant="secondary" className="gap-1"><TagIcon className="h-3 w-3" /> {tField(tg, "name", lang) || tg.name}</Badge>
               </Link>
             ))}

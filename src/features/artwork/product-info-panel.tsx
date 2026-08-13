@@ -41,7 +41,7 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
         <span className="flex flex-wrap gap-x-2 gap-y-1">
           {cats.map((c, i) => (
             <span key={c.slug}>
-              <Link to="/catalogo" search={{ categoria: c.slug } as any} className="text-primary hover:underline">
+              <Link to="/catalogo" search={{ categoria: c.slug, page: 1 } as any} className="text-primary hover:underline">
                 {c.name}
               </Link>
               {i < cats.length - 1 && <span className="text-muted-foreground">,</span>}

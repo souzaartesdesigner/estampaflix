@@ -116,7 +116,7 @@ function PixCheckoutPage() {
               Não foi possível carregar este pedido.
             </p>
             <Button asChild className="mt-4" variant="outline">
-              <Link to="/catalogo">Voltar ao catálogo</Link>
+              <Link to="/catalogo" search={{ page: 1 }}>Voltar ao catálogo</Link>
             </Button>
           </div>
         )}
@@ -143,7 +143,7 @@ function PixCheckoutPage() {
               </p>
             </div>
             <Button asChild variant="outline">
-              <Link to="/catalogo">Catálogo</Link>
+              <Link to="/catalogo" search={{ page: 1 }}>Catálogo</Link>
             </Button>
           </div>
         )}

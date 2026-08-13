@@ -154,7 +154,7 @@ function ArtworkPage() {
       <div className="mx-auto w-full max-w-6xl px-3 py-6 sm:px-4 sm:py-8">
         <nav className="mb-4 text-xs text-muted-foreground">
           <Link to="/" className="hover:text-foreground">{t("product.crumbHome")}</Link> /{" "}
-          <Link to="/catalogo" className="hover:text-foreground">{t("product.crumbCatalog")}</Link> /{" "}
+          <Link to="/catalogo" search={{ page: 1 }} className="hover:text-foreground">{t("product.crumbCatalog")}</Link> /{" "}
           <span className="text-foreground">{trTitle}</span>
         </nav>
 

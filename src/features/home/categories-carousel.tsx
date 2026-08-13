@@ -81,7 +81,7 @@ export function CategoriesCarousel({ categories }: { categories: any[] }) {
             <Link
               key={c.id}
               to="/catalogo"
-              search={{ categoria: c.slug } as any}
+              search={{ categoria: c.slug, page: 1 } as any}
               className="group w-[70%] flex-none snap-start sm:w-[260px] md:w-[280px]"
             >
               <div className="grid grid-cols-2 grid-rows-2 gap-2">

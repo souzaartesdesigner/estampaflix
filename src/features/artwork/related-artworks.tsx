@@ -33,7 +33,7 @@ export function RelatedArtworks({ categoryIds, currentId }: { categoryIds: strin
     <section className="mt-12">
       <div className="mb-4 flex items-end justify-between">
         <h2 className="font-display text-2xl font-bold">{t("product.related")}</h2>
-        <Link to="/catalogo" className="text-sm text-primary hover:underline">{t("product.seeMore")}</Link>
+        <Link to="/catalogo" search={{ page: 1 }} className="text-sm text-primary hover:underline">{t("product.seeMore")}</Link>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {data.map((a: any) => (

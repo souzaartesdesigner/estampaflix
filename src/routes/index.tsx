@@ -162,7 +162,7 @@ function Home() {
             <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
               <h2 className="font-display text-2xl font-bold sm:text-3xl">{t("home.categoriesTitle")}</h2>
               <Button asChild variant="secondary" size="sm" className="rounded-lg">
-                <Link to="/catalogo">{t("home.viewCategories")}</Link>
+                <Link to="/catalogo" search={{ page: 1 }}>{t("home.viewCategories")}</Link>
               </Button>
             </div>
             <CategoriesCarousel categories={data.categories} />
@@ -189,7 +189,7 @@ function Home() {
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
             <h2 className="font-display text-2xl font-bold sm:text-3xl">{t("home.categoriesTitle")}</h2>
             <Button asChild variant="secondary" size="sm" className="rounded-lg">
-              <Link to="/catalogo">{t("home.viewCategories")}</Link>
+              <Link to="/catalogo" search={{ page: 1 }}>{t("home.viewCategories")}</Link>
             </Button>
           </div>
           <CategoriesCarousel categories={data.categories} />

@@ -78,7 +78,7 @@ function CartPage() {
           <div className="rounded-xl border border-dashed border-border/60 p-12 text-center">
             <ShoppingBag className="mx-auto h-10 w-10 text-muted-foreground" />
             <p className="mt-3 text-muted-foreground">{t("cart.empty")}</p>
-            <Button asChild className="mt-4"><Link to="/catalogo">{t("account.exploreCatalog")}</Link></Button>
+            <Button asChild className="mt-4"><Link to="/catalogo" search={{ page: 1 }}>{t("account.exploreCatalog")}</Link></Button>
           </div>
         ) : (
           <div className="grid gap-6 lg:grid-cols-[1fr,340px]">
