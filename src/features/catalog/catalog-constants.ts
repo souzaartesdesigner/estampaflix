@@ -7,7 +7,7 @@ export const catalogSearchSchema = z.object({
   formato: z.string().optional(),
   cor: z.string().optional(),
   licenca: z.enum(["free", "premium"]).optional(),
-  page: z.coerce.number().optional().default(1),
+  page: z.coerce.number().catch(1).optional().default(1),
 });
 
 export const LICENSES = [
