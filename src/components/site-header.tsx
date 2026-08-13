@@ -28,7 +28,7 @@ export function SiteHeader() {
   const { t } = useI18n();
   const NAV = [
     { to: "/", label: t("nav.home") },
-    { to: "/catalogo", label: t("nav.catalog") },
+    { to: "/catalogo", label: t("nav.catalog"), search: { page: 1 } },
     { to: "/planos", label: t("nav.plans") },
     { to: "/blog", label: t("nav.blog") },
     { to: "/suporte", label: t("nav.support") },
@@ -70,7 +70,7 @@ export function SiteHeader() {
 
   function submitSearch(e: React.FormEvent) {
     e.preventDefault();
-    navigate({ to: "/catalogo", search: { q: q || undefined } as any });
+    navigate({ to: "/catalogo", search: { q: q || undefined, page: 1 } as any });
   }
 
   const [isOpen, setIsOpen] = useState(false);
@@ -93,6 +93,7 @@ export function SiteHeader() {
               <Link
                 key={item.to}
                 to={item.to}
+                search={item.search}
                 className={`relative rounded-full px-3.5 py-2 text-sm font-medium transition-colors ${
                   active
                     ? "bg-primary/10 text-foreground"
