@@ -99,11 +99,12 @@ function Importar() {
   async function uniqueSlug(base: string): Promise<string> {
     let slug = base || `arte-${Date.now()}`;
     let i = 1;
+    let finalSlug = slug;
     while (true) {
-      const { data } = await supabase.from("artworks").select("id").eq("slug", slug).maybeSingle();
-      if (!data) return slug;
+      const { data } = await supabase.from("artworks").select("id").eq("slug", finalSlug).maybeSingle();
+      if (!data) return finalSlug;
       i++;
-      slug = `${base}-${i}`;
+      finalSlug = `${slug}-${i}`;
     }
   }
 
@@ -199,7 +200,7 @@ function Importar() {
           const cleanSeoDesc = rawSeoDesc.replace(/%%title%%/gi, title);
           const cleanSeoKw = rawSeoKw.replace(/%%title%%/gi, title);
 
-          const baseSlug = product_code ? slugify(`${title}-${product_code}`) : slugify(title);
+          const baseSlug = slugify(title);
           // Check if already exists by slug
           const { data: existing } = await supabase.from("artworks").select("id,slug").eq("slug", baseSlug).maybeSingle();
           const slug = existing?.slug ?? (await uniqueSlug(baseSlug));
