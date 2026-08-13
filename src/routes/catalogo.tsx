@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site-layout";
@@ -95,32 +95,37 @@ function Catalogo() {
 
 
   const filters = useMemo(() => search, [search]);
+  const page = search.page || 1;
+  const ITEMS_PER_PAGE = 24;
+  const resultsRef = useRef<HTMLDivElement>(null);
 
-  const { data: artworks = [], isLoading } = useQuery({
-    queryKey: ["catalog", filters, categories.length],
+  const { data: { artworks = [], count = 0 } = {}, isLoading } = useQuery({
+    queryKey: ["catalog", filters, categories.length, page],
     queryFn: async () => {
       let artworkIdsFilter: string[] | null = null;
       if (filters.categoria) {
         const cat = categories.find((c: any) => c.slug === filters.categoria);
-        if (!cat) return [];
+        if (!cat) return { artworks: [], count: 0 };
         const ids = [cat.id, ...categories.filter((c: any) => c.parent_id === cat.id).map((c: any) => c.id)];
         const { data: links } = await supabase
           .from("artwork_categories")
           .select("artwork_id")
           .in("category_id", ids);
         artworkIdsFilter = Array.from(new Set((links ?? []).map((l: any) => l.artwork_id)));
-        if (artworkIdsFilter.length === 0) return [];
+        if (artworkIdsFilter.length === 0) return { artworks: [], count: 0 };
       }
+
+      const from = (page - 1) * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
 
       let query = supabase
         .from("artworks")
-        .select("id,slug,title,preview_url,price_cents,license_type,is_featured,is_trending,download_count,category_id,colors,file_format,translations,categories!artworks_category_id_fkey(id,name,slug,translations),artwork_categories(categories(id,name,slug,translations))")
+        .select("id,slug,title,preview_url,price_cents,license_type,is_featured,is_trending,download_count,category_id,colors,file_format,translations,categories!artworks_category_id_fkey(id,name,slug,translations),artwork_categories(categories(id,name,slug,translations))", { count: 'exact' })
         .eq("is_published", true)
         .order("created_at", { ascending: false })
-        .limit(60);
+        .range(from, to);
 
       if (filters.q) {
-        // Sanitiza a busca: remove caracteres usados na sintaxe de filtro do PostgREST
         const term = filters.q.trim().slice(0, 80).replace(/[,()*\\"']/g, " ").trim();
         if (term) {
           const isCode = /^[0-9a-fA-F]{4,8}$/.test(term);
@@ -134,15 +139,31 @@ function Catalogo() {
       if (filters.licenca) query = query.eq("license_type", filters.licenca);
       if (filters.formato) query = query.eq("file_format", filters.formato);
       if (filters.cor) query = query.contains("colors", [filters.cor]);
-      const { data } = await query;
-      return data ?? [];
+
+      const { data, count } = await query;
+      return { artworks: data ?? [], count: count ?? 0 };
     },
   });
 
+  const update = useCallback((patch: Partial<CatalogSearch>) => {
+    // Se estiver mudando filtros (não a página), reseta para a página 1
+    const isOnlyPageChange = Object.keys(patch).length === 1 && 'page' in patch;
+    const newSearch = { ...filters, ...patch };
+    
+    if (!isOnlyPageChange) {
+      newSearch.page = 1;
+    }
 
-  function update(patch: Partial<CatalogSearch>) {
-    navigate({ to: "/catalogo", search: { ...filters, ...patch } as any });
-  }
+    navigate({ 
+      to: "/catalogo", 
+      search: newSearch as any,
+      replace: true
+    });
+
+    if (isOnlyPageChange) {
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [filters, navigate]);
 
   return (
     <SiteLayout>
@@ -230,12 +251,18 @@ function Catalogo() {
             <CatalogFilters filters={filters} categories={categories} formats={formats} onChange={update} />
           </aside>
 
-          <CatalogResults
-            filters={filters}
-            artworks={artworks}
-            isLoading={isLoading}
-            onRemoveFilter={(k) => update({ [k]: undefined } as any)}
-          />
+          <div ref={resultsRef} className="scroll-mt-20">
+            <CatalogResults
+              filters={filters}
+              artworks={artworks}
+              count={count}
+              page={page}
+              itemsPerPage={ITEMS_PER_PAGE}
+              isLoading={isLoading}
+              onRemoveFilter={(k) => update({ [k]: undefined } as any)}
+              onPageChange={(p) => update({ page: p })}
+            />
+          </div>
         </div>
 
       </div>

@@ -64,7 +64,7 @@ function Sucesso() {
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Button asChild className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
-            <Link to="/catalogo">Explorar catálogo</Link>
+            <Link to="/catalogo" search={{ page: 1 }}>Explorar catálogo</Link>
           </Button>
           <Button asChild variant="outline">
             <Link to="/minha-conta" search={{ tab: "profile" }}>Minha conta</Link>

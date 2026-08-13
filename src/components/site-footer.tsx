@@ -22,7 +22,7 @@ export function SiteFooter() {
         <div>
           <h4 className="text-sm font-semibold">{t("footer.navigation")}</h4>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li><Link to="/catalogo" className="hover:text-foreground">{t("nav.catalog")}</Link></li>
+            <li><Link to="/catalogo" search={{ page: 1 }} className="hover:text-foreground">{t("nav.catalog")}</Link></li>
             <li><Link to="/planos" className="hover:text-foreground">{t("nav.plans")}</Link></li>
             <li><Link to="/blog" className="hover:text-foreground">{t("nav.blog")}</Link></li>
             <li><Link to="/suporte" className="hover:text-foreground">{t("nav.support")}</Link></li>
