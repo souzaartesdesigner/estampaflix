@@ -25,6 +25,7 @@ export type ArtworkCardData = {
   translations?: any;
   categories?: { id?: string; name: string; slug: string; translations?: any } | null;
   artwork_categories?: Array<{ categories: { id?: string; name: string; slug: string; translations?: any } | null }> | null;
+  alt_text?: string | null;
 };
 
 export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
