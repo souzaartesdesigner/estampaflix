@@ -31,7 +31,7 @@ export function ArtworkGallery({ images, alt, showWatermark = true }: Props) {
           <div className="relative aspect-square">
             <SmartImage
               src={current}
-              alt={alt}
+              alt={alt || ""}
               widths={DETAIL_WIDTHS}
               fallbackWidth={800}
               sizes="(max-width: 1024px) 94vw, 640px"
@@ -83,7 +83,7 @@ export function ArtworkGallery({ images, alt, showWatermark = true }: Props) {
                   i === idx ? "border-primary" : "border-border/50 hover:border-border"
                 }`}
               >
-                <SmartImage src={src} alt={`${alt} — imagem ${i + 1}`} widths={THUMB_WIDTHS} fallbackWidth={160} sizes="64px" width={64} height={64} className="h-full w-full object-cover" />
+                <SmartImage src={src} alt={alt ? `${alt} — imagem ${i + 1}` : ""} widths={THUMB_WIDTHS} fallbackWidth={160} sizes="64px" width={64} height={64} className="h-full w-full object-cover" />
               </button>
             ))}
           </div>
@@ -179,7 +179,7 @@ function ZoomViewer({
       >
         <img
           src={src}
-          alt={alt}
+          alt={alt || ""}
           draggable={false}
           decoding="async"
           style={{
