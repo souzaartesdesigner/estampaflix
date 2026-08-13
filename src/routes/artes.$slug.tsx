@@ -27,8 +27,9 @@ export const Route = createFileRoute("/artes/$slug")({
       .select("id,slug,title,description,category_id,preview_url,file_path,file_format,colors,price_cents,license_type,is_published,is_featured,is_trending,download_count,view_count,created_at,updated_at,credit_cost,gallery_urls,translations,featured_order,seo_title,seo_description,seo_keyword,product_code,alt_text,noindex,tech_specs,resolution,dimensions,usage_instructions,license_text, categories!artworks_category_id_fkey(name,slug), artwork_categories(categories(id,name,slug)), artwork_tags(tags(id,name,slug))")
       .eq("slug", params.slug)
       .maybeSingle();
+    
     if (error) {
-      console.error("Error loading artwork:", error);
+      console.error("Erro ao carregar arte:", error);
       throw error;
     }
     if (!data) throw notFound();
