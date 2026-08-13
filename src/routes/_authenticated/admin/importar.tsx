@@ -197,8 +197,8 @@ function Importar() {
           try {
             preview_url = await processImage({ data: { url: rawImageUrls[0], folder: "arts" } });
           } catch (imgErr) {
-            console.warn("Falha ao transferir imagem principal, usando URL original:", imgErr);
-            preview_url = rawImageUrls[0];
+            console.error("Falha crítica ao transferir imagem principal:", imgErr);
+            throw new Error(`Erro no download da imagem principal: ${imgErr instanceof Error ? imgErr.message : String(imgErr)}`);
           }
 
           // Process Gallery
