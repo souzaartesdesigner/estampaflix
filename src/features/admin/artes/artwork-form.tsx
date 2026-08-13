@@ -39,11 +39,11 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
   const isEdit = !!editing;
   const [form, setForm] = useState<any>({
     title: editing?.title ?? "",
+    product_code: editing?.product_code ?? "",
     description: editing?.description ?? "",
     slug: editing?.slug ?? "",
     category_id: editing?.category_id ?? "",
     preview_url: editing?.preview_url ?? "",
-    file_path: editing?.file_path ?? "",
     external_url: "",
     file_format: editing?.file_format ?? "png",
     price_brl: centsToBRLInput(editing?.price_cents ?? 990),
@@ -137,6 +137,7 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
 
       const payload = {
         title: form.title,
+        product_code: form.product_code?.trim() || null,
         description: form.description,
         slug: form.slug || slugify(form.title),
         category_id: categoryIds[0] || null,
@@ -213,6 +214,7 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         <DialogHeader><DialogTitle>{isEdit ? "Editar arte" : "Nova arte"}</DialogTitle></DialogHeader>
         <form onSubmit={submit} className="space-y-4">
           <div className="grid gap-2"><Label>Título</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required /></div>
+          <div className="grid gap-2"><Label>Código do Produto (SKU)</Label><Input value={form.product_code} onChange={(e) => setForm({ ...form, product_code: e.target.value })} placeholder="Ex: SKU-123" /></div>
           <div className="grid gap-2"><Label>Slug (URL)</Label><Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="deixe vazio para gerar automaticamente" /></div>
           <div className="grid gap-2"><Label>Descrição</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} /></div>
 
