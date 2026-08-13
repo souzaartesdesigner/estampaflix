@@ -148,11 +148,16 @@ function Importar() {
       for (let r = 0; r < data.length; r++) {
         const row = data[r];
         const title = (row[cName] || "").trim();
-        const product_code = cSku >= 0 ? (row[cSku] || "").trim() : "";
+        // Generate internal unique product_code if missing
+        let product_code = cSku >= 0 ? (row[cSku] || "").trim() : "";
+        if (!product_code) {
+          product_code = `EF-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+        }
+
         try {
           if (!title) throw new Error("Nome vazio");
 
-          // Categories: CSV may bring several separated by comma; "A > B" uses the leaf
+          // Categories logic
           const categoryIds: string[] = [];
           if (cCats >= 0 && row[cCats]) {
             const names = row[cCats].split(",").map((s) => s.trim()).filter(Boolean);
@@ -164,7 +169,6 @@ function Importar() {
           }
           const category_id: string | null = categoryIds[0] ?? null;
 
-
           // Description
           const rawDesc = cDesc >= 0 ? row[cDesc] : "";
           const description = keepHtml ? rawDesc : stripHtml(rawDesc);
@@ -174,7 +178,7 @@ function Importar() {
           const regular = cPrice >= 0 ? parsePriceToCents(row[cPrice]) : 0;
           const price_cents = sale > 0 ? sale : regular;
 
-          // Images: 1st = preview, others = gallery
+          // Images
           const imageUrls = (cImg >= 0 ? row[cImg] : "")
             .split(",")
             .map((s) => s.trim())
@@ -184,11 +188,10 @@ function Importar() {
           const gallery_urls = Array.from(new Set(imageUrls.slice(1))).slice(0, 12);
 
           const external_url = (cDlUrl >= 0 ? row[cDlUrl] : "").trim() || (cExtUrl >= 0 ? row[cExtUrl] : "").trim() || null;
-
           const is_published = cPub >= 0 ? (row[cPub] || "").trim() === "1" : publishAll;
           const is_featured = cFeat >= 0 ? (row[cFeat] || "").trim() === "1" : false;
 
-          // SEO (Yoast quando existir, senão gerado da descrição curta/longa)
+          // SEO metadata
           const shortDesc = cShort >= 0 ? stripHtml(row[cShort] || "").replace(/\s+/g, " ").trim() : "";
           const plainDesc = stripHtml(rawDesc).replace(/\s+/g, " ").trim();
           
@@ -200,10 +203,9 @@ function Importar() {
           const cleanSeoDesc = rawSeoDesc.replace(/%%title%%/gi, title);
           const cleanSeoKw = rawSeoKw.replace(/%%title%%/gi, title);
 
+          // ALWAYS generate a unique slug incrementally
           const baseSlug = slugify(title);
-          // Check if already exists by slug
-          const { data: existing } = await supabase.from("artworks").select("id,slug").eq("slug", baseSlug).maybeSingle();
-          const slug = existing?.slug ?? (await uniqueSlug(baseSlug));
+          const slug = await uniqueSlug(baseSlug);
 
           const payload = {
             title,
@@ -212,37 +214,29 @@ function Importar() {
             category_id,
             preview_url,
             gallery_urls,
-            product_code: product_code || null,
+            product_code, // Always provided/generated
             seo_title: cleanSeoTitle.slice(0, 70),
             seo_description: cleanSeoDesc.slice(0, 160),
             seo_keyword: cleanSeoKw.slice(0, 120),
-            file_path: null as string | null,
+            file_path: null,
             external_url,
             file_format:
               (autoFormat
                 ? guessFormat(external_url ?? "", title, cTags >= 0 ? row[cTags] : "", rawDesc)
                 : null) || defaultFormat.trim().toLowerCase().replace(/^\./, ""),
-
             price_cents,
             credit_cost: defaultCreditCost,
             is_published: publishAll ? true : is_published,
             is_featured,
           };
 
-          let artworkId: string;
-          if (existing?.id) {
-            const { error } = await supabase.from("artworks").update(payload).eq("id", existing.id);
-            if (error) throw error;
-            artworkId = existing.id;
-          } else {
-            const { data: ins, error } = await supabase.from("artworks").insert(payload).select("id").single();
-            if (error) throw error;
-            artworkId = ins.id;
-          }
+          // FORCE INSERT - Never update
+          const { data: ins, error } = await supabase.from("artworks").insert(payload).select("id").single();
+          if (error) throw error;
+          const artworkId = ins.id;
 
           // Multi-categorias
           if (categoryIds.length) {
-            await supabase.from("artwork_categories").delete().eq("artwork_id", artworkId);
             await supabase
               .from("artwork_categories")
               .insert(categoryIds.map((cid) => ({ artwork_id: artworkId, category_id: cid })));
@@ -257,12 +251,11 @@ function Importar() {
               if (id) tagIds.push(id);
             }
             if (tagIds.length) {
-              await supabase.from("artwork_tags").delete().eq("artwork_id", artworkId);
               await supabase.from("artwork_tags").insert(tagIds.map((tid) => ({ artwork_id: artworkId, tag_id: tid })));
             }
           }
 
-          logs.push({ title, status: "ok", message: existing ? "atualizado" : "criado" });
+          logs.push({ title, status: "ok", message: "criado" });
         } catch (err: any) {
           logs.push({ title: title || `Linha ${r + 2}`, status: "error", message: err.message || String(err) });
         }

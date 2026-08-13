@@ -135,11 +135,31 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
         if (!file_path) throw new Error("Envie o arquivo para download.");
       }
 
+      const baseSlug = slugify(form.title);
+      let slug = form.slug?.trim();
+      
+      // Se for uma nova arte e o slug estiver vazio, garantimos um slug único incremental
+      if (!isEdit && !slug) {
+        let i = 1;
+        let finalSlug = baseSlug;
+        while (true) {
+          const { data: exists } = await supabase.from("artworks").select("id").eq("slug", finalSlug).maybeSingle();
+          if (!exists) {
+            slug = finalSlug;
+            break;
+          }
+          i++;
+          finalSlug = `${baseSlug}-${i}`;
+        }
+      } else if (!slug) {
+        slug = baseSlug;
+      }
+
       const payload = {
         title: form.title,
-        product_code: form.product_code?.trim() || null,
+        product_code: form.product_code?.trim() || (isEdit ? null : `EF-${Math.random().toString(36).substring(2, 7).toUpperCase()}`),
         description: form.description,
-        slug: form.slug || slugify(form.title),
+        slug,
         category_id: categoryIds[0] || null,
         preview_url,
         file_path,
