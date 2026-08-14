@@ -167,6 +167,7 @@ function Importar() {
       setProgress({ done: 0, total: data.length, currentAction: "Iniciando importação..." });
       const currentLogs: LogItem[] = [];
 
+      const usedSlugsInBatch = new Set<string>();
       const BATCH_SIZE = 3; 
       for (let i = 0; i < data.length; i += BATCH_SIZE) {
         const batch = data.slice(i, i + BATCH_SIZE);
@@ -232,9 +233,19 @@ function Importar() {
             const cleanSeoTitle = rawSeoTitle.replace(/%%title%%/gi, title);
             const cleanSeoDesc = rawSeoDesc.replace(/%%title%%/gi, title);
             const cleanSeoKw = rawSeoKw.replace(/%%title%%/gi, title);
-            const shortHash = Math.random().toString(36).substring(2, 7);
-            const baseSlug = slugify(title);
-            const slug = await uniqueSlug(baseSlug ? `${baseSlug}-${shortHash}` : shortHash);
+            const baseSlug = slugify(title) || `arte-${Date.now()}`;
+            
+            // Verifica se existe no banco
+            const { data: existingInDb } = await supabase.from("artworks").select("id").eq("slug", baseSlug).maybeSingle();
+            
+            let slug = baseSlug;
+            // Se existir no banco OU já tiver sido usado neste batch, gera com sufixo
+            if (existingInDb || usedSlugsInBatch.has(baseSlug)) {
+              const shortHash = Math.random().toString(36).substring(2, 7);
+              slug = `${baseSlug}-${shortHash}`;
+            }
+            
+            usedSlugsInBatch.add(slug);
 
             const payload = {
               title,
