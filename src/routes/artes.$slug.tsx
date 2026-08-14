@@ -167,6 +167,9 @@ function ArtworkPage() {
             <ArtworkGallery
               images={galleryImages}
               alt={(artwork as any).alt_text || ""}
+              licenseType={artwork.license_type}
+              isFeatured={artwork.is_featured}
+              isTrending={artwork.is_trending}
             />
             <ProductInfoPanel artwork={artwork} />
           </div>

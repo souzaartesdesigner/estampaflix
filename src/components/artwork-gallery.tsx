@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { ChevronLeft, ChevronRight, ZoomIn, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, ZoomIn, X, Gift, Crown, Star, Flame } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { SmartImage } from "@/components/smart-image";
 import { DETAIL_WIDTHS, THUMB_WIDTHS } from "@/lib/image-cdn";
@@ -10,9 +10,12 @@ type Props = {
   images: string[];
   alt: string;
   showWatermark?: boolean;
+  licenseType?: string | null;
+  isFeatured?: boolean;
+  isTrending?: boolean;
 };
 
-export function ArtworkGallery({ images, alt, showWatermark = true }: Props) {
+export function ArtworkGallery({ images, alt, showWatermark = true, licenseType, isFeatured, isTrending }: Props) {
   const list = images.filter(Boolean);
   const [idx, setIdx] = useState(0);
   const [zoomOpen, setZoomOpen] = useState(false);
@@ -39,6 +42,44 @@ export function ArtworkGallery({ images, alt, showWatermark = true }: Props) {
               className="h-full w-full cursor-zoom-in object-cover transition-transform duration-300 group-hover:scale-105"
               onClick={() => setZoomOpen(true)}
             />
+
+            <div className="absolute left-4 top-4 z-10 flex flex-col gap-2 items-start pointer-events-none">
+              {licenseType === "free" ? (
+                <span
+                  aria-label="Arte gratuita"
+                  title="Arte gratuita"
+                  className="grid h-8 w-8 place-items-center rounded-full bg-success text-foreground shadow-lg"
+                >
+                  <Gift className="h-4.5 w-4.5" />
+                </span>
+              ) : (
+                <span
+                  aria-label="Arte premium"
+                  title="Arte premium"
+                  className="grid h-8 w-8 place-items-center rounded-full bg-gradient-brand text-brand-foreground shadow-lg"
+                >
+                  <Crown className="h-4.5 w-4.5" />
+                </span>
+              )}
+              {isFeatured && (
+                <span
+                  aria-label={t("card.featured")}
+                  title={t("card.featured")}
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-yellow-400/50 bg-black shadow-lg"
+                >
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                </span>
+              )}
+              {isTrending && (
+                <span
+                  aria-label={t("card.trending")}
+                  title={t("card.trending")}
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-orange-500/50 bg-black shadow-lg"
+                >
+                  <Flame className="h-4 w-4 fill-orange-500 text-orange-500" />
+                </span>
+              )}
+            </div>
 
             <button
               type="button"
