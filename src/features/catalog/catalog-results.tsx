@@ -12,6 +12,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { cn } from "@/lib/utils";
 
 type Props = {
   filters: CatalogSearch;
@@ -184,8 +185,8 @@ export function CatalogResults({
                 </Pagination>
               </div>
 
-              {/* Mobile Pagination */}
-              <div className="flex sm:hidden items-center justify-between w-full max-w-[300px] mx-auto">
+              {/* Responsive/Mobile Pagination (Image Reference Style) */}
+              <div className="flex sm:hidden items-center justify-center gap-2 w-full">
                 <button
                   type="button"
                   onClick={() => {
@@ -195,15 +196,20 @@ export function CatalogResults({
                     }
                   }}
                   disabled={page === 1}
-                  className="bg-primary text-primary-foreground w-10 h-10 rounded-md flex items-center justify-center disabled:opacity-50 transition-opacity"
-                  aria-label="Anterior"
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/50 bg-[#131313] text-sm font-medium transition-all active:scale-95",
+                    "disabled:opacity-40 disabled:pointer-events-none hover:bg-surface-2"
+                  )}
                 >
-                  <ChevronLeft className="h-5 w-5" />
+                  <ChevronLeft className="h-4 w-4" />
+                  Anterior
                 </button>
 
-                <span className="text-sm font-medium">
-                  Página {page} de {totalPages}
-                </span>
+                <div className="flex items-center justify-center min-w-[80px] px-4 py-2.5 rounded-xl border border-border/50 bg-[#131313] text-sm font-medium">
+                  <span className="text-white font-bold">{page}</span>
+                  <span className="mx-1.5 text-muted-foreground">/</span>
+                  <span className="text-muted-foreground">{totalPages}</span>
+                </div>
 
                 <button
                   type="button"
@@ -214,10 +220,13 @@ export function CatalogResults({
                     }
                   }}
                   disabled={page === totalPages}
-                  className="bg-primary text-primary-foreground w-10 h-10 rounded-md flex items-center justify-center disabled:opacity-50 transition-opacity"
-                  aria-label="Próximo"
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/50 bg-[#131313] text-sm font-medium transition-all active:scale-95",
+                    "disabled:opacity-40 disabled:pointer-events-none hover:bg-surface-2"
+                  )}
                 >
-                  <ChevronRight className="h-5 w-5" />
+                  Próxima
+                  <ChevronRight className="h-4 w-4" />
                 </button>
               </div>
             </div>
