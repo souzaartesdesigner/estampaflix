@@ -198,15 +198,15 @@ export function CatalogResults({
                   disabled={page === 1}
                   className={cn(
                     "flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/50 bg-[#131313] text-sm font-medium transition-all active:scale-95",
-                    "disabled:opacity-40 disabled:pointer-events-none hover:bg-surface-2"
+                    "disabled:opacity-40 disabled:pointer-events-none hover:bg-surface-2 hover:border-primary/30"
                   )}
                 >
                   <ChevronLeft className="h-4 w-4" />
                   Anterior
                 </button>
 
-                <div className="flex items-center justify-center min-w-[80px] px-4 py-2.5 rounded-xl border border-border/50 bg-[#131313] text-sm font-medium">
-                  <span className="text-white font-bold">{page}</span>
+                <div className="flex items-center justify-center min-w-[80px] px-4 py-2.5 rounded-xl border border-primary/20 bg-[#131313] text-sm font-medium shadow-[0_0_15px_rgba(0,123,255,0.1)]">
+                  <span className="text-primary font-bold">{page}</span>
                   <span className="mx-1.5 text-muted-foreground">/</span>
                   <span className="text-muted-foreground">{totalPages}</span>
                 </div>
@@ -222,7 +222,7 @@ export function CatalogResults({
                   disabled={page === totalPages}
                   className={cn(
                     "flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border/50 bg-[#131313] text-sm font-medium transition-all active:scale-95",
-                    "disabled:opacity-40 disabled:pointer-events-none hover:bg-surface-2"
+                    "disabled:opacity-40 disabled:pointer-events-none hover:bg-surface-2 hover:border-primary/30"
                   )}
                 >
                   Próxima
