@@ -261,7 +261,10 @@ function Importar() {
             const artworkId = ins.id;
 
             if (categoryIds.length) {
-              await supabase.from("artwork_categories").insert(categoryIds.map((cid) => ({ artwork_id: artworkId, category_id: cid })));
+              await supabase.from("artwork_categories").upsert(
+                categoryIds.map((cid) => ({ artwork_id: artworkId, category_id: cid })),
+                { onConflict: "artwork_id,category_id", ignoreDuplicates: true },
+              );
             }
 
             if (cTags >= 0 && row[cTags]) {
