@@ -167,7 +167,6 @@ function ArtworkPage() {
             <ArtworkGallery
               images={galleryImages}
               alt={(artwork as any).alt_text || ""}
-              artwork={artwork}
             />
             <ProductInfoPanel artwork={artwork} />
           </div>

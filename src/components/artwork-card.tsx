@@ -122,7 +122,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
         </h3>
         <div className="mt-auto flex w-full flex-col items-center gap-1 pt-2 md:flex-row md:items-center md:justify-between md:gap-2 md:text-left">
           {cats.length > 0 ? (
-            <span className="line-clamp-2 min-w-0 text-[12px] text-muted-foreground md:order-2 md:text-right">
+            <span className="line-clamp-2 min-w-0 text-[11px] text-muted-foreground md:order-2 md:text-right">
               {cats.slice(0, 2).map((c) => tField(c as any, "name", lang) || c!.name).join(" · ")}
             </span>
           ) : (

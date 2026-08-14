@@ -40,6 +40,43 @@ export function ArtworkInfo({ artwork, title, session, sub, owned }: Props) {
 
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="font-display text-2xl font-bold sm:text-3xl">{title}</h1>
+        <div className="flex items-center gap-2">
+          {artwork.license_type === "free" ? (
+            <span
+              aria-label="Arte gratuita"
+              title="Arte gratuita"
+              className="grid h-7 w-7 place-items-center rounded-full bg-success text-foreground shadow-sm"
+            >
+              <Gift className="h-4 w-4" />
+            </span>
+          ) : (
+            <span
+              aria-label="Arte premium"
+              title="Arte premium"
+              className="grid h-7 w-7 place-items-center rounded-full bg-gradient-brand text-brand-foreground shadow-sm"
+            >
+              <Crown className="h-4 w-4" />
+            </span>
+          )}
+          {artwork.is_featured && (
+            <span
+              aria-label={t("card.featured")}
+              title={t("card.featured")}
+              className="flex h-7 w-7 items-center justify-center rounded-full border border-yellow-400/50 bg-black shadow-sm"
+            >
+              <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+            </span>
+          )}
+          {artwork.is_trending && (
+            <span
+              aria-label={t("card.trending")}
+              title={t("card.trending")}
+              className="flex h-7 w-7 items-center justify-center rounded-full border border-orange-500/50 bg-black shadow-sm"
+            >
+              <Flame className="h-3.5 w-3.5 fill-orange-500 text-orange-500" />
+            </span>
+          )}
+        </div>
       </div>
       <div className="flex items-center gap-2">
         <FavoriteButton artworkId={artwork.id} size="md" />

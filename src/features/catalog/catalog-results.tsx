@@ -91,7 +91,7 @@ export function CatalogResults({
   const endRange = Math.min(page * itemsPerPage, count);
 
   return (
-    <div className="flex w-full max-w-full flex-col gap-6 overflow-x-hidden">
+    <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         {!isLoading && count > 0 && (
           <span className="text-sm text-muted-foreground">

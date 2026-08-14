@@ -159,8 +159,6 @@ function Catalogo() {
 
     if (isOnlyPageChange) {
       resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      // Prevenção extra para mobile e comportamentos de zoom indesejados
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [filters, navigate]);
 
