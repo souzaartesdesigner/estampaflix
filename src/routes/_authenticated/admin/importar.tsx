@@ -275,7 +275,10 @@ function Importar() {
                 if (id) tagIds.push(id);
               }
               if (tagIds.length) {
-                await supabase.from("artwork_tags").insert(tagIds.map((tid) => ({ artwork_id: artworkId, tag_id: tid })));
+                await supabase.from("artwork_tags").upsert(
+                  tagIds.map((tid) => ({ artwork_id: artworkId, tag_id: tid })),
+                  { onConflict: "artwork_id,tag_id", ignoreDuplicates: true },
+                );
               }
             }
             currentLogs.push({ title, status: "ok", message: "criado" });
