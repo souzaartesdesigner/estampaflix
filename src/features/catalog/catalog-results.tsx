@@ -186,7 +186,7 @@ export function CatalogResults({
               </div>
 
               {/* Responsive/Mobile Pagination (Image Reference Style) */}
-              <div className="flex sm:hidden items-center justify-center gap-1 w-full px-1">
+              <div className="flex sm:hidden items-center justify-center gap-2 w-full px-1">
                 <button
                   type="button"
                   onClick={() => {
