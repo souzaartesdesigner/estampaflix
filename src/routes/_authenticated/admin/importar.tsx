@@ -73,26 +73,49 @@ function Importar() {
   const [autoFormat, setAutoFormat] = useState(true);
   const processImage = useServerFn(processExternalImage);
 
-  async function ensureCategory(name: string): Promise<string | null> {
+  const categoryCache = new Map<string, string>();
+  const tagCache = new Map<string, string>();
+
+  async function ensureTaxonomy(
+    table: "categories" | "tags",
+    cache: Map<string, string>,
+    name: string,
+  ): Promise<string | null> {
     const clean = name.trim();
     if (!clean) return null;
     const slug = slugify(clean);
-    const { data: existing } = await supabase.from("categories").select("id").eq("slug", slug).maybeSingle();
-    if (existing?.id) return existing.id;
-    const { data, error } = await supabase.from("categories").insert({ slug, name: clean }).select("id").single();
+    if (!slug) return null;
+    const cached = cache.get(slug);
+    if (cached) return cached;
+
+    // UPSERT por slug: se já existir, apenas retorna o registro existente
+    const { data, error } = await supabase
+      .from(table)
+      .upsert({ slug, name: clean }, { onConflict: "slug", ignoreDuplicates: false })
+      .select("id")
+      .maybeSingle();
+
+    if (data?.id) {
+      cache.set(slug, data.id);
+      return data.id;
+    }
+
+    // Fallback: busca o existente (ex.: upsert bloqueado por RLS de update)
+    const { data: existing } = await supabase.from(table).select("id").eq("slug", slug).maybeSingle();
+    if (existing?.id) {
+      cache.set(slug, existing.id);
+      return existing.id;
+    }
     if (error) throw error;
-    return data.id;
+    return null;
+  }
+
+  async function ensureCategory(name: string): Promise<string | null> {
+    return ensureTaxonomy("categories", categoryCache, name);
   }
 
   async function ensureTag(name: string): Promise<string | null> {
-    const clean = name.trim();
-    if (!clean) return null;
-    const slug = slugify(clean);
-    const { data: existing } = await supabase.from("tags").select("id").eq("slug", slug).maybeSingle();
-    if (existing?.id) return existing.id;
-    const { data, error } = await supabase.from("tags").insert({ slug, name: clean }).select("id").single();
-    if (error) throw error;
-    return data.id;
+    return ensureTaxonomy("tags", tagCache, name);
   }
 
   async function uniqueSlug(base: string): Promise<string> {
@@ -238,7 +261,10 @@ function Importar() {
             const artworkId = ins.id;
 
             if (categoryIds.length) {
-              await supabase.from("artwork_categories").insert(categoryIds.map((cid) => ({ artwork_id: artworkId, category_id: cid })));
+              await supabase.from("artwork_categories").upsert(
+                categoryIds.map((cid) => ({ artwork_id: artworkId, category_id: cid })),
+                { onConflict: "artwork_id,category_id", ignoreDuplicates: true },
+              );
             }
 
             if (cTags >= 0 && row[cTags]) {
@@ -249,7 +275,10 @@ function Importar() {
                 if (id) tagIds.push(id);
               }
               if (tagIds.length) {
-                await supabase.from("artwork_tags").insert(tagIds.map((tid) => ({ artwork_id: artworkId, tag_id: tid })));
+                await supabase.from("artwork_tags").upsert(
+                  tagIds.map((tid) => ({ artwork_id: artworkId, tag_id: tid })),
+                  { onConflict: "artwork_id,tag_id", ignoreDuplicates: true },
+                );
               }
             }
             currentLogs.push({ title, status: "ok", message: "criado" });
