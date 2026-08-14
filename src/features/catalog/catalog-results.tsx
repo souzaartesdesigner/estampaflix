@@ -225,7 +225,7 @@ export function CatalogResults({
                     "disabled:opacity-40 disabled:pointer-events-none hover:bg-surface-2 hover:border-primary/30"
                   )}
                 >
-                  <span className="hidden xs:inline">Próxima</span>
+                  <span className="hidden min-[360px]:inline">Próxima</span>
                   <ChevronRight className="h-4 w-4 shrink-0" />
                 </button>
               </div>
