@@ -232,8 +232,9 @@ function Importar() {
             const cleanSeoTitle = rawSeoTitle.replace(/%%title%%/gi, title);
             const cleanSeoDesc = rawSeoDesc.replace(/%%title%%/gi, title);
             const cleanSeoKw = rawSeoKw.replace(/%%title%%/gi, title);
+            const shortHash = Math.random().toString(36).substring(2, 7);
             const baseSlug = slugify(title);
-            const slug = await uniqueSlug(baseSlug);
+            const slug = await uniqueSlug(baseSlug ? `${baseSlug}-${shortHash}` : shortHash);
 
             const payload = {
               title,
