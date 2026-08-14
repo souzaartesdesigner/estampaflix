@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { ArtworkCard } from "@/components/artwork-card";
 import { useI18n } from "@/lib/i18n";
 import type { CatalogSearch } from "./catalog-constants";
@@ -146,34 +146,80 @@ export function CatalogResults({
           </div>
 
           {totalPages > 1 && (
-            <div className="mt-8 flex justify-center">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (page > 1) onPageChange(page - 1);
-                      }}
-                      href={`#page=${page - 1}`}
-                      className={page === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
+            <div className="mt-8">
+              {/* Desktop Pagination */}
+              <div className="hidden sm:flex justify-center">
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (page > 1) {
+                            onPageChange(page - 1);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }
+                        }}
+                        href={`#page=${page - 1}`}
+                        className={page === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
 
-                  {renderPaginationItems()}
+                    {renderPaginationItems()}
 
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={(e) => {
-                        e.preventDefault();
-                        if (page < totalPages) onPageChange(page + 1);
-                      }}
-                      href={`#page=${page + 1}`}
-                      className={page === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
+                    <PaginationItem>
+                      <PaginationNext
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (page < totalPages) {
+                            onPageChange(page + 1);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }
+                        }}
+                        href={`#page=${page + 1}`}
+                        className={page === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+
+              {/* Mobile Pagination */}
+              <div className="flex sm:hidden items-center justify-between w-full max-w-[300px] mx-auto">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (page > 1) {
+                      onPageChange(page - 1);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
+                  disabled={page === 1}
+                  className="bg-primary text-primary-foreground w-10 h-10 rounded-md flex items-center justify-center disabled:opacity-50 transition-opacity"
+                  aria-label="Anterior"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+
+                <span className="text-sm font-medium">
+                  Página {page} de {totalPages}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (page < totalPages) {
+                      onPageChange(page + 1);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
+                  disabled={page === totalPages}
+                  className="bg-primary text-primary-foreground w-10 h-10 rounded-md flex items-center justify-center disabled:opacity-50 transition-opacity"
+                  aria-label="Próximo"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </div>
             </div>
           )}
         </>
