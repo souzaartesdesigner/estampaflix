@@ -25,18 +25,20 @@ type Props = {
   onPageChange: (page: number) => void;
 };
 
-export function CatalogResults({ 
-  filters, 
-  artworks, 
-  count, 
-  page, 
-  itemsPerPage, 
-  isLoading, 
+export function CatalogResults({
+  filters,
+  artworks,
+  count,
+  page,
+  itemsPerPage,
+  isLoading,
   onRemoveFilter,
-  onPageChange
+  onPageChange,
 }: Props) {
   const { t } = useI18n();
-  const activeFilters = Object.entries(filters).filter(([k, v]) => v && k !== 'page') as Array<[keyof CatalogSearch, string]>;
+  const activeFilters = Object.entries(filters).filter(([k, v]) => v && k !== "page") as Array<
+    [keyof CatalogSearch, string]
+  >;
   const totalPages = Math.ceil(count / itemsPerPage);
 
   const renderPaginationItems = () => {
@@ -50,14 +52,14 @@ export function CatalogResults({
     } else {
       items.push(1);
       if (page > 3) items.push("ellipsis-start");
-      
+
       const start = Math.max(2, page - 1);
       const end = Math.min(totalPages - 1, page + 1);
-      
+
       for (let i = start; i <= end; i++) {
         items.push(i);
       }
-      
+
       if (page < totalPages - 2) items.push("ellipsis-end");
       items.push(totalPages);
     }
@@ -99,7 +101,7 @@ export function CatalogResults({
             Mostrando {startRange}–{endRange} de {count.toLocaleString()} resultados
           </span>
         )}
-        
+
         {activeFilters.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 text-sm">
             <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
@@ -123,10 +125,7 @@ export function CatalogResults({
       {isLoading ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div
-              key={i}
-              className="flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-card"
-            >
+            <div key={i} className="flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-card">
               <div className="aspect-square w-full animate-pulse bg-surface-2" />
               <div className="flex flex-col items-center gap-2 p-3.5">
                 <div className="h-4 w-4/5 animate-pulse rounded bg-surface-2" />
@@ -143,7 +142,9 @@ export function CatalogResults({
       ) : (
         <>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
-            {artworks.map((a: any) => <ArtworkCard key={a.id} artwork={a} />)}
+            {artworks.map((a: any) => (
+              <ArtworkCard key={a.id} artwork={a} />
+            ))}
           </div>
 
           {totalPages > 1 && (
@@ -158,7 +159,7 @@ export function CatalogResults({
                           e.preventDefault();
                           if (page > 1) {
                             onPageChange(page - 1);
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            window.scrollTo({ top: 0, behavior: "smooth" });
                           }
                         }}
                         href={`#page=${page - 1}`}
@@ -174,7 +175,7 @@ export function CatalogResults({
                           e.preventDefault();
                           if (page < totalPages) {
                             onPageChange(page + 1);
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            window.scrollTo({ top: 0, behavior: "smooth" });
                           }
                         }}
                         href={`#page=${page + 1}`}
@@ -186,19 +187,19 @@ export function CatalogResults({
               </div>
 
               {/* Responsive/Mobile Pagination (Image Reference Style) */}
-              <div className="flex sm:hidden items-center justify-center gap-2 w-full px-1">
+              <div className="flex sm:hidden items-center justify-center gap-3 w-full px-1">
                 <button
                   type="button"
                   onClick={() => {
                     if (page > 1) {
                       onPageChange(page - 1);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      window.scrollTo({ top: 0, behavior: "smooth" });
                     }
                   }}
                   disabled={page === 1}
                   className={cn(
                     "flex items-center gap-1.5 px-2.5 sm:px-4 py-2.5 rounded-xl border border-border/50 bg-[#131313] text-sm font-medium transition-all active:scale-95",
-                    "disabled:opacity-40 disabled:pointer-events-none hover:bg-surface-2 hover:border-primary/30"
+                    "disabled:opacity-40 disabled:pointer-events-none hover:bg-surface-2 hover:border-primary/30",
                   )}
                 >
                   <ChevronLeft className="h-4 w-4 shrink-0" />
@@ -216,13 +217,13 @@ export function CatalogResults({
                   onClick={() => {
                     if (page < totalPages) {
                       onPageChange(page + 1);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      window.scrollTo({ top: 0, behavior: "smooth" });
                     }
                   }}
                   disabled={page === totalPages}
                   className={cn(
                     "flex items-center gap-1.5 px-2.5 sm:px-4 py-2.5 rounded-xl border border-border/50 bg-[#131313] text-sm font-medium transition-all active:scale-95",
-                    "disabled:opacity-40 disabled:pointer-events-none hover:bg-surface-2 hover:border-primary/30"
+                    "disabled:opacity-40 disabled:pointer-events-none hover:bg-surface-2 hover:border-primary/30",
                   )}
                 >
                   <span className="hidden [@media(min-width:370px)]:inline">Próxima</span>
