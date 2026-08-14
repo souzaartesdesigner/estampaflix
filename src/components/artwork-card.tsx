@@ -8,7 +8,7 @@ import { CARD_WIDTHS } from "@/lib/image-cdn";
 
 import { FavoriteButton } from "./favorite-button";
 
-import { ShoppingCart, Check, Crown, Gift } from "lucide-react";
+import { ShoppingCart, Check, Crown, Gift, Star, Flame } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { useI18n, tField } from "@/lib/i18n";
 
@@ -59,12 +59,12 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
         ) : (
           <div className="grid h-full place-items-center text-muted-foreground">{t("card.noImage")}</div>
         )}
-        <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5">
+        <div className="absolute left-2.5 top-2.5 flex flex-col gap-2 items-start">
           {artwork.license_type === "free" ? (
             <span
               aria-label="Arte gratuita"
               title="Arte gratuita"
-              className="grid h-7 w-7 place-items-center rounded-full bg-success text-foreground"
+              className="grid h-7 w-7 place-items-center rounded-full bg-success text-foreground shadow-sm"
             >
               <Gift className="h-4 w-4" />
             </span>
@@ -72,20 +72,28 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
             <span
               aria-label="Arte premium"
               title="Arte premium"
-              className="grid h-7 w-7 place-items-center rounded-full bg-gradient-brand text-brand-foreground"
+              className="grid h-7 w-7 place-items-center rounded-full bg-gradient-brand text-brand-foreground shadow-sm"
             >
               <Crown className="h-4 w-4" />
             </span>
           )}
           {artwork.is_featured && (
-            <Badge variant="secondary" className="bg-background/70 backdrop-blur-md">
-              {t("card.featured")}
-            </Badge>
+            <span
+              aria-label={t("card.featured")}
+              title={t("card.featured")}
+              className="w-7 h-7 rounded-full bg-black flex items-center justify-center shadow-sm border border-yellow-400/50"
+            >
+              <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+            </span>
           )}
           {artwork.is_trending && (
-            <Badge variant="secondary" className="bg-background/70 backdrop-blur-md">
-              {t("card.trending")}
-            </Badge>
+            <span
+              aria-label={t("card.trending")}
+              title={t("card.trending")}
+              className="w-7 h-7 rounded-full bg-black flex items-center justify-center shadow-sm border border-orange-500/50"
+            >
+              <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500" />
+            </span>
           )}
         </div>
 
