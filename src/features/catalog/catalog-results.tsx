@@ -221,7 +221,7 @@ export function CatalogResults({
                   }}
                   disabled={page === totalPages}
                   className={cn(
-                    "flex items-center gap-1.5 px-2.5 py-2.5 rounded-xl border border-border/50 bg-[#131313] text-sm font-medium transition-all active:scale-95",
+                    "flex items-center gap-1.5 px-2.5 sm:px-4 py-2.5 rounded-xl border border-border/50 bg-[#131313] text-sm font-medium transition-all active:scale-95",
                     "disabled:opacity-40 disabled:pointer-events-none hover:bg-surface-2 hover:border-primary/30"
                   )}
                 >
