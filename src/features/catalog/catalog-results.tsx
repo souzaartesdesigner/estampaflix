@@ -202,7 +202,7 @@ export function CatalogResults({
                   )}
                 >
                   <ChevronLeft className="h-4 w-4 shrink-0" />
-                  <span>Anterior</span>
+                  <span className="hidden [@media(min-width:370px)]:inline">Anterior</span>
                 </button>
 
                 <div className="flex items-center justify-center min-w-[70px] px-2 py-2.5 rounded-xl border border-primary/20 bg-[#131313] text-sm font-medium shadow-[0_0_15px_rgba(0,123,255,0.1)]">
@@ -225,7 +225,7 @@ export function CatalogResults({
                     "disabled:opacity-40 disabled:pointer-events-none hover:bg-surface-2 hover:border-primary/30"
                   )}
                 >
-                  <span>Próxima</span>
+                  <span className="hidden [@media(min-width:370px)]:inline">Próxima</span>
                   <ChevronRight className="h-4 w-4 shrink-0" />
                 </button>
               </div>
