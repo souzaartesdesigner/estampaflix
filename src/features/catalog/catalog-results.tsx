@@ -186,7 +186,7 @@ export function CatalogResults({
               </div>
 
               {/* Responsive/Mobile Pagination (Image Reference Style) */}
-              <div className="flex sm:hidden items-center justify-center gap-1 w-full overflow-hidden px-1">
+              <div className="flex sm:hidden items-center justify-center gap-1 w-full px-1">
                 <button
                   type="button"
                   onClick={() => {
@@ -197,12 +197,12 @@ export function CatalogResults({
                   }}
                   disabled={page === 1}
                   className={cn(
-                    "flex items-center gap-1.5 px-2.5 py-2.5 rounded-xl border border-border/50 bg-[#131313] text-sm font-medium transition-all active:scale-95",
+                    "flex items-center gap-1.5 px-2.5 sm:px-4 py-2.5 rounded-xl border border-border/50 bg-[#131313] text-sm font-medium transition-all active:scale-95",
                     "disabled:opacity-40 disabled:pointer-events-none hover:bg-surface-2 hover:border-primary/30"
                   )}
                 >
                   <ChevronLeft className="h-4 w-4 shrink-0" />
-                  <span className="hidden xs:inline">Anterior</span>
+                  <span className="hidden [@media(min-width:370px)]:inline">Anterior</span>
                 </button>
 
                 <div className="flex items-center justify-center min-w-[70px] px-2 py-2.5 rounded-xl border border-primary/20 bg-[#131313] text-sm font-medium shadow-[0_0_15px_rgba(0,123,255,0.1)]">
@@ -221,11 +221,11 @@ export function CatalogResults({
                   }}
                   disabled={page === totalPages}
                   className={cn(
-                    "flex items-center gap-1.5 px-2.5 py-2.5 rounded-xl border border-border/50 bg-[#131313] text-sm font-medium transition-all active:scale-95",
+                    "flex items-center gap-1.5 px-2.5 sm:px-4 py-2.5 rounded-xl border border-border/50 bg-[#131313] text-sm font-medium transition-all active:scale-95",
                     "disabled:opacity-40 disabled:pointer-events-none hover:bg-surface-2 hover:border-primary/30"
                   )}
                 >
-                  <span className="hidden xs:inline">Próxima</span>
+                  <span className="hidden [@media(min-width:370px)]:inline">Próxima</span>
                   <ChevronRight className="h-4 w-4 shrink-0" />
                 </button>
               </div>
