@@ -8,7 +8,7 @@ import { CARD_WIDTHS } from "@/lib/image-cdn";
 
 import { FavoriteButton } from "./favorite-button";
 
-import { ShoppingCart, Check, Crown, Gift } from "lucide-react";
+import { ShoppingCart, Check, Crown, Gift, Star, Flame } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
 import { useI18n, tField } from "@/lib/i18n";
 
