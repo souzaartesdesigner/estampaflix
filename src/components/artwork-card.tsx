@@ -50,7 +50,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
             alt={artwork.alt_text || ""}
             widths={CARD_WIDTHS}
             fallbackWidth={400}
-            sizes="(max-width: 640px) 92vw, (max-width: 768px) 46vw, (max-width: 1280px) 31vw, 300px"
+            sizes="(max-width: 640px) 92vw, (max-width: 768px) 46vw, (max-width: 1280px) 25vw, 400px"
             width={400}
             height={400}
             className="h-full w-full object-cover"
