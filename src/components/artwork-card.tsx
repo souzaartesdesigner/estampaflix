@@ -120,15 +120,15 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
         <h3 className="line-clamp-3 text-sm font-semibold tracking-tight text-foreground/95 transition-colors group-hover:text-primary md:line-clamp-none">
           {title}
         </h3>
-        <div className="mt-auto flex w-full flex-col items-center gap-1 pt-2 md:flex-row md:items-center md:justify-between md:gap-2 md:text-left">
+        <div className="mt-auto flex w-full flex-col items-center gap-1 pt-2 xs:flex-row xs:items-center xs:justify-between xs:gap-2 xs:text-left md:flex-row md:items-center md:justify-between md:gap-2 md:text-left">
           {cats.length > 0 ? (
-            <span className="line-clamp-2 min-w-0 text-[12px] text-muted-foreground md:order-2 md:text-right">
+            <span className="line-clamp-2 min-w-0 text-[12px] text-muted-foreground xs:order-2 xs:text-right md:order-2 md:text-right">
               {cats.slice(0, 2).map((c) => tField(c as any, "name", lang) || c!.name).join(" · ")}
             </span>
           ) : (
-            <span className="hidden md:order-2 md:block" />
+            <span className="hidden xs:order-2 xs:block md:order-2 md:block" />
           )}
-          <span className="font-display text-base font-bold tracking-tight text-foreground md:order-1 md:shrink-0">
+          <span className="font-display text-base font-bold tracking-tight text-foreground xs:order-1 xs:shrink-0 md:order-1 md:shrink-0">
             {artwork.license_type === "free" ? "Grátis" : formatBRL(artwork.price_cents)}
           </span>
         </div>
