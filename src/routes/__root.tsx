@@ -260,6 +260,16 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        {/* DO NOT REMOVE — Google Tag Manager (GTM-594LSV6J) noscript iframe */}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-594LSV6J"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
+        {/* END DO NOT REMOVE — GTM noscript */}
         {loaderData?.bodyScripts && (
           <div dangerouslySetInnerHTML={{ __html: loaderData.bodyScripts }} />
         )}
