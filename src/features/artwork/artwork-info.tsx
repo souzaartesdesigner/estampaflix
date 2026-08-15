@@ -67,7 +67,7 @@ export function ArtworkInfo({ artwork, title, session, sub, owned }: Props) {
       <ArtworkActions artwork={artwork} session={session} sub={sub} owned={owned} header={header} />
 
       {tags.length > 0 && (
-        <div>
+        <div className="hidden lg:block">
           <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("product.tags")}</h2>
           <div className="flex flex-wrap gap-1">
             {tags.map((tg: any) => (
