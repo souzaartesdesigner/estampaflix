@@ -108,7 +108,7 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
         {rows.map((r, i) => (
           <div key={i} className="flex flex-col gap-1 py-2.5 sm:flex-row sm:items-start sm:gap-4 overflow-hidden">
             <dt className="flex min-w-0 sm:min-w-[170px] shrink-0 items-center gap-2 text-muted-foreground">
-              <span className="text-primary shrink-0">{r.icon}</span>
+              <span className="text-primary shrink-0"><FileType className="h-4 w-4 shrink-0" /></span>
               <span className="truncate">{r.label}</span>
             </dt>
             <dd className="min-w-0 flex-1 break-words text-foreground">{r.value}</dd>
