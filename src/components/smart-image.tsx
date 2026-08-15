@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { cn } from "@/lib/utils";
 import { buildSrcSet, canTransform, transformedUrl, CARD_WIDTHS } from "@/lib/image-cdn";
 
 type Props = Omit<React.ImgHTMLAttributes<HTMLImageElement>, "srcSet" | "sizes"> & {
@@ -51,6 +52,7 @@ export function SmartImage({
       loading={loading ?? (priority ? "eager" : "lazy")}
       fetchPriority={priority ? "high" : rest.fetchPriority}
       decoding={decoding}
+      className={cn("w-full max-w-full object-contain", rest.className)}
       onError={(e) => {
         if (!failed) setFailed(true);
         rest.onError?.(e);
