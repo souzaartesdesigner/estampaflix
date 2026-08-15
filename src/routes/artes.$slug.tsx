@@ -163,7 +163,7 @@ function ArtworkPage() {
         </nav>
 
         <div className="flex flex-col gap-6 lg:grid lg:grid-cols-2 lg:gap-8">
-          <div className="order-2 lg:order-1">
+          <div className="order-1 lg:order-1">
             <ArtworkGallery
               images={galleryImages}
               alt={(artwork as any).alt_text || ""}
@@ -175,7 +175,7 @@ function ArtworkPage() {
               <ProductInfoPanel artwork={artwork} />
             </div>
           </div>
-          <div className="order-1 lg:order-2">
+          <div className="order-2 lg:order-2">
             <ArtworkInfo artwork={artwork} title={trTitle} session={session} sub={sub} owned={owned} />
             <div className="lg:hidden">
               <ProductInfoPanel artwork={artwork} />

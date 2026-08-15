@@ -101,20 +101,39 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
     rows.push({ icon: <Hash className="h-4 w-4" />, label: "Código do produto", value: code });
   }
 
+  const tags: any[] = artwork.artwork_tags?.map((at: any) => at.tags).filter(Boolean) ?? [];
+
   return (
-    <section className="mt-6 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur sm:p-5">
-      <h2 className="mb-3 font-display text-base font-semibold sm:text-lg">Informações do produto</h2>
-      <dl className="divide-y divide-border/50 text-sm">
-        {rows.map((r, i) => (
-          <div key={i} className="flex flex-col gap-1 py-2.5 sm:flex-row sm:items-start sm:gap-4">
-            <dt className="flex min-w-[170px] items-center gap-2 text-muted-foreground">
-              <span className="text-primary">{r.icon}</span>
-              {r.label}
-            </dt>
-            <dd className="flex-1 text-foreground">{r.value}</dd>
+    <div className="flex flex-col gap-6">
+      <section className="mt-6 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur sm:p-5">
+        <h2 className="mb-3 font-display text-base font-semibold sm:text-lg">Informações do produto</h2>
+        <dl className="divide-y divide-border/50 text-sm">
+          {rows.map((r, i) => (
+            <div key={i} className="flex flex-col gap-1 py-2.5 sm:flex-row sm:items-start sm:gap-4">
+              <dt className="flex min-w-[170px] items-center gap-2 text-muted-foreground">
+                <span className="text-primary">{r.icon}</span>
+                {r.label}
+              </dt>
+              <dd className="flex-1 text-foreground">{r.value}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      {tags.length > 0 && (
+        <div className="lg:hidden">
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Tags</h3>
+          <div className="flex flex-wrap gap-1">
+            {tags.map((tg: any) => (
+              <Link key={tg.id} to="/catalogo" search={{ tag: tg.slug, page: 1 } as any}>
+                <div className="inline-flex items-center gap-1 rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground transition-colors hover:bg-secondary/80">
+                  <TagIcon className="h-3 w-3" /> {tg.name}
+                </div>
+              </Link>
+            ))}
           </div>
-        ))}
-      </dl>
-    </section>
+        </div>
+      )}
+    </div>
   );
 }
