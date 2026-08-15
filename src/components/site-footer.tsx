@@ -12,7 +12,7 @@ export function SiteFooter() {
   const siteName = settings?.site_name || "Estampa Flix";
   return (
     <footer className="mt-24 border-t border-border/50 bg-surface/40">
-      <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-12 md:grid-cols-4">
+      <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-12 md:grid-cols-4 overflow-hidden">
         <div>
           <div className="flex items-center gap-2 font-display text-lg font-bold">
             <img src={logoUrl} alt={siteName} className="h-10 w-auto max-w-[180px] object-contain" />

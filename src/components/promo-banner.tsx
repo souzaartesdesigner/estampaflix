@@ -41,7 +41,7 @@ export function PromoBanner() {
     </>
   );
 
-  const className = "flex min-h-[44px] items-center gap-2 bg-gradient-brand px-4 py-2 text-xs font-medium text-brand-foreground sm:text-sm";
+  const className = "flex min-h-[44px] w-full items-center gap-2 bg-gradient-brand px-4 py-2 text-xs font-medium text-brand-foreground sm:text-sm";
 
   if (link) {
     return <a href={link} className={className}>{content}</a>;
