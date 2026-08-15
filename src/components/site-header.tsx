@@ -141,15 +141,14 @@ export function SiteHeader() {
           {user ? (
             <UserNav user={user as any} isAdmin={isAdmin} />
           ) : (
-
-            <>
-              <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <Button asChild variant="ghost" size="sm" className="px-2 sm:px-3">
                 <Link to="/auth">{t("nav.signIn")}</Link>
               </Button>
-              <Button asChild size="sm" className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
+              <Button asChild size="sm" className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90 px-2 sm:px-3">
                 <Link to="/planos">{t("nav.subscribe")}</Link>
               </Button>
-            </>
+            </div>
           )}
 
 
