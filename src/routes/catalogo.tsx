@@ -245,7 +245,7 @@ function Catalogo() {
 
         <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
           <aside className={`${filtersOpen ? "block" : "hidden"} space-y-6 lg:block`}>
-            <CatalogFilters filters={filters} categories={categories} formats={formats} onChange={update} />
+            <CatalogFilters filters={filters} categories={categories} formats={formats} onChange={update} onClose={() => setFiltersOpen(false)} />
           </aside>
 
           <div ref={resultsRef} className="scroll-mt-20">
