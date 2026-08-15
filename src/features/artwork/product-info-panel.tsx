@@ -107,7 +107,7 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
       <dl className="divide-y divide-border/50 text-sm">
         {rows.map((r, i) => (
           <div key={i} className="flex flex-col gap-1 py-2.5 sm:flex-row sm:items-start sm:gap-4">
-            <dt className="flex min-w-[170px] items-center gap-2 text-muted-foreground">
+            <dt className="flex min-w-0 sm:min-w-[170px] items-center gap-2 text-muted-foreground shrink-0">
               <span className="text-primary">{r.icon}</span>
               {r.label}
             </dt>
