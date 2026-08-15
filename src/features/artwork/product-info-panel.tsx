@@ -102,7 +102,7 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
   }
 
   return (
-    <section className="mt-6 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur sm:p-5">
+    <section className="mt-6 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur sm:p-5 overflow-hidden">
       <h2 className="mb-3 font-display text-base font-semibold sm:text-lg">Informações do produto</h2>
       <dl className="divide-y divide-border/50 text-sm">
         {rows.map((r, i) => (
