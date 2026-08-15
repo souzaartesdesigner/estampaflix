@@ -102,16 +102,16 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
   }
 
   return (
-    <section className="mt-6 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur sm:p-5 overflow-hidden">
+    <section className="mt-6 rounded-xl border border-border/60 bg-card/60 p-4 backdrop-blur sm:p-5">
       <h2 className="mb-3 font-display text-base font-semibold sm:text-lg">Informações do produto</h2>
       <dl className="divide-y divide-border/50 text-sm">
         {rows.map((r, i) => (
-          <div key={i} className="flex flex-col gap-1 py-2.5 sm:flex-row sm:items-start sm:gap-4 overflow-hidden">
-            <dt className="flex min-w-0 sm:min-w-[170px] shrink-0 items-center gap-2 text-muted-foreground">
-              <span className="text-primary shrink-0"><FileType className="h-4 w-4 shrink-0" /></span>
-              <span className="truncate">{r.label}</span>
+          <div key={i} className="flex flex-col gap-1 py-2.5 sm:flex-row sm:items-start sm:gap-4">
+            <dt className="flex min-w-[170px] items-center gap-2 text-muted-foreground">
+              <span className="text-primary">{r.icon}</span>
+              {r.label}
             </dt>
-            <dd className="min-w-0 flex-1 break-words text-foreground">{r.value}</dd>
+            <dd className="flex-1 text-foreground">{r.value}</dd>
           </div>
         ))}
       </dl>

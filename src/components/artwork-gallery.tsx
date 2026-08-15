@@ -28,7 +28,7 @@ export function ArtworkGallery({ images, alt, showWatermark = true, licenseType,
 
   return (
     <>
-      <div className="flex flex-col gap-3 w-full max-w-full overflow-hidden touch-pan-y">
+      <div className="flex flex-col gap-3 w-full overflow-hidden">
         {/* Main image */}
         <div className="group relative w-full overflow-hidden rounded-2xl border border-border/60 bg-surface">
           <div className="relative aspect-square w-full">
