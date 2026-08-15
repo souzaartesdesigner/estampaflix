@@ -9,9 +9,10 @@ type Props = {
   categories: any[];
   formats?: string[];
   onChange: (patch: Partial<CatalogSearch>) => void;
+  onClose?: () => void;
 };
 
-export function CatalogFilters({ filters, categories, formats = [], onChange }: Props) {
+export function CatalogFilters({ filters, categories, formats = [], onChange, onClose }: Props) {
   const { t, lang } = useI18n();
 
 
@@ -41,14 +42,14 @@ export function CatalogFilters({ filters, categories, formats = [], onChange }: 
           <FilterOption
             label="Todas as licenças"
             active={!filters.licenca}
-            onClick={() => onChange({ licenca: undefined })}
+            onClick={() => { onChange({ licenca: undefined }); onClose?.(); }}
           />
           {LICENSES.map((l) => (
             <FilterOption
               key={l.value}
               label={l.label}
               active={filters.licenca === l.value}
-              onClick={() => onChange({ licenca: filters.licenca === l.value ? undefined : (l.value as any) })}
+              onClick={() => { onChange({ licenca: filters.licenca === l.value ? undefined : (l.value as any) }); onClose?.(); }}
             />
           ))}
         </div>
@@ -65,7 +66,7 @@ export function CatalogFilters({ filters, categories, formats = [], onChange }: 
                 label={depth > 0 ? `— ${nm}` : nm}
                 active={filters.categoria === c.slug}
                 depth={depth}
-                onClick={() => onChange({ categoria: filters.categoria === c.slug ? undefined : c.slug })}
+                onClick={() => { onChange({ categoria: filters.categoria === c.slug ? undefined : c.slug }); onClose?.(); }}
               />
             );
           })}
@@ -78,7 +79,7 @@ export function CatalogFilters({ filters, categories, formats = [], onChange }: 
             {formats.map((f: string) => (
               <button
                 key={f}
-                onClick={() => onChange({ formato: filters.formato === f ? undefined : f })}
+                onClick={() => { onChange({ formato: filters.formato === f ? undefined : f }); onClose?.(); }}
                 className={`flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs transition-colors ${
                   filters.formato === f ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"
                 }`}
