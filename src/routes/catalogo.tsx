@@ -159,6 +159,8 @@ function Catalogo() {
 
     if (isOnlyPageChange) {
       resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      setFiltersOpen(false);
     }
   }, [filters, navigate]);
 
