@@ -156,14 +156,10 @@ function ArtworkPage() {
   return (
     <SiteLayout>
       <div className="mx-auto w-full max-w-6xl px-3 py-6 sm:px-4 sm:py-8 overflow-hidden">
-        <nav className="mb-4 text-xs text-muted-foreground overflow-hidden whitespace-nowrap">
-          <div className="flex items-center gap-1">
-            <Link to="/" className="hover:text-foreground shrink-0">{t("product.crumbHome")}</Link>
-            <span className="shrink-0">/</span>
-            <Link to="/catalogo" search={{ page: 1 }} className="hover:text-foreground shrink-0">{t("product.crumbCatalog")}</Link>
-            <span className="shrink-0">/</span>
-            <span className="text-foreground truncate">{trTitle}</span>
-          </div>
+        <nav className="mb-4 text-xs text-muted-foreground">
+          <Link to="/" className="hover:text-foreground">{t("product.crumbHome")}</Link> /{" "}
+          <Link to="/catalogo" search={{ page: 1 }} className="hover:text-foreground">{t("product.crumbCatalog")}</Link> /{" "}
+          <span className="text-foreground">{trTitle}</span>
         </nav>
 
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">

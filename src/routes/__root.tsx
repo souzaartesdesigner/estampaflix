@@ -259,7 +259,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className="w-full max-w-[100vw]">
+      <body className="overflow-x-hidden w-full max-w-[100vw]">
         {/* DO NOT REMOVE — Google Tag Manager (GTM-594LSV6J) noscript iframe */}
         <noscript>
           <iframe
