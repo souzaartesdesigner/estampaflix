@@ -106,10 +106,10 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
       <h2 className="mb-3 font-display text-base font-semibold sm:text-lg">Informações do produto</h2>
       <dl className="divide-y divide-border/50 text-sm">
         {rows.map((r, i) => (
-          <div key={i} className="flex flex-col gap-1 py-2.5 sm:flex-row sm:items-start sm:gap-4">
-            <dt className="flex min-w-0 sm:min-w-[170px] shrink-0 items-center gap-2 text-muted-foreground sm:shrink-0">
-              <span className="text-primary">{r.icon}</span>
-              {r.label}
+          <div key={i} className="flex flex-col gap-1 py-2.5 sm:flex-row sm:items-start sm:gap-4 overflow-hidden">
+            <dt className="flex min-w-0 sm:min-w-[170px] shrink-0 items-center gap-2 text-muted-foreground">
+              <span className="text-primary shrink-0">{r.icon}</span>
+              <span className="truncate">{r.label}</span>
             </dt>
             <dd className="min-w-0 flex-1 break-words text-foreground">{r.value}</dd>
           </div>

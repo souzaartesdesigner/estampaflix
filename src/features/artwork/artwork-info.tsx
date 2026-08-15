@@ -38,8 +38,8 @@ export function ArtworkInfo({ artwork, title, session, sub, owned }: Props) {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-3">
-        <h1 className="font-display text-2xl font-bold sm:text-3xl break-words max-w-full">{title}</h1>
+      <div className="flex flex-wrap items-center gap-3 max-w-full overflow-hidden">
+        <h1 className="font-display text-2xl font-bold sm:text-3xl break-words w-full">{title}</h1>
       </div>
       <div className="flex items-center gap-2">
         <FavoriteButton artworkId={artwork.id} size="md" />
