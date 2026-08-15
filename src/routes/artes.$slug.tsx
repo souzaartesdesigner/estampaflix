@@ -162,8 +162,8 @@ function ArtworkPage() {
           <span className="text-foreground">{trTitle}</span>
         </nav>
 
-        <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-          <div>
+        <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
+          <div className="flex-1 order-1 lg:order-none">
             <ArtworkGallery
               images={galleryImages}
               alt={(artwork as any).alt_text || ""}
@@ -171,10 +171,16 @@ function ArtworkPage() {
               isFeatured={artwork.is_featured}
               isTrending={artwork.is_trending}
             />
+          </div>
+          <div className="lg:w-[400px] order-none lg:order-1">
+            <ArtworkInfo artwork={artwork} title={trTitle} session={session} sub={sub} owned={owned} />
             <ProductInfoPanel artwork={artwork} />
           </div>
-          <ArtworkInfo artwork={artwork} title={trTitle} session={session} sub={sub} owned={owned} />
         </div>
+
+        <ArtworkReviews artworkId={artwork.id} />
+
+        <ArtworkDescription html={trDesc} />
 
         <RelatedArtworks
           categoryIds={Array.from(new Set([
@@ -183,10 +189,6 @@ function ArtworkPage() {
           ].filter(Boolean))) as string[]}
           currentId={artwork.id}
         />
-
-        <ArtworkReviews artworkId={artwork.id} />
-
-        <ArtworkDescription html={trDesc} />
       </div>
     </SiteLayout>
   );
