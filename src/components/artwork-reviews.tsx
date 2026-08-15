@@ -52,7 +52,6 @@ export function ArtworkReviews({ artworkId }: { artworkId: string }) {
   const { data: reviews = [] } = useQuery({
     queryKey: ["reviews", artworkId],
     queryFn: async () => {
-      console.log("Buscando reviews para artworkId:", artworkId);
       const { data, error } = await supabase
         .from("reviews")
         .select(SELECT)
@@ -60,11 +59,7 @@ export function ArtworkReviews({ artworkId }: { artworkId: string }) {
         .eq("is_approved", true)
         .order("created_at", { ascending: false });
       
-      if (error) {
-        console.error("Erro ao buscar reviews:", error);
-        throw error;
-      }
-      console.log("Reviews encontradas:", data?.length || 0, data);
+      if (error) throw error;
       return (data ?? []) as unknown as Review[];
     },
   });
