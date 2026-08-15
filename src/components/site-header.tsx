@@ -77,7 +77,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-xl">
       <PromoBanner />
-      <div className="mx-auto flex h-14 w-full max-w-7xl items-center gap-2 px-3 sm:h-16 sm:gap-4 sm:px-4 overflow-hidden">
+      <div className="mx-auto flex h-14 w-full max-w-7xl items-center gap-2 px-3 sm:h-16 sm:gap-4 sm:px-4">
         <Link to="/" className="flex shrink-0 items-center gap-2 font-display text-base font-bold tracking-tight sm:gap-2.5 sm:text-lg">
           <img
             src={settings?.logo_url || logoAsset.url}
