@@ -162,8 +162,8 @@ function ArtworkPage() {
           <span className="text-foreground">{trTitle}</span>
         </nav>
 
-        <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-          <div>
+        <div className="flex flex-col gap-6 lg:grid lg:grid-cols-2 lg:gap-8">
+          <div className="order-2 lg:order-1">
             <ArtworkGallery
               images={galleryImages}
               alt={(artwork as any).alt_text || ""}
@@ -171,9 +171,16 @@ function ArtworkPage() {
               isFeatured={artwork.is_featured}
               isTrending={artwork.is_trending}
             />
-            <ProductInfoPanel artwork={artwork} />
+            <div className="hidden lg:block">
+              <ProductInfoPanel artwork={artwork} />
+            </div>
           </div>
-          <ArtworkInfo artwork={artwork} title={trTitle} session={session} sub={sub} owned={owned} />
+          <div className="order-1 lg:order-2">
+            <ArtworkInfo artwork={artwork} title={trTitle} session={session} sub={sub} owned={owned} />
+            <div className="lg:hidden">
+              <ProductInfoPanel artwork={artwork} />
+            </div>
+          </div>
         </div>
 
         <RelatedArtworks
