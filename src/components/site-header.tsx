@@ -141,14 +141,10 @@ export function SiteHeader() {
           {user ? (
             <UserNav user={user as any} isAdmin={isAdmin} />
           ) : (
+
             <>
-              <Button asChild variant="ghost" size="sm" className="hidden lg:inline-flex">
+              <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
                 <Link to="/auth">{t("nav.signIn")}</Link>
-              </Button>
-              <Button asChild variant="ghost" size="icon" className="lg:hidden" aria-label={t("nav.signIn")}>
-                <Link to="/auth">
-                  <User className="h-5 w-5" />
-                </Link>
               </Button>
               <Button asChild size="sm" className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
                 <Link to="/planos">{t("nav.subscribe")}</Link>

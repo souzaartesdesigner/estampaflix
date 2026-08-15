@@ -30,16 +30,16 @@ export function ArtworkGallery({ images, alt, showWatermark = true, licenseType,
     <>
       <div className="flex flex-col gap-3">
         {/* Main image */}
-        <div className="group relative overflow-hidden rounded-2xl border border-border/60 bg-surface w-full">
-          <div className="relative aspect-square w-full">
+        <div className="group relative overflow-hidden rounded-2xl border border-border/60 bg-surface">
+          <div className="relative aspect-square">
             <SmartImage
               src={current}
               alt={alt || ""}
               widths={DETAIL_WIDTHS}
               fallbackWidth={800}
-              sizes="(max-width: 1024px) 100vw, 640px"
+              sizes="(max-width: 1024px) 94vw, 640px"
               priority
-              className="h-full w-full cursor-zoom-in object-contain transition-transform duration-300 group-hover:scale-105"
+              className="h-full w-full cursor-zoom-in object-cover transition-transform duration-300 group-hover:scale-105"
               onClick={() => setZoomOpen(true)}
             />
 
