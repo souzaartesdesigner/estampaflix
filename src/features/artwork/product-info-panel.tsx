@@ -1,4 +1,4 @@
-import { BookOpen, Download, FileType, Hash, LayoutGrid, Maximize, Ruler, ShieldCheck, Wrench, Zap } from "lucide-react";
+import { BookOpen, Download, FileType, Hash, LayoutGrid, Maximize, Ruler, ShieldCheck, Tag as TagIcon, Wrench, Zap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { formatDescription, formatLabel } from "./formats";
 import { FileFormatIcon } from "./file-format-icon";
