@@ -9,10 +9,9 @@ type Props = {
   categories: any[];
   formats?: string[];
   onChange: (patch: Partial<CatalogSearch>) => void;
-  onFilterSelected?: () => void;
 };
 
-export function CatalogFilters({ filters, categories, formats = [], onChange, onFilterSelected }: Props) {
+export function CatalogFilters({ filters, categories, formats = [], onChange }: Props) {
   const { t, lang } = useI18n();
 
 
@@ -42,14 +41,14 @@ export function CatalogFilters({ filters, categories, formats = [], onChange, on
           <FilterOption
             label="Todas as licenças"
             active={!filters.licenca}
-            onClick={() => { onChange({ licenca: undefined }); onFilterSelected?.(); }}
+            onClick={() => onChange({ licenca: undefined })}
           />
           {LICENSES.map((l) => (
             <FilterOption
               key={l.value}
               label={l.label}
               active={filters.licenca === l.value}
-              onClick={() => { onChange({ licenca: filters.licenca === l.value ? undefined : (l.value as any) }); onFilterSelected?.(); }}
+              onClick={() => onChange({ licenca: filters.licenca === l.value ? undefined : (l.value as any) })}
             />
           ))}
         </div>
@@ -66,7 +65,7 @@ export function CatalogFilters({ filters, categories, formats = [], onChange, on
                 label={depth > 0 ? `— ${nm}` : nm}
                 active={filters.categoria === c.slug}
                 depth={depth}
-                onClick={() => { onChange({ categoria: filters.categoria === c.slug ? undefined : c.slug }); onFilterSelected?.(); }}
+                onClick={() => onChange({ categoria: filters.categoria === c.slug ? undefined : c.slug })}
               />
             );
           })}
@@ -79,7 +78,7 @@ export function CatalogFilters({ filters, categories, formats = [], onChange, on
             {formats.map((f: string) => (
               <button
                 key={f}
-                onClick={() => { onChange({ formato: filters.formato === f ? undefined : f }); onFilterSelected?.(); }}
+                onClick={() => onChange({ formato: filters.formato === f ? undefined : f })}
                 className={`flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs transition-colors ${
                   filters.formato === f ? "border-primary bg-primary/10 text-primary" : "border-border hover:border-primary/50"
                 }`}
