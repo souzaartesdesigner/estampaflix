@@ -163,43 +163,30 @@ function ArtworkPage() {
         </nav>
 
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-          {/* Coluna principal - Inverte ordem no mobile */}
-          <div className="flex flex-col gap-6">
-            <div className="order-1 lg:order-none">
-              <ArtworkGallery
-                images={galleryImages}
-                alt={(artwork as any).alt_text || ""}
-                licenseType={artwork.license_type}
-                isFeatured={artwork.is_featured}
-                isTrending={artwork.is_trending}
-              />
-            </div>
-            <div className="order-3 lg:order-none">
-              <ProductInfoPanel artwork={artwork} />
-            </div>
-            <div className="order-2 block lg:hidden">
-               <ArtworkInfo artwork={artwork} title={trTitle} session={session} sub={sub} owned={owned} />
-            </div>
+          <div>
+            <ArtworkGallery
+              images={galleryImages}
+              alt={(artwork as any).alt_text || ""}
+              licenseType={artwork.license_type}
+              isFeatured={artwork.is_featured}
+              isTrending={artwork.is_trending}
+            />
+            <ProductInfoPanel artwork={artwork} />
           </div>
-          
-          <div className="hidden lg:block">
-            <ArtworkInfo artwork={artwork} title={trTitle} session={session} sub={sub} owned={owned} />
-          </div>
+          <ArtworkInfo artwork={artwork} title={trTitle} session={session} sub={sub} owned={owned} />
         </div>
 
-        <div className="mt-12 space-y-12">
-          <ArtworkReviews artworkId={artwork.id} />
-          
-          <RelatedArtworks
-            categoryIds={Array.from(new Set([
-              (artwork as any).category_id,
-              ...(((artwork as any).artwork_categories ?? []).map((r: any) => r.categories?.id)),
-            ].filter(Boolean))) as string[]}
-            currentId={artwork.id}
-          />
+        <RelatedArtworks
+          categoryIds={Array.from(new Set([
+            (artwork as any).category_id,
+            ...(((artwork as any).artwork_categories ?? []).map((r: any) => r.categories?.id)),
+          ].filter(Boolean))) as string[]}
+          currentId={artwork.id}
+        />
 
-          <ArtworkDescription html={trDesc} />
-        </div>
+        <ArtworkReviews artworkId={artwork.id} />
+
+        <ArtworkDescription html={trDesc} />
       </div>
     </SiteLayout>
   );
