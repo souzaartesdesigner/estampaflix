@@ -41,7 +41,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
     <Link
       to="/artes/$slug"
       params={{ slug: artwork.slug }}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-card shadow-card transition-colors duration-300 hover:border-primary/50"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-card shadow-card transition-colors duration-300 hover:border-primary/50 max-w-full"
     >
       <div className="relative aspect-square overflow-hidden bg-surface-2">
         {artwork.preview_url ? (
