@@ -211,6 +211,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { rel: "icon", type: "image/png", href: d.favicon },
       ],
       scripts: [
+        // DO NOT REMOVE — Google Tag Manager (GTM-594LSV6J) head script
+        {
+          children:
+            "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-594LSV6J');",
+        },
+        // END DO NOT REMOVE — GTM
         {
           type: "application/ld+json",
           children: JSON.stringify({
@@ -254,6 +260,16 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        {/* DO NOT REMOVE — Google Tag Manager (GTM-594LSV6J) noscript iframe */}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-594LSV6J"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
+        {/* END DO NOT REMOVE — GTM noscript */}
         {loaderData?.bodyScripts && (
           <div dangerouslySetInnerHTML={{ __html: loaderData.bodyScripts }} />
         )}
