@@ -179,11 +179,11 @@ function ArtworkPage() {
         </div>
 
         <div className="flex flex-col">
-          <div className="order-1">
+          <div className="order-1 lg:order-none">
             <ArtworkReviews artworkId={artwork.id} />
           </div>
           
-          <div className="order-3">
+          <div className="order-3 lg:order-none">
             <RelatedArtworks
               categoryIds={Array.from(new Set([
                 (artwork as any).category_id,
@@ -193,7 +193,7 @@ function ArtworkPage() {
             />
           </div>
 
-          <div className="order-2">
+          <div className="order-2 lg:order-none">
             <ArtworkDescription html={trDesc} />
           </div>
         </div>
