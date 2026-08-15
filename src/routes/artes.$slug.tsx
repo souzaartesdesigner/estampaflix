@@ -163,7 +163,7 @@ function ArtworkPage() {
         </nav>
 
         <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
-          <div className="order-1 flex-1 lg:order-1">
+          <div className="order-1 flex-1 lg:order-none">
             <ArtworkGallery
               images={galleryImages}
               alt={(artwork as any).alt_text || ""}
@@ -172,7 +172,7 @@ function ArtworkPage() {
               isTrending={artwork.is_trending}
             />
           </div>
-          <div className="order-2 lg:order-2 lg:w-[400px]">
+          <div className="order-2 lg:order-none lg:w-[400px]">
             <ArtworkInfo artwork={artwork} title={trTitle} session={session} sub={sub} owned={owned} />
             <ProductInfoPanel artwork={artwork} />
           </div>
