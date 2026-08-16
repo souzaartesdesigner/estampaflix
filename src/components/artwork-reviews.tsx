@@ -49,10 +49,9 @@ export function ArtworkReviews({ artworkId }: { artworkId: string }) {
   });
   const uid = session?.user.id;
 
-  const { data: reviews = [] } = useQuery({
+  const { data: reviews = [], isLoading: isReviewsLoading } = useQuery({
     queryKey: ["reviews", artworkId],
     queryFn: async () => {
-      // Consulta pública: nomes vêm de uma função restrita (sem expor e-mail/telefone)
       const { data, error } = await supabase
         .from("reviews")
         .select(SELECT)
@@ -64,7 +63,13 @@ export function ArtworkReviews({ artworkId }: { artworkId: string }) {
       const rows = (data ?? []) as unknown as Review[];
       const ids = Array.from(new Set(rows.map((r) => r.user_id)));
       if (ids.length === 0) return rows;
-      const { data: authors } = await supabase.rpc("review_author_names", { _ids: ids });
+      
+      const { data: authors, error: rpcError } = await supabase.rpc("review_author_names", { _ids: ids });
+      if (rpcError) {
+        console.error("Erro RPC review_author_names:", rpcError);
+        return rows.map(r => ({ ...r, profiles: { full_name: "Cliente", email: null } }));
+      }
+      
       const nameById = new Map<string, string | null>((authors ?? []).map((a: any) => [a.id, a.full_name]));
       return rows.map((r) => ({ ...r, profiles: { full_name: nameById.get(r.user_id) ?? null, email: null } }));
     },
@@ -192,8 +197,11 @@ export function ArtworkReviews({ artworkId }: { artworkId: string }) {
         </div>
       )}
 
-      {/* List */}
-      {list.length === 0 ? (
+      {isReviewsLoading ? (
+        <div className="flex justify-center py-8">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+        </div>
+      ) : list.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t("product.reviewsEmpty")}</p>
       ) : (
         <div className="grid gap-5 md:grid-cols-2">
