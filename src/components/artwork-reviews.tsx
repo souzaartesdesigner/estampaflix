@@ -52,6 +52,7 @@ export function ArtworkReviews({ artworkId }: { artworkId: string }) {
   const { data: reviews = [] } = useQuery({
     queryKey: ["reviews", artworkId],
     queryFn: async () => {
+      // Usamos uma consulta simples que não depende da sessão para que visitantes vejam as avaliações
       const { data, error } = await supabase
         .from("reviews")
         .select(`
@@ -175,7 +176,7 @@ export function ArtworkReviews({ artworkId }: { artworkId: string }) {
           />
           <div className="flex flex-wrap items-center gap-2">
             <Button onClick={() => submit.mutate()} disabled={submit.isPending} className="bg-gradient-brand text-brand-foreground">
-              {mine ? t("product.reviewUpdate") : t("product.reviewSubmit")}
+              {t("product.reviewSubmit")}
             </Button>
             {mine && (
               <Button variant="ghost" size="sm" onClick={() => del.mutate()}>
