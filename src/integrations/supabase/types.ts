@@ -952,6 +952,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       site_content: {
@@ -1264,7 +1271,21 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          full_name: string | null
+          id: string | null
+        }
+        Insert: {
+          full_name?: string | null
+          id?: string | null
+        }
+        Update: {
+          full_name?: string | null
+          id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       admin_get_artwork_external_url: {
