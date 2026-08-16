@@ -175,7 +175,7 @@ export function ArtworkReviews({ artworkId }: { artworkId: string }) {
           />
           <div className="flex flex-wrap items-center gap-2">
             <Button onClick={() => submit.mutate()} disabled={submit.isPending} className="bg-gradient-brand text-brand-foreground">
-              {mine ? t("product.reviewUpdate") : t("product.reviewSubmit")}
+              {t("product.reviewSubmit")}
             </Button>
             {mine && (
               <Button variant="ghost" size="sm" onClick={() => del.mutate()}>
