@@ -82,7 +82,7 @@ function SeoCheckPage() {
   const { data: stats } = useQuery({
     queryKey: ["admin-seo-stats"],
     queryFn: async () => {
-      const { count } = await supabase.from("artworks").select("*", { count: "exact", head: true }).eq("is_published", true);
+      const { count } = await supabase.from("artworks").select("id", { count: "exact", head: true }).eq("is_published", true);
       return { total: count ?? 0 };
     }
   });
