@@ -945,6 +945,13 @@ export type Database = {
             referencedRelation: "artworks"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       site_content: {

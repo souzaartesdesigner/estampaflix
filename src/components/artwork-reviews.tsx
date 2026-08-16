@@ -54,7 +54,16 @@ export function ArtworkReviews({ artworkId }: { artworkId: string }) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("reviews")
-        .select(SELECT)
+        .select(`
+          id,
+          user_id,
+          rating,
+          comment,
+          created_at,
+          is_approved,
+          is_verified,
+          profiles(full_name, email)
+        `)
         .eq("artwork_id", artworkId)
         .eq("is_approved", true)
         .order("created_at", { ascending: false });
