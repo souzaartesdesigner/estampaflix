@@ -36,7 +36,7 @@ function colorFor(id: string) {
   return COLORS[n];
 }
 
-const SELECT = "id,user_id,rating,comment,created_at,is_approved,is_verified,profiles(full_name,email)";
+const SELECT = "id,user_id,rating,comment,created_at,is_approved,is_verified,profiles!reviews_user_id_fkey(full_name,email)";
 
 export function ArtworkReviews({ artworkId }: { artworkId: string }) {
   const qc = useQueryClient();
