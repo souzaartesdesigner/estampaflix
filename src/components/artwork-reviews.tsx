@@ -52,6 +52,7 @@ export function ArtworkReviews({ artworkId }: { artworkId: string }) {
   const { data: reviews = [] } = useQuery({
     queryKey: ["reviews", artworkId],
     queryFn: async () => {
+      // Usamos uma consulta simples que não depende da sessão para que visitantes vejam as avaliações
       const { data, error } = await supabase
         .from("reviews")
         .select(`
