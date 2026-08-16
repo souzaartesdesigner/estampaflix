@@ -36,7 +36,7 @@ function colorFor(id: string) {
   return COLORS[n];
 }
 
-const SELECT = "id,user_id,rating,comment,created_at,is_approved,is_verified,profiles!reviews_user_id_fkey(full_name,email)";
+const SELECT = "id,user_id,rating,comment,created_at,is_approved,is_verified";
 
 export function ArtworkReviews({ artworkId }: { artworkId: string }) {
   const qc = useQueryClient();
@@ -52,27 +52,24 @@ export function ArtworkReviews({ artworkId }: { artworkId: string }) {
   const { data: reviews = [] } = useQuery({
     queryKey: ["reviews", artworkId],
     queryFn: async () => {
-      // Usamos uma consulta simples que não depende da sessão para que visitantes vejam as avaliações
+      // Consulta pública: nomes vêm de uma função restrita (sem expor e-mail/telefone)
       const { data, error } = await supabase
         .from("reviews")
-        .select(`
-          id,
-          user_id,
-          rating,
-          comment,
-          created_at,
-          is_approved,
-          is_verified,
-          profiles(full_name, email)
-        `)
+        .select(SELECT)
         .eq("artwork_id", artworkId)
         .eq("is_approved", true)
         .order("created_at", { ascending: false });
-      
+
       if (error) throw error;
-      return (data ?? []) as unknown as Review[];
+      const rows = (data ?? []) as unknown as Review[];
+      const ids = Array.from(new Set(rows.map((r) => r.user_id)));
+      if (ids.length === 0) return rows;
+      const { data: authors } = await supabase.rpc("review_author_names", { _ids: ids });
+      const nameById = new Map<string, string | null>((authors ?? []).map((a: any) => [a.id, a.full_name]));
+      return rows.map((r) => ({ ...r, profiles: { full_name: nameById.get(r.user_id) ?? null, email: null } }));
     },
   });
+
 
   const { data: mine } = useQuery({
     queryKey: ["my-review", uid, artworkId],

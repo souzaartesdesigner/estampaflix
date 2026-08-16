@@ -1293,6 +1293,13 @@ export type Database = {
         }
         Returns: boolean
       }
+      review_author_names: {
+        Args: { _ids: string[] }
+        Returns: {
+          full_name: string
+          id: string
+        }[]
+      }
       validate_coupon: {
         Args: { _code: string; _scope: string; _subtotal_cents: number }
         Returns: {
