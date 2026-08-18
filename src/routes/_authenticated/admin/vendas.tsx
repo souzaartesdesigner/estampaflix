@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Eye, Search, ShoppingBag, CreditCard, TrendingUp, Clock, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { cleanupExpiredOrders } from "@/lib/orders-maintenance.functions";
+
 
 
 export const Route = createFileRoute("/_authenticated/admin/vendas")({ component: Vendas });
