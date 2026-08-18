@@ -77,11 +77,8 @@ function Vendas() {
   const avgTicket = paidOrders.length ? Math.round(orderRev / paidOrders.length) : 0;
 
   const cleanup = useMutation({
-    mutationFn: async () => {
-      const resp = await fetch("/api/public/orders/cleanup-expired", { method: "POST" });
-      if (!resp.ok) throw new Error("Falha ao limpar pedidos");
-      return resp.json();
-    },
+    mutationFn: async () => await cleanupExpiredOrders(),
+
     onSuccess: () => {
       toast.success("Pedidos expirados foram cancelados");
       qc.invalidateQueries({ queryKey: ["admin-sales-v2"] });
