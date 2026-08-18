@@ -1,8 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertAdmin } from "./admin-guard.server";
 
 export const adminCreateUser = createServerFn({ method: "POST" })
-  .inputValidator((data: any) => 
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: any) =>
     z.object({
       email: z.string().email(),
       password: z.string().min(6),
@@ -10,9 +13,10 @@ export const adminCreateUser = createServerFn({ method: "POST" })
       role: z.enum(["admin", "user"]).default("user"),
     }).parse(data)
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase as any, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    
+
     // 1. Create user in Auth
     const { data: authUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email: data.email,
@@ -20,7 +24,7 @@ export const adminCreateUser = createServerFn({ method: "POST" })
       email_confirm: true,
       user_metadata: { full_name: data.fullName }
     });
-    
+
     if (authError) throw authError;
     if (!authUser.user) throw new Error("Falha ao criar usuário");
 
@@ -41,8 +45,10 @@ export const adminCreateUser = createServerFn({ method: "POST" })
   });
 
 export const adminDeleteUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: any) => z.object({ userId: z.string().uuid() }).parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase as any, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
     if (error) throw error;
