@@ -18,7 +18,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useCart } from "@/hooks/use-cart";
 import { useI18n } from "@/lib/i18n";
 import { LangSwitcher } from "./lang-switcher";
-import { NotificationsBell } from "./notifications-bell";
+
 import { PromoBanner } from "./promo-banner";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 
@@ -125,7 +125,7 @@ export function SiteHeader() {
             <Link to="/catalogo" search={{ page: 1 }}><Search className="h-5 w-5" /></Link>
           </Button>
           <LangSwitcher />
-          {user && <NotificationsBell />}
+          
           {user && (
             <Button asChild variant="ghost" size="icon" className="relative" aria-label={t("nav.cart")}>
               <Link to="/carrinho">
