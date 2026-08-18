@@ -60,10 +60,10 @@ export function ArtworkReviews({ artworkId }: { artworkId: string }) {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      const rows = (data ?? []) as unknown as (Review & { author_name?: string | null })[];
+      const rows = (data ?? []) as any[];
       return rows.map((r) => ({
         ...r,
-        profiles: { full_name: r.author_name ?? null, email: null },
+        profiles: { full_name: r.author_name || "Cliente", email: null },
       }));
     },
 
