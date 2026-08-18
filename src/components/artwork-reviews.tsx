@@ -36,7 +36,7 @@ function colorFor(id: string) {
   return COLORS[n];
 }
 
-const SELECT = "id,user_id,rating,comment,created_at,is_approved,is_verified";
+const SELECT = "id,user_id,rating,comment,created_at,is_approved,is_verified,author_name";
 
 export function ArtworkReviews({ artworkId }: { artworkId: string }) {
   const qc = useQueryClient();
@@ -60,19 +60,13 @@ export function ArtworkReviews({ artworkId }: { artworkId: string }) {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      const rows = (data ?? []) as unknown as Review[];
-      const ids = Array.from(new Set(rows.map((r) => r.user_id)));
-      if (ids.length === 0) return rows;
-      
-      const { data: authors, error: rpcError } = await supabase.rpc("review_author_names", { _ids: ids });
-      if (rpcError) {
-        console.error("Erro RPC review_author_names:", rpcError);
-        return rows.map(r => ({ ...r, profiles: { full_name: "Cliente", email: null } }));
-      }
-      
-      const nameById = new Map<string, string | null>((authors ?? []).map((a: any) => [a.id, a.full_name]));
-      return rows.map((r) => ({ ...r, profiles: { full_name: nameById.get(r.user_id) ?? null, email: null } }));
+      const rows = (data ?? []) as unknown as (Review & { author_name?: string | null })[];
+      return rows.map((r) => ({
+        ...r,
+        profiles: { full_name: r.author_name ?? null, email: null },
+      }));
     },
+
   });
 
 
