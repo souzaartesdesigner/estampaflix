@@ -906,6 +906,7 @@ export type Database = {
       reviews: {
         Row: {
           artwork_id: string
+          author_name: string | null
           comment: string | null
           created_at: string
           id: string
@@ -917,6 +918,7 @@ export type Database = {
         }
         Insert: {
           artwork_id: string
+          author_name?: string | null
           comment?: string | null
           created_at?: string
           id?: string
@@ -928,6 +930,7 @@ export type Database = {
         }
         Update: {
           artwork_id?: string
+          author_name?: string | null
           comment?: string | null
           created_at?: string
           id?: string
@@ -1292,13 +1295,6 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
-      }
-      review_author_names: {
-        Args: { _ids: string[] }
-        Returns: {
-          full_name: string
-          id: string
-        }[]
       }
       validate_coupon: {
         Args: { _code: string; _scope: string; _subtotal_cents: number }
