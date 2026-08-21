@@ -14,7 +14,7 @@ import {
 import { CatalogFilters } from "@/features/catalog/catalog-filters";
 import { CatalogResults } from "@/features/catalog/catalog-results";
 
-export const Route = createFileRoute("/catalogo")({
+export const Route = createFileRoute("/catalogo/")({
   validateSearch: (search) => catalogSearchSchema.parse(search),
   loaderDeps: ({ search }) => ({ search }),
   loader: async ({ context: { queryClient }, deps: { search } }) => {
