@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import { Search, SlidersHorizontal } from "lucide-react";
@@ -14,49 +14,44 @@ import {
 import { CatalogFilters } from "@/features/catalog/catalog-filters";
 import { CatalogResults } from "@/features/catalog/catalog-results";
 
-export const Route = createFileRoute("/catalogo")({
+export const Route = createFileRoute("/catalogo/$slug")({
   validateSearch: (search) => catalogSearchSchema.parse(search),
   loaderDeps: ({ search }) => ({ search }),
-  loader: async ({ context: { queryClient }, deps: { search } }) => {
-    const filters = search as CatalogSearch;
-    if (filters.categoria) {
-      const catSlug = filters.categoria;
-      await queryClient.ensureQueryData({
-        queryKey: ["category-seo", catSlug],
-        queryFn: async () => {
-          const { data } = await supabase
-            .from("categories")
-            .select("name, slug, seo_title, seo_description, seo_keyword, cover_url, cover_alt")
-            .eq("slug", catSlug)
-            .maybeSingle();
-          return data;
-        },
-      });
-    }
+  loader: async ({ context: { queryClient }, params: { slug } }) => {
+    await queryClient.ensureQueryData({
+      queryKey: ["category-seo", slug],
+      queryFn: async () => {
+        const { data } = await supabase
+          .from("categories")
+          .select("name, slug, seo_title, seo_description, seo_keyword, cover_url, cover_alt")
+          .eq("slug", slug)
+          .maybeSingle();
+        return data;
+      },
+    });
     return null;
   },
   head: (args) => {
-    // Acessar via search validado se disponível no contexto do TanStack Start
+    const { slug } = args.params;
     const search = (args as any).search as CatalogSearch;
-    const catSlug = search?.categoria;
     
     return {
       meta: [
-        { title: catSlug ? `${catSlug.charAt(0).toUpperCase() + catSlug.slice(1)} — Estampa Flix` : "Catálogo de artes digitais — Estampa Flix" },
+        { title: `${slug.charAt(0).toUpperCase() + slug.slice(1)} — Estampa Flix` },
         { name: "description", content: "Explore milhares de artes digitais prontas para sublimação, DTF e estamparia. Filtre por categoria, formato e cor e baixe em alta resolução." },
-        { property: "og:title", content: catSlug ? `${catSlug.charAt(0).toUpperCase() + catSlug.slice(1)} — Estampa Flix` : "Catálogo de artes digitais — Estampa Flix" },
+        { property: "og:title", content: `${slug.charAt(0).toUpperCase() + slug.slice(1)} — Estampa Flix` },
         { property: "og:description", content: "Milhares de artes em 300 DPI para sublimação e DTF. Filtre por categoria, formato e cor e baixe com licença comercial." },
         { property: "og:type", content: "website" },
-        { property: "og:url", content: `https://estampaflix.com/catalogo${catSlug ? `/${catSlug}` : ""}` },
+        { property: "og:url", content: `https://estampaflix.com/catalogo/${slug}` },
       ],
-      links: [{ rel: "canonical", href: `https://estampaflix.com/catalogo${catSlug ? `/${catSlug}` : ""}` }],
+      links: [{ rel: "canonical", href: `https://estampaflix.com/catalogo/${slug}` }],
     };
   },
-  component: Catalogo,
+  component: CatalogoCategoria,
 });
 
-
-function Catalogo() {
+function CatalogoCategoria() {
+  const { slug } = useParams({ from: "/catalogo/$slug" });
   const search = Route.useSearch();
   const navigate = useNavigate();
   const [q, setQ] = useState(search.q ?? "");
@@ -64,13 +59,12 @@ function Catalogo() {
   const { t } = useI18n();
 
   const { data: currentCategory } = useQuery({
-    queryKey: ["category-seo", search.categoria],
-    enabled: !!search.categoria,
+    queryKey: ["category-seo", slug],
     queryFn: async () => {
       const { data } = await supabase
         .from("categories")
         .select("*")
-        .eq("slug", search.categoria!)
+        .eq("slug", slug)
         .maybeSingle();
       return data;
     },
@@ -80,6 +74,7 @@ function Catalogo() {
     queryKey: ["categories"],
     queryFn: async () => (await supabase.from("categories").select("id,slug,name,parent_id,translations").order("sort_order").order("name")).data ?? [],
   });
+
   const { data: formats = [] } = useQuery({
     queryKey: ["artwork-formats"],
     queryFn: async () => {
@@ -93,8 +88,7 @@ function Catalogo() {
     },
   });
 
-
-  const filters = useMemo(() => search, [search]);
+  const filters = useMemo(() => ({ ...search, categoria: slug }), [search, slug]);
   const page = search.page || 1;
   const ITEMS_PER_PAGE = 24;
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -102,18 +96,17 @@ function Catalogo() {
   const { data: { artworks = [], count = 0 } = {}, isLoading } = useQuery({
     queryKey: ["catalog", filters, categories.length, page],
     queryFn: async () => {
-      let artworkIdsFilter: string[] | null = null;
-      if (filters.categoria) {
-        const cat = categories.find((c: any) => c.slug === filters.categoria);
-        if (!cat) return { artworks: [], count: 0 };
-        const ids = [cat.id, ...categories.filter((c: any) => c.parent_id === cat.id).map((c: any) => c.id)];
-        const { data: links } = await supabase
-          .from("artwork_categories")
-          .select("artwork_id")
-          .in("category_id", ids);
-        artworkIdsFilter = Array.from(new Set((links ?? []).map((l: any) => l.artwork_id)));
-        if (artworkIdsFilter.length === 0) return { artworks: [], count: 0 };
-      }
+      const cat = categories.find((c: any) => c.slug === slug);
+      if (!cat) return { artworks: [], count: 0 };
+      
+      const ids = [cat.id, ...categories.filter((c: any) => c.parent_id === cat.id).map((c: any) => c.id)];
+      const { data: links } = await supabase
+        .from("artwork_categories")
+        .select("artwork_id")
+        .in("category_id", ids);
+      
+      const artworkIdsFilter = Array.from(new Set((links ?? []).map((l: any) => l.artwork_id)));
+      if (artworkIdsFilter.length === 0) return { artworks: [], count: 0 };
 
       const from = (page - 1) * ITEMS_PER_PAGE;
       const to = from + ITEMS_PER_PAGE - 1;
@@ -123,7 +116,8 @@ function Catalogo() {
         .select("id,slug,title,preview_url,price_cents,license_type,is_featured,is_trending,download_count,category_id,colors,file_format,translations,categories!artworks_category_id_fkey(id,name,slug,translations),artwork_categories(categories(id,name,slug,translations))", { count: 'exact' })
         .eq("is_published", true)
         .order("created_at", { ascending: false })
-        .range(from, to);
+        .range(from, to)
+        .in("id", artworkIdsFilter);
 
       if (filters.q) {
         const term = filters.q.trim();
@@ -132,7 +126,6 @@ function Catalogo() {
         }
       }
 
-      if (artworkIdsFilter) query = query.in("id", artworkIdsFilter);
       if (filters.licenca) query = query.eq("license_type", filters.licenca);
       if (filters.formato) query = query.eq("file_format", filters.formato);
       if (filters.cor) query = query.contains("colors", [filters.cor]);
@@ -143,24 +136,39 @@ function Catalogo() {
   });
 
   const update = useCallback((patch: Partial<CatalogSearch>) => {
-    // Se estiver mudando filtros (não a página), reseta para a página 1
     const isOnlyPageChange = Object.keys(patch).length === 1 && 'page' in patch;
-    const newSearch = { ...filters, ...patch };
+    const newSearch = { ...search, ...patch };
     
     if (!isOnlyPageChange) {
       newSearch.page = 1;
     }
 
+    // Se mudou a categoria, navega para a nova rota de slug
     if (patch.categoria) {
       const nextSlug = patch.categoria;
       const nextSearch = { ...newSearch };
       delete nextSearch.categoria;
-      navigate({ to: "/catalogo/$slug", params: { slug: nextSlug }, search: nextSearch as any, replace: true });
+      
+      navigate({ 
+        to: "/catalogo/$slug", 
+        params: { slug: nextSlug },
+        search: nextSearch as any,
+        replace: true
+      });
+      return;
+    }
+
+    // Se removeu a categoria, volta para o catálogo geral
+    if (patch.hasOwnProperty('categoria') && !patch.categoria) {
+      const nextSearch = { ...newSearch };
+      delete nextSearch.categoria;
+      navigate({ to: "/catalogo", search: nextSearch as any, replace: true });
       return;
     }
 
     navigate({ 
-      to: "/catalogo", 
+      to: "/catalogo/$slug", 
+      params: { slug },
       search: newSearch as any,
       replace: true
     });
@@ -168,7 +176,7 @@ function Catalogo() {
     if (isOnlyPageChange) {
       resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [filters, navigate]);
+  }, [search, slug, navigate]);
 
   return (
     <SiteLayout>
@@ -269,7 +277,6 @@ function Catalogo() {
             />
           </div>
         </div>
-
       </div>
     </SiteLayout>
   );

@@ -3,6 +3,7 @@ import { tField, useI18n } from "@/lib/i18n";
 import { LICENSES, type CatalogSearch } from "./catalog-constants";
 import { FileFormatIcon } from "@/features/artwork/file-format-icon";
 import { FilterGroup, FilterOption } from "./filter-group";
+import { useNavigate, useParams } from "@tanstack/react-router";
 
 type Props = {
   filters: CatalogSearch;
@@ -14,6 +15,9 @@ type Props = {
 
 export function CatalogFilters({ filters, categories, formats = [], onChange, onFilterSelected }: Props) {
   const { t, lang } = useI18n();
+  const navigate = useNavigate();
+  const params = useParams({ strict: false });
+  const currentSlug = (params as any).slug || filters.categoria;
 
 
   const orderedCategories = useMemo(() => {
@@ -60,13 +64,21 @@ export function CatalogFilters({ filters, categories, formats = [], onChange, on
         <div className="space-y-1">
           {orderedCategories.map(({ cat: c, depth }) => {
             const nm = tField(c as any, "name", lang) || c.name;
+            const isActive = currentSlug === c.slug;
             return (
               <FilterOption
                 key={c.id}
                 label={depth > 0 ? `— ${nm}` : nm}
-                active={filters.categoria === c.slug}
+                active={isActive}
                 depth={depth}
-                onClick={() => { onChange({ categoria: filters.categoria === c.slug ? undefined : c.slug }); onFilterSelected?.(); }}
+                onClick={() => { 
+                  if (isActive) {
+                    navigate({ to: "/catalogo", search: (s: any) => ({ ...s, page: 1, categoria: undefined }) });
+                  } else {
+                    navigate({ to: "/catalogo/$slug", params: { slug: c.slug }, search: (s: any) => ({ ...s, page: 1, categoria: undefined }) });
+                  }
+                  onFilterSelected?.(); 
+                }}
               />
             );
           })}
