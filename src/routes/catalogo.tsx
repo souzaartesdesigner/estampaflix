@@ -180,7 +180,7 @@ function Catalogo() {
               "@type": "CollectionPage",
               "name": currentCategory.seo_title || currentCategory.name,
               "description": currentCategory.seo_description || currentCategory.description,
-              "url": `https://estampaflix.com/catalogo?categoria=${currentCategory.slug}`,
+              "url": `https://estampaflix.com/catalogo/${currentCategory.slug}`,
               "image": currentCategory.cover_url,
               "breadcrumb": {
                 "@type": "BreadcrumbList",
@@ -201,7 +201,7 @@ function Catalogo() {
                     "@type": "ListItem",
                     "position": 3,
                     "name": currentCategory.name,
-                    "item": `https://estampaflix.com/catalogo?categoria=${currentCategory.slug}`
+                    "item": `https://estampaflix.com/catalogo/${currentCategory.slug}`
                   }
                 ]
               }
