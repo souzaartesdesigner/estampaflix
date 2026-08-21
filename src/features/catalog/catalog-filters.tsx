@@ -17,7 +17,10 @@ export function CatalogFilters({ filters, categories, formats = [], onChange, on
   const { t, lang } = useI18n();
   const navigate = useNavigate();
   const params = useParams({ strict: false });
+  const search = (params as any).slug ? filters : filters;
   const currentSlug = (params as any).slug || filters.categoria;
+  
+  console.log("CatalogFilters: currentSlug from params:", (params as any).slug, "or filters.categoria:", filters.categoria);
 
 
   const orderedCategories = useMemo(() => {

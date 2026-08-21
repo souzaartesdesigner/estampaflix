@@ -97,11 +97,16 @@ function CatalogoCategoria() {
   const ITEMS_PER_PAGE = 24;
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  const { data: { artworks = [], count = 0 } = {}, isLoading, isFetching } = useQuery({
+  const { data: { artworks = [], count = 0 } = {}, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["catalog", slug, filters, categories.length, page],
+    enabled: categories.length > 0,
     queryFn: async () => {
+      console.log("Fetching catalog for slug:", slug, "with search filters:", search);
       const cat = categories.find((c: any) => c.slug === slug);
-      if (!cat) return { artworks: [], count: 0 };
+      if (!cat) {
+        console.warn("Category not found for slug:", slug);
+        return { artworks: [], count: 0 };
+      }
       
       const ids = [cat.id, ...categories.filter((c: any) => c.parent_id === cat.id).map((c: any) => c.id)];
       const { data: links } = await supabase
@@ -110,6 +115,7 @@ function CatalogoCategoria() {
         .in("category_id", ids);
       
       const artworkIdsFilter = Array.from(new Set((links ?? []).map((l: any) => l.artwork_id)));
+      console.log("Found artwork IDs for category:", artworkIdsFilter.length);
       if (artworkIdsFilter.length === 0) return { artworks: [], count: 0 };
 
       const from = (page - 1) * ITEMS_PER_PAGE;
@@ -123,23 +129,41 @@ function CatalogoCategoria() {
         .range(from, to)
         .in("id", artworkIdsFilter);
 
-      if (filters.q) {
-        const term = filters.q.trim();
+      if (search.q) {
+        const term = search.q.trim();
         if (term) {
           query = query.or(`product_code.ilike.${term}%,title.ilike.%${term}%`);
         }
       }
 
-      if (filters.licenca) query = query.eq("license_type", filters.licenca);
-      if (filters.formato) query = query.eq("file_format", filters.formato);
-      if (filters.cor) query = query.contains("colors", [filters.cor]);
+      if (search.licenca) query = query.eq("license_type", search.licenca);
+      if (search.formato) query = query.eq("file_format", search.formato);
+      if (search.cor) query = query.contains("colors", [search.cor]);
 
-      const { data, count } = await query;
+      const { data, count, error } = await query;
+      if (error) {
+        console.error("Supabase query error:", error);
+        throw error;
+      }
+      console.log("Fetched artworks count:", data?.length, "Total count:", count);
       return { artworks: data ?? [], count: count ?? 0 };
     },
   });
 
+  // Forçar refetch quando o slug mudar, apenas para garantir
+  useEffect(() => {
+    console.log("Slug changed to:", slug, "triggering refetch");
+    refetch();
+  }, [slug, refetch]);
+
+  // Sincronizar filtros de busca caso eles mudem sem navegar
+  useEffect(() => {
+    console.log("Search params changed, triggering refetch:", search);
+    refetch();
+  }, [search, refetch]);
+
   const update = useCallback((patch: Partial<CatalogSearch>) => {
+    console.log("Update called with patch:", patch);
     const isOnlyPageChange = Object.keys(patch).length === 1 && 'page' in patch;
     const newSearch = { ...search, ...patch };
     
@@ -153,6 +177,7 @@ function CatalogoCategoria() {
       const nextSearch = { ...newSearch };
       delete nextSearch.categoria;
       
+      console.log("Navigating to new category slug:", nextSlug);
       navigate({ 
         to: "/catalogo/$slug", 
         params: { slug: nextSlug },
@@ -164,12 +189,14 @@ function CatalogoCategoria() {
 
     // Se removeu a categoria, volta para o catálogo geral
     if (patch.hasOwnProperty('categoria') && !patch.categoria) {
+      console.log("Removing category filter, navigating to /catalogo");
       const nextSearch = { ...newSearch };
       delete nextSearch.categoria;
       navigate({ to: "/catalogo", search: nextSearch as any, replace: true });
       return;
     }
 
+    console.log("Staying on same slug, updating search params:", newSearch);
     navigate({ 
       to: "/catalogo/$slug", 
       params: { slug },

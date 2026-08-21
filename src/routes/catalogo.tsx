@@ -103,20 +103,26 @@ function Catalogo() {
   const ITEMS_PER_PAGE = 24;
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  const { data: { artworks = [], count = 0 } = {}, isLoading, isFetching } = useQuery({
-    queryKey: ["catalog", filters, categories.length, page],
+  const { data: { artworks = [], count = 0 } = {}, isLoading, isFetching, refetch } = useQuery({
+    queryKey: ["catalog", search, categories.length, page],
+    enabled: categories.length > 0,
     queryFn: async () => {
+      console.log("Fetching catalog with search filters:", search);
       let artworkIdsFilter: string[] | null = null;
-      if (filters.categoria) {
-        const cat = categories.find((c: any) => c.slug === filters.categoria);
-        if (!cat) return { artworks: [], count: 0 };
+      if (search.categoria) {
+        const cat = categories.find((c: any) => c.slug === search.categoria);
+        if (!cat) {
+          console.warn("Category not found for slug:", search.categoria);
+          return { artworks: [], count: 0 };
+        }
         const ids = [cat.id, ...categories.filter((c: any) => c.parent_id === cat.id).map((c: any) => c.id)];
         const { data: links } = await supabase
           .from("artwork_categories")
           .select("artwork_id")
           .in("category_id", ids);
         artworkIdsFilter = Array.from(new Set((links ?? []).map((l: any) => l.artwork_id)));
-        if (artworkIdsFilter.length === 0) return { artworks: [], count: 0 };
+        console.log("Found artwork IDs for category:", artworkIdsFilter?.length);
+        if (!artworkIdsFilter || artworkIdsFilter.length === 0) return { artworks: [], count: 0 };
       }
 
       const from = (page - 1) * ITEMS_PER_PAGE;
@@ -129,22 +135,32 @@ function Catalogo() {
         .order("created_at", { ascending: false })
         .range(from, to);
 
-      if (filters.q) {
-        const term = filters.q.trim();
+      if (search.q) {
+        const term = search.q.trim();
         if (term) {
           query = query.or(`product_code.ilike.${term}%,title.ilike.%${term}%`);
         }
       }
 
       if (artworkIdsFilter) query = query.in("id", artworkIdsFilter);
-      if (filters.licenca) query = query.eq("license_type", filters.licenca);
-      if (filters.formato) query = query.eq("file_format", filters.formato);
-      if (filters.cor) query = query.contains("colors", [filters.cor]);
+      if (search.licenca) query = query.eq("license_type", search.licenca);
+      if (search.formato) query = query.eq("file_format", search.formato);
+      if (search.cor) query = query.contains("colors", [search.cor]);
 
-      const { data, count } = await query;
+      const { data, count, error } = await query;
+      if (error) {
+        console.error("Supabase query error:", error);
+        throw error;
+      }
+      console.log("Fetched artworks count:", data?.length, "Total count:", count);
       return { artworks: data ?? [], count: count ?? 0 };
     },
   });
+
+  useEffect(() => {
+    console.log("Catalogo: Search params or page changed, refetching...", search, page);
+    refetch();
+  }, [search, page, refetch]);
 
   const update = useCallback((patch: Partial<CatalogSearch>) => {
     // Se estiver mudando filtros (não a página), reseta para a página 1
