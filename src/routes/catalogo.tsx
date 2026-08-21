@@ -47,9 +47,9 @@ export const Route = createFileRoute("/catalogo")({
         { property: "og:title", content: catSlug ? `${catSlug.charAt(0).toUpperCase() + catSlug.slice(1)} — Estampa Flix` : "Catálogo de artes digitais — Estampa Flix" },
         { property: "og:description", content: "Milhares de artes em 300 DPI para sublimação e DTF. Filtre por categoria, formato e cor e baixe com licença comercial." },
         { property: "og:type", content: "website" },
-        { property: "og:url", content: `https://estampaflix.com/catalogo${catSlug ? `?categoria=${catSlug}` : ""}` },
+        { property: "og:url", content: `https://estampaflix.com/catalogo${catSlug ? `/${catSlug}` : ""}` },
       ],
-      links: [{ rel: "canonical", href: `https://estampaflix.com/catalogo${catSlug ? `?categoria=${catSlug}` : ""}` }],
+      links: [{ rel: "canonical", href: `https://estampaflix.com/catalogo${catSlug ? `/${catSlug}` : ""}` }],
     };
   },
   component: Catalogo,
