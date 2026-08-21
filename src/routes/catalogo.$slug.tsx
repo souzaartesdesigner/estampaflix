@@ -101,7 +101,7 @@ function CatalogoCategoria() {
     queryKey: ["catalog", slug, filters, categories.length, page],
     enabled: categories.length > 0,
     queryFn: async () => {
-      console.log("Fetching catalog for slug:", slug, "with filters:", filters);
+      console.log("Fetching catalog for slug:", slug, "with search filters:", search);
       const cat = categories.find((c: any) => c.slug === slug);
       if (!cat) {
         console.warn("Category not found for slug:", slug);
@@ -129,16 +129,16 @@ function CatalogoCategoria() {
         .range(from, to)
         .in("id", artworkIdsFilter);
 
-      if (filters.q) {
-        const term = filters.q.trim();
+      if (search.q) {
+        const term = search.q.trim();
         if (term) {
           query = query.or(`product_code.ilike.${term}%,title.ilike.%${term}%`);
         }
       }
 
-      if (filters.licenca) query = query.eq("license_type", filters.licenca);
-      if (filters.formato) query = query.eq("file_format", filters.formato);
-      if (filters.cor) query = query.contains("colors", [filters.cor]);
+      if (search.licenca) query = query.eq("license_type", search.licenca);
+      if (search.formato) query = query.eq("file_format", search.formato);
+      if (search.cor) query = query.contains("colors", [search.cor]);
 
       const { data, count, error } = await query;
       if (error) {
@@ -152,8 +152,15 @@ function CatalogoCategoria() {
 
   // Forçar refetch quando o slug mudar, apenas para garantir
   useEffect(() => {
+    console.log("Slug changed to:", slug, "triggering refetch");
     refetch();
   }, [slug, refetch]);
+
+  // Sincronizar filtros de busca caso eles mudem sem navegar
+  useEffect(() => {
+    console.log("Search params changed, triggering refetch:", search);
+    refetch();
+  }, [search, refetch]);
 
   const update = useCallback((patch: Partial<CatalogSearch>) => {
     console.log("Update called with patch:", patch);
