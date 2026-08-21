@@ -47,7 +47,7 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
         {artwork.preview_url ? (
           <SmartImage
             src={artwork.preview_url}
-            alt={artwork.alt_text || ""}
+            alt={artwork.alt_text?.trim() || title}
             widths={CARD_WIDTHS}
             fallbackWidth={400}
             sizes="(max-width: 640px) 92vw, (max-width: 768px) 46vw, (max-width: 1280px) 25vw, 400px"
