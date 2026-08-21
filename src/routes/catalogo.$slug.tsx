@@ -99,9 +99,14 @@ function CatalogoCategoria() {
 
   const { data: { artworks = [], count = 0 } = {}, isLoading, isFetching } = useQuery({
     queryKey: ["catalog", slug, filters, categories.length, page],
+    enabled: categories.length > 0,
     queryFn: async () => {
+      console.log("Fetching catalog for slug:", slug);
       const cat = categories.find((c: any) => c.slug === slug);
-      if (!cat) return { artworks: [], count: 0 };
+      if (!cat) {
+        console.warn("Category not found for slug:", slug);
+        return { artworks: [], count: 0 };
+      }
       
       const ids = [cat.id, ...categories.filter((c: any) => c.parent_id === cat.id).map((c: any) => c.id)];
       const { data: links } = await supabase
@@ -134,7 +139,11 @@ function CatalogoCategoria() {
       if (filters.formato) query = query.eq("file_format", filters.formato);
       if (filters.cor) query = query.contains("colors", [filters.cor]);
 
-      const { data, count } = await query;
+      const { data, count, error } = await query;
+      if (error) {
+        console.error("Supabase query error:", error);
+        throw error;
+      }
       return { artworks: data ?? [], count: count ?? 0 };
     },
   });
