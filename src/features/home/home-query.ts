@@ -48,7 +48,7 @@ export const homeQuery = queryOptions({
         const ids = await artworkIdsForCategory(c.id);
         if (ids.length === 0) return { ...c, samples: [], count: 0 };
         const [{ data: samples }, { count }] = await Promise.all([
-          supabase.from("artworks").select("id,preview_url").eq("is_published", true).in("id", ids).order("created_at", { ascending: false }).limit(4),
+          supabase.from("artworks").select("id,preview_url,title,alt_text").eq("is_published", true).in("id", ids).order("created_at", { ascending: false }).limit(4),
           supabase.from("artworks").select("id", { count: "exact", head: true }).eq("is_published", true).in("id", ids),
         ]);
         return { ...c, samples: samples ?? [], count: count ?? 0 };
