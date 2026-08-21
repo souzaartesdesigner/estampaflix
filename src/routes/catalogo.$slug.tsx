@@ -149,6 +149,7 @@ function CatalogoCategoria() {
   });
 
   const update = useCallback((patch: Partial<CatalogSearch>) => {
+    console.log("Update called with patch:", patch);
     const isOnlyPageChange = Object.keys(patch).length === 1 && 'page' in patch;
     const newSearch = { ...search, ...patch };
     
@@ -162,6 +163,7 @@ function CatalogoCategoria() {
       const nextSearch = { ...newSearch };
       delete nextSearch.categoria;
       
+      console.log("Navigating to new category slug:", nextSlug);
       navigate({ 
         to: "/catalogo/$slug", 
         params: { slug: nextSlug },
@@ -173,12 +175,14 @@ function CatalogoCategoria() {
 
     // Se removeu a categoria, volta para o catálogo geral
     if (patch.hasOwnProperty('categoria') && !patch.categoria) {
+      console.log("Removing category filter, navigating to /catalogo");
       const nextSearch = { ...newSearch };
       delete nextSearch.categoria;
       navigate({ to: "/catalogo", search: nextSearch as any, replace: true });
       return;
     }
 
+    console.log("Staying on same slug, updating search params:", newSearch);
     navigate({ 
       to: "/catalogo/$slug", 
       params: { slug },
