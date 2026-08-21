@@ -97,11 +97,11 @@ function CatalogoCategoria() {
   const ITEMS_PER_PAGE = 24;
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  const { data: { artworks = [], count = 0 } = {}, isLoading, isFetching } = useQuery({
+  const { data: { artworks = [], count = 0 } = {}, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["catalog", slug, filters, categories.length, page],
     enabled: categories.length > 0,
     queryFn: async () => {
-      console.log("Fetching catalog for slug:", slug);
+      console.log("Fetching catalog for slug:", slug, "with filters:", filters);
       const cat = categories.find((c: any) => c.slug === slug);
       if (!cat) {
         console.warn("Category not found for slug:", slug);
@@ -115,6 +115,7 @@ function CatalogoCategoria() {
         .in("category_id", ids);
       
       const artworkIdsFilter = Array.from(new Set((links ?? []).map((l: any) => l.artwork_id)));
+      console.log("Found artwork IDs for category:", artworkIdsFilter.length);
       if (artworkIdsFilter.length === 0) return { artworks: [], count: 0 };
 
       const from = (page - 1) * ITEMS_PER_PAGE;
@@ -144,9 +145,15 @@ function CatalogoCategoria() {
         console.error("Supabase query error:", error);
         throw error;
       }
+      console.log("Fetched artworks count:", data?.length, "Total count:", count);
       return { artworks: data ?? [], count: count ?? 0 };
     },
   });
+
+  // Forçar refetch quando o slug mudar, apenas para garantir
+  useEffect(() => {
+    refetch();
+  }, [slug, refetch]);
 
   const update = useCallback((patch: Partial<CatalogSearch>) => {
     console.log("Update called with patch:", patch);
