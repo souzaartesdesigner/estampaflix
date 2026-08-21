@@ -3,6 +3,7 @@ import { tField, useI18n } from "@/lib/i18n";
 import { LICENSES, type CatalogSearch } from "./catalog-constants";
 import { FileFormatIcon } from "@/features/artwork/file-format-icon";
 import { FilterGroup, FilterOption } from "./filter-group";
+import { useNavigate, useParams } from "@tanstack/react-router";
 
 type Props = {
   filters: CatalogSearch;
