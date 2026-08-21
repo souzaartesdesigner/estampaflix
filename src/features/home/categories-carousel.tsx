@@ -88,9 +88,9 @@ export function CategoriesCarousel({ categories }: { categories: any[] }) {
                 {filled.slice(0, 4).map((s, i) => (
                   <div key={i} className="aspect-square overflow-hidden rounded-md bg-[#ebebeb] ring-1 ring-border/40">
                     {s ? (
-                      <SmartImage src={s.preview_url} alt="" widths={THUMB_WIDTHS} fallbackWidth={160} sizes="140px" width={200} height={200} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <SmartImage src={s.preview_url} alt={s.alt_text?.trim() || s.title || catName} widths={THUMB_WIDTHS} fallbackWidth={160} sizes="140px" width={200} height={200} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     ) : c.cover_url && i === 0 ? (
-                      <SmartImage src={c.cover_url} alt="" widths={THUMB_WIDTHS} fallbackWidth={160} sizes="140px" width={200} height={200} className="h-full w-full object-cover" />
+                      <SmartImage src={c.cover_url} alt={catName} widths={THUMB_WIDTHS} fallbackWidth={160} sizes="140px" width={200} height={200} className="h-full w-full object-cover" />
 
                     ) : (
                       <div className="flex h-full w-full items-center justify-center text-muted-foreground/50">
