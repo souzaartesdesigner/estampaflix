@@ -15,6 +15,9 @@ type Props = {
 
 export function CatalogFilters({ filters, categories, formats = [], onChange, onFilterSelected }: Props) {
   const { t, lang } = useI18n();
+  const navigate = useNavigate();
+  const params = useParams({ strict: false });
+  const currentSlug = (params as any).slug || filters.categoria;
 
 
   const orderedCategories = useMemo(() => {
