@@ -73,9 +73,9 @@ export function CatalogFilters({ filters, categories, formats = [], onChange, on
                 depth={depth}
                 onClick={() => { 
                   if (isActive) {
-                    navigate({ to: "/catalogo", search: (s: any) => ({ ...s, page: 1, categoria: undefined }) });
+                    onChange({ categoria: undefined });
                   } else {
-                    navigate({ to: "/catalogo/$slug", params: { slug: c.slug }, search: (s: any) => ({ ...s, page: 1, categoria: undefined }) });
+                    onChange({ categoria: c.slug });
                   }
                   onFilterSelected?.(); 
                 }}
