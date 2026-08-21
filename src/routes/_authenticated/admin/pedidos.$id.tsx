@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { adminGrantOrderDownloads } from "@/lib/admin-artworks.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatBRL, formatDate } from "@/lib/format";
@@ -59,10 +60,7 @@ function OrderDetail() {
       if (updateErr) throw updateErr;
 
       // Chama a RPC para liberar os downloads para o CLIENTE do pedido
-      const { error: rpcErr } = await supabase.rpc("grant_order_downloads", { 
-        _order_id: id 
-      });
-      if (rpcErr) throw rpcErr;
+      await adminGrantOrderDownloads({ data: { orderId: id } });
     },
     onSuccess: () => { toast.success("Pedido marcado como pago e downloads liberados"); qc.invalidateQueries({ queryKey: ["admin-order", id] }); },
     onError: (e: any) => toast.error(e.message),
