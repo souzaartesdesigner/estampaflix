@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
+import { adminGetArtworkExternalUrl } from "@/lib/admin-artworks.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { slugify, brlToCents, centsToBRLInput } from "@/lib/format";
 import { FORMAT_SUGGESTIONS, normalizeFormat } from "@/features/catalog/catalog-constants";
@@ -80,9 +81,9 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
     if (!isEdit || !editing?.id) return;
     let cancelled = false;
     (async () => {
-      const { data } = await supabase.rpc("admin_get_artwork_external_url", { _artwork_id: editing.id });
-      if (cancelled || !data) return;
-      setForm((f: any) => ({ ...f, external_url: data as string }));
+      const res = await adminGetArtworkExternalUrl({ data: { artworkId: editing.id } }).catch(() => null);
+      if (cancelled || !res?.url) return;
+      setForm((f: any) => ({ ...f, external_url: res.url as string }));
       setSourceType("external");
     })();
     return () => {

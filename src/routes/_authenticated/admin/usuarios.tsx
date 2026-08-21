@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { adminGrantOrderDownloads } from "@/lib/admin-artworks.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -196,11 +197,7 @@ function ManageUserDialog({ user, onClose }: { user: any; onClose: () => void })
       if (orderErr) throw orderErr;
 
       // 2. Chamar a RPC para garantir que vá para a tabela de downloads
-      const { error: rpcErr } = await supabase.rpc("grant_order_downloads", {
-        _order_id: order.id
-      });
-      
-      if (rpcErr) throw rpcErr;
+      await adminGrantOrderDownloads({ data: { orderId: order.id } });
     },
     onSuccess: () => { 
       toast.success("Arte concedida e liberada para download"); 
