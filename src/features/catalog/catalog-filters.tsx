@@ -64,7 +64,7 @@ export function CatalogFilters({ filters, categories, formats = [], onChange, on
         <div className="space-y-1">
           {orderedCategories.map(({ cat: c, depth }) => {
             const nm = tField(c as any, "name", lang) || c.name;
-            const isActive = filters.categoria === c.slug;
+            const isActive = currentSlug === c.slug;
             return (
               <FilterOption
                 key={c.id}
@@ -72,7 +72,11 @@ export function CatalogFilters({ filters, categories, formats = [], onChange, on
                 active={isActive}
                 depth={depth}
                 onClick={() => { 
-                  onChange({ categoria: isActive ? undefined : c.slug }); 
+                  if (isActive) {
+                    navigate({ to: "/catalogo", search: (s: any) => ({ ...s, page: 1, categoria: undefined }) });
+                  } else {
+                    navigate({ to: "/catalogo/$slug", params: { slug: c.slug }, search: (s: any) => ({ ...s, page: 1, categoria: undefined }) });
+                  }
                   onFilterSelected?.(); 
                 }}
               />
