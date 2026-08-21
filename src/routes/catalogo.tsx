@@ -60,6 +60,10 @@ function Catalogo() {
   const search = Route.useSearch();
   const navigate = useNavigate();
   const [q, setQ] = useState(search.q ?? "");
+  
+  useEffect(() => {
+    setQ(search.q ?? "");
+  }, [search.q]);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const { t } = useI18n();
 
@@ -99,7 +103,7 @@ function Catalogo() {
   const ITEMS_PER_PAGE = 24;
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  const { data: { artworks = [], count = 0 } = {}, isLoading } = useQuery({
+  const { data: { artworks = [], count = 0 } = {}, isLoading, isFetching } = useQuery({
     queryKey: ["catalog", filters, categories.length, page],
     queryFn: async () => {
       let artworkIdsFilter: string[] | null = null;
@@ -263,7 +267,7 @@ function Catalogo() {
               count={count}
               page={page}
               itemsPerPage={ITEMS_PER_PAGE}
-              isLoading={isLoading}
+              isLoading={isLoading || isFetching}
               onRemoveFilter={(k) => update({ [k]: undefined } as any)}
               onPageChange={(p) => update({ page: p })}
             />
