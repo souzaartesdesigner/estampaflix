@@ -20,10 +20,10 @@ import { Route as LicencaRouteImport } from './routes/licenca'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as DownloadsRouteImport } from './routes/downloads'
 import { Route as CobrancaRouteImport } from './routes/cobranca'
-import { Route as CatalogoRouteImport } from './routes/catalogo'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CatalogoIndexRouteImport } from './routes/catalogo.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as PagamentoSucessoRouteImport } from './routes/pagamento.sucesso'
 import { Route as CatalogoSlugRouteImport } from './routes/catalogo.$slug'
@@ -115,11 +115,6 @@ const CobrancaRoute = CobrancaRouteImport.update({
   path: '/cobranca',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CatalogoRoute = CatalogoRouteImport.update({
-  id: '/catalogo',
-  path: '/catalogo',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -134,6 +129,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CatalogoIndexRoute = CatalogoIndexRouteImport.update({
+  id: '/catalogo/',
+  path: '/catalogo/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
@@ -145,9 +145,9 @@ const PagamentoSucessoRoute = PagamentoSucessoRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const CatalogoSlugRoute = CatalogoSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => CatalogoRoute,
+  id: '/catalogo/$slug',
+  path: '/catalogo/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/blog/$slug',
@@ -331,7 +331,6 @@ const AuthenticatedAdminPedidosIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/catalogo': typeof CatalogoRouteWithChildren
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
   '/favoritos': typeof FavoritosRoute
@@ -351,6 +350,7 @@ export interface FileRoutesByFullPath {
   '/catalogo/$slug': typeof CatalogoSlugRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/blog/': typeof BlogIndexRoute
+  '/catalogo/': typeof CatalogoIndexRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/artes': typeof AuthenticatedAdminArtesRoute
   '/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
@@ -382,7 +382,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/catalogo': typeof CatalogoRouteWithChildren
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
   '/favoritos': typeof FavoritosRoute
@@ -401,6 +400,7 @@ export interface FileRoutesByTo {
   '/catalogo/$slug': typeof CatalogoSlugRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/blog': typeof BlogIndexRoute
+  '/catalogo': typeof CatalogoIndexRoute
   '/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/admin/artes': typeof AuthenticatedAdminArtesRoute
   '/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
@@ -434,7 +434,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/catalogo': typeof CatalogoRouteWithChildren
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
   '/favoritos': typeof FavoritosRoute
@@ -454,6 +453,7 @@ export interface FileRoutesById {
   '/catalogo/$slug': typeof CatalogoSlugRoute
   '/pagamento/sucesso': typeof PagamentoSucessoRoute
   '/blog/': typeof BlogIndexRoute
+  '/catalogo/': typeof CatalogoIndexRoute
   '/_authenticated/admin/analytics': typeof AuthenticatedAdminAnalyticsRoute
   '/_authenticated/admin/artes': typeof AuthenticatedAdminArtesRoute
   '/_authenticated/admin/avaliacoes': typeof AuthenticatedAdminAvaliacoesRoute
@@ -487,7 +487,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
-    | '/catalogo'
     | '/cobranca'
     | '/downloads'
     | '/favoritos'
@@ -507,6 +506,7 @@ export interface FileRouteTypes {
     | '/catalogo/$slug'
     | '/pagamento/sucesso'
     | '/blog/'
+    | '/catalogo/'
     | '/admin/analytics'
     | '/admin/artes'
     | '/admin/avaliacoes'
@@ -538,7 +538,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
-    | '/catalogo'
     | '/cobranca'
     | '/downloads'
     | '/favoritos'
@@ -557,6 +556,7 @@ export interface FileRouteTypes {
     | '/catalogo/$slug'
     | '/pagamento/sucesso'
     | '/blog'
+    | '/catalogo'
     | '/admin/analytics'
     | '/admin/artes'
     | '/admin/avaliacoes'
@@ -589,7 +589,6 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
-    | '/catalogo'
     | '/cobranca'
     | '/downloads'
     | '/favoritos'
@@ -609,6 +608,7 @@ export interface FileRouteTypes {
     | '/catalogo/$slug'
     | '/pagamento/sucesso'
     | '/blog/'
+    | '/catalogo/'
     | '/_authenticated/admin/analytics'
     | '/_authenticated/admin/artes'
     | '/_authenticated/admin/avaliacoes'
@@ -642,7 +642,6 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
-  CatalogoRoute: typeof CatalogoRouteWithChildren
   CobrancaRoute: typeof CobrancaRoute
   DownloadsRoute: typeof DownloadsRoute
   FavoritosRoute: typeof FavoritosRoute
@@ -656,8 +655,10 @@ export interface RootRouteChildren {
   TermosRoute: typeof TermosRoute
   ArtesSlugRoute: typeof ArtesSlugRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  CatalogoSlugRoute: typeof CatalogoSlugRoute
   PagamentoSucessoRoute: typeof PagamentoSucessoRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  CatalogoIndexRoute: typeof CatalogoIndexRoute
   PagamentoPixOrderIdRoute: typeof PagamentoPixOrderIdRoute
   ApiPublicMercadopagoWebhookRoute: typeof ApiPublicMercadopagoWebhookRoute
   ApiPublicOrdersCleanupExpiredRoute: typeof ApiPublicOrdersCleanupExpiredRoute
@@ -746,13 +747,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CobrancaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/catalogo': {
-      id: '/catalogo'
-      path: '/catalogo'
-      fullPath: '/catalogo'
-      preLoaderRoute: typeof CatalogoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -774,6 +768,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/catalogo/': {
+      id: '/catalogo/'
+      path: '/catalogo'
+      fullPath: '/catalogo/'
+      preLoaderRoute: typeof CatalogoIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/': {
       id: '/blog/'
       path: '/blog'
@@ -790,10 +791,10 @@ declare module '@tanstack/react-router' {
     }
     '/catalogo/$slug': {
       id: '/catalogo/$slug'
-      path: '/$slug'
+      path: '/catalogo/$slug'
       fullPath: '/catalogo/$slug'
       preLoaderRoute: typeof CatalogoSlugRouteImport
-      parentRoute: typeof CatalogoRoute
+      parentRoute: typeof rootRouteImport
     }
     '/blog/$slug': {
       id: '/blog/$slug'
@@ -1089,23 +1090,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
-interface CatalogoRouteChildren {
-  CatalogoSlugRoute: typeof CatalogoSlugRoute
-}
-
-const CatalogoRouteChildren: CatalogoRouteChildren = {
-  CatalogoSlugRoute: CatalogoSlugRoute,
-}
-
-const CatalogoRouteWithChildren = CatalogoRoute._addFileChildren(
-  CatalogoRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
-  CatalogoRoute: CatalogoRouteWithChildren,
   CobrancaRoute: CobrancaRoute,
   DownloadsRoute: DownloadsRoute,
   FavoritosRoute: FavoritosRoute,
@@ -1119,8 +1107,10 @@ const rootRouteChildren: RootRouteChildren = {
   TermosRoute: TermosRoute,
   ArtesSlugRoute: ArtesSlugRoute,
   BlogSlugRoute: BlogSlugRoute,
+  CatalogoSlugRoute: CatalogoSlugRoute,
   PagamentoSucessoRoute: PagamentoSucessoRoute,
   BlogIndexRoute: BlogIndexRoute,
+  CatalogoIndexRoute: CatalogoIndexRoute,
   PagamentoPixOrderIdRoute: PagamentoPixOrderIdRoute,
   ApiPublicMercadopagoWebhookRoute: ApiPublicMercadopagoWebhookRoute,
   ApiPublicOrdersCleanupExpiredRoute: ApiPublicOrdersCleanupExpiredRoute,
