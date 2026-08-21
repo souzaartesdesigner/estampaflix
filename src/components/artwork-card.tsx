@@ -125,9 +125,22 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
             {artwork.license_type === "free" ? "Grátis" : formatBRL(artwork.price_cents)}
           </span>
           {cats.length > 0 && (
-            <span className="line-clamp-2 min-w-0 text-[12px] text-muted-foreground md:order-2 md:text-right">
-              {cats.slice(0, 2).map((c) => tField(c as any, "name", lang) || c!.name).join(" · ")}
-            </span>
+            <div className="line-clamp-2 min-w-0 text-[12px] text-muted-foreground md:order-2 md:text-right">
+              {cats.slice(0, 2).map((c, idx) => (
+                <span key={c!.slug}>
+                  {idx > 0 && " · "}
+                  <Link
+                    to="/catalogo/$slug"
+                    params={{ slug: c!.slug }}
+                    search={{ page: 1 } as any}
+                    className="hover:text-primary transition-colors"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {tField(c as any, "name", lang) || c!.name}
+                  </Link>
+                </span>
+              ))}
+            </div>
           )}
         </div>
       </div>

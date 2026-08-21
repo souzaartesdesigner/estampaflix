@@ -60,13 +60,17 @@ export function CatalogFilters({ filters, categories, formats = [], onChange, on
         <div className="space-y-1">
           {orderedCategories.map(({ cat: c, depth }) => {
             const nm = tField(c as any, "name", lang) || c.name;
+            const isActive = filters.categoria === c.slug;
             return (
               <FilterOption
                 key={c.id}
                 label={depth > 0 ? `— ${nm}` : nm}
-                active={filters.categoria === c.slug}
+                active={isActive}
                 depth={depth}
-                onClick={() => { onChange({ categoria: filters.categoria === c.slug ? undefined : c.slug }); onFilterSelected?.(); }}
+                onClick={() => { 
+                  onChange({ categoria: isActive ? undefined : c.slug }); 
+                  onFilterSelected?.(); 
+                }}
               />
             );
           })}
