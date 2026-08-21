@@ -105,17 +105,23 @@ function Catalogo() {
 
   const { data: { artworks = [], count = 0 } = {}, isLoading, isFetching } = useQuery({
     queryKey: ["catalog", filters, categories.length, page],
+    enabled: categories.length > 0,
     queryFn: async () => {
+      console.log("Fetching catalog with filters:", filters);
       let artworkIdsFilter: string[] | null = null;
       if (filters.categoria) {
         const cat = categories.find((c: any) => c.slug === filters.categoria);
-        if (!cat) return { artworks: [], count: 0 };
+        if (!cat) {
+          console.warn("Category not found for slug:", filters.categoria);
+          return { artworks: [], count: 0 };
+        }
         const ids = [cat.id, ...categories.filter((c: any) => c.parent_id === cat.id).map((c: any) => c.id)];
         const { data: links } = await supabase
           .from("artwork_categories")
           .select("artwork_id")
           .in("category_id", ids);
         artworkIdsFilter = Array.from(new Set((links ?? []).map((l: any) => l.artwork_id)));
+        console.log("Found artwork IDs for category:", artworkIdsFilter.length);
         if (artworkIdsFilter.length === 0) return { artworks: [], count: 0 };
       }
 
@@ -141,7 +147,12 @@ function Catalogo() {
       if (filters.formato) query = query.eq("file_format", filters.formato);
       if (filters.cor) query = query.contains("colors", [filters.cor]);
 
-      const { data, count } = await query;
+      const { data, count, error } = await query;
+      if (error) {
+        console.error("Supabase query error:", error);
+        throw error;
+      }
+      console.log("Fetched artworks count:", data?.length, "Total count:", count);
       return { artworks: data ?? [], count: count ?? 0 };
     },
   });
