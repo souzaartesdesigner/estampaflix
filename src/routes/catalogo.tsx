@@ -151,6 +151,14 @@ function Catalogo() {
       newSearch.page = 1;
     }
 
+    if (patch.categoria) {
+      const nextSlug = patch.categoria;
+      const nextSearch = { ...newSearch };
+      delete nextSearch.categoria;
+      navigate({ to: "/catalogo/$slug", params: { slug: nextSlug }, search: nextSearch as any, replace: true });
+      return;
+    }
+
     navigate({ 
       to: "/catalogo", 
       search: newSearch as any,
