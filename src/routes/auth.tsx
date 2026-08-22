@@ -86,7 +86,9 @@ function Auth() {
               alt="Logo Estampa Flix"
               className="mx-auto mb-4 h-10 w-auto object-contain"
             />
-            <h1 className="font-display text-lg font-bold">Entrar ou criar conta na Estampa Flix</h1>
+            <h1 className="font-display text-base md:text-xl font-bold leading-tight">
+              Entrar ou criar conta na Estampa&nbsp;Flix
+            </h1>
             <p className="mt-1 text-sm text-muted-foreground">Entre ou crie sua conta para começar</p>
           </div>
 
