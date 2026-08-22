@@ -105,7 +105,7 @@ export function CatalogResults({
           </span>
         )}
 
-        {activeFilters.length > 0 && (
+        {activeFilters.length > 0 && (isLoading || artworks.length > 0) && (
           <div className="flex flex-wrap items-center gap-2 text-sm">
             <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
             {activeFilters.map(([k, v]) => (
