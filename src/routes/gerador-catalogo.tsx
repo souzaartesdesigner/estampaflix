@@ -56,7 +56,6 @@ function CatalogGeneratorPage() {
   const [logo, setLogo] = useState<{ dataUrl: string; name: string } | null>(null);
   const [columns, setColumns] = useState("3");
   const [bgColor, setBgColor] = useState(DEFAULT_BG);
-  const [pages, setPages] = useState(1);
   const [generating, setGenerating] = useState(false);
 
   const { data: categories = [] } = useQuery({
@@ -72,25 +71,36 @@ function CatalogGeneratorPage() {
       ).data ?? [],
   });
 
-  useEffect(() => {
-    setPages(1);
-  }, [term, categorySlug]);
+  const resolveCategoryIds = async (slug: string): Promise<string[] | null> => {
+    const cat = (categories as any[]).find((c) => c.slug === slug);
+    if (!cat) return null;
+    const { data: subs } = await supabase.from("categories").select("id").eq("parent_id", cat.id);
+    const catIds = [cat.id, ...((subs ?? []) as any[]).map((s) => s.id)];
+    const { data: links } = await supabase
+      .from("artwork_categories")
+      .select("artwork_id")
+      .in("category_id", catIds);
+    return Array.from(new Set(((links ?? []) as any[]).map((l) => l.artwork_id)));
+  };
 
-  const { data, isLoading, isFetching } = useQuery({
-    queryKey: ["catalog-generator-artworks", term, categorySlug, categories.length, pages],
-    queryFn: async () => {
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["catalog-generator-artworks", term, categorySlug, categories.length],
+    queryFn: async ({ pageParam }) => {
+      const from = pageParam * PAGE_LIMIT;
+      const to = from + PAGE_LIMIT - 1;
+
       let ids: string[] | null = null;
       if (categorySlug) {
-        const cat = (categories as any[]).find((c) => c.slug === categorySlug);
-        if (!cat) return { items: [], total: 0 };
-        const { data: subs } = await supabase.from("categories").select("id").eq("parent_id", cat.id);
-        const catIds = [cat.id, ...((subs ?? []) as any[]).map((s) => s.id)];
-        const { data: links } = await supabase
-          .from("artwork_categories")
-          .select("artwork_id")
-          .in("category_id", catIds);
-        ids = Array.from(new Set(((links ?? []) as any[]).map((l) => l.artwork_id)));
-        if (ids.length === 0) return { items: [], total: 0 };
+        ids = await resolveCategoryIds(categorySlug);
+        if (ids && ids.length === 0) {
+          return { items: [], total: 0, nextPage: undefined };
+        }
       }
 
       let query = supabase
@@ -99,19 +109,27 @@ function CatalogGeneratorPage() {
         .eq("is_published", true)
         .not("preview_url", "is", null)
         .order("created_at", { ascending: false })
-        .range(0, pages * PAGE_LIMIT - 1);
+        .range(from, to);
 
       if (term.trim()) query = query.ilike("title", `%${term.trim()}%`);
       if (ids) query = query.in("id", ids);
 
       const { data: rows, count } = await query;
-      return { items: rows ?? [], total: count ?? (rows?.length ?? 0) };
+      const items = rows ?? [];
+      return {
+        items,
+        total: count ?? items.length,
+        nextPage: items.length === PAGE_LIMIT ? pageParam + 1 : undefined,
+      };
     },
+    initialPageParam: 0,
+    getNextPageParam: (last) => last.nextPage,
     placeholderData: (prev) => prev,
   });
 
-  const artworks = (data?.items ?? []) as any[];
-  const total = data?.total ?? 0;
+  const artworks = (data?.pages.flatMap((p) => p.items) ?? []) as any[];
+  const total = data?.pages[0]?.total ?? 0;
+  const hasMore = !!hasNextPage && artworks.length < total;
 
   const selectedList = useMemo(() => artworks.filter((a) => selected[a.id]), [artworks, selected]);
   const selectedCount = selectedList.length;
