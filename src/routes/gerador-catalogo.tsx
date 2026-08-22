@@ -362,9 +362,9 @@ function CatalogGeneratorPage() {
               <Button variant="outline" size="sm" onClick={() => setSelected({})}>
                 <XSquare className="h-4 w-4" /> Limpar seleção
               </Button>
-              {artworks.length < total && (
-                <Button variant="secondary" size="sm" onClick={() => setPages((p) => p + 1)} disabled={isFetching}>
-                  {isFetching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+              {hasMore && (
+                <Button size="sm" onClick={() => fetchNextPage()} disabled={isFetchingNextPage} className="gap-2">
+                  {isFetchingNextPage ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
                   Carregar mais
                 </Button>
               )}
