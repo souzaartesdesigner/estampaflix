@@ -295,6 +295,7 @@ function CatalogoCategoria() {
               isLoading={isLoading || isFetching}
               onRemoveFilter={(k) => update({ [k]: undefined } as any)}
               onPageChange={(p) => update({ page: p })}
+              onClearFilters={() => navigate({ to: "/catalogo", search: {} as any, replace: true })}
             />
           </div>
         </div>

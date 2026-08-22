@@ -13,6 +13,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
+import { CatalogEmptyState } from "./catalog-empty-state";
 
 type Props = {
   filters: CatalogSearch;
@@ -23,6 +24,7 @@ type Props = {
   isLoading: boolean;
   onRemoveFilter: (key: keyof CatalogSearch) => void;
   onPageChange: (page: number) => void;
+  onClearFilters?: () => void;
 };
 
 export function CatalogResults({
@@ -34,6 +36,7 @@ export function CatalogResults({
   isLoading,
   onRemoveFilter,
   onPageChange,
+  onClearFilters,
 }: Props) {
   const { t } = useI18n();
   const activeFilters = Object.entries(filters).filter(([k, v]) => v && k !== "page") as Array<
@@ -102,7 +105,7 @@ export function CatalogResults({
           </span>
         )}
 
-        {activeFilters.length > 0 && (
+        {activeFilters.length > 0 && (isLoading || artworks.length > 0) && (
           <div className="flex flex-wrap items-center gap-2 text-sm">
             <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
             {activeFilters.map(([k, v]) => (
@@ -136,9 +139,15 @@ export function CatalogResults({
           ))}
         </div>
       ) : artworks.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-border/60 p-12 text-center text-sm text-muted-foreground">
-          {t("catalog.empty")}
-        </div>
+        <CatalogEmptyState
+          mode={filters.q && activeFilters.length <= 1 ? "search" : "filters"}
+          activeFilters={activeFilters}
+          onRemoveFilter={onRemoveFilter}
+          onClearFilters={() => {
+            if (onClearFilters) onClearFilters();
+            else activeFilters.forEach(([k]) => onRemoveFilter(k));
+          }}
+        />
       ) : (
         <>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
