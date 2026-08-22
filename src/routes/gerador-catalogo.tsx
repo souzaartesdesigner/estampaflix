@@ -339,7 +339,18 @@ function CatalogGeneratorPage() {
                         />
                       </div>
                       <span className="absolute left-2 top-2">
-                        <Checkbox checked={isOn} className="pointer-events-none bg-background/80" />
+                        <span
+                          aria-hidden
+                          className={cn(
+                            "grid h-5 w-5 place-items-center rounded border",
+                            isOn
+                              ? "border-primary bg-primary text-primary-foreground"
+                              : "border-border bg-background/80",
+                          )}
+                        >
+                          {isOn && <Check className="h-3.5 w-3.5" />}
+                        </span>
+
                       </span>
                       <p className="line-clamp-2 p-3 text-xs text-foreground/90">{a.title}</p>
                     </button>
