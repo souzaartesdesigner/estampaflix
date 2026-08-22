@@ -259,7 +259,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body><span className="hidden">⁣</span>
         {/* DO NOT REMOVE — Google Tag Manager (GTM-594LSV6J) noscript iframe */}
         <noscript>
           <iframe
