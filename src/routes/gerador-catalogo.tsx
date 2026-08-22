@@ -137,22 +137,29 @@ function CatalogGeneratorPage() {
       const cellW = (pageW - margin * 2 - gap * (cols - 1)) / cols;
       const cellH = cellW;
 
-      let top = margin;
-      if (logo) {
-        const meta = await loadImage(logo.dataUrl);
-        const maxH = 22;
-        const maxW = 70;
-        const ratio = Math.min(maxW / meta.width, maxH / meta.height);
-        const w = meta.width * ratio;
-        const h = meta.height * ratio;
-        doc.addImage(logo.dataUrl, (pageW - w) / 2, top, w, h, undefined, "FAST");
-        top += h + 8;
-      }
-      const headerTop = top;
+      const logoMeta = logo ? await loadImage(logo.dataUrl) : null;
+      const drawHeader = () => {
+        if (!logo || !logoMeta) return margin;
+        const ratio = Math.min(70 / logoMeta.width, 22 / logoMeta.height);
+        const w = logoMeta.width * ratio;
+        const h = logoMeta.height * ratio;
+        doc.addImage(logo.dataUrl, (pageW - w) / 2, margin, w, h, undefined, "FAST");
+        return margin + h + 8;
+      };
 
       let x = margin;
-      let y = top;
+      let y = drawHeader();
+      let col = 0;
       for (const art of selectedList) {
+        if (col === cols) {
+          col = 0;
+          x = margin;
+          y += cellH + gap;
+          if (y + cellH > pageH - margin) {
+            doc.addPage();
+            y = drawHeader();
+          }
+        }
         const img = await toDataUrl(art.preview_url);
         if (img) {
           const ratio = Math.min(cellW / img.width, cellH / img.height);
@@ -161,23 +168,9 @@ function CatalogGeneratorPage() {
           doc.addImage(img.dataUrl, x + (cellW - w) / 2, y + (cellH - h) / 2, w, h, undefined, "FAST");
         }
         x += cellW + gap;
-        if (x + cellW > pageW - margin + 0.01) {
-          x = margin;
-          y += cellH + gap;
-          if (y + cellH > pageH - margin) {
-            doc.addPage();
-            y = headerTop === margin ? margin : margin;
-            if (logo) {
-              const meta = await loadImage(logo.dataUrl);
-              const ratio = Math.min(70 / meta.width, 22 / meta.height);
-              const w = meta.width * ratio;
-              const h = meta.height * ratio;
-              doc.addImage(logo.dataUrl, (pageW - w) / 2, y, w, h, undefined, "FAST");
-              y += h + 8;
-            }
-          }
-        }
+        col += 1;
       }
+
 
       doc.save("catalogo.pdf");
       toast.success("Catálogo gerado com sucesso!");
