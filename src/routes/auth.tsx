@@ -84,9 +84,9 @@ function Auth() {
             <img
               src="https://estampaflix.com/__l5e/assets-v1/803758df-7757-44c9-8c71-26e110368b12/estampa-flix-logo.png"
               alt="Logo Estampa Flix"
-              className="mx-auto mb-4 h-12 w-auto object-contain"
+              className="mx-auto mb-4 h-10 w-auto object-contain"
             />
-            <h1 className="font-display text-xl font-bold">Entrar ou criar conta na Estampa Flix</h1>
+            <h1 className="font-display text-lg font-bold">Entrar ou criar conta na Estampa Flix</h1>
             <p className="mt-1 text-sm text-muted-foreground">Entre ou crie sua conta para começar</p>
           </div>
 
