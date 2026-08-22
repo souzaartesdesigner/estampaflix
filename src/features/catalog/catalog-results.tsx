@@ -139,9 +139,15 @@ export function CatalogResults({
           ))}
         </div>
       ) : artworks.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-border/60 p-12 text-center text-sm text-muted-foreground">
-          {t("catalog.empty")}
-        </div>
+        <CatalogEmptyState
+          mode={filters.q && activeFilters.length <= 1 ? "search" : "filters"}
+          activeFilters={activeFilters}
+          onRemoveFilter={onRemoveFilter}
+          onClearFilters={() => {
+            if (onClearFilters) onClearFilters();
+            else activeFilters.forEach(([k]) => onRemoveFilter(k));
+          }}
+        />
       ) : (
         <>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
