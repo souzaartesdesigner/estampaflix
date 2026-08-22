@@ -13,6 +13,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
+import { CatalogEmptyState } from "./catalog-empty-state";
 
 type Props = {
   filters: CatalogSearch;
@@ -23,6 +24,7 @@ type Props = {
   isLoading: boolean;
   onRemoveFilter: (key: keyof CatalogSearch) => void;
   onPageChange: (page: number) => void;
+  onClearFilters?: () => void;
 };
 
 export function CatalogResults({
@@ -34,6 +36,7 @@ export function CatalogResults({
   isLoading,
   onRemoveFilter,
   onPageChange,
+  onClearFilters,
 }: Props) {
   const { t } = useI18n();
   const activeFilters = Object.entries(filters).filter(([k, v]) => v && k !== "page") as Array<
