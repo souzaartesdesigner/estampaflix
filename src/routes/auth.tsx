@@ -186,7 +186,7 @@ function Auth() {
 
           <p className="mt-4 text-center text-xs text-muted-foreground">
             Ao continuar você aceita nossos{" "}
-            <Link to="/suporte" className="underline">
+            <Link to="/termos" className="underline">
               termos de uso
             </Link>
             .
