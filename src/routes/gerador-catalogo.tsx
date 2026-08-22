@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { Search, Upload, FileDown, CheckSquare, XSquare, Loader2, X, Check } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Search, Upload, FileDown, CheckSquare, XSquare, Loader2, X, Check, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site-layout";
@@ -40,7 +40,13 @@ export const Route = createFileRoute("/gerador-catalogo")({
   component: CatalogGeneratorPage,
 });
 
-const PAGE_LIMIT = 60;
+const PAGE_LIMIT = 300;
+const DEFAULT_BG = "#e8e8e8";
+
+function refLabel(art: any) {
+  const code = art?.product_code?.trim();
+  return code ? `Ref: ${code}` : "";
+}
 
 function CatalogGeneratorPage() {
   const [q, setQ] = useState("");
@@ -49,6 +55,8 @@ function CatalogGeneratorPage() {
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [logo, setLogo] = useState<{ dataUrl: string; name: string } | null>(null);
   const [columns, setColumns] = useState("3");
+  const [bgColor, setBgColor] = useState(DEFAULT_BG);
+  const [pages, setPages] = useState(1);
   const [generating, setGenerating] = useState(false);
 
   const { data: categories = [] } = useQuery({
@@ -64,13 +72,17 @@ function CatalogGeneratorPage() {
       ).data ?? [],
   });
 
-  const { data: artworks = [], isLoading } = useQuery({
-    queryKey: ["catalog-generator-artworks", term, categorySlug, categories.length],
+  useEffect(() => {
+    setPages(1);
+  }, [term, categorySlug]);
+
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ["catalog-generator-artworks", term, categorySlug, categories.length, pages],
     queryFn: async () => {
       let ids: string[] | null = null;
       if (categorySlug) {
         const cat = (categories as any[]).find((c) => c.slug === categorySlug);
-        if (!cat) return [];
+        if (!cat) return { items: [], total: 0 };
         const { data: subs } = await supabase.from("categories").select("id").eq("parent_id", cat.id);
         const catIds = [cat.id, ...((subs ?? []) as any[]).map((s) => s.id)];
         const { data: links } = await supabase
@@ -78,30 +90,32 @@ function CatalogGeneratorPage() {
           .select("artwork_id")
           .in("category_id", catIds);
         ids = Array.from(new Set(((links ?? []) as any[]).map((l) => l.artwork_id)));
-        if (ids.length === 0) return [];
+        if (ids.length === 0) return { items: [], total: 0 };
       }
 
       let query = supabase
         .from("artworks")
-        .select("id,slug,title,preview_url,alt_text")
+        .select("id,slug,title,preview_url,alt_text,product_code", { count: "exact" })
         .eq("is_published", true)
         .not("preview_url", "is", null)
         .order("created_at", { ascending: false })
-        .limit(PAGE_LIMIT);
+        .range(0, pages * PAGE_LIMIT - 1);
 
       if (term.trim()) query = query.ilike("title", `%${term.trim()}%`);
-      if (ids) query = query.in("id", ids.slice(0, 500));
+      if (ids) query = query.in("id", ids);
 
-      const { data } = await query;
-      return data ?? [];
+      const { data: rows, count } = await query;
+      return { items: rows ?? [], total: count ?? (rows?.length ?? 0) };
     },
+    placeholderData: (prev) => prev,
   });
 
-  const selectedList = useMemo(
-    () => (artworks as any[]).filter((a) => selected[a.id]),
-    [artworks, selected],
-  );
-  const selectedCount = Object.values(selected).filter(Boolean).length;
+  const artworks = (data?.items ?? []) as any[];
+  const total = data?.total ?? 0;
+
+  const selectedList = useMemo(() => artworks.filter((a) => selected[a.id]), [artworks, selected]);
+  const selectedCount = selectedList.length;
+  const cols = Number(columns);
 
   function toggle(id: string) {
     setSelected((s) => ({ ...s, [id]: !s[id] }));
@@ -130,21 +144,31 @@ function CatalogGeneratorPage() {
       const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
       const pageW = doc.internal.pageSize.getWidth();
       const pageH = doc.internal.pageSize.getHeight();
-      const margin = 12;
-      const cols = Number(columns);
-      const gap = 6;
+      const margin = 8;
+      const gap = 4;
+      const captionH = 7;
       const cellW = (pageW - margin * 2 - gap * (cols - 1)) / cols;
-      const cellH = cellW;
+      const imgH = cellW;
+      const cellH = imgH + captionH;
+
+      const paintBg = () => {
+        doc.setFillColor(bgColor);
+        doc.rect(0, 0, pageW, pageH, "F");
+      };
 
       const logoMeta = logo ? await loadImage(logo.dataUrl) : null;
       const drawHeader = () => {
+        paintBg();
         if (!logo || !logoMeta) return margin;
-        const ratio = Math.min(70 / logoMeta.width, 22 / logoMeta.height);
+        const ratio = Math.min(90 / logoMeta.width, 30 / logoMeta.height);
         const w = logoMeta.width * ratio;
         const h = logoMeta.height * ratio;
         doc.addImage(logo.dataUrl, (pageW - w) / 2, margin, w, h, undefined, "FAST");
-        return margin + h + 8;
+        return margin + h + 6;
       };
+
+      doc.setFontSize(11);
+      doc.setTextColor(20, 20, 20);
 
       let x = margin;
       let y = drawHeader();
@@ -159,17 +183,18 @@ function CatalogGeneratorPage() {
             y = drawHeader();
           }
         }
-        const img = await toDataUrl(art.preview_url);
+        const img = await toDataUrl(art.preview_url, bgColor);
         if (img) {
-          const ratio = Math.min(cellW / img.width, cellH / img.height);
+          const ratio = Math.min(cellW / img.width, imgH / img.height);
           const w = img.width * ratio;
           const h = img.height * ratio;
-          doc.addImage(img.dataUrl, x + (cellW - w) / 2, y + (cellH - h) / 2, w, h, undefined, "FAST");
+          doc.addImage(img.dataUrl, x + (cellW - w) / 2, y + (imgH - h) / 2, w, h, undefined, "FAST");
         }
+        const label = refLabel(art);
+        if (label) doc.text(label, x + cellW / 2, y + imgH + 5, { align: "center" });
         x += cellW + gap;
         col += 1;
       }
-
 
       doc.save("catalogo.pdf");
       toast.success("Catálogo gerado com sucesso!");
@@ -275,6 +300,22 @@ function CatalogGeneratorPage() {
             </div>
 
             <div className="rounded-2xl border border-border/50 bg-card p-4">
+              <Label htmlFor="pdf-bg" className="text-sm font-semibold">
+                Cor de fundo do PDF
+              </Label>
+              <div className="mt-3 flex items-center gap-3">
+                <input
+                  id="pdf-bg"
+                  type="color"
+                  value={bgColor}
+                  onChange={(e) => setBgColor(e.target.value)}
+                  className="h-10 w-14 cursor-pointer rounded-lg border border-border bg-transparent p-1"
+                />
+                <span className="text-sm text-muted-foreground">{bgColor.toUpperCase()}</span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-border/50 bg-card p-4">
               <p className="text-sm text-muted-foreground">
                 <span className="font-semibold text-foreground">{selectedCount}</span> arte(s) selecionada(s)
               </p>
@@ -286,14 +327,14 @@ function CatalogGeneratorPage() {
           </aside>
 
           <section>
-            <div className="mb-4 flex flex-wrap items-center gap-2">
+            <div className="mb-3 flex flex-wrap items-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() =>
                   setSelected((s) => {
                     const next = { ...s };
-                    for (const a of artworks as any[]) next[a.id] = true;
+                    for (const a of artworks) next[a.id] = true;
                     return next;
                   })
                 }
@@ -303,7 +344,18 @@ function CatalogGeneratorPage() {
               <Button variant="outline" size="sm" onClick={() => setSelected({})}>
                 <XSquare className="h-4 w-4" /> Limpar seleção
               </Button>
+              {artworks.length < total && (
+                <Button variant="secondary" size="sm" onClick={() => setPages((p) => p + 1)} disabled={isFetching}>
+                  {isFetching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
+                  Carregar mais
+                </Button>
+              )}
             </div>
+
+            <p className="mb-4 text-sm text-muted-foreground">
+              Encontrado(s) <span className="font-semibold text-foreground">{total}</span> produto(s). Carregados{" "}
+              <span className="font-semibold text-foreground">{artworks.length}</span>.
+            </p>
 
             {isLoading ? (
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
@@ -311,13 +363,13 @@ function CatalogGeneratorPage() {
                   <div key={i} className="aspect-square animate-pulse rounded-2xl bg-surface-2" />
                 ))}
               </div>
-            ) : (artworks as any[]).length === 0 ? (
+            ) : artworks.length === 0 ? (
               <p className="rounded-2xl border border-border/50 bg-card p-10 text-center text-muted-foreground">
                 Nenhuma arte encontrada com esses filtros.
               </p>
             ) : (
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4">
-                {(artworks as any[]).map((a) => {
+                {artworks.map((a) => {
                   const isOn = !!selected[a.id];
                   return (
                     <button
@@ -329,12 +381,12 @@ function CatalogGeneratorPage() {
                         isOn ? "border-primary" : "border-border/50 hover:border-primary/40",
                       )}
                     >
-                      <div className="aspect-square overflow-hidden bg-surface-2">
+                      <div className="aspect-square w-full overflow-hidden bg-surface-2">
                         <img
                           src={a.preview_url}
                           alt={a.alt_text?.trim() || a.title}
                           loading="lazy"
-                          className="h-full w-full object-cover"
+                          className="block h-full w-full object-cover"
                         />
                       </div>
                       <span className="absolute left-2 top-2">
@@ -349,12 +401,50 @@ function CatalogGeneratorPage() {
                         >
                           {isOn && <Check className="h-3.5 w-3.5" />}
                         </span>
-
                       </span>
-                      <p className="line-clamp-2 p-3 text-xs text-foreground/90">{a.title}</p>
+                      <p className="line-clamp-2 p-3 text-base font-medium leading-snug text-foreground">{a.title}</p>
+                      {a.product_code && (
+                        <p className="px-3 pb-3 text-sm text-muted-foreground">{refLabel(a)}</p>
+                      )}
                     </button>
                   );
                 })}
+              </div>
+            )}
+
+            {selectedCount > 0 && (
+              <div className="mt-10">
+                <h2 className="mb-3 font-display text-xl font-bold">Pré-visualização do PDF</h2>
+                <div
+                  className="rounded-2xl border border-border/50 p-6"
+                  style={{ backgroundColor: bgColor }}
+                >
+                  {logo && (
+                    <img
+                      src={logo.dataUrl}
+                      alt="Logo do cliente no topo do catálogo"
+                      className="mx-auto mb-6 h-16 w-auto max-w-[240px] object-contain"
+                    />
+                  )}
+                  <div
+                    className="grid gap-3"
+                    style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+                  >
+                    {selectedList.map((a) => (
+                      <figure key={a.id} className="text-center">
+                        <div className="aspect-square w-full overflow-hidden">
+                          <img
+                            src={a.preview_url}
+                            alt={a.alt_text?.trim() || a.title}
+                            loading="lazy"
+                            className="block h-full w-full object-contain"
+                          />
+                        </div>
+                        <figcaption className="mt-1 text-sm font-medium text-[#141414]">{refLabel(a)}</figcaption>
+                      </figure>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
           </section>
@@ -399,20 +489,23 @@ function loadImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-async function toDataUrl(url: string): Promise<{ dataUrl: string; width: number; height: number } | null> {
+async function toDataUrl(
+  url: string,
+  background = "#ffffff",
+): Promise<{ dataUrl: string; width: number; height: number } | null> {
   try {
     const img = await loadImage(url);
-    const max = 1000;
+    const max = 1400;
     const scale = Math.min(1, max / Math.max(img.width, img.height));
     const canvas = document.createElement("canvas");
     canvas.width = Math.round(img.width * scale);
     canvas.height = Math.round(img.height * scale);
     const ctx = canvas.getContext("2d");
     if (!ctx) return null;
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle = background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    return { dataUrl: canvas.toDataURL("image/jpeg", 0.85), width: canvas.width, height: canvas.height };
+    return { dataUrl: canvas.toDataURL("image/jpeg", 0.9), width: canvas.width, height: canvas.height };
   } catch {
     return null;
   }
