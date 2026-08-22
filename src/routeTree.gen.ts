@@ -17,6 +17,7 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PlanosRouteImport } from './routes/planos'
 import { Route as LicencaRouteImport } from './routes/licenca'
+import { Route as GeradorCatalogoRouteImport } from './routes/gerador-catalogo'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as DownloadsRouteImport } from './routes/downloads'
 import { Route as CobrancaRouteImport } from './routes/cobranca'
@@ -98,6 +99,11 @@ const PlanosRoute = PlanosRouteImport.update({
 const LicencaRoute = LicencaRouteImport.update({
   id: '/licenca',
   path: '/licenca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GeradorCatalogoRoute = GeradorCatalogoRouteImport.update({
+  id: '/gerador-catalogo',
+  path: '/gerador-catalogo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FavoritosRoute = FavoritosRouteImport.update({
@@ -334,6 +340,7 @@ export interface FileRoutesByFullPath {
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
   '/favoritos': typeof FavoritosRoute
+  '/gerador-catalogo': typeof GeradorCatalogoRoute
   '/licenca': typeof LicencaRoute
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -385,6 +392,7 @@ export interface FileRoutesByTo {
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
   '/favoritos': typeof FavoritosRoute
+  '/gerador-catalogo': typeof GeradorCatalogoRoute
   '/licenca': typeof LicencaRoute
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -437,6 +445,7 @@ export interface FileRoutesById {
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
   '/favoritos': typeof FavoritosRoute
+  '/gerador-catalogo': typeof GeradorCatalogoRoute
   '/licenca': typeof LicencaRoute
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
@@ -490,6 +499,7 @@ export interface FileRouteTypes {
     | '/cobranca'
     | '/downloads'
     | '/favoritos'
+    | '/gerador-catalogo'
     | '/licenca'
     | '/planos'
     | '/privacidade'
@@ -541,6 +551,7 @@ export interface FileRouteTypes {
     | '/cobranca'
     | '/downloads'
     | '/favoritos'
+    | '/gerador-catalogo'
     | '/licenca'
     | '/planos'
     | '/privacidade'
@@ -592,6 +603,7 @@ export interface FileRouteTypes {
     | '/cobranca'
     | '/downloads'
     | '/favoritos'
+    | '/gerador-catalogo'
     | '/licenca'
     | '/planos'
     | '/privacidade'
@@ -645,6 +657,7 @@ export interface RootRouteChildren {
   CobrancaRoute: typeof CobrancaRoute
   DownloadsRoute: typeof DownloadsRoute
   FavoritosRoute: typeof FavoritosRoute
+  GeradorCatalogoRoute: typeof GeradorCatalogoRoute
   LicencaRoute: typeof LicencaRoute
   PlanosRoute: typeof PlanosRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
@@ -724,6 +737,13 @@ declare module '@tanstack/react-router' {
       path: '/licenca'
       fullPath: '/licenca'
       preLoaderRoute: typeof LicencaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gerador-catalogo': {
+      id: '/gerador-catalogo'
+      path: '/gerador-catalogo'
+      fullPath: '/gerador-catalogo'
+      preLoaderRoute: typeof GeradorCatalogoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/favoritos': {
@@ -1097,6 +1117,7 @@ const rootRouteChildren: RootRouteChildren = {
   CobrancaRoute: CobrancaRoute,
   DownloadsRoute: DownloadsRoute,
   FavoritosRoute: FavoritosRoute,
+  GeradorCatalogoRoute: GeradorCatalogoRoute,
   LicencaRoute: LicencaRoute,
   PlanosRoute: PlanosRoute,
   PrivacidadeRoute: PrivacidadeRoute,

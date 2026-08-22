@@ -30,7 +30,9 @@ export function SiteHeader() {
     { to: "/", label: t("nav.home") },
     { to: "/catalogo", label: t("nav.catalog"), search: { page: 1 } },
     { to: "/planos", label: t("nav.plans") },
+    { to: "/gerador-catalogo", label: "Gerador de Catálogo" },
     { to: "/blog", label: t("nav.blog") },
+
     { to: "/suporte", label: t("nav.support") },
   ];
   const [user, setUser] = useState<{ email?: string | null } | null>(null);
