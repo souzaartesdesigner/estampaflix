@@ -430,6 +430,20 @@ function CatalogGeneratorPage() {
               </div>
             )}
 
+            {hasMore && !isLoading && artworks.length > 0 && (
+              <div className="mt-8 flex justify-center">
+                <Button
+                  size="lg"
+                  onClick={() => fetchNextPage()}
+                  disabled={isFetchingNextPage}
+                  className="gap-2 shadow-lg shadow-primary/30"
+                >
+                  {isFetchingNextPage ? <Loader2 className="h-5 w-5 animate-spin" /> : <Plus className="h-5 w-5" />}
+                  Carregar mais produtos
+                </Button>
+              </div>
+            )}
+
             {selectedCount > 0 && (
               <div className="mt-10">
                 <h2 className="mb-3 font-display text-xl font-bold">Pré-visualização do PDF</h2>
