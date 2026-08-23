@@ -335,6 +335,9 @@ function CatalogGeneratorPage() {
               // Pill shape radius
               ctx.roundRect(0, 0, canvas.width, canvas.height, canvas.height / 2);
               ctx.fill();
+              
+              // Draw icon on top of gradient if necessary (optional improvement)
+              // But currently icons are drawn as separate steps below.
 
               doc.addImage(canvas.toDataURL("image/png"), "PNG", startX, footerY, w, btnH, undefined, "FAST");
             }
