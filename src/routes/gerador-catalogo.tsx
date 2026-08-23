@@ -900,7 +900,7 @@ function CatalogGeneratorPage() {
                   <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
                     {selectedList.map((a) => (
                       <figure key={a.id} className="text-center">
-                        <div className="aspect-square w-full overflow-hidden">
+                        <div className="aspect-square w-full overflow-hidden rounded-[8px]">
                           <img
                             src={a.preview_url}
                             alt={a.alt_text?.trim() || a.title}
@@ -1047,8 +1047,26 @@ async function toDataUrl(
     if (!ctx) return null;
     ctx.fillStyle = background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Apply 8px border radius clipping
+    // The radius needs to be scaled to the canvas resolution
+    // We target ~8px at standard document size, but since canvas is scaled for quality:
+    const radius = 8 * (canvas.width / 300); // Approximate scaling for radius
+    ctx.beginPath();
+    if (typeof ctx.roundRect === "function") {
+      ctx.roundRect(0, 0, canvas.width, canvas.height, radius);
+    } else {
+      // Fallback for older environments
+      ctx.moveTo(radius, 0);
+      ctx.arcTo(canvas.width, 0, canvas.width, canvas.height, radius);
+      ctx.arcTo(canvas.width, canvas.height, 0, canvas.height, radius);
+      ctx.arcTo(0, canvas.height, 0, 0, radius);
+      ctx.arcTo(0, 0, canvas.width, 0, radius);
+    }
+    ctx.clip();
+
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    return { dataUrl: canvas.toDataURL("image/jpeg", 0.9), width: canvas.width, height: canvas.height };
+    return { dataUrl: canvas.toDataURL("image/png"), width: canvas.width, height: canvas.height };
   } catch {
     return null;
   }
