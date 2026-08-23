@@ -222,15 +222,31 @@ function CatalogGeneratorPage() {
         doc.rect(0, 0, pageW, pageH, "F");
       };
 
+      const effTextColor = isPremium ? textColor : DEFAULT_TEXT;
+      const [tr, tg, tb] = hexToRgb(effTextColor);
+      const showNotice = isPremium && showClickNotice;
+
       const logoMeta = (isPremium && logo) ? await loadImage(logo.dataUrl) : null;
       const drawHeader = () => {
         paintBg();
-        if (!isPremium || !logo || !logoMeta) return margin;
-        const ratio = Math.min(90 / logoMeta.width, 30 / logoMeta.height);
-        const w = logoMeta.width * ratio;
-        const h = logoMeta.height * ratio;
-        doc.addImage(logo.dataUrl, (pageW - w) / 2, margin, w, h, undefined, "FAST");
-        return margin + h + 6;
+        let cursor = margin;
+        if (isPremium && logo && logoMeta) {
+          const ratio = Math.min(90 / logoMeta.width, 30 / logoMeta.height);
+          const w = logoMeta.width * ratio;
+          const h = logoMeta.height * ratio;
+          doc.addImage(logo.dataUrl, (pageW - w) / 2, margin, w, h, undefined, "FAST");
+          cursor = margin + h + 4;
+        }
+        if (showNotice) {
+          doc.setFontSize(9);
+          doc.setTextColor(tr, tg, tb);
+          const lines = doc.splitTextToSize(CLICK_NOTICE, pageW - margin * 2) as string[];
+          doc.text(lines, pageW / 2, cursor + 3, { align: "center" });
+          cursor += lines.length * 4 + 3;
+          doc.setFontSize(11);
+        }
+        doc.setTextColor(tr, tg, tb);
+        return cursor + (cursor > margin ? 3 : 0);
       };
 
       const drawWatermark = () => {
@@ -238,11 +254,13 @@ function CatalogGeneratorPage() {
           doc.setFontSize(8);
           doc.setTextColor(150, 150, 150);
           doc.text("Gerado via Estampaflix", pageW / 2, pageH - 5, { align: "center" });
+          doc.setFontSize(11);
+          doc.setTextColor(tr, tg, tb);
         }
       };
 
       doc.setFontSize(11);
-      doc.setTextColor(20, 20, 20);
+      doc.setTextColor(tr, tg, tb);
 
       let x = margin;
       let y = drawHeader();
@@ -258,7 +276,7 @@ function CatalogGeneratorPage() {
             y = drawHeader();
           }
         }
-        const img = await toDataUrl(art.preview_url, bgColor);
+        const img = await toDataUrl(art.preview_url, isPremium ? bgColor : DEFAULT_BG);
         if (img) {
           const ratio = Math.min(cellW / img.width, imgH / img.height);
           const w = img.width * ratio;
@@ -270,7 +288,8 @@ function CatalogGeneratorPage() {
           const cleanPhone = isPremium ? whatsapp.replace(/\D/g, "") : "";
           if (cleanPhone) {
             const code = art.product_code?.trim() || "";
-            const msg = `Olá! Gostaria de encomendar um produto com esta estampa: Ref: ${code}`;
+            const template = waMessage.trim() || DEFAULT_WA_MESSAGE;
+            const msg = template.replace(/\[CODIGO\]/gi, code);
             const whatsappLink = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
             doc.link(imgX, imgY, w, h, { url: whatsappLink });
           }
