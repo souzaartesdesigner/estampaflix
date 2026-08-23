@@ -1,20 +1,28 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo, useState, useEffect } from "react";
-import { Search, Upload, FileDown, CheckSquare, XSquare, Loader2, X, Check, Plus, Lock, Sparkles, ExternalLink, Instagram } from "lucide-react";
+import {
+  Search,
+  Upload,
+  FileDown,
+  CheckSquare,
+  XSquare,
+  Loader2,
+  X,
+  Check,
+  Plus,
+  Lock,
+  Sparkles,
+  ExternalLink,
+  Instagram,
+} from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site-layout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -122,20 +130,11 @@ function CatalogGeneratorPage() {
     if (!cat) return null;
     const { data: subs } = await supabase.from("categories").select("id").eq("parent_id", cat.id);
     const catIds = [cat.id, ...((subs ?? []) as any[]).map((s) => s.id)];
-    const { data: links } = await supabase
-      .from("artwork_categories")
-      .select("artwork_id")
-      .in("category_id", catIds);
+    const { data: links } = await supabase.from("artwork_categories").select("artwork_id").in("category_id", catIds);
     return Array.from(new Set(((links ?? []) as any[]).map((l) => l.artwork_id)));
   };
 
-  const {
-    data,
-    isLoading,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: ["catalog-generator-artworks", term, categorySlug, categories.length],
     queryFn: async ({ pageParam }) => {
       const from = pageParam * PAGE_LIMIT;
@@ -229,7 +228,7 @@ function CatalogGeneratorPage() {
       const [tr, tg, tb] = hexToRgb(effTextColor);
       const showNotice = isPremium && showClickNotice;
 
-      const logoMeta = (isPremium && logo) ? await loadImage(logo.dataUrl) : null;
+      const logoMeta = isPremium && logo ? await loadImage(logo.dataUrl) : null;
       const drawHeader = () => {
         paintBg();
         let cursor = margin;
@@ -272,19 +271,19 @@ function CatalogGeneratorPage() {
 
         const buttons = [];
         if (showWaButton && whatsapp) {
-          buttons.push({ 
-            type: "wa", 
-            label: "Whatsapp", 
+          buttons.push({
+            type: "wa",
+            label: "Whatsapp",
             color: [0, 215, 87],
-            link: `https://api.whatsapp.com/send?phone=${whatsapp.replace(/\D/g, "")}`
+            link: `https://api.whatsapp.com/send?phone=${whatsapp.replace(/\D/g, "")}`,
           });
         }
         if (showInstaButton && instagramUser) {
-          buttons.push({ 
-            type: "insta", 
-            label: instagramUser.replace("@", ""), 
+          buttons.push({
+            type: "insta",
+            label: instagramUser.replace("@", ""),
             gradient: true,
-            link: `https://instagram.com/${instagramUser.replace("@", "")}`
+            link: `https://instagram.com/${instagramUser.replace("@", "")}`,
           });
         }
 
@@ -294,11 +293,11 @@ function CatalogGeneratorPage() {
         const btnGap = 4;
         const iconSize = 5;
         const padding = 3;
-        
+
         // Calculate total width first to center
         let totalW = 0;
         const btnWidths: number[] = [];
-        
+
         for (const btn of buttons) {
           doc.setFontSize(9);
           const textW = doc.getTextWidth(btn.label);
@@ -313,7 +312,7 @@ function CatalogGeneratorPage() {
         for (let i = 0; i < buttons.length; i++) {
           const btn = buttons[i];
           const w = btnWidths[i];
-          
+
           // Draw background
           if (btn.gradient) {
             // Instagram official gradient colors for PDF
@@ -330,33 +329,41 @@ function CatalogGeneratorPage() {
               grad.addColorStop(0.5, "#d62976");
               grad.addColorStop(0.75, "#962fbf");
               grad.addColorStop(1, "#4f5bd5");
-              
+
               ctx.fillStyle = grad;
               ctx.beginPath();
               // Pill shape radius
               ctx.roundRect(0, 0, canvas.width, canvas.height, canvas.height / 2);
               ctx.fill();
-              
+
               doc.addImage(canvas.toDataURL("image/png"), "PNG", startX, footerY, w, btnH, undefined, "FAST");
             }
           } else if (btn.color) {
             doc.setFillColor(btn.color[0], btn.color[1], btn.color[2]);
             doc.roundedRect(startX, footerY, w, btnH, 4, 4, "F");
           }
-          
+
           // Draw Icon
           const iconImg = await renderSocialIconForPdf(btn.type as "wa" | "insta");
           if (iconImg) {
-            doc.addImage(iconImg, startX + padding, footerY + (btnH - iconSize) / 2, iconSize, iconSize, undefined, "FAST");
+            doc.addImage(
+              iconImg,
+              startX + padding,
+              footerY + (btnH - iconSize) / 2,
+              iconSize,
+              iconSize,
+              undefined,
+              "FAST",
+            );
           }
 
           // Draw Text
           doc.setTextColor(255, 255, 255);
           doc.setFontSize(9);
           doc.text(btn.label, startX + padding + iconSize + 2, footerY + 5.5);
-          
+
           doc.link(startX, footerY, w, btnH, { url: btn.link });
-          
+
           startX += w + btnGap;
         }
 
@@ -424,8 +431,8 @@ function CatalogGeneratorPage() {
         <header className="mb-8 max-w-2xl">
           <h1 className="font-display text-3xl font-bold tracking-tight md:text-4xl">Gerador de Catálogo</h1>
           <p className="mt-2 text-muted-foreground">
-            Monte um portfólio em PDF com as artes que você quiser, adicione a logo da sua marca e envie direto
-            para os seus clientes — sem preços e sem marca d'água.
+            Monte um portfólio em PDF com as artes que você quiser, adicione a logo da sua marca e envie direto para os
+            seus clientes — sem preços e sem marca d'água.
           </p>
         </header>
 
@@ -466,10 +473,10 @@ function CatalogGeneratorPage() {
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
           <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto lg:pr-2 custom-scrollbar">
-            <div 
+            <div
               className={cn(
                 "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
-                !isPremium && "opacity-60"
+                !isPremium && "opacity-60",
               )}
               onClick={handlePremiumClick}
             >
@@ -482,7 +489,11 @@ function CatalogGeneratorPage() {
               </p>
               {logo && isPremium ? (
                 <div className="mt-3 flex items-center gap-3 rounded-xl border border-border/50 bg-surface-2 p-3">
-                  <img src={logo.dataUrl} alt="Logo enviada pelo cliente" className="h-10 w-auto max-w-24 object-contain" />
+                  <img
+                    src={logo.dataUrl}
+                    alt="Logo enviada pelo cliente"
+                    className="h-10 w-auto max-w-24 object-contain"
+                  />
                   <span className="line-clamp-1 flex-1 text-xs text-muted-foreground">{logo.name}</span>
                   <button
                     type="button"
@@ -497,10 +508,12 @@ function CatalogGeneratorPage() {
                   </button>
                 </div>
               ) : (
-                <label className={cn(
-                  "mt-3 flex flex-col items-center gap-2 rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground transition-colors",
-                  isPremium ? "cursor-pointer hover:border-primary/50 hover:text-foreground" : "cursor-default"
-                )}>
+                <label
+                  className={cn(
+                    "mt-3 flex flex-col items-center gap-2 rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground transition-colors",
+                    isPremium ? "cursor-pointer hover:border-primary/50 hover:text-foreground" : "cursor-default",
+                  )}
+                >
                   <Upload className="h-5 w-5" />
                   Enviar logo (PNG/JPG)
                   <input
@@ -527,10 +540,10 @@ function CatalogGeneratorPage() {
               </Select>
             </div>
 
-            <div 
+            <div
               className={cn(
                 "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
-                !isPremium && "opacity-60"
+                !isPremium && "opacity-60",
               )}
               onClick={handlePremiumClick}
             >
@@ -549,14 +562,16 @@ function CatalogGeneratorPage() {
                   onChange={(e) => setBgColor(e.target.value)}
                   className="h-10 w-14 cursor-pointer rounded-lg border border-border bg-transparent p-1"
                 />
-                <span className="text-sm text-muted-foreground">{(isPremium ? bgColor : DEFAULT_BG).toUpperCase()}</span>
+                <span className="text-sm text-muted-foreground">
+                  {(isPremium ? bgColor : DEFAULT_BG).toUpperCase()}
+                </span>
               </div>
             </div>
 
             <div
               className={cn(
                 "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
-                !isPremium && "opacity-60"
+                !isPremium && "opacity-60",
               )}
               onClick={handlePremiumClick}
             >
@@ -584,7 +599,7 @@ function CatalogGeneratorPage() {
             <div
               className={cn(
                 "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
-                !isPremium && "opacity-60"
+                !isPremium && "opacity-60",
               )}
               onClick={handlePremiumClick}
             >
@@ -607,10 +622,10 @@ function CatalogGeneratorPage() {
               </p>
             </div>
 
-            <div 
+            <div
               className={cn(
                 "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
-                !isPremium && "opacity-60"
+                !isPremium && "opacity-60",
               )}
               onClick={handlePremiumClick}
             >
@@ -659,10 +674,10 @@ function CatalogGeneratorPage() {
               )}
             </div>
 
-            <div 
+            <div
               className={cn(
                 "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
-                !isPremium && "opacity-60"
+                !isPremium && "opacity-60",
               )}
               onClick={handlePremiumClick}
             >
@@ -747,9 +762,14 @@ function CatalogGeneratorPage() {
                     Botões sociais clicáveis (WhatsApp e Instagram) no rodapé.
                   </li>
                 </ul>
-                <Button asChild variant="outline" className="mt-4 w-full border-primary/50 text-primary hover:bg-primary/10">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="mt-4 w-full border-primary/50 text-[11px] text-primary hover:bg-primary/10"
+                >
                   <a href={exemploCatalogo.url} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="h-4 w-4" /> Ver Exemplo de Catálogo Premium
+                    <ExternalLink className="h-4 w-4" />
+                    Ver Exemplo de Catálogo Premium
                   </a>
                 </Button>
                 <Button asChild className="mt-2 w-full bg-gradient-brand text-brand-foreground hover:opacity-90">
@@ -837,9 +857,7 @@ function CatalogGeneratorPage() {
                         </span>
                       </span>
                       <p className="line-clamp-2 p-3 text-base font-medium leading-snug text-foreground">{a.title}</p>
-                      {a.product_code && (
-                        <p className="px-3 pb-3 text-sm text-muted-foreground">{refLabel(a)}</p>
-                      )}
+                      {a.product_code && <p className="px-3 pb-3 text-sm text-muted-foreground">{refLabel(a)}</p>}
                     </button>
                   );
                 })}
@@ -875,17 +893,11 @@ function CatalogGeneratorPage() {
                     />
                   )}
                   {isPremium && showClickNotice && (
-                    <p
-                      className="mx-auto mb-6 max-w-xl text-center text-sm"
-                      style={{ color: textColor }}
-                    >
+                    <p className="mx-auto mb-6 max-w-xl text-center text-sm" style={{ color: textColor }}>
                       {CLICK_NOTICE}
                     </p>
                   )}
-                  <div
-                    className="grid gap-3"
-                    style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
-                  >
+                  <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
                     {selectedList.map((a) => (
                       <figure key={a.id} className="text-center">
                         <div className="aspect-square w-full overflow-hidden">
@@ -905,7 +917,7 @@ function CatalogGeneratorPage() {
                       </figure>
                     ))}
                   </div>
-                  
+
                   {isPremium && (showWaButton || showInstaButton) && (
                     <div className="mt-8 border-t border-border/30 pt-6 text-center">
                       <p className="mb-4 text-xs font-medium" style={{ color: textColor }}>
@@ -921,10 +933,10 @@ function CatalogGeneratorPage() {
                           </div>
                         )}
                         {showInstaButton && instagramUser && (
-                          <div 
+                          <div
                             className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-white shadow-sm"
-                            style={{ 
-                              background: "linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5)"
+                            style={{
+                              background: "linear-gradient(45deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5)",
                             }}
                           >
                             <svg className="h-4 w-4 fill-white" viewBox="0 0 24 24">
@@ -955,7 +967,8 @@ function CatalogGeneratorPage() {
                 <Lock className="h-5 w-5 text-primary" /> Recurso Exclusivo Premium
               </DialogTitle>
               <DialogDescription className="pt-2 text-base">
-                Assine um dos nossos planos (Premium Lite, Pro ou Plus) para personalizar seus catálogos com sua logo, cores e links diretos para o seu WhatsApp!
+                Assine um dos nossos planos (Premium Lite, Pro ou Plus) para personalizar seus catálogos com sua logo,
+                cores e links diretos para o seu WhatsApp!
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-end">
@@ -992,15 +1005,7 @@ function CatalogGeneratorPage() {
   );
 }
 
-function Pill({
-  active,
-  onClick,
-  children,
-}: {
-  active?: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
+function Pill({ active, onClick, children }: { active?: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button
       type="button"
@@ -1062,7 +1067,9 @@ async function renderSocialIconForPdf(type: "wa" | "insta"): Promise<string | nu
     if (type === "insta") {
       // Instagram Icon Path (centered and scaled)
       ctx.fillStyle = "white";
-      const p = new Path2D("M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4H7.6zm8.9 1.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z");
+      const p = new Path2D(
+        "M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4H7.6zm8.9 1.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z",
+      );
       ctx.save();
       ctx.scale(120 / 24, 120 / 24);
       ctx.fill(p);
@@ -1070,7 +1077,9 @@ async function renderSocialIconForPdf(type: "wa" | "insta"): Promise<string | nu
     } else {
       // WhatsApp Icon Path (centered and scaled)
       ctx.fillStyle = "white";
-      const p = new Path2D("M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z");
+      const p = new Path2D(
+        "M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z",
+      );
       ctx.save();
       ctx.scale(120 / 16, 120 / 16);
       ctx.fill(p);
