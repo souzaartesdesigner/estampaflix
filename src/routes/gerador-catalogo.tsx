@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo, useState, useEffect } from "react";
 import { Search, Upload, FileDown, CheckSquare, XSquare, Loader2, X, Check, Plus, Lock } from "lucide-react";
