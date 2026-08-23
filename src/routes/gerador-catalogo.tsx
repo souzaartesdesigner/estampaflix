@@ -706,8 +706,16 @@ function CatalogGeneratorPage() {
                     <img
                       src={logo.dataUrl}
                       alt="Logo do cliente no topo do catálogo"
-                      className="mx-auto mb-6 h-16 w-auto max-w-[240px] object-contain"
+                      className="mx-auto mb-3 h-16 w-auto max-w-[240px] object-contain"
                     />
+                  )}
+                  {isPremium && showClickNotice && (
+                    <p
+                      className="mx-auto mb-6 max-w-xl text-center text-sm"
+                      style={{ color: textColor }}
+                    >
+                      {CLICK_NOTICE}
+                    </p>
                   )}
                   <div
                     className="grid gap-3"
@@ -723,7 +731,12 @@ function CatalogGeneratorPage() {
                             className="block h-full w-full object-contain"
                           />
                         </div>
-                        <figcaption className="mt-1 text-sm font-medium text-[#141414]">{refLabel(a)}</figcaption>
+                        <figcaption
+                          className="mt-1 text-sm font-medium"
+                          style={{ color: isPremium ? textColor : DEFAULT_TEXT }}
+                        >
+                          {refLabel(a)}
+                        </figcaption>
                       </figure>
                     ))}
                   </div>
