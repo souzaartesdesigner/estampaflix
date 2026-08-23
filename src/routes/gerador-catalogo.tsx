@@ -335,6 +335,9 @@ function CatalogGeneratorPage() {
               // Pill shape radius
               ctx.roundRect(0, 0, canvas.width, canvas.height, canvas.height / 2);
               ctx.fill();
+              
+              // Draw icon on top of gradient if necessary (optional improvement)
+              // But currently icons are drawn as separate steps below.
 
               doc.addImage(canvas.toDataURL("image/png"), "PNG", startX, footerY, w, btnH, undefined, "FAST");
             }
@@ -397,10 +400,8 @@ function CatalogGeneratorPage() {
           const imgX = x + (cellW - w) / 2;
           const imgY = y + (imgH - h) / 2;
 
-          // Apply 8px border radius clipping (approx 2.1mm)
           doc.saveGraphicsState();
-          // Use roundedRect(x, y, w, h, rx, ry, style)
-          // We only need the path for clipping, so we don't use 'F' or 'S'
+          // Clip path for rounded corners (8px radius)
           doc.roundedRect(imgX, imgY, w, h, 2.1, 2.1);
           doc.clip();
           doc.addImage(img.dataUrl, imgX, imgY, w, h, undefined, "FAST");
@@ -913,7 +914,7 @@ function CatalogGeneratorPage() {
                             src={a.preview_url}
                             alt={a.alt_text?.trim() || a.title}
                             loading="lazy"
-                            className="block h-full w-full object-contain"
+                            className="block h-full w-full object-cover"
                           />
                         </div>
                         <figcaption
@@ -1079,6 +1080,7 @@ async function renderSocialIconForPdf(type: "wa" | "insta"): Promise<string | nu
         "M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4H7.6zm8.9 1.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z",
       );
       ctx.save();
+      ctx.fillStyle = "white";
       ctx.scale(120 / 24, 120 / 24);
       ctx.fill(p);
       ctx.restore();
@@ -1089,6 +1091,7 @@ async function renderSocialIconForPdf(type: "wa" | "insta"): Promise<string | nu
         "M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z",
       );
       ctx.save();
+      ctx.fillStyle = "white";
       ctx.scale(120 / 16, 120 / 16);
       ctx.fill(p);
       ctx.restore();
