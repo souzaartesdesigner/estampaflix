@@ -52,7 +52,7 @@ function CatalogGeneratorPage() {
   const [q, setQ] = useState("");
   const [term, setTerm] = useState("");
   const [categorySlug, setCategorySlug] = useState<string | null>(null);
-  const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const [selected, setSelected] = useState<Record<string, any>>({});
   const [logo, setLogo] = useState<{ dataUrl: string; name: string } | null>(null);
   const [columns, setColumns] = useState("3");
   const [bgColor, setBgColor] = useState(DEFAULT_BG);
@@ -131,12 +131,17 @@ function CatalogGeneratorPage() {
   const total = data?.pages[0]?.total ?? 0;
   const hasMore = !!hasNextPage && artworks.length < total;
 
-  const selectedList = useMemo(() => artworks.filter((a) => selected[a.id]), [artworks, selected]);
+  const selectedList = useMemo(() => Object.values(selected) as any[], [selected]);
   const selectedCount = selectedList.length;
   const cols = Number(columns);
 
-  function toggle(id: string) {
-    setSelected((s) => ({ ...s, [id]: !s[id] }));
+  function toggle(art: any) {
+    setSelected((s) => {
+      const next = { ...s };
+      if (next[art.id]) delete next[art.id];
+      else next[art.id] = art;
+      return next;
+    });
   }
 
   function onLogoChange(file: File | null) {
