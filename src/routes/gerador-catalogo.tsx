@@ -912,7 +912,7 @@ function CatalogGeneratorPage() {
                             src={a.preview_url}
                             alt={a.alt_text?.trim() || a.title}
                             loading="lazy"
-                            className="block h-full w-full object-contain"
+                            className="block h-full w-full object-cover"
                           />
                         </div>
                         <figcaption
