@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { Search, Upload, FileDown, CheckSquare, XSquare, Loader2, X, Check, Plus } from "lucide-react";
+import { useMemo, useState, useEffect } from "react";
+import { Search, Upload, FileDown, CheckSquare, XSquare, Loader2, X, Check, Plus, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site-layout";
@@ -15,7 +15,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { useUserSubscription } from "@/hooks/use-user-subscription";
 
 export const Route = createFileRoute("/gerador-catalogo")({
   ssr: false,
@@ -58,6 +67,20 @@ function CatalogGeneratorPage() {
   const [bgColor, setBgColor] = useState(DEFAULT_BG);
   const [generating, setGenerating] = useState(false);
   const [whatsapp, setWhatsapp] = useState("");
+  const [isPaywallOpen, setIsPaywallOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  const { data: subscription } = useUserSubscription(user?.id);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => authSub.unsubscribe();
+  }, []);
+
+  const hasActiveSubscription = !!subscription && subscription.status === "active";
 
   const { data: categories = [] } = useQuery({
     queryKey: ["catalog-generator-categories"],
@@ -162,6 +185,12 @@ function CatalogGeneratorPage() {
       toast.error("Selecione ao menos uma arte.");
       return;
     }
+
+    if (!hasActiveSubscription) {
+      setIsPaywallOpen(true);
+      return;
+    }
+
     setGenerating(true);
     try {
       const { jsPDF } = await import("jspdf");
@@ -535,6 +564,29 @@ function CatalogGeneratorPage() {
           </div>
         </div>
       )}
+
+      <Dialog open={isPaywallOpen} onOpenChange={setIsPaywallOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-primary/10 text-primary">
+              <Lock className="h-6 w-6" />
+            </div>
+            <DialogTitle className="text-center text-xl">Recurso Exclusivo para Assinantes</DialogTitle>
+            <DialogDescription className="text-center text-base">
+              Para gerar catálogos em PDF com a sua própria logo e enviar para seus clientes, você precisa de um plano
+              Premium ativo.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-col gap-2 sm:flex-col">
+            <Button asChild className="w-full bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
+              <Link to="/planos">Conhecer Planos</Link>
+            </Button>
+            <Button variant="ghost" onClick={() => setIsPaywallOpen(false)} className="w-full">
+              Fechar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SiteLayout>
   );
 }
