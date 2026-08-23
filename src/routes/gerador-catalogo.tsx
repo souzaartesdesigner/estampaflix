@@ -77,8 +77,11 @@ function CatalogGeneratorPage() {
   const [logo, setLogo] = useState<{ dataUrl: string; name: string } | null>(null);
   const [columns, setColumns] = useState("3");
   const [bgColor, setBgColor] = useState(DEFAULT_BG);
+  const [textColor, setTextColor] = useState(DEFAULT_TEXT);
+  const [showClickNotice, setShowClickNotice] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [whatsapp, setWhatsapp] = useState("");
+  const [waMessage, setWaMessage] = useState(DEFAULT_WA_MESSAGE);
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
   const [userId, setUserId] = useState<string | undefined>();
 
