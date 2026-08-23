@@ -262,7 +262,7 @@ function CatalogGeneratorPage() {
         }
       };
 
-      const drawSocialButtons = () => {
+      const drawSocialButtons = async () => {
         if (!isPremium || (!showWaButton && !showInstaButton)) return;
 
         const footerY = pageH - 15;
@@ -271,32 +271,74 @@ function CatalogGeneratorPage() {
         doc.text("Siga nossas redes e faça seu pedido!", pageW / 2, footerY - 8, { align: "center" });
 
         const buttons = [];
-        if (showWaButton && whatsapp) buttons.push({ type: "wa", label: "Whatsapp", color: [0, 215, 87] });
-        if (showInstaButton && instagramUser) buttons.push({ type: "insta", label: instagramUser.replace("@", ""), color: [225, 48, 108] });
+        if (showWaButton && whatsapp) {
+          buttons.push({ 
+            type: "wa", 
+            label: "Whatsapp", 
+            color: [0, 215, 87],
+            link: `https://api.whatsapp.com/send?phone=${whatsapp.replace(/\D/g, "")}`
+          });
+        }
+        if (showInstaButton && instagramUser) {
+          buttons.push({ 
+            type: "insta", 
+            label: instagramUser.replace("@", ""), 
+            gradient: true,
+            link: `https://instagram.com/${instagramUser.replace("@", "")}`
+          });
+        }
 
         if (buttons.length === 0) return;
 
-        const btnW = 35;
         const btnH = 8;
         const btnGap = 4;
-        const totalW = buttons.length * btnW + (buttons.length - 1) * btnGap;
+        const iconSize = 5;
+        const padding = 3;
+        
+        // Calculate total width first to center
+        let totalW = 0;
+        const btnWidths: number[] = [];
+        
+        for (const btn of buttons) {
+          doc.setFontSize(9);
+          const textW = doc.getTextWidth(btn.label);
+          const w = padding * 2 + iconSize + 2 + textW + 2;
+          btnWidths.push(w);
+          totalW += w;
+        }
+        totalW += (buttons.length - 1) * btnGap;
+
         let startX = (pageW - totalW) / 2;
 
-        buttons.forEach((btn) => {
-          doc.setFillColor(btn.color[0], btn.color[1], btn.color[2]);
-          doc.roundedRect(startX, footerY, btnW, btnH, 4, 4, "F");
+        for (let i = 0; i < buttons.length; i++) {
+          const btn = buttons[i];
+          const w = btnWidths[i];
+          
+          // Draw background
+          if (btn.gradient) {
+            // Simplified gradient for Instagram in PDF
+            doc.setFillColor(214, 41, 118); // #d62976 dominant pinkish
+            doc.roundedRect(startX, footerY, w, btnH, 4, 4, "F");
+          } else if (btn.color) {
+            doc.setFillColor(btn.color[0], btn.color[1], btn.color[2]);
+            doc.roundedRect(startX, footerY, w, btnH, 4, 4, "F");
+          }
+          
+          // Draw Icon
+          const iconImg = await renderSocialIconForPdf(btn.type as "wa" | "insta");
+          if (iconImg) {
+            doc.addImage(iconImg, startX + padding, footerY + (btnH - iconSize) / 2, iconSize, iconSize, undefined, "FAST");
+          }
+
+          // Draw Text
           doc.setTextColor(255, 255, 255);
           doc.setFontSize(9);
+          doc.text(btn.label, startX + padding + iconSize + 2, footerY + 5.5);
           
-          doc.text(btn.label, startX + btnW / 2, footerY + 5.5, { align: "center" });
+          doc.link(startX, footerY, w, btnH, { url: btn.link });
           
-          const link = btn.type === "wa" 
-            ? `https://api.whatsapp.com/send?phone=${whatsapp.replace(/\D/g, "")}` 
-            : `https://instagram.com/${btn.label}`;
-          doc.link(startX, footerY, btnW, btnH, { url: link });
-          
-          startX += btnW + btnGap;
-        });
+          startX += w + btnGap;
+        }
 
         doc.setTextColor(tr, tg, tb);
         doc.setFontSize(11);
