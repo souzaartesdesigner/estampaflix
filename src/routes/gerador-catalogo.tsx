@@ -765,7 +765,7 @@ function CatalogGeneratorPage() {
                 <Button
                   asChild
                   variant="outline"
-                  className="mt-4 w-full border-primary/50 text-[11px] text-primary hover:bg-primary/10"
+                  className="mt-4 w-full border-primary/50 text-[11px] font-bold text-primary hover:bg-primary/10"
                 >
                   <a href={exemploCatalogo.url} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="h-4 w-4" />
