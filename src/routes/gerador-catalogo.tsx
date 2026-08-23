@@ -323,6 +323,7 @@ function CatalogGeneratorPage() {
             canvas.height = btnH * 10 * scaleFactor;
             const ctx = canvas.getContext("2d");
             if (ctx) {
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
               const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
               grad.addColorStop(0, "#feda75");
               grad.addColorStop(0.25, "#fa7e1e");
@@ -333,12 +334,10 @@ function CatalogGeneratorPage() {
               ctx.fillStyle = grad;
               ctx.beginPath();
               // Pill shape radius
-              ctx.roundRect(0, 0, canvas.width, canvas.height, canvas.height / 2);
+              const radius = canvas.height / 2;
+              ctx.roundRect(0, 0, canvas.width, canvas.height, radius);
               ctx.fill();
               
-              // Draw icon on top of gradient if necessary (optional improvement)
-              // But currently icons are drawn as separate steps below.
-
               doc.addImage(canvas.toDataURL("image/png"), "PNG", startX, footerY, w, btnH, undefined, "FAST");
             }
           } else if (btn.color) {
@@ -401,8 +400,11 @@ function CatalogGeneratorPage() {
           const imgY = y + (imgH - h) / 2;
 
           doc.saveGraphicsState();
-          // Clip path for rounded corners (8px radius)
-          doc.roundedRect(imgX, imgY, w, h, 2.1, 2.1);
+          // Clip path for rounded corners (8px radius = 2.1mm)
+          // We use 'null' for style to ensure no border is drawn by the rect itself
+          doc.roundedRect(imgX, imgY, w, h, 2.1, 2.1, "S");
+          doc.setLineWidth(0);
+          doc.setDrawColor(0, 0, 0, 0); // Transparent border
           doc.clip();
           doc.addImage(img.dataUrl, imgX, imgY, w, h, undefined, "FAST");
           doc.restoreGraphicsState();
