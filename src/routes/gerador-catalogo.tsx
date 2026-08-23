@@ -325,32 +325,48 @@ function CatalogGeneratorPage() {
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
           <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
-            <div className="rounded-2xl border border-border/50 bg-card p-4">
-              <Label className="text-sm font-semibold">Logo do cliente</Label>
+            <div 
+              className={cn(
+                "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
+                !isPremium && "opacity-60"
+              )}
+              onClick={handlePremiumClick}
+            >
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-semibold">Logo do cliente</Label>
+                {!isPremium && <Lock className="h-3 w-3 text-muted-foreground" />}
+              </div>
               <p className="mt-1 text-xs text-muted-foreground">
                 Aparece apenas no topo do PDF. Não é salva no servidor.
               </p>
-              {logo ? (
+              {logo && isPremium ? (
                 <div className="mt-3 flex items-center gap-3 rounded-xl border border-border/50 bg-surface-2 p-3">
                   <img src={logo.dataUrl} alt="Logo enviada pelo cliente" className="h-10 w-auto max-w-24 object-contain" />
                   <span className="line-clamp-1 flex-1 text-xs text-muted-foreground">{logo.name}</span>
                   <button
                     type="button"
                     aria-label="Remover logo"
-                    onClick={() => setLogo(null)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLogo(null);
+                    }}
                     className="rounded-full p-1 hover:bg-muted"
                   >
                     <X className="h-4 w-4" />
                   </button>
                 </div>
               ) : (
-                <label className="mt-3 flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground">
+                <label className={cn(
+                  "mt-3 flex flex-col items-center gap-2 rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground transition-colors",
+                  isPremium ? "cursor-pointer hover:border-primary/50 hover:text-foreground" : "cursor-default"
+                )}>
                   <Upload className="h-5 w-5" />
                   Enviar logo (PNG/JPG)
                   <input
                     type="file"
                     accept="image/*"
                     className="hidden"
+                    disabled={!isPremium}
                     onChange={(e) => onLogoChange(e.target.files?.[0] ?? null)}
                   />
                 </label>
