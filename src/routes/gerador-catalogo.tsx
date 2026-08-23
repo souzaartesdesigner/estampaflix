@@ -316,9 +316,22 @@ function CatalogGeneratorPage() {
           
           // Draw background
           if (btn.gradient) {
-            // Simplified gradient for Instagram in PDF
-            doc.setFillColor(214, 41, 118); // #d62976 dominant pinkish
-            doc.roundedRect(startX, footerY, w, btnH, 4, 4, "F");
+            // Instagram official gradient colors for PDF
+            const canvas = document.createElement("canvas");
+            canvas.width = 100;
+            canvas.height = 100;
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+              const grad = ctx.createLinearGradient(0, 0, 100, 100);
+              grad.addColorStop(0, "#feda75");
+              grad.addColorStop(0.25, "#fa7e1e");
+              grad.addColorStop(0.5, "#d62976");
+              grad.addColorStop(0.75, "#962fbf");
+              grad.addColorStop(1, "#4f5bd5");
+              ctx.fillStyle = grad;
+              ctx.fillRect(0, 0, 100, 100);
+              doc.addImage(canvas.toDataURL("image/jpeg"), "JPEG", startX, footerY, w, btnH, undefined, "FAST");
+            }
           } else if (btn.color) {
             doc.setFillColor(btn.color[0], btn.color[1], btn.color[2]);
             doc.roundedRect(startX, footerY, w, btnH, 4, 4, "F");
