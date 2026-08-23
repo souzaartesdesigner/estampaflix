@@ -396,7 +396,15 @@ function CatalogGeneratorPage() {
           const h = img.height * ratio;
           const imgX = x + (cellW - w) / 2;
           const imgY = y + (imgH - h) / 2;
+
+          // Apply 8px border radius clipping (approx 2.1mm)
+          doc.saveGraphicsState();
+          // Use roundedRect(x, y, w, h, rx, ry, style)
+          // We only need the path for clipping, so we don't use 'F' or 'S'
+          doc.roundedRect(imgX, imgY, w, h, 2.1, 2.1);
+          doc.clip();
           doc.addImage(img.dataUrl, imgX, imgY, w, h, undefined, "FAST");
+          doc.restoreGraphicsState();
 
           const cleanPhone = isPremium ? whatsapp.replace(/\D/g, "") : "";
           if (cleanPhone) {
@@ -900,7 +908,7 @@ function CatalogGeneratorPage() {
                   <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
                     {selectedList.map((a) => (
                       <figure key={a.id} className="text-center">
-                        <div className="aspect-square w-full overflow-hidden">
+                        <div className="aspect-square w-full overflow-hidden rounded-lg">
                           <img
                             src={a.preview_url}
                             alt={a.alt_text?.trim() || a.title}
