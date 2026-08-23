@@ -323,6 +323,7 @@ function CatalogGeneratorPage() {
             canvas.height = btnH * 10 * scaleFactor;
             const ctx = canvas.getContext("2d");
             if (ctx) {
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
               const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
               grad.addColorStop(0, "#feda75");
               grad.addColorStop(0.25, "#fa7e1e");
@@ -333,12 +334,10 @@ function CatalogGeneratorPage() {
               ctx.fillStyle = grad;
               ctx.beginPath();
               // Pill shape radius
-              ctx.roundRect(0, 0, canvas.width, canvas.height, canvas.height / 2);
+              const radius = canvas.height / 2;
+              ctx.roundRect(0, 0, canvas.width, canvas.height, radius);
               ctx.fill();
               
-              // Draw icon on top of gradient if necessary (optional improvement)
-              // But currently icons are drawn as separate steps below.
-
               doc.addImage(canvas.toDataURL("image/png"), "PNG", startX, footerY, w, btnH, undefined, "FAST");
             }
           } else if (btn.color) {
@@ -401,8 +400,11 @@ function CatalogGeneratorPage() {
           const imgY = y + (imgH - h) / 2;
 
           doc.saveGraphicsState();
-          // Clip path for rounded corners (8px radius)
-          doc.roundedRect(imgX, imgY, w, h, 2.1, 2.1);
+          // Use path for clipping to avoid any stroke artifacts
+          doc.setLineWidth(0);
+          doc.setDrawColor(0, 0, 0, 0); 
+          // Draw the rounded rect as a path and clip
+          doc.roundedRect(imgX, imgY, w, h, 2.1, 2.1, "S");
           doc.clip();
           doc.addImage(img.dataUrl, imgX, imgY, w, h, undefined, "FAST");
           doc.restoreGraphicsState();
@@ -1066,12 +1068,13 @@ async function toDataUrl(
 async function renderSocialIconForPdf(type: "wa" | "insta"): Promise<string | null> {
   try {
     const canvas = document.createElement("canvas");
-    canvas.width = 120;
-    canvas.height = 120;
+    const scale = 4; // High resolution
+    canvas.width = 120 * scale;
+    canvas.height = 120 * scale;
     const ctx = canvas.getContext("2d");
     if (!ctx) return null;
 
-    ctx.clearRect(0, 0, 120, 120);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (type === "insta") {
       // Instagram Icon Path (centered and scaled)
@@ -1081,7 +1084,7 @@ async function renderSocialIconForPdf(type: "wa" | "insta"): Promise<string | nu
       );
       ctx.save();
       ctx.fillStyle = "white";
-      ctx.scale(120 / 24, 120 / 24);
+      ctx.scale((120 * scale) / 24, (120 * scale) / 24);
       ctx.fill(p);
       ctx.restore();
     } else {
@@ -1092,7 +1095,7 @@ async function renderSocialIconForPdf(type: "wa" | "insta"): Promise<string | nu
       );
       ctx.save();
       ctx.fillStyle = "white";
-      ctx.scale(120 / 16, 120 / 16);
+      ctx.scale((120 * scale) / 16, (120 * scale) / 16);
       ctx.fill(p);
       ctx.restore();
     }
