@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { Search, Upload, FileDown, CheckSquare, XSquare, Loader2, X, Check, Plus } from "lucide-react";
+import { useMemo, useState, useEffect } from "react";
+import { Search, Upload, FileDown, CheckSquare, XSquare, Loader2, X, Check, Plus, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site-layout";
@@ -15,7 +15,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { useUserSubscription } from "@/hooks/use-user-subscription";
 
 export const Route = createFileRoute("/gerador-catalogo")({
   ssr: false,
@@ -58,6 +67,24 @@ function CatalogGeneratorPage() {
   const [bgColor, setBgColor] = useState(DEFAULT_BG);
   const [generating, setGenerating] = useState(false);
   const [whatsapp, setWhatsapp] = useState("");
+  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
+  const [userId, setUserId] = useState<string | undefined>();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id));
+  }, []);
+
+  const { data: sub } = useUserSubscription(userId);
+  const isPremium = !!sub && ["lite", "pro", "plus"].includes(sub.plans?.tier || "");
+
+  const handlePremiumClick = (e: React.MouseEvent) => {
+    if (!isPremium) {
+      e.preventDefault();
+      setPremiumModalOpen(true);
+      return true;
+    }
+    return false;
+  };
 
   const { data: categories = [] } = useQuery({
     queryKey: ["catalog-generator-categories"],
@@ -176,19 +203,27 @@ function CatalogGeneratorPage() {
       const cellH = imgH + captionH;
 
       const paintBg = () => {
-        doc.setFillColor(bgColor);
+        doc.setFillColor(isPremium ? bgColor : DEFAULT_BG);
         doc.rect(0, 0, pageW, pageH, "F");
       };
 
-      const logoMeta = logo ? await loadImage(logo.dataUrl) : null;
+      const logoMeta = (isPremium && logo) ? await loadImage(logo.dataUrl) : null;
       const drawHeader = () => {
         paintBg();
-        if (!logo || !logoMeta) return margin;
+        if (!isPremium || !logo || !logoMeta) return margin;
         const ratio = Math.min(90 / logoMeta.width, 30 / logoMeta.height);
         const w = logoMeta.width * ratio;
         const h = logoMeta.height * ratio;
         doc.addImage(logo.dataUrl, (pageW - w) / 2, margin, w, h, undefined, "FAST");
         return margin + h + 6;
+      };
+
+      const drawWatermark = () => {
+        if (!isPremium) {
+          doc.setFontSize(8);
+          doc.setTextColor(150, 150, 150);
+          doc.text("Gerado via Estampaflix", pageW / 2, pageH - 5, { align: "center" });
+        }
       };
 
       doc.setFontSize(11);
@@ -203,6 +238,7 @@ function CatalogGeneratorPage() {
           x = margin;
           y += cellH + gap;
           if (y + cellH > pageH - margin) {
+            drawWatermark();
             doc.addPage();
             y = drawHeader();
           }
@@ -216,7 +252,7 @@ function CatalogGeneratorPage() {
           const imgY = y + (imgH - h) / 2;
           doc.addImage(img.dataUrl, imgX, imgY, w, h, undefined, "FAST");
 
-          const cleanPhone = whatsapp.replace(/\D/g, "");
+          const cleanPhone = isPremium ? whatsapp.replace(/\D/g, "") : "";
           if (cleanPhone) {
             const code = art.product_code?.trim() || "";
             const msg = `Olá! Gostaria de encomendar um produto com esta estampa: Ref: ${code}`;
@@ -230,6 +266,7 @@ function CatalogGeneratorPage() {
         col += 1;
       }
 
+      drawWatermark();
       doc.save("catalogo.pdf");
       toast.success("Catálogo gerado com sucesso!");
     } catch (err) {
@@ -288,32 +325,48 @@ function CatalogGeneratorPage() {
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
           <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
-            <div className="rounded-2xl border border-border/50 bg-card p-4">
-              <Label className="text-sm font-semibold">Logo do cliente</Label>
+            <div 
+              className={cn(
+                "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
+                !isPremium && "opacity-60"
+              )}
+              onClick={handlePremiumClick}
+            >
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-semibold">Logo do cliente</Label>
+                {!isPremium && <Lock className="h-3 w-3 text-muted-foreground" />}
+              </div>
               <p className="mt-1 text-xs text-muted-foreground">
                 Aparece apenas no topo do PDF. Não é salva no servidor.
               </p>
-              {logo ? (
+              {logo && isPremium ? (
                 <div className="mt-3 flex items-center gap-3 rounded-xl border border-border/50 bg-surface-2 p-3">
                   <img src={logo.dataUrl} alt="Logo enviada pelo cliente" className="h-10 w-auto max-w-24 object-contain" />
                   <span className="line-clamp-1 flex-1 text-xs text-muted-foreground">{logo.name}</span>
                   <button
                     type="button"
                     aria-label="Remover logo"
-                    onClick={() => setLogo(null)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLogo(null);
+                    }}
                     className="rounded-full p-1 hover:bg-muted"
                   >
                     <X className="h-4 w-4" />
                   </button>
                 </div>
               ) : (
-                <label className="mt-3 flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground">
+                <label className={cn(
+                  "mt-3 flex flex-col items-center gap-2 rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground transition-colors",
+                  isPremium ? "cursor-pointer hover:border-primary/50 hover:text-foreground" : "cursor-default"
+                )}>
                   <Upload className="h-5 w-5" />
                   Enviar logo (PNG/JPG)
                   <input
                     type="file"
                     accept="image/*"
                     className="hidden"
+                    disabled={!isPremium}
                     onChange={(e) => onLogoChange(e.target.files?.[0] ?? null)}
                   />
                 </label>
@@ -333,33 +386,53 @@ function CatalogGeneratorPage() {
               </Select>
             </div>
 
-            <div className="rounded-2xl border border-border/50 bg-card p-4">
-              <Label htmlFor="pdf-bg" className="text-sm font-semibold">
-                Cor de fundo do PDF
-              </Label>
+            <div 
+              className={cn(
+                "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
+                !isPremium && "opacity-60"
+              )}
+              onClick={handlePremiumClick}
+            >
+              <div className="flex items-center justify-between">
+                <Label htmlFor="pdf-bg" className="text-sm font-semibold">
+                  Cor de fundo do PDF
+                </Label>
+                {!isPremium && <Lock className="h-3 w-3 text-muted-foreground" />}
+              </div>
               <div className="mt-3 flex items-center gap-3">
                 <input
                   id="pdf-bg"
                   type="color"
-                  value={bgColor}
+                  value={isPremium ? bgColor : DEFAULT_BG}
+                  disabled={!isPremium}
                   onChange={(e) => setBgColor(e.target.value)}
                   className="h-10 w-14 cursor-pointer rounded-lg border border-border bg-transparent p-1"
                 />
-                <span className="text-sm text-muted-foreground">{bgColor.toUpperCase()}</span>
+                <span className="text-sm text-muted-foreground">{(isPremium ? bgColor : DEFAULT_BG).toUpperCase()}</span>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-border/50 bg-card p-4">
-              <Label htmlFor="whatsapp" className="text-sm font-semibold">
-                WhatsApp (com DDD)
-              </Label>
+            <div 
+              className={cn(
+                "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
+                !isPremium && "opacity-60"
+              )}
+              onClick={handlePremiumClick}
+            >
+              <div className="flex items-center justify-between">
+                <Label htmlFor="whatsapp" className="text-sm font-semibold">
+                  WhatsApp (com DDD)
+                </Label>
+                {!isPremium && <Lock className="h-3 w-3 text-muted-foreground" />}
+              </div>
               <p className="mt-1 text-xs text-muted-foreground">
                 Torna as imagens no PDF clicáveis para compra direta.
               </p>
               <Input
                 id="whatsapp"
                 type="text"
-                value={whatsapp}
+                value={isPremium ? whatsapp : ""}
+                disabled={!isPremium}
                 onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, ""))}
                 placeholder="Ex: 11999999999"
                 className="mt-3"
@@ -483,9 +556,9 @@ function CatalogGeneratorPage() {
                 <h2 className="mb-3 font-display text-xl font-bold">Pré-visualização do PDF</h2>
                 <div
                   className="rounded-2xl border border-border/50 p-6"
-                  style={{ backgroundColor: bgColor }}
+                  style={{ backgroundColor: isPremium ? bgColor : DEFAULT_BG }}
                 >
-                  {logo && (
+                  {isPremium && logo && (
                     <img
                       src={logo.dataUrl}
                       alt="Logo do cliente no topo do catálogo"
@@ -510,11 +583,37 @@ function CatalogGeneratorPage() {
                       </figure>
                     ))}
                   </div>
+                  {!isPremium && (
+                    <div className="mt-8 border-t border-border/30 pt-4 text-center">
+                      <p className="text-xs text-muted-foreground/60">Gerado via Estampaflix</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
           </section>
         </div>
+
+        <Dialog open={premiumModalOpen} onOpenChange={setPremiumModalOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Lock className="h-5 w-5 text-primary" /> Recurso Exclusivo Premium
+              </DialogTitle>
+              <DialogDescription className="pt-2 text-base">
+                Assine um dos nossos planos (Premium Lite, Pro ou Plus) para personalizar seus catálogos com sua logo, cores e links diretos para o seu WhatsApp!
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-end">
+              <Button variant="ghost" onClick={() => setPremiumModalOpen(false)}>
+                Agora não
+              </Button>
+              <Button asChild className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
+                <Link to="/planos">Conhecer Planos</Link>
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {selectedCount > 0 && (
