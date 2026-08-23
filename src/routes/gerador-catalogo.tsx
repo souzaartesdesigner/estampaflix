@@ -266,6 +266,7 @@ function CatalogGeneratorPage() {
         col += 1;
       }
 
+      drawWatermark();
       doc.save("catalogo.pdf");
       toast.success("Catálogo gerado com sucesso!");
     } catch (err) {
