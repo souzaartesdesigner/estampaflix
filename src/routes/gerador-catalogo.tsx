@@ -556,9 +556,9 @@ function CatalogGeneratorPage() {
                 <h2 className="mb-3 font-display text-xl font-bold">Pré-visualização do PDF</h2>
                 <div
                   className="rounded-2xl border border-border/50 p-6"
-                  style={{ backgroundColor: bgColor }}
+                  style={{ backgroundColor: isPremium ? bgColor : DEFAULT_BG }}
                 >
-                  {logo && (
+                  {isPremium && logo && (
                     <img
                       src={logo.dataUrl}
                       alt="Logo do cliente no topo do catálogo"
@@ -583,11 +583,38 @@ function CatalogGeneratorPage() {
                       </figure>
                     ))}
                   </div>
+                  {!isPremium && (
+                    <div className="mt-8 border-t border-border/30 pt-4 text-center">
+                      <p className="text-xs text-muted-foreground/60">Gerado via Estampaflix</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
           </section>
         </div>
+
+        <Dialog open={premiumModalOpen} onOpenChange={setPremiumModalOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Lock className="h-5 w-5 text-primary" /> Recurso Exclusivo Premium
+              </DialogTitle>
+              <DialogDescription className="pt-2 text-base">
+                Assine um dos nossos planos (Premium Lite, Pro ou Plus) para personalizar seus catálogos com sua logo, cores e links diretos para o seu WhatsApp!
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-end">
+              <Button variant="ghost" onClick={() => setPremiumModalOpen(false)}>
+                Agora não
+              </Button>
+              <Button asChild className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
+                <Link to="/planos">Conhecer Planos</Link>
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
       </div>
 
       {selectedCount > 0 && (
