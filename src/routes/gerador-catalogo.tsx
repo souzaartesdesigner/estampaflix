@@ -57,6 +57,7 @@ function CatalogGeneratorPage() {
   const [columns, setColumns] = useState("3");
   const [bgColor, setBgColor] = useState(DEFAULT_BG);
   const [generating, setGenerating] = useState(false);
+  const [whatsapp, setWhatsapp] = useState("");
 
   const { data: categories = [] } = useQuery({
     queryKey: ["catalog-generator-categories"],
@@ -211,7 +212,17 @@ function CatalogGeneratorPage() {
           const ratio = Math.min(cellW / img.width, imgH / img.height);
           const w = img.width * ratio;
           const h = img.height * ratio;
-          doc.addImage(img.dataUrl, x + (cellW - w) / 2, y + (imgH - h) / 2, w, h, undefined, "FAST");
+          const imgX = x + (cellW - w) / 2;
+          const imgY = y + (imgH - h) / 2;
+          doc.addImage(img.dataUrl, imgX, imgY, w, h, undefined, "FAST");
+
+          const cleanPhone = whatsapp.replace(/\D/g, "");
+          if (cleanPhone) {
+            const code = art.product_code?.trim() || "";
+            const msg = `Olá! Gostaria de encomendar um produto com esta estampa: Ref: ${code}`;
+            const whatsappLink = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
+            doc.link(imgX, imgY, w, h, { url: whatsappLink });
+          }
         }
         const label = refLabel(art);
         if (label) doc.text(label, x + cellW / 2, y + imgH + 5, { align: "center" });
@@ -336,6 +347,23 @@ function CatalogGeneratorPage() {
                 />
                 <span className="text-sm text-muted-foreground">{bgColor.toUpperCase()}</span>
               </div>
+            </div>
+
+            <div className="rounded-2xl border border-border/50 bg-card p-4">
+              <Label htmlFor="whatsapp" className="text-sm font-semibold">
+                WhatsApp (com DDD)
+              </Label>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Torna as imagens no PDF clicáveis para compra direta.
+              </p>
+              <Input
+                id="whatsapp"
+                type="text"
+                value={whatsapp}
+                onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, ""))}
+                placeholder="Ex: 11999999999"
+                className="mt-3"
+              />
             </div>
 
             <div className="rounded-2xl border border-border/50 bg-card p-4">
