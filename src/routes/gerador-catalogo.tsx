@@ -615,7 +615,6 @@ function CatalogGeneratorPage() {
           </DialogContent>
         </Dialog>
       </div>
-      </div>
 
       {selectedCount > 0 && (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/50 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
