@@ -318,19 +318,26 @@ function CatalogGeneratorPage() {
           if (btn.gradient) {
             // Instagram official gradient colors for PDF
             const canvas = document.createElement("canvas");
-            canvas.width = 100;
-            canvas.height = 100;
+            // Use a higher resolution for better quality
+            const scaleFactor = 4;
+            canvas.width = w * 10 * scaleFactor;
+            canvas.height = btnH * 10 * scaleFactor;
             const ctx = canvas.getContext("2d");
             if (ctx) {
-              const grad = ctx.createLinearGradient(0, 0, 100, 100);
+              const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
               grad.addColorStop(0, "#feda75");
               grad.addColorStop(0.25, "#fa7e1e");
               grad.addColorStop(0.5, "#d62976");
               grad.addColorStop(0.75, "#962fbf");
               grad.addColorStop(1, "#4f5bd5");
+              
               ctx.fillStyle = grad;
-              ctx.fillRect(0, 0, 100, 100);
-              doc.addImage(canvas.toDataURL("image/jpeg"), "JPEG", startX, footerY, w, btnH, undefined, "FAST");
+              ctx.beginPath();
+              // Pill shape radius
+              ctx.roundRect(0, 0, canvas.width, canvas.height, canvas.height / 2);
+              ctx.fill();
+              
+              doc.addImage(canvas.toDataURL("image/png"), "PNG", startX, footerY, w, btnH, undefined, "FAST");
             }
           } else if (btn.color) {
             doc.setFillColor(btn.color[0], btn.color[1], btn.color[2]);
