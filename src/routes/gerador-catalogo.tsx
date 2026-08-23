@@ -252,7 +252,7 @@ function CatalogGeneratorPage() {
           const imgY = y + (imgH - h) / 2;
           doc.addImage(img.dataUrl, imgX, imgY, w, h, undefined, "FAST");
 
-          const cleanPhone = whatsapp.replace(/\D/g, "");
+          const cleanPhone = isPremium ? whatsapp.replace(/\D/g, "") : "";
           if (cleanPhone) {
             const code = art.product_code?.trim() || "";
             const msg = `Olá! Gostaria de encomendar um produto com esta estampa: Ref: ${code}`;
