@@ -5,47 +5,57 @@ Implement a paywall for the PDF generation feature in the Catalog Generator. Use
 ## Proposed Changes
 
 ### PDF Generator Route (`src/routes/gerador-catalogo.tsx`)
-- Import `useAuth` to check user authentication status.
-- Import `useUserSubscription` to check for active Premium plans.
-- Add local state `isPaywallOpen` to control the conversion modal.
-- Modify `generatePdf` function:
-    - Check if the user is logged in.
-    - Check if the user has an active subscription.
-    - If either check fails, prevent PDF generation and open the `PaywallModal`.
-- Implement `PaywallModal` component using `Dialog` from shadcn/ui.
-
-### Components
-- Ensure the `Dialog` components (from `src/components/ui/dialog.tsx`) are correctly used for the modal.
+- Import `useUserSubscription` hook to check for active Premium plans.
+- Add local state for the current user (`user`) and the Paywall Modal (`isPaywallOpen`).
+- Initialize auth state in a `useEffect` using `supabase.auth`.
+- Modify `generatePdf` function to check for an active subscription before proceeding.
+- Implement a `PaywallModal` component using the shadcn/ui `Dialog` component.
+- The modal will feature:
+    - Title: "Recurso Exclusivo para Assinantes"
+    - Description: "Para gerar catálogos em PDF com a sua própria logo e enviar para seus clientes, você precisa de um plano Premium ativo."
+    - Primary CTA: "Conhecer Planos" (redirecting to `/planos`).
+    - Secondary CTA: "Fechar".
 
 ## Technical Details
 
-### Paywall Logic
+### Auth & Subscription Check
 ```typescript
-const { user } = useAuth();
-const { data: subscription } = useUserSubscription(user?.id);
+const [user, setUser] = useState<any>(null);
+const { data: subscription, isLoading: isLoadingSub } = useUserSubscription(user?.id);
 
-const canGeneratePdf = !!user && subscription?.status === 'active';
+useEffect(() => {
+  supabase.auth.getUser().then(({ data }) => setUser(data.user));
+}, []);
 
-async function handleGenerateClick() {
-  if (!canGeneratePdf) {
+const hasActiveSubscription = !!subscription && subscription.status === 'active';
+```
+
+### Paywall Interception
+In `generatePdf`:
+```typescript
+async function generatePdf() {
+  if (!user || !hasActiveSubscription) {
     setIsPaywallOpen(true);
     return;
   }
-  await generatePdf();
+  // ... existing generation logic
 }
 ```
-
-### UI - Conversion Modal
-- **Title**: "Recurso Exclusivo para Assinantes"
-- **Text**: "Para gerar catálogos em PDF com a sua própria logo e enviar para seus clientes, você precisa de um plano Premium ativo."
-- **Primary CTA**: Button "Conhecer Planos" (redirects to `/planos` or similar pricing page).
-- **Secondary CTA**: "Fechar" button.
 
 ## Verification Plan
 
 ### Manual Verification
-- Access `/gerador-catalogo` as an anonymous user.
-- Select artworks and click "Gerar PDF".
-- Verify that the conversion modal appears.
-- Log in with a non-subscriber account and repeat.
-- Log in with a subscriber account and verify that the PDF is generated correctly.
+1. **Anonymous User**:
+    - Navigate to `/gerador-catalogo`.
+    - Select a few artworks.
+    - Click "Gerar PDF".
+    - Verify that the "Recurso Exclusivo para Assinantes" modal appears.
+2. **Logged-in User (No Subscription)**:
+    - Log in with an account that has no active subscription.
+    - Go to `/gerador-catalogo`, select artworks, and click "Gerar PDF".
+    - Verify that the conversion modal appears.
+3. **Premium User**:
+    - Log in with an account that has an active Premium subscription.
+    - Go to `/gerador-catalogo`, select artworks, and click "Gerar PDF".
+    - Verify that the PDF is generated and downloaded without the modal appearing.
+
