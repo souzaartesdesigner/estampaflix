@@ -465,7 +465,7 @@ function CatalogGeneratorPage() {
         </section>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
-          <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+          <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto lg:pr-2 custom-scrollbar">
             <div 
               className={cn(
                 "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
