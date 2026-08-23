@@ -386,19 +386,29 @@ function CatalogGeneratorPage() {
               </Select>
             </div>
 
-            <div className="rounded-2xl border border-border/50 bg-card p-4">
-              <Label htmlFor="pdf-bg" className="text-sm font-semibold">
-                Cor de fundo do PDF
-              </Label>
+            <div 
+              className={cn(
+                "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
+                !isPremium && "opacity-60"
+              )}
+              onClick={handlePremiumClick}
+            >
+              <div className="flex items-center justify-between">
+                <Label htmlFor="pdf-bg" className="text-sm font-semibold">
+                  Cor de fundo do PDF
+                </Label>
+                {!isPremium && <Lock className="h-3 w-3 text-muted-foreground" />}
+              </div>
               <div className="mt-3 flex items-center gap-3">
                 <input
                   id="pdf-bg"
                   type="color"
-                  value={bgColor}
+                  value={isPremium ? bgColor : DEFAULT_BG}
+                  disabled={!isPremium}
                   onChange={(e) => setBgColor(e.target.value)}
                   className="h-10 w-14 cursor-pointer rounded-lg border border-border bg-transparent p-1"
                 />
-                <span className="text-sm text-muted-foreground">{bgColor.toUpperCase()}</span>
+                <span className="text-sm text-muted-foreground">{(isPremium ? bgColor : DEFAULT_BG).toUpperCase()}</span>
               </div>
             </div>
 
