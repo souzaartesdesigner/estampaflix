@@ -67,6 +67,24 @@ function CatalogGeneratorPage() {
   const [bgColor, setBgColor] = useState(DEFAULT_BG);
   const [generating, setGenerating] = useState(false);
   const [whatsapp, setWhatsapp] = useState("");
+  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
+  const [userId, setUserId] = useState<string | undefined>();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id));
+  }, []);
+
+  const { data: sub } = useUserSubscription(userId);
+  const isPremium = !!sub && ["lite", "pro", "plus"].includes(sub.plans?.tier || "");
+
+  const handlePremiumClick = (e: React.MouseEvent) => {
+    if (!isPremium) {
+      e.preventDefault();
+      setPremiumModalOpen(true);
+      return true;
+    }
+    return false;
+  };
 
   const { data: categories = [] } = useQuery({
     queryKey: ["catalog-generator-categories"],
