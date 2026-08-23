@@ -1095,7 +1095,7 @@ async function renderSocialIconForPdf(type: "wa" | "insta"): Promise<string | nu
       );
       ctx.save();
       ctx.fillStyle = "white";
-      ctx.scale(120 / 16, 120 / 16);
+      ctx.scale((120 * scale) / 16, (120 * scale) / 16);
       ctx.fill(p);
       ctx.restore();
     }
