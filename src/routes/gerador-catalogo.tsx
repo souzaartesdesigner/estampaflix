@@ -398,8 +398,7 @@ function CatalogGeneratorPage() {
           const imgY = y + (imgH - h) / 2;
 
           doc.saveGraphicsState();
-          // Define a path for the rounded rectangle (2.1mm = 8px)
-          // style: undefined/null to not draw anything (just define the path)
+          // Clip path for rounded corners (8px radius)
           doc.roundedRect(imgX, imgY, w, h, 2.1, 2.1);
           doc.clip();
           doc.addImage(img.dataUrl, imgX, imgY, w, h, undefined, "FAST");
