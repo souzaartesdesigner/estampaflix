@@ -231,7 +231,7 @@ function CatalogGeneratorPage() {
 
   return (
     <SiteLayout>
-      <div className="container mx-auto px-4 py-10">
+      <div className="container mx-auto px-4 py-10 pb-32">
         <header className="mb-8 max-w-2xl">
           <h1 className="font-display text-3xl font-bold tracking-tight md:text-4xl">Gerador de Catálogo</h1>
           <p className="mt-2 text-muted-foreground">
@@ -488,6 +488,25 @@ function CatalogGeneratorPage() {
           </section>
         </div>
       </div>
+
+      {selectedCount > 0 && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/50 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+          <div className="container mx-auto flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+            <p className="text-sm text-muted-foreground">
+              <span className="font-semibold text-primary">{selectedCount}</span> arte(s) selecionada(s) no total
+            </p>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => setSelected({})}>
+                <XSquare className="h-4 w-4" /> Limpar seleção
+              </Button>
+              <Button size="sm" onClick={generatePdf} disabled={generating} className="shadow-lg shadow-primary/30">
+                {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+                {generating ? "Gerando PDF…" : "Gerar PDF"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </SiteLayout>
   );
 }
