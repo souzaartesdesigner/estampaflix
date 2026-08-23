@@ -203,19 +203,27 @@ function CatalogGeneratorPage() {
       const cellH = imgH + captionH;
 
       const paintBg = () => {
-        doc.setFillColor(bgColor);
+        doc.setFillColor(isPremium ? bgColor : DEFAULT_BG);
         doc.rect(0, 0, pageW, pageH, "F");
       };
 
-      const logoMeta = logo ? await loadImage(logo.dataUrl) : null;
+      const logoMeta = (isPremium && logo) ? await loadImage(logo.dataUrl) : null;
       const drawHeader = () => {
         paintBg();
-        if (!logo || !logoMeta) return margin;
+        if (!isPremium || !logo || !logoMeta) return margin;
         const ratio = Math.min(90 / logoMeta.width, 30 / logoMeta.height);
         const w = logoMeta.width * ratio;
         const h = logoMeta.height * ratio;
         doc.addImage(logo.dataUrl, (pageW - w) / 2, margin, w, h, undefined, "FAST");
         return margin + h + 6;
+      };
+
+      const drawWatermark = () => {
+        if (!isPremium) {
+          doc.setFontSize(8);
+          doc.setTextColor(150, 150, 150);
+          doc.text("Gerado via Estampaflix", pageW / 2, pageH - 5, { align: "center" });
+        }
       };
 
       doc.setFontSize(11);
