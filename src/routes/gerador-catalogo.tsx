@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo, useState, useEffect } from "react";
-import { Search, Upload, FileDown, CheckSquare, XSquare, Loader2, X, Check, Plus, Lock } from "lucide-react";
+import { Search, Upload, FileDown, CheckSquare, XSquare, Loader2, X, Check, Plus, Lock, Sparkles, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site-layout";
@@ -23,8 +23,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useUserSubscription } from "@/hooks/use-user-subscription";
+import exemploCatalogo from "@/assets/exemplo-catalogo.pdf.asset.json";
 
 export const Route = createFileRoute("/gerador-catalogo")({
   ssr: false,
@@ -51,10 +54,19 @@ export const Route = createFileRoute("/gerador-catalogo")({
 
 const PAGE_LIMIT = 300;
 const DEFAULT_BG = "#e8e8e8";
+const DEFAULT_TEXT = "#141414";
+const DEFAULT_WA_MESSAGE = "Olá! Gostaria de encomendar um produto com esta estampa: Ref: [CODIGO]";
+const CLICK_NOTICE = "Dica: As imagens deste catálogo são clicáveis. Clique na estampa para fazer o seu pedido!";
 
 function refLabel(art: any) {
   const code = art?.product_code?.trim();
   return code ? `Ref: ${code}` : "";
+}
+
+function hexToRgb(hex: string): [number, number, number] {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.trim());
+  if (!m) return [20, 20, 20];
+  return [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)];
 }
 
 function CatalogGeneratorPage() {
