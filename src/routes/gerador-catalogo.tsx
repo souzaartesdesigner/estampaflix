@@ -387,7 +387,7 @@ function CatalogGeneratorPage() {
       }
 
       drawWatermark();
-      drawSocialButtons();
+      await drawSocialButtons();
       doc.save("catalogo.pdf");
       toast.success("Catálogo gerado com sucesso!");
     } catch (err) {
