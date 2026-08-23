@@ -412,17 +412,27 @@ function CatalogGeneratorPage() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-border/50 bg-card p-4">
-              <Label htmlFor="whatsapp" className="text-sm font-semibold">
-                WhatsApp (com DDD)
-              </Label>
+            <div 
+              className={cn(
+                "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
+                !isPremium && "opacity-60"
+              )}
+              onClick={handlePremiumClick}
+            >
+              <div className="flex items-center justify-between">
+                <Label htmlFor="whatsapp" className="text-sm font-semibold">
+                  WhatsApp (com DDD)
+                </Label>
+                {!isPremium && <Lock className="h-3 w-3 text-muted-foreground" />}
+              </div>
               <p className="mt-1 text-xs text-muted-foreground">
                 Torna as imagens no PDF clicáveis para compra direta.
               </p>
               <Input
                 id="whatsapp"
                 type="text"
-                value={whatsapp}
+                value={isPremium ? whatsapp : ""}
+                disabled={!isPremium}
                 onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, ""))}
                 placeholder="Ex: 11999999999"
                 className="mt-3"
