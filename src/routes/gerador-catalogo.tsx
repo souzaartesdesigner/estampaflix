@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
-import { Search, Upload, FileDown, CheckSquare, XSquare, Loader2, X, Check, Plus } from "lucide-react";
+import { useMemo, useState, useEffect } from "react";
+import { Search, Upload, FileDown, CheckSquare, XSquare, Loader2, X, Check, Plus, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site-layout";
@@ -15,7 +15,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { useUserSubscription } from "@/hooks/use-user-subscription";
 
 export const Route = createFileRoute("/gerador-catalogo")({
   ssr: false,
