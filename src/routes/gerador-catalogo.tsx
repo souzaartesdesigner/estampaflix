@@ -1068,12 +1068,13 @@ async function toDataUrl(
 async function renderSocialIconForPdf(type: "wa" | "insta"): Promise<string | null> {
   try {
     const canvas = document.createElement("canvas");
-    canvas.width = 120;
-    canvas.height = 120;
+    const scale = 4; // High resolution
+    canvas.width = 120 * scale;
+    canvas.height = 120 * scale;
     const ctx = canvas.getContext("2d");
     if (!ctx) return null;
 
-    ctx.clearRect(0, 0, 120, 120);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (type === "insta") {
       // Instagram Icon Path (centered and scaled)
