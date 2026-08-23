@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { useMemo, useState, useEffect } from "react";
-import { Search, Upload, FileDown, CheckSquare, XSquare, Loader2, X, Check, Plus, Lock } from "lucide-react";
+import { Search, Upload, FileDown, CheckSquare, XSquare, Loader2, X, Check, Plus, Lock, Sparkles, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/site-layout";
@@ -23,8 +23,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useUserSubscription } from "@/hooks/use-user-subscription";
+import exemploCatalogo from "@/assets/exemplo-catalogo.pdf.asset.json";
 
 export const Route = createFileRoute("/gerador-catalogo")({
   ssr: false,
@@ -51,10 +54,19 @@ export const Route = createFileRoute("/gerador-catalogo")({
 
 const PAGE_LIMIT = 300;
 const DEFAULT_BG = "#e8e8e8";
+const DEFAULT_TEXT = "#141414";
+const DEFAULT_WA_MESSAGE = "Olá! Gostaria de encomendar um produto com esta estampa: Ref: [CODIGO]";
+const CLICK_NOTICE = "Dica: As imagens deste catálogo são clicáveis. Clique na estampa para fazer o seu pedido!";
 
 function refLabel(art: any) {
   const code = art?.product_code?.trim();
   return code ? `Ref: ${code}` : "";
+}
+
+function hexToRgb(hex: string): [number, number, number] {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.trim());
+  if (!m) return [20, 20, 20];
+  return [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)];
 }
 
 function CatalogGeneratorPage() {
@@ -65,8 +77,11 @@ function CatalogGeneratorPage() {
   const [logo, setLogo] = useState<{ dataUrl: string; name: string } | null>(null);
   const [columns, setColumns] = useState("3");
   const [bgColor, setBgColor] = useState(DEFAULT_BG);
+  const [textColor, setTextColor] = useState(DEFAULT_TEXT);
+  const [showClickNotice, setShowClickNotice] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [whatsapp, setWhatsapp] = useState("");
+  const [waMessage, setWaMessage] = useState(DEFAULT_WA_MESSAGE);
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
   const [userId, setUserId] = useState<string | undefined>();
 
@@ -207,15 +222,31 @@ function CatalogGeneratorPage() {
         doc.rect(0, 0, pageW, pageH, "F");
       };
 
+      const effTextColor = isPremium ? textColor : DEFAULT_TEXT;
+      const [tr, tg, tb] = hexToRgb(effTextColor);
+      const showNotice = isPremium && showClickNotice;
+
       const logoMeta = (isPremium && logo) ? await loadImage(logo.dataUrl) : null;
       const drawHeader = () => {
         paintBg();
-        if (!isPremium || !logo || !logoMeta) return margin;
-        const ratio = Math.min(90 / logoMeta.width, 30 / logoMeta.height);
-        const w = logoMeta.width * ratio;
-        const h = logoMeta.height * ratio;
-        doc.addImage(logo.dataUrl, (pageW - w) / 2, margin, w, h, undefined, "FAST");
-        return margin + h + 6;
+        let cursor = margin;
+        if (isPremium && logo && logoMeta) {
+          const ratio = Math.min(90 / logoMeta.width, 30 / logoMeta.height);
+          const w = logoMeta.width * ratio;
+          const h = logoMeta.height * ratio;
+          doc.addImage(logo.dataUrl, (pageW - w) / 2, margin, w, h, undefined, "FAST");
+          cursor = margin + h + 4;
+        }
+        if (showNotice) {
+          doc.setFontSize(9);
+          doc.setTextColor(tr, tg, tb);
+          const lines = doc.splitTextToSize(CLICK_NOTICE, pageW - margin * 2) as string[];
+          doc.text(lines, pageW / 2, cursor + 3, { align: "center" });
+          cursor += lines.length * 4 + 3;
+          doc.setFontSize(11);
+        }
+        doc.setTextColor(tr, tg, tb);
+        return cursor + (cursor > margin ? 3 : 0);
       };
 
       const drawWatermark = () => {
@@ -223,11 +254,13 @@ function CatalogGeneratorPage() {
           doc.setFontSize(8);
           doc.setTextColor(150, 150, 150);
           doc.text("Gerado via Estampaflix", pageW / 2, pageH - 5, { align: "center" });
+          doc.setFontSize(11);
+          doc.setTextColor(tr, tg, tb);
         }
       };
 
       doc.setFontSize(11);
-      doc.setTextColor(20, 20, 20);
+      doc.setTextColor(tr, tg, tb);
 
       let x = margin;
       let y = drawHeader();
@@ -243,7 +276,7 @@ function CatalogGeneratorPage() {
             y = drawHeader();
           }
         }
-        const img = await toDataUrl(art.preview_url, bgColor);
+        const img = await toDataUrl(art.preview_url, isPremium ? bgColor : DEFAULT_BG);
         if (img) {
           const ratio = Math.min(cellW / img.width, imgH / img.height);
           const w = img.width * ratio;
@@ -255,7 +288,8 @@ function CatalogGeneratorPage() {
           const cleanPhone = isPremium ? whatsapp.replace(/\D/g, "") : "";
           if (cleanPhone) {
             const code = art.product_code?.trim() || "";
-            const msg = `Olá! Gostaria de encomendar um produto com esta estampa: Ref: ${code}`;
+            const template = waMessage.trim() || DEFAULT_WA_MESSAGE;
+            const msg = template.replace(/\[CODIGO\]/gi, code);
             const whatsappLink = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
             doc.link(imgX, imgY, w, h, { url: whatsappLink });
           }
@@ -412,6 +446,60 @@ function CatalogGeneratorPage() {
               </div>
             </div>
 
+            <div
+              className={cn(
+                "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
+                !isPremium && "opacity-60"
+              )}
+              onClick={handlePremiumClick}
+            >
+              <div className="flex items-center justify-between">
+                <Label htmlFor="pdf-text" className="text-sm font-semibold">
+                  Cor do texto do PDF
+                </Label>
+                {!isPremium && <Lock className="h-3 w-3 text-muted-foreground" />}
+              </div>
+              <div className="mt-3 flex items-center gap-3">
+                <input
+                  id="pdf-text"
+                  type="color"
+                  value={isPremium ? textColor : DEFAULT_TEXT}
+                  disabled={!isPremium}
+                  onChange={(e) => setTextColor(e.target.value)}
+                  className="h-10 w-14 cursor-pointer rounded-lg border border-border bg-transparent p-1"
+                />
+                <span className="text-sm text-muted-foreground">
+                  {(isPremium ? textColor : DEFAULT_TEXT).toUpperCase()}
+                </span>
+              </div>
+            </div>
+
+            <div
+              className={cn(
+                "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
+                !isPremium && "opacity-60"
+              )}
+              onClick={handlePremiumClick}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <Label htmlFor="click-notice" className="text-sm font-semibold leading-snug">
+                  Exibir aviso "Imagens Clicáveis" no PDF
+                </Label>
+                <div className="flex items-center gap-2">
+                  {!isPremium && <Lock className="h-3 w-3 text-muted-foreground" />}
+                  <Switch
+                    id="click-notice"
+                    checked={isPremium && showClickNotice}
+                    disabled={!isPremium}
+                    onCheckedChange={setShowClickNotice}
+                  />
+                </div>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Mostra um aviso logo abaixo da sua logo, orientando o cliente a clicar nas estampas.
+              </p>
+            </div>
+
             <div 
               className={cn(
                 "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
@@ -437,6 +525,31 @@ function CatalogGeneratorPage() {
                 placeholder="Ex: 11999999999"
                 className="mt-3"
               />
+
+              <Label htmlFor="wa-message" className="mt-4 block text-sm font-semibold">
+                Mensagem do WhatsApp
+              </Label>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Use <span className="font-mono text-foreground">[CODIGO]</span> para inserir o código da estampa.
+              </p>
+              <Textarea
+                id="wa-message"
+                rows={3}
+                value={isPremium ? waMessage : DEFAULT_WA_MESSAGE}
+                disabled={!isPremium}
+                onChange={(e) => setWaMessage(e.target.value)}
+                placeholder={DEFAULT_WA_MESSAGE}
+                className="mt-2 text-sm"
+              />
+              {isPremium && waMessage.trim() !== DEFAULT_WA_MESSAGE && (
+                <button
+                  type="button"
+                  onClick={() => setWaMessage(DEFAULT_WA_MESSAGE)}
+                  className="mt-2 text-xs text-primary hover:underline"
+                >
+                  Restaurar mensagem padrão
+                </button>
+              )}
             </div>
 
             <div className="rounded-2xl border border-border/50 bg-card p-4">
@@ -448,6 +561,37 @@ function CatalogGeneratorPage() {
                 {generating ? "Gerando PDF…" : "Gerar PDF"}
               </Button>
             </div>
+
+            {!isPremium && (
+              <div className="rounded-2xl border border-primary/40 bg-primary/5 p-4 shadow-brand">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <h2 className="text-sm font-semibold text-foreground">Vantagens de ser Premium no Gerador</h2>
+                </div>
+                <ul className="mt-3 space-y-2 text-xs text-muted-foreground">
+                  <li className="flex gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Catálogo com a sua logo, sem marca d'água da Estampa Flix.
+                  </li>
+                  <li className="flex gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Cores de fundo e de texto personalizadas com a sua identidade.
+                  </li>
+                  <li className="flex gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Estampas clicáveis com link de venda direto para o seu WhatsApp.
+                  </li>
+                </ul>
+                <Button asChild variant="outline" className="mt-4 w-full border-primary/50 text-primary hover:bg-primary/10">
+                  <a href={exemploCatalogo.url} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-4 w-4" /> Ver Exemplo de Catálogo Premium
+                  </a>
+                </Button>
+                <Button asChild className="mt-2 w-full bg-gradient-brand text-brand-foreground hover:opacity-90">
+                  <Link to="/planos">Quero ser Premium</Link>
+                </Button>
+              </div>
+            )}
           </aside>
 
           <section>
@@ -562,8 +706,16 @@ function CatalogGeneratorPage() {
                     <img
                       src={logo.dataUrl}
                       alt="Logo do cliente no topo do catálogo"
-                      className="mx-auto mb-6 h-16 w-auto max-w-[240px] object-contain"
+                      className="mx-auto mb-3 h-16 w-auto max-w-[240px] object-contain"
                     />
+                  )}
+                  {isPremium && showClickNotice && (
+                    <p
+                      className="mx-auto mb-6 max-w-xl text-center text-sm"
+                      style={{ color: textColor }}
+                    >
+                      {CLICK_NOTICE}
+                    </p>
                   )}
                   <div
                     className="grid gap-3"
@@ -579,7 +731,12 @@ function CatalogGeneratorPage() {
                             className="block h-full w-full object-contain"
                           />
                         </div>
-                        <figcaption className="mt-1 text-sm font-medium text-[#141414]">{refLabel(a)}</figcaption>
+                        <figcaption
+                          className="mt-1 text-sm font-medium"
+                          style={{ color: isPremium ? textColor : DEFAULT_TEXT }}
+                        >
+                          {refLabel(a)}
+                        </figcaption>
                       </figure>
                     ))}
                   </div>
