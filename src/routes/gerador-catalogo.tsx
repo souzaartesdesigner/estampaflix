@@ -374,43 +374,69 @@ function CatalogGeneratorPage() {
       doc.setFontSize(11);
       doc.setTextColor(tr, tg, tb);
 
-      let x = margin;
-      let y = drawHeader();
-      let col = 0;
-      for (const art of selectedList) {
-        if (col === cols) {
-          col = 0;
-          x = margin;
-          y += cellH + gap;
-          if (y + cellH > pageH - margin) {
-            drawWatermark();
-            await drawSocialButtons();
-            doc.addPage();
-            y = drawHeader();
+      let currentIndex = 0;
+      while (currentIndex < selectedList.length) {
+        let x = margin;
+        let y = drawHeader();
+        
+        // Calculate items that fit on this page
+        const startY = y;
+        const availableH = (pageH - margin - 15) - startY; // 15mm reserved for footer
+        const itemsPerPage = Math.floor(availableH / (cellH + gap)) * cols;
+        const pageItems = selectedList.slice(currentIndex, currentIndex + itemsPerPage);
+        
+        // If not premium, distribute rows vertically
+        let currentGapY = gap;
+        if (!isPremium && pageItems.length > 0) {
+          const rowsOnPage = Math.ceil(pageItems.length / cols);
+          const contentH = rowsOnPage * cellH + (rowsOnPage - 1) * gap;
+          if (availableH > contentH) {
+            const extra = availableH - contentH;
+            const spacing = extra / (rowsOnPage + 1);
+            y += spacing;
+            currentGapY = spacing;
           }
         }
-        const img = await toDataUrl(art.preview_url, isPremium ? bgColor : DEFAULT_BG);
-        if (img) {
-          const ratio = Math.min(cellW / img.width, imgH / img.height);
-          const w = img.width * ratio;
-          const h = img.height * ratio;
-          const imgX = x + (cellW - w) / 2;
-          const imgY = y + (imgH - h) / 2;
-          doc.addImage(img.dataUrl, imgX, imgY, w, h, undefined, "FAST");
 
-          const cleanPhone = isPremium ? whatsapp.replace(/\D/g, "") : "";
-          if (cleanPhone) {
-            const code = art.product_code?.trim() || "";
-            const template = waMessage.trim() || DEFAULT_WA_MESSAGE;
-            const msg = template.replace(/\[CODIGO\]/gi, code);
-            const whatsappLink = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
-            doc.link(imgX, imgY, w, h, { url: whatsappLink });
+        let col = 0;
+        for (const art of pageItems) {
+          if (col === cols) {
+            col = 0;
+            x = margin;
+            y += cellH + currentGapY;
           }
+
+          const img = await toDataUrl(art.preview_url, isPremium ? bgColor : DEFAULT_BG);
+          if (img) {
+            const ratio = Math.min(cellW / img.width, imgH / img.height);
+            const w = img.width * ratio;
+            const h = img.height * ratio;
+            const imgX = x + (cellW - w) / 2;
+            const imgY = y + (imgH - h) / 2;
+            doc.addImage(img.dataUrl, imgX, imgY, w, h, undefined, "FAST");
+
+            const cleanPhone = isPremium ? whatsapp.replace(/\D/g, "") : "";
+            if (cleanPhone) {
+              const code = art.product_code?.trim() || "";
+              const template = waMessage.trim() || DEFAULT_WA_MESSAGE;
+              const msg = template.replace(/\[CODIGO\]/gi, code);
+              const whatsappLink = `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
+              doc.link(imgX, imgY, w, h, { url: whatsappLink });
+            }
+          }
+          const label = refLabel(art);
+          if (label) doc.text(label, x + cellW / 2, y + imgH + 5, { align: "center" });
+          
+          x += cellW + gap;
+          col += 1;
         }
-        const label = refLabel(art);
-        if (label) doc.text(label, x + cellW / 2, y + imgH + 5, { align: "center" });
-        x += cellW + gap;
-        col += 1;
+
+        currentIndex += pageItems.length;
+        if (currentIndex < selectedList.length) {
+          drawWatermark();
+          await drawSocialButtons();
+          doc.addPage();
+        }
       }
 
       drawWatermark();
