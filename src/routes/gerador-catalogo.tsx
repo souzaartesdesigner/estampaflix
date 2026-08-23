@@ -397,10 +397,9 @@ function CatalogGeneratorPage() {
           const imgX = x + (cellW - w) / 2;
           const imgY = y + (imgH - h) / 2;
 
-          // Apply 8px border radius clipping (approx 2.1mm)
           doc.saveGraphicsState();
-          // Use roundedRect(x, y, w, h, rx, ry, style)
-          // We only need the path for clipping, so we don't use 'F' or 'S'
+          // Define a path for the rounded rectangle (2.1mm = 8px)
+          // style: undefined/null to not draw anything (just define the path)
           doc.roundedRect(imgX, imgY, w, h, 2.1, 2.1);
           doc.clip();
           doc.addImage(img.dataUrl, imgX, imgY, w, h, undefined, "FAST");
@@ -1079,6 +1078,7 @@ async function renderSocialIconForPdf(type: "wa" | "insta"): Promise<string | nu
         "M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm-.2 2A3.6 3.6 0 0 0 4 7.6v8.8A3.6 3.6 0 0 0 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6A3.6 3.6 0 0 0 16.4 4H7.6zm8.9 1.5a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z",
       );
       ctx.save();
+      ctx.fillStyle = "white";
       ctx.scale(120 / 24, 120 / 24);
       ctx.fill(p);
       ctx.restore();
