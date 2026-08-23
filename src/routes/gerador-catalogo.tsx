@@ -357,7 +357,7 @@ function CatalogGeneratorPage() {
                 onClick={() =>
                   setSelected((s) => {
                     const next = { ...s };
-                    for (const a of artworks) next[a.id] = true;
+                    for (const a of artworks) next[a.id] = a;
                     return next;
                   })
                 }
@@ -377,7 +377,8 @@ function CatalogGeneratorPage() {
 
             <p className="mb-4 text-sm text-muted-foreground">
               Encontrado(s) <span className="font-semibold text-foreground">{total}</span> produto(s). Carregados{" "}
-              <span className="font-semibold text-foreground">{artworks.length}</span>.
+              <span className="font-semibold text-foreground">{artworks.length}</span>.{" "}
+              <span className="font-semibold text-primary">{selectedCount}</span> arte(s) selecionada(s) no total.
             </p>
 
             {isLoading ? (
@@ -398,7 +399,7 @@ function CatalogGeneratorPage() {
                     <button
                       type="button"
                       key={a.id}
-                      onClick={() => toggle(a.id)}
+                      onClick={() => toggle(a)}
                       className={cn(
                         "group relative overflow-hidden rounded-2xl border bg-card text-left transition-colors",
                         isOn ? "border-primary" : "border-border/50 hover:border-primary/40",
