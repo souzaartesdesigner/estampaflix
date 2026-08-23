@@ -238,6 +238,7 @@ function CatalogGeneratorPage() {
           x = margin;
           y += cellH + gap;
           if (y + cellH > pageH - margin) {
+            drawWatermark();
             doc.addPage();
             y = drawHeader();
           }
