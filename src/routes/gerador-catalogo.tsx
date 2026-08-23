@@ -52,7 +52,7 @@ function CatalogGeneratorPage() {
   const [q, setQ] = useState("");
   const [term, setTerm] = useState("");
   const [categorySlug, setCategorySlug] = useState<string | null>(null);
-  const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const [selected, setSelected] = useState<Record<string, any>>({});
   const [logo, setLogo] = useState<{ dataUrl: string; name: string } | null>(null);
   const [columns, setColumns] = useState("3");
   const [bgColor, setBgColor] = useState(DEFAULT_BG);
@@ -131,12 +131,17 @@ function CatalogGeneratorPage() {
   const total = data?.pages[0]?.total ?? 0;
   const hasMore = !!hasNextPage && artworks.length < total;
 
-  const selectedList = useMemo(() => artworks.filter((a) => selected[a.id]), [artworks, selected]);
+  const selectedList = useMemo(() => Object.values(selected) as any[], [selected]);
   const selectedCount = selectedList.length;
   const cols = Number(columns);
 
-  function toggle(id: string) {
-    setSelected((s) => ({ ...s, [id]: !s[id] }));
+  function toggle(art: any) {
+    setSelected((s) => {
+      const next = { ...s };
+      if (next[art.id]) delete next[art.id];
+      else next[art.id] = art;
+      return next;
+    });
   }
 
   function onLogoChange(file: File | null) {
@@ -226,7 +231,7 @@ function CatalogGeneratorPage() {
 
   return (
     <SiteLayout>
-      <div className="container mx-auto px-4 py-10">
+      <div className="container mx-auto px-4 py-10 pb-32">
         <header className="mb-8 max-w-2xl">
           <h1 className="font-display text-3xl font-bold tracking-tight md:text-4xl">Gerador de Catálogo</h1>
           <p className="mt-2 text-muted-foreground">
@@ -352,7 +357,7 @@ function CatalogGeneratorPage() {
                 onClick={() =>
                   setSelected((s) => {
                     const next = { ...s };
-                    for (const a of artworks) next[a.id] = true;
+                    for (const a of artworks) next[a.id] = a;
                     return next;
                   })
                 }
@@ -372,7 +377,8 @@ function CatalogGeneratorPage() {
 
             <p className="mb-4 text-sm text-muted-foreground">
               Encontrado(s) <span className="font-semibold text-foreground">{total}</span> produto(s). Carregados{" "}
-              <span className="font-semibold text-foreground">{artworks.length}</span>.
+              <span className="font-semibold text-foreground">{artworks.length}</span>.{" "}
+              <span className="font-semibold text-primary">{selectedCount}</span> arte(s) selecionada(s) no total.
             </p>
 
             {isLoading ? (
@@ -393,7 +399,7 @@ function CatalogGeneratorPage() {
                     <button
                       type="button"
                       key={a.id}
-                      onClick={() => toggle(a.id)}
+                      onClick={() => toggle(a)}
                       className={cn(
                         "group relative overflow-hidden rounded-2xl border bg-card text-left transition-colors",
                         isOn ? "border-primary" : "border-border/50 hover:border-primary/40",
@@ -482,6 +488,25 @@ function CatalogGeneratorPage() {
           </section>
         </div>
       </div>
+
+      {selectedCount > 0 && (
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/50 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
+          <div className="container mx-auto flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+            <p className="text-sm text-muted-foreground">
+              <span className="font-semibold text-primary">{selectedCount}</span> arte(s) selecionada(s) no total
+            </p>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => setSelected({})}>
+                <XSquare className="h-4 w-4" /> Limpar seleção
+              </Button>
+              <Button size="sm" onClick={generatePdf} disabled={generating} className="shadow-lg shadow-primary/30">
+                {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+                {generating ? "Gerando PDF…" : "Gerar PDF"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </SiteLayout>
   );
 }
