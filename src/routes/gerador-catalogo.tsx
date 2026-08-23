@@ -400,11 +400,11 @@ function CatalogGeneratorPage() {
           const imgY = y + (imgH - h) / 2;
 
           doc.saveGraphicsState();
-          // Clip path for rounded corners (8px radius = 2.1mm)
-          // We use 'null' for style to ensure no border is drawn by the rect itself
-          doc.roundedRect(imgX, imgY, w, h, 2.1, 2.1, "S");
+          // Use path for clipping to avoid any stroke artifacts
           doc.setLineWidth(0);
-          doc.setDrawColor(0, 0, 0, 0); // Transparent border
+          doc.setDrawColor(0, 0, 0, 0); 
+          // Draw the rounded rect as a path and clip
+          doc.roundedRect(imgX, imgY, w, h, 2.1, 2.1, "S");
           doc.clip();
           doc.addImage(img.dataUrl, imgX, imgY, w, h, undefined, "FAST");
           doc.restoreGraphicsState();
