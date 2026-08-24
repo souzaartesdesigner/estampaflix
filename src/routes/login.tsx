@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
-  validateSearch: (s: Record<string, unknown>) => ({
-    redirect: typeof s.redirect === "string" ? s.redirect : undefined,
-  }),
+  validateSearch: (s: Record<string, unknown>): { redirect?: string } =>
+    typeof s.redirect === "string" ? { redirect: s.redirect } : {},
+
   head: () => ({
     meta: [
       { title: "Entrar | Estampa Flix" },
