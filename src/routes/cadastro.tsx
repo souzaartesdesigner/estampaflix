@@ -120,7 +120,7 @@ function SignupPage() {
       title={
         <>
           {" "}
-          Crie sua <span className="text-[#0089ff]">conta.</span>{" "}
+          CRIE SUA <span className="text-[#0089ff]">CONTA.</span>{" "}
         </>
       }
       subtitle="Comece agora a explorar a Estampa Flix."
