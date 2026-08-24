@@ -11,8 +11,6 @@ const PERKS = [
   { icon: Crown, title: "Para sublimadores", desc: "Criado por quem entende do seu negócio." },
 ];
 
-
-
 export function AuthShell({
   title,
   subtitle,
@@ -41,10 +39,7 @@ export function AuthShell({
               "radial-gradient(ellipse 90% 45% at 25% 12%, var(--brand), transparent 65%), radial-gradient(ellipse 80% 40% at 85% 90%, var(--brand-2), transparent 70%)",
           }}
         />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 bg-background/80"
-        />
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 bg-background/80" />
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-10"
@@ -65,8 +60,7 @@ export function AuthShell({
           aria-hidden
           className="pointer-events-none absolute inset-y-0 right-0 hidden w-px lg:block"
           style={{
-            background:
-              "linear-gradient(180deg, transparent, oklch(0.635 0.208 253 / 0.35), transparent)",
+            background: "linear-gradient(180deg, transparent, oklch(0.635 0.208 253 / 0.35), transparent)",
           }}
         />
 
@@ -120,7 +114,6 @@ export function AuthShell({
         </div>
       </section>
 
-
       {/* Formulário */}
       <section
         className="relative flex w-full flex-1 items-center justify-center px-4 py-14 sm:px-10 lg:min-h-screen lg:px-16 lg:py-20"
@@ -134,21 +127,18 @@ export function AuthShell({
         </Link>
 
         <div className="w-full max-w-[440px]">
-
           <div className="mb-7 flex flex-col items-center text-center lg:hidden">
             <Link to="/">
               <img src={logo} alt={siteName} className="h-9 w-auto object-contain" />
             </Link>
           </div>
 
-
           <div className="relative overflow-hidden rounded-[26px] border border-border/60 bg-card/60 p-7 shadow-elegant backdrop-blur-2xl sm:p-9">
             <span
               aria-hidden
               className="pointer-events-none absolute inset-x-10 top-0 h-px"
               style={{
-                background:
-                  "linear-gradient(90deg, transparent, oklch(0.635 0.208 253 / 0.9), transparent)",
+                background: "linear-gradient(90deg, transparent, oklch(0.635 0.208 253 / 0.9), transparent)",
               }}
             />
             <span
@@ -157,7 +147,7 @@ export function AuthShell({
               style={{ background: "var(--brand)", opacity: 0.12 }}
             />
 
-            <div className="relative mb-6">
+            <div className="relative mb-6 text-center">
               <h1 className="font-display text-2xl font-bold tracking-tight sm:text-[27px]">{title}</h1>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{subtitle}</p>
             </div>
@@ -181,8 +171,7 @@ export function PasswordStrength({ password }: { password: string }) {
   ];
   const score = checks.filter((c) => c.ok).length;
   const label = score <= 1 ? "Fraca" : score === 2 ? "Razoável" : score === 3 ? "Boa" : "Forte";
-  const color =
-    score <= 1 ? "bg-destructive" : score === 2 ? "bg-warning" : score === 3 ? "bg-primary" : "bg-success";
+  const color = score <= 1 ? "bg-destructive" : score === 2 ? "bg-warning" : score === 3 ? "bg-primary" : "bg-success";
 
   return (
     <div className="rounded-xl border border-border/60 bg-surface/40 p-3.5">
@@ -212,10 +201,22 @@ export function GoogleButton({ onClick, label }: { onClick: () => void; label: s
       className="flex w-full items-center justify-center gap-2.5 rounded-xl border border-border/60 bg-surface/40 py-2.5 text-sm font-medium transition-colors hover:bg-surface hover:text-foreground"
     >
       <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden>
-        <path fill="#EA4335" d="M12 5c1.6 0 3.1.6 4.2 1.6l3.1-3.1C17.5 1.7 14.9.6 12 .6 7.3.6 3.3 3.3 1.4 7.3l3.6 2.8C6 7.1 8.8 5 12 5z" />
-        <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.4H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z" />
-        <path fill="#FBBC05" d="M5 14.1c-.3-.9-.5-1.9-.5-2.9s.2-2 .5-2.9L1.4 5.5C.5 7.3 0 9.3 0 11.4s.5 4.1 1.4 5.9l3.6-2.8z" />
-        <path fill="#34A853" d="M12 22.2c3.2 0 5.9-1.1 7.8-2.9l-3.7-2.9c-1 .7-2.4 1.1-4.1 1.1-3.2 0-5.9-2.1-6.9-5L1.4 15.3C3.3 19.3 7.3 22.2 12 22.2z" />
+        <path
+          fill="#EA4335"
+          d="M12 5c1.6 0 3.1.6 4.2 1.6l3.1-3.1C17.5 1.7 14.9.6 12 .6 7.3.6 3.3 3.3 1.4 7.3l3.6 2.8C6 7.1 8.8 5 12 5z"
+        />
+        <path
+          fill="#4285F4"
+          d="M23.5 12.3c0-.8-.1-1.7-.2-2.4H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"
+        />
+        <path
+          fill="#FBBC05"
+          d="M5 14.1c-.3-.9-.5-1.9-.5-2.9s.2-2 .5-2.9L1.4 5.5C.5 7.3 0 9.3 0 11.4s.5 4.1 1.4 5.9l3.6-2.8z"
+        />
+        <path
+          fill="#34A853"
+          d="M12 22.2c3.2 0 5.9-1.1 7.8-2.9l-3.7-2.9c-1 .7-2.4 1.1-4.1 1.1-3.2 0-5.9-2.1-6.9-5L1.4 15.3C3.3 19.3 7.3 22.2 12 22.2z"
+        />
       </svg>
       {label}
     </button>
