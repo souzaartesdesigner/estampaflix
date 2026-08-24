@@ -263,6 +263,7 @@ export function PasswordField({
     className="w-full rounded-xl border border-border/60 bg-surface/40 py-2.5 pl-11 pr-3.5 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary/60 focus:bg-surface focus:ring-2 focus:ring-primary/25"
   />
 </div>
+        />
         <button
           type="button"
           onClick={onToggle}
