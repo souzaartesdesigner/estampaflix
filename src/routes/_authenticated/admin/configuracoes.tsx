@@ -30,6 +30,8 @@ function Configuracoes() {
       // Usamos upsert para garantir que a linha única exista ou seja atualizada
       const { error } = await (supabase as any).from("site_settings").upsert({ ...form, id: true });
       if (error) throw error;
+      // Recarregar os dados após o salvamento para garantir que a UI reflita o estado do banco
+      refetch();
     },
     onSuccess: () => { toast.success("Configurações salvas"); qc.invalidateQueries({ queryKey: ["site-settings"] }); },
     onError: (e: any) => toast.error(e.message),
