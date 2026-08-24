@@ -32,7 +32,7 @@ export function SiteFooter() {
         <div>
           <h4 className="text-sm font-semibold">{t("footer.account")}</h4>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li><Link to="/auth" className="hover:text-foreground">{t("footer.signInCreate")}</Link></li>
+            <li><Link to="/login" className="hover:text-foreground">{t("footer.signInCreate")}</Link></li>
             <li><Link to="/minha-conta" search={{ tab: "profile" }} className="hover:text-foreground">{t("nav.myAccount")}</Link></li>
           </ul>
         </div>
