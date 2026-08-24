@@ -98,14 +98,17 @@ function LoginPage() {
           value={email}
           onChange={setEmail}
           autoComplete="email"
+          placeholder="seu@gmail.com"
           error={errors.email}
         />
+
         <PasswordField
           id="password"
           label="Senha"
           value={password}
           onChange={setPassword}
           autoComplete="current-password"
+          placeholder="Digite sua senha"
           error={errors.password}
           visible={show}
           onToggle={() => setShow((v) => !v)}
