@@ -229,6 +229,7 @@ export function PasswordField({
   value,
   onChange,
   autoComplete,
+  placeholder,
   error,
   visible,
   onToggle,
@@ -239,6 +240,7 @@ export function PasswordField({
   value: string;
   onChange: (v: string) => void;
   autoComplete: string;
+  placeholder?: string;
   error?: string;
   visible: boolean;
   onToggle: () => void;
@@ -256,6 +258,7 @@ export function PasswordField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           autoComplete={autoComplete}
+          placeholder={placeholder}
           autoFocus={autoFocus}
           aria-invalid={!!error}
           aria-describedby={error ? `${id}-error` : undefined}
@@ -303,6 +306,7 @@ export function TextField({
   value,
   onChange,
   autoComplete,
+  placeholder,
   error,
   autoFocus,
 }: {
@@ -312,6 +316,7 @@ export function TextField({
   value: string;
   onChange: (v: string) => void;
   autoComplete?: string;
+  placeholder?: string;
   error?: string;
   autoFocus?: boolean;
 }) {
@@ -326,6 +331,7 @@ export function TextField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         autoComplete={autoComplete}
+        placeholder={placeholder}
         autoFocus={autoFocus}
         aria-invalid={!!error}
         aria-describedby={error ? `${id}-error` : undefined}
