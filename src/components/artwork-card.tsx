@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { formatBRL } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { SmartImage } from "@/components/smart-image";
@@ -30,6 +30,7 @@ export type ArtworkCardData = {
 
 export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
   const { t, lang } = useI18n();
+  const navigate = useNavigate();
   const cart = useCart();
   const inCart = cart.contains(artwork.id);
   const title = tField(artwork as any, "title", lang) || artwork.title;
@@ -129,15 +130,17 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
               {cats.slice(0, 2).map((c, idx) => (
                 <span key={c!.slug}>
                   {idx > 0 && " · "}
-                  <Link
-                    to="/catalogo/$slug"
-                    params={{ slug: c!.slug }}
-                    search={{ page: 1 } as any}
+                  <button
+                    type="button"
                     className="hover:text-primary transition-colors"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      navigate({ to: "/catalogo/$slug", params: { slug: c!.slug }, search: { page: 1 } });
+                    }}
                   >
                     {tField(c as any, "name", lang) || c!.name}
-                  </Link>
+                  </button>
                 </span>
               ))}
             </div>
