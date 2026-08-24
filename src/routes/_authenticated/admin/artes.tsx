@@ -53,7 +53,7 @@ function Artes() {
     queryFn: async () => {
       let query = supabase
         .from("artworks")
-        .select("id,slug,title,description,category_id,preview_url,file_path,file_format,colors,price_cents,license_type,is_published,is_featured,is_trending,download_count,view_count,created_at,updated_at,credit_cost,gallery_urls,translations,featured_order,seo_title,seo_description,seo_keyword,product_code,alt_text,noindex,tech_specs,usage_instructions,license_text, categories!artworks_category_id_fkey(name), artwork_categories(category_id)", { count: "exact" });
+        .select("id,slug,title,description,category_id,preview_url,file_format,colors,price_cents,license_type,is_published,is_featured,is_trending,download_count,view_count,created_at,updated_at,credit_cost,gallery_urls,translations,featured_order,seo_title,seo_description,seo_keyword,product_code,alt_text,noindex,tech_specs,usage_instructions,license_text, categories!artworks_category_id_fkey(name), artwork_categories(category_id)", { count: "exact" });
 
       if (search) {
         query = query.or(`title.ilike.%${search}%,product_code.ilike.%${search}%,slug.ilike.%${search}%`);
