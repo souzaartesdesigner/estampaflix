@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import { adminGetArtworkExternalUrl } from "@/lib/admin-artworks.functions";
+import { adminGetArtworkExternalUrl, adminGetArtworkFilePath } from "@/lib/admin-artworks.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { slugify, brlToCents, centsToBRLInput } from "@/lib/format";
 import { FORMAT_SUGGESTIONS, normalizeFormat } from "@/features/catalog/catalog-constants";
