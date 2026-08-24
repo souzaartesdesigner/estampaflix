@@ -20,6 +20,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as LicencaRouteImport } from './routes/licenca'
 import { Route as GeradorCatalogoRouteImport } from './routes/gerador-catalogo'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
+import { Route as EsqueciASenhaRouteImport } from './routes/esqueci-a-senha'
 import { Route as DownloadsRouteImport } from './routes/downloads'
 import { Route as CobrancaRouteImport } from './routes/cobranca'
 import { Route as CadastroRouteImport } from './routes/cadastro'
@@ -115,6 +116,11 @@ const GeradorCatalogoRoute = GeradorCatalogoRouteImport.update({
 const FavoritosRoute = FavoritosRouteImport.update({
   id: '/favoritos',
   path: '/favoritos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EsqueciASenhaRoute = EsqueciASenhaRouteImport.update({
+  id: '/esqueci-a-senha',
+  path: '/esqueci-a-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DownloadsRoute = DownloadsRouteImport.update({
@@ -345,6 +351,7 @@ export interface FileRoutesByFullPath {
   '/cadastro': typeof CadastroRoute
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
+  '/esqueci-a-senha': typeof EsqueciASenhaRoute
   '/favoritos': typeof FavoritosRoute
   '/gerador-catalogo': typeof GeradorCatalogoRoute
   '/licenca': typeof LicencaRoute
@@ -398,6 +405,7 @@ export interface FileRoutesByTo {
   '/cadastro': typeof CadastroRoute
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
+  '/esqueci-a-senha': typeof EsqueciASenhaRoute
   '/favoritos': typeof FavoritosRoute
   '/gerador-catalogo': typeof GeradorCatalogoRoute
   '/licenca': typeof LicencaRoute
@@ -452,6 +460,7 @@ export interface FileRoutesById {
   '/cadastro': typeof CadastroRoute
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
+  '/esqueci-a-senha': typeof EsqueciASenhaRoute
   '/favoritos': typeof FavoritosRoute
   '/gerador-catalogo': typeof GeradorCatalogoRoute
   '/licenca': typeof LicencaRoute
@@ -507,6 +516,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/cobranca'
     | '/downloads'
+    | '/esqueci-a-senha'
     | '/favoritos'
     | '/gerador-catalogo'
     | '/licenca'
@@ -560,6 +570,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/cobranca'
     | '/downloads'
+    | '/esqueci-a-senha'
     | '/favoritos'
     | '/gerador-catalogo'
     | '/licenca'
@@ -613,6 +624,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/cobranca'
     | '/downloads'
+    | '/esqueci-a-senha'
     | '/favoritos'
     | '/gerador-catalogo'
     | '/licenca'
@@ -668,6 +680,7 @@ export interface RootRouteChildren {
   CadastroRoute: typeof CadastroRoute
   CobrancaRoute: typeof CobrancaRoute
   DownloadsRoute: typeof DownloadsRoute
+  EsqueciASenhaRoute: typeof EsqueciASenhaRoute
   FavoritosRoute: typeof FavoritosRoute
   GeradorCatalogoRoute: typeof GeradorCatalogoRoute
   LicencaRoute: typeof LicencaRoute
@@ -771,6 +784,13 @@ declare module '@tanstack/react-router' {
       path: '/favoritos'
       fullPath: '/favoritos'
       preLoaderRoute: typeof FavoritosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/esqueci-a-senha': {
+      id: '/esqueci-a-senha'
+      path: '/esqueci-a-senha'
+      fullPath: '/esqueci-a-senha'
+      preLoaderRoute: typeof EsqueciASenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/downloads': {
@@ -1136,6 +1156,7 @@ const rootRouteChildren: RootRouteChildren = {
   CadastroRoute: CadastroRoute,
   CobrancaRoute: CobrancaRoute,
   DownloadsRoute: DownloadsRoute,
+  EsqueciASenhaRoute: EsqueciASenhaRoute,
   FavoritosRoute: FavoritosRoute,
   GeradorCatalogoRoute: GeradorCatalogoRoute,
   LicencaRoute: LicencaRoute,
