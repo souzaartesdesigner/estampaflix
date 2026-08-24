@@ -213,7 +213,7 @@ function CatalogGeneratorPage() {
       const pageW = doc.internal.pageSize.getWidth();
       const pageH = doc.internal.pageSize.getHeight();
       const margin = 8;
-      const gap = 4;
+      const gap = 8; // Increased from 4 to 8
       const captionH = 7;
       const cellW = (pageW - margin * 2 - gap * (cols - 1)) / cols;
       const imgH = cellW;
@@ -387,7 +387,7 @@ function CatalogGeneratorPage() {
         
         // If not premium, distribute rows vertically
         let currentGapY = gap;
-        if (!isPremium && pageItems.length > 0) {
+        if (pageItems.length > 0) {
           const rowsOnPage = Math.ceil(pageItems.length / cols);
           const contentH = rowsOnPage * cellH + (rowsOnPage - 1) * gap;
           if (availableH > contentH) {
@@ -923,7 +923,7 @@ function CatalogGeneratorPage() {
                       {CLICK_NOTICE}
                     </p>
                   )}
-                  <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
+                  <div className="grid gap-6" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
                     {selectedList.map((a) => (
                       <figure key={a.id} className="text-center">
                         <div className="aspect-square w-full overflow-hidden rounded-[8px]">
