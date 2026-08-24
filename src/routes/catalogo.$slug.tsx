@@ -33,7 +33,7 @@ export const Route = createFileRoute("/catalogo/$slug")({
   },
   head: (args) => {
     const { slug } = args.params;
-    const categorySeo = args.context.queryClient.getQueryData<any>(["category-seo", slug]);
+    const categorySeo = (args as any).context?.queryClient?.getQueryData?.(["category-seo", slug]);
     
     const title = categorySeo?.seo_title || `${slug.charAt(0).toUpperCase() + slug.slice(1)} — Estampa Flix`;
     const description = categorySeo?.seo_description || "Explore milhares de artes digitais prontas para sublimação, DTF e estamparia. Filtre por categoria, formato e cor e baixe em alta resolução.";
