@@ -103,7 +103,7 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
       if (msg.includes("daily_limit_reached")) toast.error("Você atingiu o limite de 5 downloads gratuitos hoje. Assine um plano para downloads ilimitados.");
       else if (msg.includes("no_credits")) toast.error(t("product.errNoCredits"));
       else if (msg.includes("no_active_subscription")) toast.error(t("product.errNoSub"));
-      else if (msg.includes("not_authenticated")) { toast.error(t("product.errLogin")); navigate({ to: "/auth" }); }
+      else if (msg.includes("not_authenticated")) { toast.error(t("product.errLogin")); navigate({ to: "/login" }); }
       else toast.error(msg || t("account.errDownload"));
     },
   });
@@ -112,7 +112,7 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
   const buyMut = useMutation({
     mutationFn: async () => {
       if (!session) {
-        navigate({ to: "/auth" });
+        navigate({ to: "/login" });
         throw new Error("not_authenticated");
       }
       trackBeginCheckout([artwork], artwork.price_cents);
@@ -149,7 +149,7 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
           <>
             <Button
               onClick={() => {
-                if (!session) { navigate({ to: "/auth" }); return; }
+                if (!session) { navigate({ to: "/login" }); return; }
                 if (freeLimitReached) { setPlanDialogOpen(true); return; }
                 downloadMut.mutate();
               }}

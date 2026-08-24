@@ -318,3 +318,16 @@ div[style*="Edit with Lovable"],
 .whatsapp-animated-btn:active {
   transform: translate(2px, 2px);
 }
+
+@keyframes ef-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@utility animate-fade-in {
+  animation: ef-fade-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in { animation: none; }
+}
