@@ -14,7 +14,10 @@ export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
       { title: "Entrar | Estampa Flix" },
-      { name: "description", content: "Acesse sua conta na Estampa Flix para baixar artes, ver pedidos e gerenciar sua assinatura." },
+      {
+        name: "description",
+        content: "Acesse sua conta na Estampa Flix para baixar artes, ver pedidos e gerenciar sua assinatura.",
+      },
       { name: "robots", content: "noindex" },
       { property: "og:title", content: "Entrar | Estampa Flix" },
       { property: "og:description", content: "Acesse sua conta na Estampa Flix." },
@@ -71,7 +74,12 @@ function LoginPage() {
 
   return (
     <AuthShell
-      title="Entre na sua conta."
+      title={
+        <>
+          {" "}
+          Bem-vindo <span className="text-[#0089ff]">de volta.</span>{" "}
+        </>
+      }
       subtitle="Acesse suas artes, downloads e benefícios da Estampa Flix."
       footer={
         <>
