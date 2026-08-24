@@ -11,7 +11,10 @@ export const Route = createFileRoute("/cadastro")({
   head: () => ({
     meta: [
       { title: "Criar conta | Estampa Flix" },
-      { name: "description", content: "Crie sua conta gratuita na Estampa Flix e comece a explorar artes digitais para sublimação e DTF." },
+      {
+        name: "description",
+        content: "Crie sua conta gratuita na Estampa Flix e comece a explorar artes digitais para sublimação e DTF.",
+      },
       { name: "robots", content: "noindex" },
       { property: "og:title", content: "Criar conta | Estampa Flix" },
       { property: "og:description", content: "Crie sua conta gratuita na Estampa Flix." },
@@ -101,7 +104,8 @@ function SignupPage() {
             <MailCheck className="h-7 w-7" />
           </div>
           <p className="text-sm text-muted-foreground">
-            Confirme seu e-mail <span className="font-medium text-foreground">{email}</span> para acessar a Estampa Flix.
+            Confirme seu e-mail <span className="font-medium text-foreground">{email}</span> para acessar a Estampa
+            Flix.
           </p>
           <Button asChild className="w-full bg-gradient-brand text-brand-foreground shadow-brand">
             <Link to="/login">Ir para o login</Link>
@@ -113,7 +117,12 @@ function SignupPage() {
 
   return (
     <AuthShell
-      title="Crie sua conta."
+      title={
+        <>
+          {" "}
+          Crie sua <span className="text-[#0089ff]">conta.</span>{" "}
+        </>
+      }
       subtitle="Comece agora a explorar a Estampa Flix."
       footer={
         <>
@@ -157,7 +166,10 @@ function SignupPage() {
             autoComplete="email"
             error={errors.email}
           />
-          <Button type="submit" className="w-full bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
+          <Button
+            type="submit"
+            className="w-full bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
+          >
             Continuar
           </Button>
 
