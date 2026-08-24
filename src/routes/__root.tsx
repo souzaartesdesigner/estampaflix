@@ -141,8 +141,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
     const title = (s?.seo_title ?? "").trim() || FALLBACK_TITLE;
     const description = (s?.seo_description ?? "").trim() || FALLBACK_DESC;
+    const siteName = (s?.site_name ?? "").trim() || "Estampa Flix";
+    
     return {
-      siteName: (s?.site_name ?? "").trim() || "Estampa Flix",
+      siteName,
       title,
       description,
       keywords: (s?.seo_keywords ?? "").trim() || null,
