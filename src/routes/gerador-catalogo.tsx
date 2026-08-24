@@ -265,7 +265,7 @@ function CatalogGeneratorPage() {
         const footerY = pageH - 15;
         doc.setFontSize(9);
         doc.setTextColor(tr, tg, tb);
-        doc.text("Siga nossas redes e faça seu pedido!", pageW / 2, footerY - 8, { align: "center" });
+        doc.text("Siga nossas redes e faça seu pedido!", pageW / 2, footerY - 3, { align: "center" });
 
         const buttons = [];
         if (showWaButton && whatsapp) {
@@ -941,7 +941,7 @@ function CatalogGeneratorPage() {
 
                   {isPremium && (showWaButton || showInstaButton) && (
                     <div className="mt-8 border-t border-border/30 pt-6 text-center">
-                      <p className="mb-4 text-xs font-medium" style={{ color: textColor }}>
+                      <p className="mb-1 text-xs font-medium" style={{ color: textColor }}>
                         Siga nossas redes e faça seu pedido!
                       </p>
                       <div className="flex items-center justify-center gap-4">
