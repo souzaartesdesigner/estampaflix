@@ -149,7 +149,7 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
           <>
             <Button
               onClick={() => {
-                if (!session) { navigate({ to: "/auth" }); return; }
+                if (!session) { navigate({ to: "/login" }); return; }
                 if (freeLimitReached) { setPlanDialogOpen(true); return; }
                 downloadMut.mutate();
               }}
