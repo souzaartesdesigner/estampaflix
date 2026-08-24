@@ -22,7 +22,7 @@ export function FavoriteButton({
     e.preventDefault();
     e.stopPropagation();
     if (!isAuthenticated) {
-      nav({ to: "/login" });
+      nav({ to: "/auth" });
       return;
     }
     toggle(artworkId);

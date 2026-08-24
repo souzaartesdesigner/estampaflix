@@ -7,7 +7,7 @@ import { useRouterState } from "@tanstack/react-router";
 export const Route = createFileRoute("/_authenticated/admin")({
   beforeLoad: async ({ context }) => {
     const user = (context as any).user;
-    if (!user) throw redirect({ to: "/login" });
+    if (!user) throw redirect({ to: "/auth" });
     const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id).eq("role", "admin");
     if (!data || data.length === 0) throw redirect({ to: "/minha-conta", search: { tab: "profile" } });
   },

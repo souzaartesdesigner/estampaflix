@@ -146,10 +146,10 @@ export function SiteHeader() {
 
             <div className="flex items-center gap-1 sm:gap-2">
               <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-                <Link to="/login">{t("nav.signIn")}</Link>
+                <Link to="/auth">{t("nav.signIn")}</Link>
               </Button>
               <Button asChild variant="secondary" size="sm" className="inline-flex sm:hidden border-border/40 bg-surface/50 hover:bg-surface hover:text-primary">
-                <Link to="/login">{t("nav.signIn")}</Link>
+                <Link to="/auth">{t("nav.signIn")}</Link>
               </Button>
               <Button asChild size="sm" className="bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90">
                 <Link to="/planos">{t("nav.subscribe")}</Link>

@@ -312,9 +312,9 @@ function ProfilePanel({ userId, email }: { userId: string; email: string }) {
     toast.success("Senha alterada com sucesso!");
   }
 
-  const initials = (fullName || email || "?").split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
-
   if (isLoading) return <div className="rounded-xl border border-border/60 bg-card p-6 text-sm text-muted-foreground">Carregando...</div>;
+
+  const initials = (fullName || email || "?").split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -391,7 +391,7 @@ function ProfilePanel({ userId, email }: { userId: string; email: string }) {
           {changingPw ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Alterando...</> : "Alterar senha"}
         </Button>
         <p className="mt-3 text-xs text-muted-foreground">
-          Esqueceu sua senha atual? <Link to="/esqueci-a-senha" className="text-primary hover:underline">Use "Esqueci minha senha"</Link> na tela de login.
+          Esqueceu sua senha atual? <Link to="/auth" className="text-primary hover:underline">Use "Esqueci minha senha"</Link> na tela de login.
         </p>
       </form>
     </div>
