@@ -27,7 +27,8 @@ function Configuracoes() {
 
   const save = useMutation({
     mutationFn: async () => {
-      const { error } = await (supabase as any).from("site_settings").update(form).eq("id", true);
+      // Usamos upsert para garantir que a linha única exista ou seja atualizada
+      const { error } = await (supabase as any).from("site_settings").upsert({ ...form, id: true });
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Configurações salvas"); qc.invalidateQueries({ queryKey: ["site-settings"] }); },
