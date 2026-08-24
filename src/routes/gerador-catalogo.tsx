@@ -493,8 +493,48 @@ function CatalogGeneratorPage() {
         </section>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
-          <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto lg:pr-2 custom-scrollbar">
+          <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto lg:pr-2 lg:pb-[5px] custom-scrollbar">
+            {!isPremium && (
+              <div className="rounded-2xl border border-primary/40 bg-primary/5 p-4 shadow-brand">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <h2 className="text-sm font-semibold text-foreground">Vantagens de ser Premium no Gerador</h2>
+                </div>
+                <ul className="mt-3 space-y-2 text-xs text-muted-foreground">
+                  <li className="flex gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Catálogo com a sua logo, sem marca d'água da Estampa Flix.
+                  </li>
+                  <li className="flex gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Cores de fundo e de texto personalizadas com a sua identidade.
+                  </li>
+                  <li className="flex gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Estampas clicáveis com link de venda direto para o seu WhatsApp.
+                  </li>
+                  <li className="flex gap-2">
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    Botões sociais clicáveis (WhatsApp e Instagram) no rodapé.
+                  </li>
+                </ul>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="mt-4 w-full border-primary/50 text-[11px] font-bold text-primary hover:bg-primary/10"
+                >
+                  <a href={exemploCatalogo.url} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-4 w-4" />
+                    Ver Exemplo de Catálogo Premium
+                  </a>
+                </Button>
+                <Button asChild className="mt-2 w-full bg-gradient-brand text-brand-foreground hover:opacity-90">
+                  <Link to="/planos">Quero ser Premium</Link>
+                </Button>
+              </div>
+            )}
             <div
+
               className={cn(
                 "rounded-2xl border border-border/50 bg-card p-4 transition-opacity",
                 !isPremium && "opacity-60",
@@ -759,46 +799,9 @@ function CatalogGeneratorPage() {
               </Button>
             </div>
 
-            {!isPremium && (
-              <div className="rounded-2xl border border-primary/40 bg-primary/5 p-4 shadow-brand">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  <h2 className="text-sm font-semibold text-foreground">Vantagens de ser Premium no Gerador</h2>
-                </div>
-                <ul className="mt-3 space-y-2 text-xs text-muted-foreground">
-                  <li className="flex gap-2">
-                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-                    Catálogo com a sua logo, sem marca d'água da Estampa Flix.
-                  </li>
-                  <li className="flex gap-2">
-                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-                    Cores de fundo e de texto personalizadas com a sua identidade.
-                  </li>
-                  <li className="flex gap-2">
-                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-                    Estampas clicáveis com link de venda direto para o seu WhatsApp.
-                  </li>
-                  <li className="flex gap-2">
-                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
-                    Botões sociais clicáveis (WhatsApp e Instagram) no rodapé.
-                  </li>
-                </ul>
-                <Button
-                  asChild
-                  variant="outline"
-                  className="mt-4 w-full border-primary/50 text-[11px] font-bold text-primary hover:bg-primary/10"
-                >
-                  <a href={exemploCatalogo.url} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="h-4 w-4" />
-                    Ver Exemplo de Catálogo Premium
-                  </a>
-                </Button>
-                <Button asChild className="mt-2 w-full bg-gradient-brand text-brand-foreground hover:opacity-90">
-                  <Link to="/planos">Quero ser Premium</Link>
-                </Button>
-              </div>
-            )}
+            <div className="h-[5px]" aria-hidden />
           </aside>
+
 
           <section>
             <div className="mb-3 flex flex-wrap items-center gap-2">
