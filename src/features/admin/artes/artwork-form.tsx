@@ -72,19 +72,25 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
     if (editing?.category_id) all.add(editing.category_id);
     return Array.from(all);
   });
-  const [sourceType, setSourceType] = useState<"upload" | "external">(
-    editing && !editing.file_path ? "external" : "upload"
-  );
+  const [sourceType, setSourceType] = useState<"upload" | "external">("upload");
 
-  // O link externo não é legível na tabela pública; só admins podem obtê-lo via RPC.
+  // Nem o link externo nem o caminho do arquivo são legíveis na tabela pública;
+  // só admins podem obtê-los via RPC protegida.
   useEffect(() => {
     if (!isEdit || !editing?.id) return;
     let cancelled = false;
     (async () => {
-      const res = await adminGetArtworkExternalUrl({ data: { artworkId: editing.id } }).catch(() => null);
-      if (cancelled || !res?.url) return;
-      setForm((f: any) => ({ ...f, external_url: res.url as string }));
-      setSourceType("external");
+      const [ext, file] = await Promise.all([
+        adminGetArtworkExternalUrl({ data: { artworkId: editing.id } }).catch(() => null),
+        adminGetArtworkFilePath({ data: { artworkId: editing.id } }).catch(() => null),
+      ]);
+      if (cancelled) return;
+      setForm((f: any) => ({
+        ...f,
+        external_url: ext?.url ?? f.external_url,
+        file_path: file?.path ?? f.file_path,
+      }));
+      setSourceType(ext?.url ? "external" : "upload");
     })();
     return () => {
       cancelled = true;
