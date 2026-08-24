@@ -5,11 +5,12 @@ import logoAsset from "@/assets/estampa-flix-logo.png.asset.json";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 
 const PERKS = [
-  "Alta resolução",
-  "Uso comercial permitido",
-  "Download imediato",
-  "Novas artes toda semana",
+  "Artes em alta resolução",
+  "Downloads rápidos",
+  "Novas artes regularmente",
+  "Conteúdo para sublimadores",
 ];
+
 
 export function AuthShell({
   title,
@@ -27,66 +28,71 @@ export function AuthShell({
   const siteName = settings?.site_name ?? "Estampa Flix";
 
   return (
-    <main className="relative flex min-h-screen w-full flex-col overflow-hidden lg:flex-row">
-      {/* Ambient light */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 50% at 20% 15%, var(--brand), transparent 65%), radial-gradient(ellipse 50% 45% at 85% 85%, var(--brand-2), transparent 70%)",
-          opacity: 0.16,
-        }}
-      />
-
-      {/* Painel visual */}
-      <section className="relative hidden w-full flex-col justify-between overflow-hidden border-r border-border/40 p-10 lg:flex lg:w-[52%] xl:p-14">
+    <main className="relative flex min-h-screen w-full flex-col lg:flex-row">
+      {/* Painel visual (showcase) — ~34% no desktop */}
+      <section className="relative flex w-full shrink-0 flex-col justify-start gap-8 overflow-hidden border-b border-border/40 px-6 py-10 lg:w-[34%] lg:min-h-screen lg:border-b-0 lg:border-r lg:border-r-primary/15 lg:px-10 lg:py-10 xl:px-12">
+        {/* Background atual, restrito ao painel esquerdo */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0"
+          className="pointer-events-none absolute inset-0 -z-10 bg-background"
           style={{
             backgroundImage:
-              "linear-gradient(oklch(1 0 0 / 0.5) 1px, transparent 1px), linear-gradient(90deg, oklch(1 0 0 / 0.5) 1px, transparent 1px)",
-            backgroundSize: "56px 56px",
-            opacity: 0.04,
-            maskImage: "radial-gradient(ellipse at 30% 40%, black, transparent 75%)",
+              "radial-gradient(ellipse 90% 45% at 25% 12%, var(--brand), transparent 65%), radial-gradient(ellipse 80% 40% at 85% 90%, var(--brand-2), transparent 70%)",
           }}
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute -left-24 top-1/4 h-96 w-96 rounded-full blur-[120px]"
-          style={{ background: "var(--brand)", opacity: 0.22 }}
+          className="pointer-events-none absolute inset-0 -z-10 bg-background/80"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            backgroundImage:
+              "linear-gradient(oklch(1 0 0 / 0.5) 1px, transparent 1px), linear-gradient(90deg, oklch(1 0 0 / 0.5) 1px, transparent 1px)",
+            backgroundSize: "48px 48px",
+            opacity: 0.035,
+            maskImage: "radial-gradient(ellipse at 35% 35%, black, transparent 78%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -left-32 top-1/3 -z-10 h-72 w-72 rounded-full blur-[130px]"
+          style={{ background: "var(--brand)", opacity: 0.18 }}
+        />
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 right-0 hidden w-px lg:block"
+          style={{
+            background:
+              "linear-gradient(180deg, transparent, oklch(0.635 0.208 253 / 0.35), transparent)",
+          }}
         />
 
         <Link to="/" className="relative inline-flex w-fit items-center">
-          <img src={logo} alt={siteName} className="h-10 w-auto object-contain" />
+          <img src={logo} alt={siteName} className="h-9 w-auto object-contain" />
         </Link>
 
-        <div className="relative max-w-xl animate-fade-in">
-          <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
-            <Sparkles className="h-3.5 w-3.5" /> Artes digitais para sublimação
+        <div className="relative max-w-full animate-fade-in">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-primary">
+            <Sparkles className="h-3 w-3" /> Artes digitais para sublimação
           </span>
-          <h2 className="mt-6 font-display text-4xl font-bold leading-[1.1] tracking-tight xl:text-5xl">
+          <h2 className="mt-5 max-w-full font-display text-[clamp(1.6rem,2.2vw,2.3rem)] font-bold leading-[1.12] tracking-tight">
             Suas artes.
             <br />
             Sua produção.
             <br />
-            <span className="text-primary" style={{ textShadow: "0 0 34px oklch(0.635 0.208 253 / 0.5)" }}>
-              Mais possibilidades.
-            </span>
+            <span className="text-primary">Mais possibilidades.</span>
           </h2>
-          <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground">
-            Encontre artes prontas para sublimação, DTF e produção criativa em um só lugar.
+          <p className="mt-4 max-w-[34ch] text-sm leading-relaxed text-muted-foreground">
+            Encontre artes prontas para transformar suas ideias em produtos incríveis.
           </p>
 
-          <ul className="mt-8 grid max-w-md grid-cols-2 gap-3">
+          <ul className="mt-7 grid max-w-[34ch] gap-2.5">
             {PERKS.map((p) => (
-              <li
-                key={p}
-                className="flex items-center gap-2.5 rounded-xl border border-border/50 bg-surface/40 px-3.5 py-3 text-sm text-foreground/90 backdrop-blur-xl"
-              >
-                <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-primary/15 text-primary">
-                  <Check className="h-3 w-3" />
+              <li key={p} className="flex items-center gap-2.5 text-sm text-foreground/90">
+                <span className="grid h-4.5 w-4.5 shrink-0 place-items-center rounded-full bg-primary/15 text-primary">
+                  <Check className="h-2.5 w-2.5" />
                 </span>
                 {p}
               </li>
@@ -94,10 +100,11 @@ export function AuthShell({
           </ul>
         </div>
 
-        <p className="relative text-xs text-muted-foreground">
-          © {new Date().getFullYear()} {siteName}. Todos os direitos reservados.
+        <p className="relative mt-auto hidden text-xs text-muted-foreground lg:block">
+          © {new Date().getFullYear()} {siteName}.
         </p>
       </section>
+
 
       {/* Formulário */}
       <section className="relative flex w-full flex-1 items-center justify-center px-4 py-10 sm:px-8">
