@@ -33,16 +33,25 @@ export const Route = createFileRoute("/catalogo/$slug")({
   },
   head: (args) => {
     const { slug } = args.params;
-    const search = (args as any).search as CatalogSearch;
+    const categorySeo = args.context.queryClient.getQueryData<any>(["category-seo", slug]);
     
+    const title = categorySeo?.seo_title || `${slug.charAt(0).toUpperCase() + slug.slice(1)} — Estampa Flix`;
+    const description = categorySeo?.seo_description || "Explore milhares de artes digitais prontas para sublimação, DTF e estamparia. Filtre por categoria, formato e cor e baixe em alta resolução.";
+    const ogImage = categorySeo?.cover_url || "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/8a36e287-6af7-46bc-9720-aead028ba808/id-preview-91e266b7--bb6fa90b-8f5d-47be-8009-cbab5c7a45fa.lovable.app-1784641090696.png";
+
     return {
       meta: [
-        { title: `${slug.charAt(0).toUpperCase() + slug.slice(1)} — Estampa Flix` },
-        { name: "description", content: "Explore milhares de artes digitais prontas para sublimação, DTF e estamparia. Filtre por categoria, formato e cor e baixe em alta resolução." },
-        { property: "og:title", content: `${slug.charAt(0).toUpperCase() + slug.slice(1)} — Estampa Flix` },
-        { property: "og:description", content: "Milhares de artes em 300 DPI para sublimação e DTF. Filtre por categoria, formato e cor e baixe com licença comercial." },
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
         { property: "og:type", content: "website" },
         { property: "og:url", content: `https://estampaflix.com/catalogo/${slug}` },
+        { property: "og:image", content: ogImage },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+        { name: "twitter:image", content: ogImage },
       ],
       links: [{ rel: "canonical", href: `https://estampaflix.com/catalogo/${slug}` }],
     };
