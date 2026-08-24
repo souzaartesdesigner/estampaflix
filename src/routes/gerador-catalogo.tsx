@@ -380,26 +380,13 @@ function CatalogGeneratorPage() {
         const startY = y;
         const availableH = pageH - margin - 15 - startY; // 15mm reserved for footer
 
-        // Calculate layout dynamically
-        let targetRows = 0;
-        const hasHeaderContent = (isPremium && logo && logoMeta) || showNotice;
-        const hasFooterContent = !isPremium || (isPremium && (showWaButton || showInstaButton));
-
-        if (cols === 4) {
-          targetRows = 5; // User wants 20 items (4x5)
-        } else if (cols === 3) {
-          if (!hasHeaderContent && !hasFooterContent) {
-            targetRows = 4; // User wants 12 items (3x4) when "clean"
-          } else {
-            // Default fit for 3 columns with header/footer
-            targetRows = Math.floor((availableH + gap) / (pageW / cols + captionH + gap));
-            if (targetRows < 1) targetRows = 1;
-          }
-        } else {
-          targetRows = Math.floor((availableH + gap) / (pageW / cols + captionH + gap));
-        }
-
+        // Calculate layout dynamically based on available height
         const cellW = (pageW - margin * 2 - gap * (cols - 1)) / cols;
+        // In a grid, we usually want images to be roughly square or consistent ratio
+        // We'll use the same formula for targetRows regardless of column count
+        let targetRows = Math.floor((availableH + gap) / (cellW + captionH + gap));
+        if (targetRows < 1) targetRows = 1;
+
         const currentCellH = (availableH - (targetRows - 1) * gap) / targetRows;
         const currentImgH = currentCellH - captionH;
         const itemsPerPage = targetRows * cols;
@@ -1021,7 +1008,7 @@ function CatalogGeneratorPage() {
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border/50 bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
           <div className="container mx-auto flex flex-wrap items-center justify-between gap-3 px-4 py-3">
             <p className="text-sm text-muted-foreground">
-              <span className="font-semibold text-primary">{selectedCount}</span> arte(s) selecionada(s) no total
+              <span className="font-semibold text-primary">{selectedCount}</span> arte(s) selecionada(s) no total {"\u2063"}
             </p>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" onClick={() => setSelected({})}>
