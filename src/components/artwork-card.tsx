@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { formatBRL } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { SmartImage } from "@/components/smart-image";
