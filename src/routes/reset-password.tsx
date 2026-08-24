@@ -110,7 +110,7 @@ function Reset() {
                 </div>
               </div>
               <Button asChild className="w-full bg-gradient-brand text-brand-foreground shadow-brand">
-                <Link to="/auth">Solicitar novo link</Link>
+                <Link to="/esqueci-a-senha">Solicitar novo link</Link>
               </Button>
             </div>
           )}
