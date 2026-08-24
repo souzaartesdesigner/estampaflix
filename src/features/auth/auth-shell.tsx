@@ -247,22 +247,22 @@ export function PasswordField({
   autoFocus?: boolean;
 }) {
   return (
-    <div className="relative">
-  <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/30" />
-
-  <input
-    id={id}
-    type={type}
-    value={value}
-    onChange={(e) => onChange(e.target.value)}
-    autoComplete={autoComplete}
-    placeholder={placeholder}
-    autoFocus={autoFocus}
-    aria-invalid={!!error}
-    aria-describedby={error ? `${id}-error` : undefined}
-    className="w-full rounded-xl border border-border/60 bg-surface/40 py-2.5 pl-11 pr-3.5 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary/60 focus:bg-surface focus:ring-2 focus:ring-primary/25"
-  />
-</div>
+    <div className="grid gap-1.5">
+      <label htmlFor={id} className="text-sm font-medium">
+        {label}
+      </label>
+      <div className="relative">
+        <input
+          id={id}
+          type={visible ? "text" : "password"}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          autoComplete={autoComplete}
+          placeholder={placeholder}
+          autoFocus={autoFocus}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${id}-error` : undefined}
+          className="w-full rounded-xl border border-border/60 bg-surface/40 py-2.5 pl-3.5 pr-11 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary/60 focus:bg-surface focus:ring-2 focus:ring-primary/25"
         />
         <button
           type="button"
