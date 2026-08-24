@@ -130,15 +130,17 @@ export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
               {cats.slice(0, 2).map((c, idx) => (
                 <span key={c!.slug}>
                   {idx > 0 && " · "}
-                  <Link
-                    to="/catalogo/$slug"
-                    params={{ slug: c!.slug }}
-                    search={{ page: 1 } as any}
+                  <button
+                    type="button"
                     className="hover:text-primary transition-colors"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      navigate({ to: "/catalogo/$slug", params: { slug: c!.slug }, search: { page: 1 } });
+                    }}
                   >
                     {tField(c as any, "name", lang) || c!.name}
-                  </Link>
+                  </button>
                 </span>
               ))}
             </div>
