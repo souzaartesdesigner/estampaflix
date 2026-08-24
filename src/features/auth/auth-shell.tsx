@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { Sparkles, ArrowLeft, ImageIcon, Zap, Star, Crown, ShieldCheck } from "lucide-react";
+import { Sparkles, ArrowLeft, ImageIcon, Zap, Star, Crown, ShieldCheck, Mail, Lock } from "lucide-react";
 import logoAsset from "@/assets/estampa-flix-logo.png.asset.json";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 
