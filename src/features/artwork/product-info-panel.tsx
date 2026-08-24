@@ -10,7 +10,7 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
   const fmt = artwork.file_format as string | null;
   const fmtLabel = formatLabel(fmt);
   const fmtDesc = formatDescription(fmt);
-  const code = String(artwork.id ?? "").split("-")[0]?.toUpperCase();
+  const sku = artwork.product_code?.trim();
 
   const rows: Row[] = [];
 
@@ -97,8 +97,8 @@ export function ProductInfoPanel({ artwork }: { artwork: any }) {
     });
   }
 
-  if (code) {
-    rows.push({ icon: <Hash className="h-4 w-4" />, label: "Código do produto", value: code });
+  if (sku) {
+    rows.push({ icon: <Hash className="h-4 w-4" />, label: "Código do produto", value: sku });
   }
 
   const tags: any[] = artwork.artwork_tags?.map((at: any) => at.tags).filter(Boolean) ?? [];
