@@ -16,6 +16,7 @@ import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PlanosRouteImport } from './routes/planos'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as LicencaRouteImport } from './routes/licenca'
 import { Route as GeradorCatalogoRouteImport } from './routes/gerador-catalogo'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
@@ -93,6 +94,11 @@ const PrivacidadeRoute = PrivacidadeRouteImport.update({
 const PlanosRoute = PlanosRouteImport.update({
   id: '/planos',
   path: '/planos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LicencaRoute = LicencaRouteImport.update({
@@ -335,6 +341,7 @@ export interface FileRoutesByFullPath {
   '/favoritos': typeof FavoritosRoute
   '/gerador-catalogo': typeof GeradorCatalogoRoute
   '/licenca': typeof LicencaRoute
+  '/login': typeof LoginRoute
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -386,6 +393,7 @@ export interface FileRoutesByTo {
   '/favoritos': typeof FavoritosRoute
   '/gerador-catalogo': typeof GeradorCatalogoRoute
   '/licenca': typeof LicencaRoute
+  '/login': typeof LoginRoute
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -438,6 +446,7 @@ export interface FileRoutesById {
   '/favoritos': typeof FavoritosRoute
   '/gerador-catalogo': typeof GeradorCatalogoRoute
   '/licenca': typeof LicencaRoute
+  '/login': typeof LoginRoute
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -491,6 +500,7 @@ export interface FileRouteTypes {
     | '/favoritos'
     | '/gerador-catalogo'
     | '/licenca'
+    | '/login'
     | '/planos'
     | '/privacidade'
     | '/reset-password'
@@ -542,6 +552,7 @@ export interface FileRouteTypes {
     | '/favoritos'
     | '/gerador-catalogo'
     | '/licenca'
+    | '/login'
     | '/planos'
     | '/privacidade'
     | '/reset-password'
@@ -593,6 +604,7 @@ export interface FileRouteTypes {
     | '/favoritos'
     | '/gerador-catalogo'
     | '/licenca'
+    | '/login'
     | '/planos'
     | '/privacidade'
     | '/reset-password'
@@ -646,6 +658,7 @@ export interface RootRouteChildren {
   FavoritosRoute: typeof FavoritosRoute
   GeradorCatalogoRoute: typeof GeradorCatalogoRoute
   LicencaRoute: typeof LicencaRoute
+  LoginRoute: typeof LoginRoute
   PlanosRoute: typeof PlanosRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -717,6 +730,13 @@ declare module '@tanstack/react-router' {
       path: '/planos'
       fullPath: '/planos'
       preLoaderRoute: typeof PlanosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/licenca': {
@@ -1098,6 +1118,7 @@ const rootRouteChildren: RootRouteChildren = {
   FavoritosRoute: FavoritosRoute,
   GeradorCatalogoRoute: GeradorCatalogoRoute,
   LicencaRoute: LicencaRoute,
+  LoginRoute: LoginRoute,
   PlanosRoute: PlanosRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   ResetPasswordRoute: ResetPasswordRoute,
