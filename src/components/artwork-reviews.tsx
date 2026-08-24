@@ -184,7 +184,7 @@ export function ArtworkReviews({ artworkId }: { artworkId: string }) {
         </div>
       ) : (
         <div className="mb-6 rounded-2xl border border-white/5 bg-white/[0.02] p-5 text-sm text-muted-foreground backdrop-blur-xl">
-          <Link to="/auth" className="text-primary underline">
+          <Link to="/login" className="text-primary underline">
             Entre na sua conta
           </Link>{" "}
           para avaliar esta arte.

@@ -312,12 +312,10 @@ function ProfilePanel({ userId, email }: { userId: string; email: string }) {
     toast.success("Senha alterada com sucesso!");
   }
 
-  if (isLoading) return <div className="rounded-xl border border-border/60 bg-card p-6 text-sm text-muted-foreground">Carregando...</div>;
+    if (!profile) return <div className="rounded-xl border border-border/60 bg-card p-6 text-sm text-muted-foreground">Carregando...</div>;
 
-  const initials = (fullName || email || "?").split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
-
-  return (
-    <div className="grid gap-6 md:grid-cols-2">
+    return (
+      <div className="grid gap-6 md:grid-cols-2">
       <form onSubmit={saveProfile} className="rounded-2xl border border-border/60 bg-card p-6">
         <div className="mb-5 flex items-center gap-2">
           <UserIcon className="h-5 w-5 text-primary" />
