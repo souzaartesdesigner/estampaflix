@@ -17,6 +17,20 @@ export const adminGetArtworkExternalUrl = createServerFn({ method: "POST" })
     return { url: (url as string | null) ?? null };
   });
 
+/** Admin-only: obtém o caminho do arquivo protegido de uma arte. */
+export const adminGetArtworkFilePath = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({ artworkId: z.string().uuid() }).parse(data))
+  .handler(async ({ context, data }) => {
+    await assertAdmin(context.supabase as any, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: path, error } = await supabaseAdmin.rpc("admin_get_artwork_file_path", {
+      _artwork_id: data.artworkId,
+    });
+    if (error) throw new Error("Falha ao obter o arquivo da arte");
+    return { path: (path as string | null) ?? null };
+  });
+
 /** Admin-only: libera os downloads de um pedido pago. */
 export const adminGrantOrderDownloads = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
