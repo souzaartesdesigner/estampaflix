@@ -79,9 +79,10 @@ function Dashboard() {
     return map[s] ?? s;
   }
 
-  async function redownload(art: { id: string; file_path: string | null; title: string }) {
+  async function redownload(art: { id: string; title: string }) {
     try {
-      // O link externo nunca é exposto na tabela pública: só a RPC valida a posse e o devolve.
+      // Nem o link externo nem o caminho do arquivo são expostos na tabela pública:
+      // só a RPC valida a posse e os devolve.
       const { data, error } = await supabase.rpc("consume_download", { _artwork_id: art.id });
       if (error) throw error;
       const row: any = Array.isArray(data) ? data[0] : data;
@@ -89,7 +90,7 @@ function Dashboard() {
         window.open(row.external_url as string, "_blank", "noopener,noreferrer");
         return;
       }
-      const path = row?.file_path ?? art.file_path;
+      const path = row?.file_path;
       if (!path) {
         toast.error(t("account.errFileUnavailable"));
         return;
