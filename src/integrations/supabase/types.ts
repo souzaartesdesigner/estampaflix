@@ -1274,6 +1274,10 @@ export type Database = {
         Args: { _artwork_id: string }
         Returns: string
       }
+      admin_get_artwork_file_path: {
+        Args: { _artwork_id: string }
+        Returns: string
+      }
       consume_download: {
         Args: { _artwork_id: string }
         Returns: {
