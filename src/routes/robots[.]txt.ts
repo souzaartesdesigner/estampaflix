@@ -8,9 +8,7 @@ Allow: /
 Disallow: /admin
 Disallow: /minha-conta
 Disallow: /carrinho
-Disallow: /login
-Disallow: /cadastro
-Disallow: /esqueci-a-senha
+Disallow: /auth
 Disallow: /reset-password
 Disallow: /pagamento
 Disallow: /lovable/

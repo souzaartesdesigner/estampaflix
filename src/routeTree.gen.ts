@@ -16,14 +16,12 @@ import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as PlanosRouteImport } from './routes/planos'
-import { Route as LoginRouteImport } from './routes/login'
 import { Route as LicencaRouteImport } from './routes/licenca'
 import { Route as GeradorCatalogoRouteImport } from './routes/gerador-catalogo'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
-import { Route as EsqueciASenhaRouteImport } from './routes/esqueci-a-senha'
 import { Route as DownloadsRouteImport } from './routes/downloads'
 import { Route as CobrancaRouteImport } from './routes/cobranca'
-import { Route as CadastroRouteImport } from './routes/cadastro'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CatalogoIndexRouteImport } from './routes/catalogo.index'
@@ -98,11 +96,6 @@ const PlanosRoute = PlanosRouteImport.update({
   path: '/planos',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LicencaRoute = LicencaRouteImport.update({
   id: '/licenca',
   path: '/licenca',
@@ -118,11 +111,6 @@ const FavoritosRoute = FavoritosRouteImport.update({
   path: '/favoritos',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EsqueciASenhaRoute = EsqueciASenhaRouteImport.update({
-  id: '/esqueci-a-senha',
-  path: '/esqueci-a-senha',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DownloadsRoute = DownloadsRouteImport.update({
   id: '/downloads',
   path: '/downloads',
@@ -133,9 +121,9 @@ const CobrancaRoute = CobrancaRouteImport.update({
   path: '/cobranca',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CadastroRoute = CadastroRouteImport.update({
-  id: '/cadastro',
-  path: '/cadastro',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -348,14 +336,12 @@ const AuthenticatedAdminPedidosIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/cadastro': typeof CadastroRoute
+  '/auth': typeof AuthRoute
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
-  '/esqueci-a-senha': typeof EsqueciASenhaRoute
   '/favoritos': typeof FavoritosRoute
   '/gerador-catalogo': typeof GeradorCatalogoRoute
   '/licenca': typeof LicencaRoute
-  '/login': typeof LoginRoute
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -402,14 +388,12 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/cadastro': typeof CadastroRoute
+  '/auth': typeof AuthRoute
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
-  '/esqueci-a-senha': typeof EsqueciASenhaRoute
   '/favoritos': typeof FavoritosRoute
   '/gerador-catalogo': typeof GeradorCatalogoRoute
   '/licenca': typeof LicencaRoute
-  '/login': typeof LoginRoute
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -457,14 +441,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/cadastro': typeof CadastroRoute
+  '/auth': typeof AuthRoute
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
-  '/esqueci-a-senha': typeof EsqueciASenhaRoute
   '/favoritos': typeof FavoritosRoute
   '/gerador-catalogo': typeof GeradorCatalogoRoute
   '/licenca': typeof LicencaRoute
-  '/login': typeof LoginRoute
   '/planos': typeof PlanosRoute
   '/privacidade': typeof PrivacidadeRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -513,14 +495,12 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/cadastro'
+    | '/auth'
     | '/cobranca'
     | '/downloads'
-    | '/esqueci-a-senha'
     | '/favoritos'
     | '/gerador-catalogo'
     | '/licenca'
-    | '/login'
     | '/planos'
     | '/privacidade'
     | '/reset-password'
@@ -567,14 +547,12 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/cadastro'
+    | '/auth'
     | '/cobranca'
     | '/downloads'
-    | '/esqueci-a-senha'
     | '/favoritos'
     | '/gerador-catalogo'
     | '/licenca'
-    | '/login'
     | '/planos'
     | '/privacidade'
     | '/reset-password'
@@ -621,14 +599,12 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
-    | '/cadastro'
+    | '/auth'
     | '/cobranca'
     | '/downloads'
-    | '/esqueci-a-senha'
     | '/favoritos'
     | '/gerador-catalogo'
     | '/licenca'
-    | '/login'
     | '/planos'
     | '/privacidade'
     | '/reset-password'
@@ -677,14 +653,12 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  CadastroRoute: typeof CadastroRoute
+  AuthRoute: typeof AuthRoute
   CobrancaRoute: typeof CobrancaRoute
   DownloadsRoute: typeof DownloadsRoute
-  EsqueciASenhaRoute: typeof EsqueciASenhaRoute
   FavoritosRoute: typeof FavoritosRoute
   GeradorCatalogoRoute: typeof GeradorCatalogoRoute
   LicencaRoute: typeof LicencaRoute
-  LoginRoute: typeof LoginRoute
   PlanosRoute: typeof PlanosRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -758,13 +732,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlanosRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/licenca': {
       id: '/licenca'
       path: '/licenca'
@@ -786,13 +753,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FavoritosRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/esqueci-a-senha': {
-      id: '/esqueci-a-senha'
-      path: '/esqueci-a-senha'
-      fullPath: '/esqueci-a-senha'
-      preLoaderRoute: typeof EsqueciASenhaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/downloads': {
       id: '/downloads'
       path: '/downloads'
@@ -807,11 +767,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CobrancaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/cadastro': {
-      id: '/cadastro'
-      path: '/cadastro'
-      fullPath: '/cadastro'
-      preLoaderRoute: typeof CadastroRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -1153,14 +1113,12 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  CadastroRoute: CadastroRoute,
+  AuthRoute: AuthRoute,
   CobrancaRoute: CobrancaRoute,
   DownloadsRoute: DownloadsRoute,
-  EsqueciASenhaRoute: EsqueciASenhaRoute,
   FavoritosRoute: FavoritosRoute,
   GeradorCatalogoRoute: GeradorCatalogoRoute,
   LicencaRoute: LicencaRoute,
-  LoginRoute: LoginRoute,
   PlanosRoute: PlanosRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   ResetPasswordRoute: ResetPasswordRoute,

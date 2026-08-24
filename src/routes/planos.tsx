@@ -90,7 +90,7 @@ function Planos() {
     try {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) {
-        window.location.href = `/login?redirect=${encodeURIComponent("/planos")}`;
+        window.location.href = `/auth?redirect=${encodeURIComponent("/planos")}`;
         return;
       }
       const plan = plans.find(p => p.id === planId);

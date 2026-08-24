@@ -391,7 +391,7 @@ function ProfilePanel({ userId, email }: { userId: string; email: string }) {
           {changingPw ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Alterando...</> : "Alterar senha"}
         </Button>
         <p className="mt-3 text-xs text-muted-foreground">
-          Esqueceu sua senha atual? <Link to="/login" className="text-primary hover:underline">Use "Esqueci minha senha"</Link> na tela de login.
+          Esqueceu sua senha atual? <Link to="/auth" className="text-primary hover:underline">Use "Esqueci minha senha"</Link> na tela de login.
         </p>
       </form>
     </div>
