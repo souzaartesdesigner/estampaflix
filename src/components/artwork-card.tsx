@@ -30,6 +30,7 @@ export type ArtworkCardData = {
 
 export function ArtworkCard({ artwork }: { artwork: ArtworkCardData }) {
   const { t, lang } = useI18n();
+  const navigate = useNavigate();
   const cart = useCart();
   const inCart = cart.contains(artwork.id);
   const title = tField(artwork as any, "title", lang) || artwork.title;
