@@ -1,15 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { Sparkles, Check } from "lucide-react";
+import { Sparkles, ArrowLeft, ImageIcon, Zap, Star, Crown, ShieldCheck } from "lucide-react";
 import logoAsset from "@/assets/estampa-flix-logo.png.asset.json";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 
 const PERKS = [
-  "Artes em alta resolução",
-  "Downloads rápidos",
-  "Novas artes regularmente",
-  "Conteúdo para sublimadores",
+  { icon: ImageIcon, title: "Artes em alta resolução", desc: "Qualidade profissional para impressão perfeita." },
+  { icon: Zap, title: "Downloads rápidos", desc: "Acesso imediato às suas artes favoritas." },
+  { icon: Star, title: "Novas artes toda semana", desc: "Conteúdo atualizado constantemente." },
+  { icon: Crown, title: "Para sublimadores", desc: "Criado por quem entende do seu negócio." },
 ];
+
 
 
 export function AuthShell({
