@@ -80,7 +80,7 @@ function LoginPage() {
           BEM-VINDO <span className="text-[#0089ff]">DE VOLTA.</span>{" "}
         </>
       }
-      subtitle="Acesse suas artes, downloads e benefícios da Estampa Flix."
+      subtitle="Acesse sua conta e gerencie seus downloads e assinaturas."
       footer={
         <>
           Ainda não tem uma conta?{" "}
