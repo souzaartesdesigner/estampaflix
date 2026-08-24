@@ -22,6 +22,7 @@ import { Route as GeradorCatalogoRouteImport } from './routes/gerador-catalogo'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
 import { Route as DownloadsRouteImport } from './routes/downloads'
 import { Route as CobrancaRouteImport } from './routes/cobranca'
+import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CatalogoIndexRouteImport } from './routes/catalogo.index'
@@ -124,6 +125,11 @@ const DownloadsRoute = DownloadsRouteImport.update({
 const CobrancaRoute = CobrancaRouteImport.update({
   id: '/cobranca',
   path: '/cobranca',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CadastroRoute = CadastroRouteImport.update({
+  id: '/cadastro',
+  path: '/cadastro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -336,6 +342,7 @@ const AuthenticatedAdminPedidosIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/cadastro': typeof CadastroRoute
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
   '/favoritos': typeof FavoritosRoute
@@ -388,6 +395,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/cadastro': typeof CadastroRoute
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
   '/favoritos': typeof FavoritosRoute
@@ -441,6 +449,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/cadastro': typeof CadastroRoute
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
   '/favoritos': typeof FavoritosRoute
@@ -495,6 +504,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/cadastro'
     | '/cobranca'
     | '/downloads'
     | '/favoritos'
@@ -547,6 +557,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/cadastro'
     | '/cobranca'
     | '/downloads'
     | '/favoritos'
@@ -599,6 +610,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/cadastro'
     | '/cobranca'
     | '/downloads'
     | '/favoritos'
@@ -653,6 +665,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  CadastroRoute: typeof CadastroRoute
   CobrancaRoute: typeof CobrancaRoute
   DownloadsRoute: typeof DownloadsRoute
   FavoritosRoute: typeof FavoritosRoute
@@ -772,6 +785,13 @@ declare module '@tanstack/react-router' {
       path: '/cobranca'
       fullPath: '/cobranca'
       preLoaderRoute: typeof CobrancaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cadastro': {
+      id: '/cadastro'
+      path: '/cadastro'
+      fullPath: '/cadastro'
+      preLoaderRoute: typeof CadastroRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -1113,6 +1133,7 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  CadastroRoute: CadastroRoute,
   CobrancaRoute: CobrancaRoute,
   DownloadsRoute: DownloadsRoute,
   FavoritosRoute: FavoritosRoute,
