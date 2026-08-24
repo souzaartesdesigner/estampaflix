@@ -387,7 +387,6 @@ function CatalogGeneratorPage() {
         let targetRows = Math.floor((availableH + gap) / (cellW + captionH + gap));
         if (targetRows < 1) targetRows = 1;
 
-        const cellW = (pageW - margin * 2 - gap * (cols - 1)) / cols;
         const currentCellH = (availableH - (targetRows - 1) * gap) / targetRows;
         const currentImgH = currentCellH - captionH;
         const itemsPerPage = targetRows * cols;
