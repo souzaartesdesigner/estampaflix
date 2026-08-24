@@ -30,8 +30,8 @@ export function AuthShell({
 
   return (
     <main className="relative flex min-h-screen w-full flex-col lg:flex-row">
-      {/* Painel visual (showcase) — ~34% no desktop */}
-      <section className="relative flex w-full shrink-0 flex-col justify-start gap-8 overflow-hidden border-b border-border/40 px-6 py-10 lg:w-[34%] lg:min-h-screen lg:border-b-0 lg:border-r lg:border-r-primary/15 lg:px-10 lg:py-10 xl:px-12">
+      {/* Painel visual (showcase) — apenas desktop */}
+      <section className="relative hidden w-full shrink-0 flex-col justify-start gap-10 overflow-hidden px-10 py-12 lg:flex lg:w-[40%] lg:min-h-screen lg:border-r lg:border-r-primary/15 xl:px-14">
         {/* Background atual, restrito ao painel esquerdo */}
         <div
           aria-hidden
@@ -71,39 +71,53 @@ export function AuthShell({
         />
 
         <Link to="/" className="relative inline-flex w-fit items-center">
-          <img src={logo} alt={siteName} className="h-9 w-auto object-contain" />
+          <img src={logo} alt={siteName} className="h-12 w-auto object-contain" />
         </Link>
 
         <div className="relative max-w-full animate-fade-in">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-primary">
-            <Sparkles className="h-3 w-3" /> Artes digitais para sublimação
+          <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
+            <Sparkles className="h-3.5 w-3.5" /> Artes digitais para sublimação
           </span>
-          <h2 className="mt-5 max-w-full font-display text-[clamp(1.6rem,2.2vw,2.3rem)] font-bold leading-[1.12] tracking-tight">
+          <h2 className="mt-7 max-w-full font-display text-[clamp(2.1rem,3vw,3.1rem)] font-bold leading-[1.08] tracking-tight">
             Suas artes.
             <br />
             Sua produção.
             <br />
             <span className="text-primary">Mais possibilidades.</span>
           </h2>
-          <p className="mt-4 max-w-[34ch] text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-5 max-w-[38ch] text-base leading-relaxed text-muted-foreground">
             Encontre artes prontas para transformar suas ideias em produtos incríveis.
           </p>
 
-          <ul className="mt-7 grid max-w-[34ch] gap-2.5">
-            {PERKS.map((p) => (
-              <li key={p} className="flex items-center gap-2.5 text-sm text-foreground/90">
-                <span className="grid h-4.5 w-4.5 shrink-0 place-items-center rounded-full bg-primary/15 text-primary">
-                  <Check className="h-2.5 w-2.5" />
+          <ul className="mt-8 grid max-w-[46ch] gap-3">
+            {PERKS.map(({ icon: Icon, title, desc }) => (
+              <li
+                key={title}
+                className="flex items-center gap-3.5 rounded-2xl border border-border/50 bg-card/40 p-3.5 backdrop-blur-sm"
+              >
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/15 text-primary">
+                  <Icon className="h-5 w-5" />
                 </span>
-                {p}
+                <span className="min-w-0">
+                  <span className="block text-[15px] font-semibold leading-snug">{title}</span>
+                  <span className="block text-[13px] leading-snug text-muted-foreground">{desc}</span>
+                </span>
               </li>
             ))}
           </ul>
         </div>
 
-        <p className="relative mt-auto hidden text-xs text-muted-foreground lg:block">
-          © {new Date().getFullYear()} {siteName}.
-        </p>
+        <div className="relative mt-auto flex max-w-[46ch] items-center gap-3.5 rounded-2xl border border-border/50 bg-card/40 p-3.5 backdrop-blur-sm">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/15 text-primary">
+            <ShieldCheck className="h-5 w-5" />
+          </span>
+          <span className="min-w-0">
+            <span className="block text-[15px] font-semibold leading-snug">Uso comercial permitido</span>
+            <span className="block text-[13px] leading-snug text-muted-foreground">
+              Artes liberadas para uso em produtos físicos.
+            </span>
+          </span>
+        </div>
       </section>
 
 
@@ -112,6 +126,13 @@ export function AuthShell({
         className="relative flex w-full flex-1 items-center justify-center px-4 py-14 sm:px-10 lg:min-h-screen lg:px-16 lg:py-20"
         style={{ background: "#0a0a0a" }}
       >
+        <Link
+          to="/"
+          className="absolute left-4 top-5 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:left-8 lg:left-10 lg:top-8"
+        >
+          <ArrowLeft className="h-4 w-4" /> Voltar ao site
+        </Link>
+
         <div className="w-full max-w-[440px]">
 
           <div className="mb-7 flex flex-col items-center text-center lg:hidden">
@@ -119,6 +140,7 @@ export function AuthShell({
               <img src={logo} alt={siteName} className="h-9 w-auto object-contain" />
             </Link>
           </div>
+
 
           <div className="relative overflow-hidden rounded-[26px] border border-border/60 bg-card/60 p-7 shadow-elegant backdrop-blur-2xl sm:p-9">
             <span
