@@ -100,7 +100,7 @@ function CatalogGeneratorPage() {
     supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id));
   }, []);
 
-  const { data: sub } = useUserSubscription(userId);
+  const { data: sub, isLoading: isSubLoading } = useUserSubscription(userId);
   const isPremium = !!sub && ["lite", "pro", "plus"].includes(sub.plans?.tier || "");
 
   const handlePremiumClick = (e: React.MouseEvent) => {
@@ -493,8 +493,8 @@ function CatalogGeneratorPage() {
         </section>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
-          <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto lg:pr-2 lg:pb-[5px] custom-scrollbar">
-            {!isPremium && (
+          <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto lg:pr-2 lg:pb-[8px] custom-scrollbar">
+            {userId && !isSubLoading && !isPremium && (
               <div className="rounded-2xl border border-primary/40 bg-primary/5 p-4 shadow-brand">
                 <div className="flex items-center gap-2">
                   <Sparkles className="h-4 w-4 text-primary" />
@@ -799,7 +799,7 @@ function CatalogGeneratorPage() {
               </Button>
             </div>
 
-            <div className="h-[5px]" aria-hidden />
+            <div className="h-[8px]" aria-hidden />
           </aside>
 
 
