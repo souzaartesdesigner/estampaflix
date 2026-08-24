@@ -213,11 +213,9 @@ function CatalogGeneratorPage() {
       const pageW = doc.internal.pageSize.getWidth();
       const pageH = doc.internal.pageSize.getHeight();
       const margin = 8;
-      const gap = 8; // Increased from 4 to 8
+      const gap = 8;
       const captionH = 7;
-      const cellW = (pageW - margin * 2 - gap * (cols - 1)) / cols;
-      const imgH = cellW;
-      const cellH = imgH + captionH;
+
 
       const paintBg = () => {
         doc.setFillColor(isPremium ? bgColor : DEFAULT_BG);
@@ -378,31 +376,50 @@ function CatalogGeneratorPage() {
       while (currentIndex < selectedList.length) {
         let x = margin;
         let y = drawHeader();
-        
-        // Calculate items that fit on this page
+
         const startY = y;
-        const availableH = (pageH - margin - 15) - startY; // 15mm reserved for footer
-        const itemsPerPage = Math.floor(availableH / (cellH + gap)) * cols;
+        const availableH = pageH - margin - 15 - startY; // 15mm reserved for footer
+
+        // Calculate layout dynamically
+        let targetRows = 0;
+        const hasHeaderContent = (isPremium && logo && logoMeta) || showNotice;
+        const hasFooterContent = !isPremium || (isPremium && (showWaButton || showInstaButton));
+
+        if (cols === 4) {
+          targetRows = 5; // User wants 20 items (4x5)
+        } else if (cols === 3) {
+          if (!hasHeaderContent && !hasFooterContent) {
+            targetRows = 4; // User wants 12 items (3x4) when "clean"
+          } else {
+            // Default fit for 3 columns with header/footer
+            targetRows = Math.floor((availableH + gap) / (pageW / cols + captionH + gap));
+            if (targetRows < 1) targetRows = 1;
+          }
+        } else {
+          targetRows = Math.floor((availableH + gap) / (pageW / cols + captionH + gap));
+        }
+
+        const cellW = (pageW - margin * 2 - gap * (cols - 1)) / cols;
+        const currentCellH = (availableH - (targetRows - 1) * gap) / targetRows;
+        const currentImgH = currentCellH - captionH;
+        const itemsPerPage = targetRows * cols;
         const pageItems = selectedList.slice(currentIndex, currentIndex + itemsPerPage);
-        
-        // Standard vertical spacing for a top-aligned grid
-        const currentGapY = gap;
 
         let col = 0;
         for (const art of pageItems) {
           if (col === cols) {
             col = 0;
             x = margin;
-            y += cellH + currentGapY;
+            y += currentCellH + gap;
           }
 
           const img = await toDataUrl(art.preview_url, isPremium ? bgColor : DEFAULT_BG);
           if (img) {
-            const ratio = Math.min(cellW / img.width, imgH / img.height);
+            const ratio = Math.min(cellW / img.width, currentImgH / img.height);
             const w = img.width * ratio;
             const h = img.height * ratio;
             const imgX = x + (cellW - w) / 2;
-            const imgY = y + (imgH - h) / 2;
+            const imgY = y + (currentImgH - h) / 2;
             doc.addImage(img.dataUrl, imgX, imgY, w, h, undefined, "FAST");
 
             const cleanPhone = isPremium ? whatsapp.replace(/\D/g, "") : "";
@@ -415,11 +432,12 @@ function CatalogGeneratorPage() {
             }
           }
           const label = refLabel(art);
-          if (label) doc.text(label, x + cellW / 2, y + imgH + 5, { align: "center" });
-          
+          if (label) doc.text(label, x + cellW / 2, y + currentImgH + 5, { align: "center" });
+
           x += cellW + gap;
           col += 1;
         }
+
 
         currentIndex += pageItems.length;
         if (currentIndex < selectedList.length) {
