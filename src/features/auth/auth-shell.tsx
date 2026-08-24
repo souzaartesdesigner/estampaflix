@@ -107,8 +107,12 @@ export function AuthShell({
 
 
       {/* Formulário */}
-      <section className="relative flex w-full flex-1 items-center justify-center px-4 py-10 sm:px-8">
+      <section
+        className="relative flex w-full flex-1 items-center justify-center px-4 py-14 sm:px-10 lg:min-h-screen lg:px-16 lg:py-20"
+        style={{ background: "#0a0a0a" }}
+      >
         <div className="w-full max-w-[440px]">
+
           <div className="mb-7 flex flex-col items-center text-center lg:hidden">
             <Link to="/">
               <img src={logo} alt={siteName} className="h-9 w-auto object-contain" />
