@@ -385,18 +385,8 @@ function CatalogGeneratorPage() {
         const itemsPerPage = Math.floor(availableH / (cellH + gap)) * cols;
         const pageItems = selectedList.slice(currentIndex, currentIndex + itemsPerPage);
         
-        // If not premium, distribute rows vertically
-        let currentGapY = gap;
-        if (pageItems.length > 0) {
-          const rowsOnPage = Math.ceil(pageItems.length / cols);
-          const contentH = rowsOnPage * cellH + (rowsOnPage - 1) * gap;
-          if (availableH > contentH) {
-            const extra = availableH - contentH;
-            const spacing = extra / (rowsOnPage + 1);
-            y += spacing;
-            currentGapY = spacing;
-          }
-        }
+        // Standard vertical spacing for a top-aligned grid
+        const currentGapY = gap;
 
         let col = 0;
         for (const art of pageItems) {
