@@ -3,7 +3,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AuthShell, TextField } from "@/features/auth/auth-shell";
 import { Button } from "@/components/ui/button";
-import { Loader2, MailCheck, AlertTriangle } from "lucide-react";
+import { Loader2, MailCheck, AlertTriangle, Mail } from "lucide-react";
 
 export const Route = createFileRoute("/esqueci-a-senha")({
   head: () => ({
@@ -73,6 +73,8 @@ function ForgotPage() {
             value={email}
             onChange={setEmail}
             autoComplete="email"
+            icon={Mail}
+            placeholder="seu@email.com"
             error={fieldError}
             autoFocus
           />

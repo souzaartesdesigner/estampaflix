@@ -234,6 +234,7 @@ export function PasswordField({
   visible,
   onToggle,
   autoFocus,
+  icon: Icon = Lock,
 }: {
   id: string;
   label: string;
@@ -245,6 +246,7 @@ export function PasswordField({
   visible: boolean;
   onToggle: () => void;
   autoFocus?: boolean;
+  icon?: React.ComponentType<{ className?: string }>;
 }) {
   return (
     <div className="grid gap-1.5">
@@ -252,6 +254,9 @@ export function PasswordField({
         {label}
       </label>
       <div className="relative">
+        {Icon && (
+          <Icon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/70" />
+        )}
         <input
           id={id}
           type={visible ? "text" : "password"}
@@ -262,7 +267,7 @@ export function PasswordField({
           autoFocus={autoFocus}
           aria-invalid={!!error}
           aria-describedby={error ? `${id}-error` : undefined}
-          className="w-full rounded-xl border border-border/60 bg-surface/40 py-2.5 pl-3.5 pr-11 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary/60 focus:bg-surface focus:ring-2 focus:ring-primary/25"
+          className={`w-full rounded-xl border border-border/60 bg-surface/40 py-2.5 pr-11 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary/60 focus:bg-surface focus:ring-2 focus:ring-primary/25 ${Icon ? "pl-10" : "pl-3.5"}`}
         />
         <button
           type="button"
@@ -309,6 +314,8 @@ export function TextField({
   placeholder,
   error,
   autoFocus,
+  icon: Icon,
+  hint,
 }: {
   id: string;
   label: string;
@@ -319,24 +326,32 @@ export function TextField({
   placeholder?: string;
   error?: string;
   autoFocus?: boolean;
+  icon?: React.ComponentType<{ className?: string }>;
+  hint?: string;
 }) {
   return (
     <div className="grid gap-1.5">
-      <label htmlFor={id} className="text-sm font-medium">
-        {label}
+      <label htmlFor={id} className="flex items-center justify-between text-sm font-medium">
+        <span>{label}</span>
+        {hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}
       </label>
-      <input
-        id={id}
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        autoComplete={autoComplete}
-        placeholder={placeholder}
-        autoFocus={autoFocus}
-        aria-invalid={!!error}
-        aria-describedby={error ? `${id}-error` : undefined}
-        className="w-full rounded-xl border border-border/60 bg-surface/40 px-3.5 py-2.5 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary/60 focus:bg-surface focus:ring-2 focus:ring-primary/25"
-      />
+      <div className="relative">
+        {Icon && (
+          <Icon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/70" />
+        )}
+        <input
+          id={id}
+          type={type}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          autoComplete={autoComplete}
+          placeholder={placeholder}
+          autoFocus={autoFocus}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${id}-error` : undefined}
+          className={`w-full rounded-xl border border-border/60 bg-surface/40 py-2.5 pr-3.5 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary/60 focus:bg-surface focus:ring-2 focus:ring-primary/25 ${Icon ? "pl-10" : "pl-3.5"}`}
+        />
+      </div>
       {error && (
         <p id={`${id}-error`} className="text-xs text-destructive">
           {error}

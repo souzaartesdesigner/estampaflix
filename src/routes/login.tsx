@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { AuthShell, GoogleButton, PasswordField, TextField } from "@/features/auth/auth-shell";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, Mail, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (s: Record<string, unknown>): { redirect?: string } =>
@@ -98,7 +98,8 @@ function LoginPage() {
           value={email}
           onChange={setEmail}
           autoComplete="email"
-          placeholder="seu@gmail.com"
+          icon={Mail}
+          placeholder="seu@email.com"
           error={errors.email}
         />
 
@@ -108,6 +109,7 @@ function LoginPage() {
           value={password}
           onChange={setPassword}
           autoComplete="current-password"
+          icon={Lock}
           placeholder="Digite sua senha"
           error={errors.password}
           visible={show}

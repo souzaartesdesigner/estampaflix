@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { AuthShell, GoogleButton, PasswordField, PasswordStrength, TextField } from "@/features/auth/auth-shell";
 import { Button } from "@/components/ui/button";
-import { Loader2, MailCheck, ArrowLeft } from "lucide-react";
+import { Loader2, MailCheck, ArrowLeft, User, Mail, Phone, Building2, Lock, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/cadastro")({
   head: () => ({
@@ -34,6 +34,9 @@ function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [company, setCompany] = useState("");
+  const [accepted, setAccepted] = useState(false);
   const [showPwd, setShowPwd] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -51,6 +54,7 @@ function SignupPage() {
     const next: Record<string, string> = {};
     if (!name.trim()) next.name = "Informe seu nome";
     if (!/^\S+@\S+\.\S+$/.test(email.trim())) next.email = "Informe um e-mail válido";
+    if (whatsapp.replace(/\D/g, "").length < 10) next.whatsapp = "Informe um WhatsApp válido com DDD";
     setErrors(next);
     if (Object.keys(next).length) return;
     setStep(1);
@@ -61,6 +65,7 @@ function SignupPage() {
     const next: Record<string, string> = {};
     if (password.length < 6) next.password = "A senha deve ter no mínimo 6 caracteres";
     if (password !== confirm) next.confirm = "As senhas não coincidem";
+    if (!accepted) next.terms = "É necessário aceitar os Termos de Uso e a Política de Privacidade";
     setErrors(next);
     if (Object.keys(next).length) return;
 
@@ -68,7 +73,15 @@ function SignupPage() {
     const { error } = await supabase.auth.signUp({
       email: email.trim(),
       password,
-      options: { data: { full_name: name.trim() }, emailRedirectTo: window.location.origin },
+      options: {
+        data: {
+          full_name: name.trim(),
+          whatsapp: whatsapp.trim(),
+          company: company.trim() || null,
+          accepted_terms_at: new Date().toISOString(),
+        },
+        emailRedirectTo: window.location.origin,
+      },
     });
     setLoading(false);
     if (error) {
@@ -156,7 +169,16 @@ function SignupPage() {
 
       {step === 0 ? (
         <form onSubmit={nextStep} className="animate-fade-in space-y-4" noValidate>
-          <TextField id="name" label="Nome" value={name} onChange={setName} autoComplete="name" error={errors.name} />
+          <TextField
+            id="name"
+            label="Nome"
+            value={name}
+            onChange={setName}
+            autoComplete="name"
+            icon={User}
+            placeholder="Seu nome completo"
+            error={errors.name}
+          />
           <TextField
             id="email"
             label="E-mail"
@@ -164,7 +186,30 @@ function SignupPage() {
             value={email}
             onChange={setEmail}
             autoComplete="email"
+            icon={Mail}
+            placeholder="seu@email.com"
             error={errors.email}
+          />
+          <TextField
+            id="whatsapp"
+            label="WhatsApp"
+            type="tel"
+            value={whatsapp}
+            onChange={setWhatsapp}
+            autoComplete="tel"
+            icon={Phone}
+            placeholder="(00) 00000-0000"
+            error={errors.whatsapp}
+          />
+          <TextField
+            id="company"
+            label="Empresa"
+            hint="Opcional"
+            value={company}
+            onChange={setCompany}
+            autoComplete="organization"
+            icon={Building2}
+            placeholder="Nome da sua empresa"
           />
           <Button
             type="submit"
@@ -186,6 +231,8 @@ function SignupPage() {
             value={password}
             onChange={setPassword}
             autoComplete="new-password"
+            icon={Lock}
+            placeholder="Crie uma senha segura"
             error={errors.password}
             visible={showPwd}
             onToggle={() => setShowPwd((v) => !v)}
@@ -197,11 +244,36 @@ function SignupPage() {
             value={confirm}
             onChange={setConfirm}
             autoComplete="new-password"
+            icon={ShieldCheck}
+            placeholder="Repita a senha"
             error={errors.confirm}
             visible={showConfirm}
             onToggle={() => setShowConfirm((v) => !v)}
           />
           {password && <PasswordStrength password={password} />}
+
+          <div className="grid gap-1.5">
+            <label className="flex cursor-pointer items-start gap-2.5 text-sm text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={accepted}
+                onChange={(e) => setAccepted(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-border/60 bg-surface/40 accent-[var(--primary)]"
+              />
+              <span>
+                Li e aceito os{" "}
+                <Link to="/termos" target="_blank" className="font-medium text-primary hover:underline">
+                  Termos de Uso
+                </Link>{" "}
+                e a{" "}
+                <Link to="/privacidade" target="_blank" className="font-medium text-primary hover:underline">
+                  Política de Privacidade
+                </Link>
+                .
+              </span>
+            </label>
+            {errors.terms && <p className="text-xs text-destructive">{errors.terms}</p>}
+          </div>
 
           <div className="flex gap-3">
             <Button type="button" variant="outline" onClick={() => setStep(0)} disabled={loading}>
