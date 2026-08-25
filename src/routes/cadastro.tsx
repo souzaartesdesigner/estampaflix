@@ -35,7 +35,6 @@ function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
-  const [countryCode, setCountryCode] = useState("+55");
   const [company, setCompany] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [showPwd, setShowPwd] = useState(false);
@@ -56,7 +55,7 @@ function SignupPage() {
     if (!name.trim() || name.trim().length > 100) next.name = "Informe seu nome (até 100 caracteres)";
     if (!/^\S+@\S+\.\S+$/.test(email.trim()) || email.trim().length > 255) next.email = "Informe um e-mail válido";
     const phoneDigits = whatsapp.replace(/\D/g, "");
-    if (phoneDigits.length < 10 || phoneDigits.length > 11) next.whatsapp = "Informe um WhatsApp válido com DDD";
+    if (phoneDigits.length < 10 || phoneDigits.length > 15) next.whatsapp = "Informe o código do país, DDD e número";
     if (company.trim().length > 100) next.company = "A empresa deve ter até 100 caracteres";
     setErrors(next);
     if (Object.keys(next).length) return;
@@ -79,7 +78,7 @@ function SignupPage() {
       options: {
         data: {
           full_name: name.trim(),
-          whatsapp: `${countryCode}${whatsapp.replace(/\D/g, "")}`,
+          whatsapp,
           company: company.trim() || null,
           accepted_terms_at: new Date().toISOString(),
         },
@@ -198,8 +197,6 @@ function SignupPage() {
           <PhoneField
             value={whatsapp}
             onChange={setWhatsapp}
-            countryCode={countryCode}
-            onCountryCodeChange={setCountryCode}
             error={errors.whatsapp}
           />
           <TextField
