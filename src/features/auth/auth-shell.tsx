@@ -364,65 +364,46 @@ export function TextField({
   );
 }
 
-const COUNTRY_CODES = [
-  { code: "+55", label: "Brasil (+55)" },
-  { code: "+351", label: "Portugal (+351)" },
-  { code: "+1", label: "EUA/Canadá (+1)" },
-  { code: "+34", label: "Espanha (+34)" },
-];
-
 export function PhoneField({
   value,
   onChange,
-  countryCode,
-  onCountryCodeChange,
   error,
 }: {
   value: string;
   onChange: (value: string) => void;
-  countryCode: string;
-  onCountryCodeChange: (value: string) => void;
   error?: string;
 }) {
+  const handleChange = (rawValue: string) => {
+    const digits = rawValue.replace(/\D/g, "").slice(0, 15);
+    onChange(digits ? `+${digits}` : "");
+  };
+
   return (
     <div className="grid gap-1.5">
       <label htmlFor="whatsapp" className="text-sm font-medium">
         Seu WhatsApp
       </label>
-      <div className="flex overflow-hidden rounded-xl border border-border/60 bg-surface/40 transition-all focus-within:border-primary/60 focus-within:bg-surface focus-within:ring-2 focus-within:ring-primary/25">
-        <label htmlFor="country-code" className="sr-only">
-          Código do país
-        </label>
-        <select
-          id="country-code"
-          value={countryCode}
-          onChange={(event) => onCountryCodeChange(event.target.value)}
-          aria-label="Código do país"
-          className="w-[88px] shrink-0 border-r border-border/60 bg-transparent px-2.5 text-sm outline-none"
-        >
-          {COUNTRY_CODES.map(({ code, label }) => (
-            <option key={code} value={code} className="bg-background text-foreground">
-              {label}
-            </option>
-          ))}
-        </select>
-        <div className="relative min-w-0 flex-1">
-          <Phone className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/70" />
-          <input
-            id="whatsapp"
-            type="tel"
-            inputMode="tel"
-            value={value}
-            onChange={(event) => onChange(event.target.value.replace(/[^\d ()-]/g, ""))}
-            autoComplete="tel-national"
-            placeholder="(00) 00000-0000"
-            maxLength={16}
-            aria-invalid={!!error}
-            aria-describedby={error ? "whatsapp-error" : undefined}
-            className="w-full bg-transparent py-2.5 pl-10 pr-3.5 text-sm outline-none placeholder:text-muted-foreground/60"
-          />
-        </div>
+      <div className="relative rounded-xl border border-border/60 bg-surface/40 transition-all focus-within:border-primary/60 focus-within:bg-surface focus-within:ring-2 focus-within:ring-primary/25">
+        <Phone className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/70" />
+        <input
+          id="whatsapp"
+          type="tel"
+          inputMode="tel"
+          value={value}
+          onChange={(event) => handleChange(event.target.value)}
+          autoComplete="tel"
+          placeholder="Digite 55 + DDD + número"
+          maxLength={16}
+          aria-invalid={!!error}
+          aria-describedby={error ? "whatsapp-error" : "whatsapp-hint"}
+          className="w-full bg-transparent py-2.5 pl-10 pr-3.5 text-sm outline-none placeholder:text-muted-foreground/60"
+        />
       </div>
+      {!error && (
+        <p id="whatsapp-hint" className="text-xs text-muted-foreground">
+          Inclua o código do país. Ex.: 55 11 99999-9999
+        </p>
+      )}
       {error && (
         <p id="whatsapp-error" className="text-xs text-destructive">
           {error}
