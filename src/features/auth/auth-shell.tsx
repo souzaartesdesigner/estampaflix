@@ -116,7 +116,7 @@ export function AuthShell({
 
       {/* Formulário */}
       <section
-        className="relative flex w-full flex-1 items-center justify-center px-4 py-14 sm:px-10 lg:min-h-screen lg:px-16 lg:py-20"
+        className="relative flex w-full flex-1 flex-col px-4 py-14 sm:px-10 lg:min-h-screen lg:px-16 lg:py-12"
         style={{ background: "#0a0a0a" }}
       >
         <Link
@@ -126,7 +126,7 @@ export function AuthShell({
           <ArrowLeft className="h-4 w-4" /> Voltar ao site
         </Link>
 
-        <div className="w-full max-w-[440px]">
+        <div className="mx-auto flex w-full max-w-[440px] flex-1 flex-col justify-center">
           <div className="mb-7 flex flex-col items-center text-center lg:hidden">
             <Link to="/">
               <img src={logo} alt={siteName} className="h-9 w-auto object-contain" />
@@ -156,6 +156,20 @@ export function AuthShell({
           </div>
 
           {footer && <div className="mt-6 text-center text-sm text-muted-foreground">{footer}</div>}
+        </div>
+
+        {/* Rodapé do painel de autenticação */}
+        <div className="mt-12 pt-5" style={{ borderTop: "1px solid rgba(255, 255, 255, 0.08)" }}>
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-center text-xs text-muted-foreground/70">
+            <span className="inline-flex items-center gap-1.5">
+              <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground/60" />
+              Ambiente seguro e protegido
+            </span>
+            <span aria-hidden className="hidden text-muted-foreground/40 sm:inline">
+              |
+            </span>
+            <span>© 2026 EstampaFlix. Todos os direitos reservados.</span>
+          </div>
         </div>
       </section>
     </main>
