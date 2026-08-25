@@ -157,6 +157,20 @@ export function AuthShell({
 
           {footer && <div className="mt-6 text-center text-sm text-muted-foreground">{footer}</div>}
         </div>
+
+        {/* Rodapé do painel de autenticação */}
+        <div className="mt-12 pt-5" style={{ borderTop: "1px solid rgba(255, 255, 255, 0.08)" }}>
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 text-center text-xs text-muted-foreground/70">
+            <span className="inline-flex items-center gap-1.5">
+              <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground/60" />
+              Ambiente seguro e protegido
+            </span>
+            <span aria-hidden className="hidden text-muted-foreground/40 sm:inline">
+              |
+            </span>
+            <span>© 2026 EstampaFlix. Todos os direitos reservados.</span>
+          </div>
+        </div>
       </section>
     </main>
   );
