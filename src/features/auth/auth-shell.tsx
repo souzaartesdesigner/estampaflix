@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { Sparkles, ArrowLeft, ImageIcon, Zap, Star, Crown, ShieldCheck, Mail, Lock } from "lucide-react";
+import { Sparkles, ArrowLeft, ImageIcon, Zap, Star, Crown, ShieldCheck, Lock, Phone } from "lucide-react";
 import logoAsset from "@/assets/estampa-flix-logo.png.asset.json";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 
@@ -316,6 +316,7 @@ export function TextField({
   autoFocus,
   icon: Icon,
   hint,
+  maxLength,
 }: {
   id: string;
   label: string;
@@ -328,12 +329,13 @@ export function TextField({
   autoFocus?: boolean;
   icon?: React.ComponentType<{ className?: string }>;
   hint?: string;
+  maxLength?: number;
 }) {
   return (
     <div className="grid gap-1.5">
-      <label htmlFor={id} className="flex items-center justify-between text-sm font-medium">
+      <label htmlFor={id} className="flex items-center gap-1.5 text-sm font-medium">
         <span>{label}</span>
-        {hint && <span className="text-xs font-normal text-muted-foreground">{hint}</span>}
+        {hint && <span className="text-xs font-normal text-muted-foreground">({hint})</span>}
       </label>
       <div className="relative">
         {Icon && (
@@ -347,6 +349,7 @@ export function TextField({
           autoComplete={autoComplete}
           placeholder={placeholder}
           autoFocus={autoFocus}
+          maxLength={maxLength}
           aria-invalid={!!error}
           aria-describedby={error ? `${id}-error` : undefined}
           className={`w-full rounded-xl border border-border/60 bg-surface/40 py-2.5 pr-3.5 text-sm outline-none transition-all placeholder:text-muted-foreground/60 focus:border-primary/60 focus:bg-surface focus:ring-2 focus:ring-primary/25 ${Icon ? "pl-10" : "pl-3.5"}`}
@@ -354,6 +357,74 @@ export function TextField({
       </div>
       {error && (
         <p id={`${id}-error`} className="text-xs text-destructive">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+const COUNTRY_CODES = [
+  { code: "+55", label: "Brasil (+55)" },
+  { code: "+351", label: "Portugal (+351)" },
+  { code: "+1", label: "EUA/Canadá (+1)" },
+  { code: "+34", label: "Espanha (+34)" },
+];
+
+export function PhoneField({
+  value,
+  onChange,
+  countryCode,
+  onCountryCodeChange,
+  error,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  countryCode: string;
+  onCountryCodeChange: (value: string) => void;
+  error?: string;
+}) {
+  return (
+    <div className="grid gap-1.5">
+      <label htmlFor="whatsapp" className="text-sm font-medium">
+        Seu WhatsApp
+      </label>
+      <div className="flex overflow-hidden rounded-xl border border-border/60 bg-surface/40 transition-all focus-within:border-primary/60 focus-within:bg-surface focus-within:ring-2 focus-within:ring-primary/25">
+        <label htmlFor="country-code" className="sr-only">
+          Código do país
+        </label>
+        <select
+          id="country-code"
+          value={countryCode}
+          onChange={(event) => onCountryCodeChange(event.target.value)}
+          aria-label="Código do país"
+          className="w-[88px] shrink-0 border-r border-border/60 bg-transparent px-2.5 text-sm outline-none"
+        >
+          {COUNTRY_CODES.map(({ code, label }) => (
+            <option key={code} value={code} className="bg-background text-foreground">
+              {label}
+            </option>
+          ))}
+        </select>
+        <div className="relative min-w-0 flex-1">
+          <Phone className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/70" />
+          <input
+            id="whatsapp"
+            type="tel"
+            inputMode="tel"
+            value={value}
+            onChange={(event) => onChange(event.target.value.replace(/[^\d ()-]/g, ""))}
+            autoComplete="tel-national"
+            placeholder="(00) 00000-0000"
+            maxLength={16}
+            aria-invalid={!!error}
+            aria-describedby={error ? "whatsapp-error" : undefined}
+            className="w-full bg-transparent py-2.5 pl-10 pr-3.5 text-sm outline-none placeholder:text-muted-foreground/60"
+          />
+        </div>
+      </div>
+      {error && (
+        <p id="whatsapp-error" className="text-xs text-destructive">
           {error}
         </p>
       )}

@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
-import { AuthShell, GoogleButton, PasswordField, PasswordStrength, TextField } from "@/features/auth/auth-shell";
+import { AuthShell, GoogleButton, PasswordField, PasswordStrength, PhoneField, TextField } from "@/features/auth/auth-shell";
 import { Button } from "@/components/ui/button";
-import { Loader2, MailCheck, ArrowLeft, User, Mail, Phone, Building2, Lock, ShieldCheck } from "lucide-react";
+import { Loader2, MailCheck, ArrowLeft, User, Mail, Building2, Lock, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/cadastro")({
   head: () => ({
@@ -35,6 +35,7 @@ function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [countryCode, setCountryCode] = useState("+55");
   const [company, setCompany] = useState("");
   const [accepted, setAccepted] = useState(false);
   const [showPwd, setShowPwd] = useState(false);
@@ -52,9 +53,11 @@ function SignupPage() {
   function nextStep(e: React.FormEvent) {
     e.preventDefault();
     const next: Record<string, string> = {};
-    if (!name.trim()) next.name = "Informe seu nome";
-    if (!/^\S+@\S+\.\S+$/.test(email.trim())) next.email = "Informe um e-mail válido";
-    if (whatsapp.replace(/\D/g, "").length < 10) next.whatsapp = "Informe um WhatsApp válido com DDD";
+    if (!name.trim() || name.trim().length > 100) next.name = "Informe seu nome (até 100 caracteres)";
+    if (!/^\S+@\S+\.\S+$/.test(email.trim()) || email.trim().length > 255) next.email = "Informe um e-mail válido";
+    const phoneDigits = whatsapp.replace(/\D/g, "");
+    if (phoneDigits.length < 10 || phoneDigits.length > 11) next.whatsapp = "Informe um WhatsApp válido com DDD";
+    if (company.trim().length > 100) next.company = "A empresa deve ter até 100 caracteres";
     setErrors(next);
     if (Object.keys(next).length) return;
     setStep(1);
@@ -76,7 +79,7 @@ function SignupPage() {
       options: {
         data: {
           full_name: name.trim(),
-          whatsapp: whatsapp.trim(),
+          whatsapp: `${countryCode}${whatsapp.replace(/\D/g, "")}`,
           company: company.trim() || null,
           accepted_terms_at: new Date().toISOString(),
         },
@@ -171,17 +174,18 @@ function SignupPage() {
         <form onSubmit={nextStep} className="animate-fade-in space-y-4" noValidate>
           <TextField
             id="name"
-            label="Nome"
+            label="Seu nome"
             value={name}
             onChange={setName}
             autoComplete="name"
             icon={User}
             placeholder="Seu nome completo"
             error={errors.name}
+            maxLength={100}
           />
           <TextField
             id="email"
-            label="E-mail"
+            label="Seu E-mail"
             type="email"
             value={email}
             onChange={setEmail}
@@ -189,16 +193,13 @@ function SignupPage() {
             icon={Mail}
             placeholder="seu@email.com"
             error={errors.email}
+            maxLength={255}
           />
-          <TextField
-            id="whatsapp"
-            label="WhatsApp"
-            type="tel"
+          <PhoneField
             value={whatsapp}
             onChange={setWhatsapp}
-            autoComplete="tel"
-            icon={Phone}
-            placeholder="(00) 00000-0000"
+            countryCode={countryCode}
+            onCountryCodeChange={setCountryCode}
             error={errors.whatsapp}
           />
           <TextField
@@ -210,6 +211,8 @@ function SignupPage() {
             autoComplete="organization"
             icon={Building2}
             placeholder="Nome da sua empresa"
+            error={errors.company}
+            maxLength={100}
           />
           <Button
             type="submit"
