@@ -15,7 +15,6 @@ export const Route = createFileRoute("/cadastro")({
         name: "description",
         content: "Crie sua conta gratuita na Estampa Flix e comece a explorar artes digitais para sublimação e DTF.",
       },
-      { name: "robots", content: "noindex" },
       { property: "og:title", content: "Criar conta | Estampa Flix" },
       { property: "og:description", content: "Crie sua conta gratuita na Estampa Flix." },
       { property: "og:type", content: "website" },

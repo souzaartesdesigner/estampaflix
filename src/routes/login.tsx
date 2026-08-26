@@ -18,7 +18,6 @@ export const Route = createFileRoute("/login")({
         name: "description",
         content: "Acesse sua conta na Estampa Flix para baixar artes, ver pedidos e gerenciar sua assinatura.",
       },
-      { name: "robots", content: "noindex" },
       { property: "og:title", content: "Entrar | Estampa Flix" },
       { property: "og:description", content: "Acesse sua conta na Estampa Flix." },
       { property: "og:type", content: "website" },

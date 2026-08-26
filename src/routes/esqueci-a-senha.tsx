@@ -10,7 +10,6 @@ export const Route = createFileRoute("/esqueci-a-senha")({
     meta: [
       { title: "Recuperar senha | Estampa Flix" },
       { name: "description", content: "Recupere o acesso à sua conta Estampa Flix e redefina sua senha com segurança." },
-      { name: "robots", content: "noindex" },
       { property: "og:title", content: "Recuperar senha | Estampa Flix" },
       { property: "og:description", content: "Redefina a senha da sua conta Estampa Flix." },
       { property: "og:type", content: "website" },
