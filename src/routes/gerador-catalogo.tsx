@@ -95,9 +95,13 @@ function CatalogGeneratorPage() {
   const [showInstaButton, setShowInstaButton] = useState(false);
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
   const [userId, setUserId] = useState<string | undefined>();
+  const [isAuthResolved, setIsAuthResolved] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id));
+    supabase.auth
+      .getUser()
+      .then(({ data }) => setUserId(data.user?.id))
+      .finally(() => setIsAuthResolved(true));
   }, []);
 
   const { data: sub, isLoading: isSubLoading } = useUserSubscription(userId);
@@ -494,7 +498,7 @@ function CatalogGeneratorPage() {
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
           <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto lg:pr-2 lg:pb-[8px] custom-scrollbar">
-            {userId && !isSubLoading && !isPremium && (
+            {isAuthResolved && !isSubLoading && !isPremium && (
               <div className="rounded-2xl border border-primary/40 bg-primary/5 p-4 shadow-brand">
                 <div className="flex items-center gap-2">
                   <Sparkles className="h-4 w-4 text-primary" />
