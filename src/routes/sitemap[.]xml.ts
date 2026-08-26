@@ -35,35 +35,36 @@ export const Route = createFileRoute("/sitemap.xml")({
         const entries: SitemapEntry[] = [
           { path: "/", changefreq: "weekly", priority: "1.0" },
           { path: "/catalogo", changefreq: "daily", priority: "0.9" },
-          { path: "/planos", changefreq: "weekly", priority: "0.8" },
+          { path: "/planos", changefreq: "weekly", priority: "0.9" },
+          { path: "/gerador-catalogo", changefreq: "weekly", priority: "0.8" },
+          { path: "/cadastro", changefreq: "monthly", priority: "0.8" },
+          { path: "/login", changefreq: "monthly", priority: "0.7" },
+          { path: "/esqueci-a-senha", changefreq: "yearly", priority: "0.3" },
           { path: "/blog", changefreq: "weekly", priority: "0.7" },
           { path: "/suporte", changefreq: "monthly", priority: "0.5" },
           { path: "/licenca", changefreq: "yearly", priority: "0.4" },
           { path: "/termos", changefreq: "yearly", priority: "0.3" },
           { path: "/privacidade", changefreq: "yearly", priority: "0.3" },
-          
-          { path: "/reset-password", changefreq: "yearly", priority: "0.2" },
-          { path: "/carrinho", changefreq: "monthly", priority: "0.4" },
-          { path: "/minha-conta", changefreq: "monthly", priority: "0.4" },
-          { path: "/pagamento/sucesso", changefreq: "yearly", priority: "0.3" },
         ];
 
         for (const raw of String(settings?.sitemap_extra_paths ?? "").split("\n")) {
           const p = raw.trim();
-          if (!p || !p.startsWith("/")) continue;
+          if (!p || !p.startsWith("/") || p === "/auth" || p.startsWith("/auth/")) continue;
           entries.push({ path: p, changefreq: "monthly", priority: "0.5" });
         }
 
         try {
           const { data: categories } = await supabase.from("categories").select("slug");
           for (const c of categories ?? []) {
+            if (!c.slug) continue;
             entries.push({
-              path: `/catalogo?categoria=${encodeURIComponent(c.slug)}`,
+              path: `/catalogo/${encodeURIComponent(c.slug)}`,
               changefreq: "weekly",
-              priority: "0.7",
+              priority: "0.8",
             });
           }
         } catch {}
+
 
         try {
           const { data: artworks } = await (supabase as any)
