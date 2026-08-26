@@ -177,21 +177,22 @@ function Planos() {
         </div>
 
 
-        <div className="mt-16 rounded-2xl border border-border/60 bg-card p-8">
+        <div className="reveal-on-scroll mt-16 rounded-2xl border border-border/60 bg-gradient-to-b from-card to-surface p-8">
           <h2 className="font-display text-2xl font-bold">{t("plans.howTitle")}</h2>
           <div className="mt-6 grid gap-6 md:grid-cols-3">
             {[
               { title: t("plans.step1Title"), desc: t("plans.step1Desc") },
               { title: t("plans.step2Title"), desc: t("plans.step2Desc") },
               { title: t("plans.step3Title"), desc: t("plans.step3Desc") },
-            ].map((s) => (
-              <div key={s.title}>
+            ].map((s, i) => (
+              <div key={s.title} className="reveal-on-scroll" style={{ transitionDelay: `${i * 90}ms` }}>
                 <h3 className="font-semibold text-primary">{s.title}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{s.desc}</p>
               </div>
             ))}
           </div>
         </div>
+
       </section>
 
       <PlansLanding
