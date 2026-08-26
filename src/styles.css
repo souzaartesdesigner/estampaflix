@@ -107,11 +107,14 @@
     color-scheme: dark;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    overscroll-behavior-y: none;
   }
   body {
     position: relative;
     overflow-x: hidden;
+    overscroll-behavior-y: none;
     width: 100%;
+    min-height: 100dvh;
     background-color: var(--color-background);
     background-image: var(--gradient-hero);
     background-attachment: fixed;

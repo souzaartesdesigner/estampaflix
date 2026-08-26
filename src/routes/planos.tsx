@@ -117,15 +117,12 @@ function Planos() {
 
   return (
     <SiteLayout>
-      <section className="relative overflow-hidden">
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute left-1/2 top-[-8rem] h-72 w-72 -translate-x-1/2 rounded-full bg-primary/25 blur-3xl animate-float-orb" />
-          <div className="absolute right-[-6rem] top-24 h-64 w-64 rounded-full bg-primary/15 blur-3xl animate-float-orb [animation-delay:-4s]" />
-          <div className="absolute left-[-6rem] top-40 h-56 w-56 rounded-full bg-primary/10 blur-3xl animate-float-orb [animation-delay:-8s]" />
-        </div>
+      <section className="relative">
         <div className="mx-auto w-full max-w-5xl px-4 py-10 text-center sm:py-16">
           <Badge className="mb-4 animate-fade-in bg-primary/15 text-primary border-primary/30">{t("plans.badge")}</Badge>
-          <h1 className="animate-fade-in font-display text-3xl font-black sm:text-4xl md:text-5xl">{t("plans.title")}</h1>
+          <h1 className="animate-fade-in font-display text-3xl font-black sm:text-4xl md:text-5xl">
+            Junte-se ao <span className="text-primary">Premium</span>
+          </h1>
           <p className="mx-auto mt-3 max-w-xl animate-fade-in text-sm text-muted-foreground sm:text-base">{t("plans.subtitle")}</p>
         </div>
       </section>

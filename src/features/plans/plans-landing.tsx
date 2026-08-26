@@ -95,6 +95,7 @@ export function PlansLanding({ onScrollToPlans }: { onScrollToPlans: () => void 
       <TestimonialsSection />
 
       <section className="mx-auto w-full max-w-6xl px-4 py-12 sm:py-16">
+        <h2 className="mb-8 text-center font-display text-2xl font-black tracking-tight sm:text-3xl">Benefícios</h2>
         <div className="grid gap-5 md:grid-cols-3">
           {PERKS.map((perk) => (
             <div
