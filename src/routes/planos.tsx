@@ -84,6 +84,8 @@ function Planos() {
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const plansRef = useRef<HTMLDivElement | null>(null);
   const { t } = useI18n();
+  useReveal();
+
 
   async function handleSubscribe(planId: string) {
     setLoadingId(planId);
