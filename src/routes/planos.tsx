@@ -113,25 +113,36 @@ function Planos() {
 
   return (
     <SiteLayout>
-      <section className="relative">
+      <section className="relative overflow-hidden">
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute left-1/2 top-[-8rem] h-72 w-72 -translate-x-1/2 rounded-full bg-primary/25 blur-3xl animate-float-orb" />
+          <div className="absolute right-[-6rem] top-24 h-64 w-64 rounded-full bg-primary/15 blur-3xl animate-float-orb [animation-delay:-4s]" />
+          <div className="absolute left-[-6rem] top-40 h-56 w-56 rounded-full bg-primary/10 blur-3xl animate-float-orb [animation-delay:-8s]" />
+        </div>
         <div className="mx-auto w-full max-w-5xl px-4 py-10 text-center sm:py-16">
-          <Badge className="mb-4 bg-primary/15 text-primary border-primary/30">{t("plans.badge")}</Badge>
-          <h1 className="font-display text-3xl font-black sm:text-4xl md:text-5xl">{t("plans.title")}</h1>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">{t("plans.subtitle")}</p>
+          <Badge className="mb-4 animate-fade-in bg-primary/15 text-primary border-primary/30">{t("plans.badge")}</Badge>
+          <h1 className="animate-fade-in font-display text-3xl font-black sm:text-4xl md:text-5xl">{t("plans.title")}</h1>
+          <p className="mx-auto mt-3 max-w-xl animate-fade-in text-sm text-muted-foreground sm:text-base">{t("plans.subtitle")}</p>
         </div>
       </section>
 
-      <section ref={plansRef} className="mx-auto w-full max-w-6xl scroll-mt-24 px-3 py-8 sm:px-4 sm:py-12">
+      <section ref={plansRef} className="relative mx-auto w-full max-w-6xl scroll-mt-24 px-3 py-8 sm:px-4 sm:py-12">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {plans.map((plan, idx) => (
             <div
               key={plan.id}
-              className={`relative flex flex-col rounded-2xl border p-5 sm:p-6 ${
-                idx === 1 ? "border-primary/60 bg-card shadow-brand" : "border-border/60 bg-card"
+              onMouseMove={(e) => {
+                const r = e.currentTarget.getBoundingClientRect();
+                e.currentTarget.style.setProperty("--mx", `${e.clientX - r.left}px`);
+                e.currentTarget.style.setProperty("--my", `${e.clientY - r.top}px`);
+              }}
+              style={{ transitionDelay: `${idx * 90}ms` }}
+              className={`plan-card reveal-on-scroll relative flex flex-col rounded-2xl border p-5 sm:p-6 ${
+                idx === 1 ? "border-primary/60 bg-gradient-to-b from-card to-surface shadow-brand" : "border-border/60 bg-card"
               }`}
             >
               {idx === 1 && (
-                <Badge className="absolute right-4 top-4 bg-gradient-brand text-brand-foreground border-0"><Zap className="mr-1 h-3 w-3" /> {t("plans.popular")}</Badge>
+                <Badge className="absolute right-4 top-4 bg-gradient-brand text-brand-foreground border-0 shadow-glow"><Zap className="mr-1 h-3 w-3" /> {t("plans.popular")}</Badge>
               )}
               <h2 className="font-display text-xl font-bold">{plan.name}</h2>
               <p className="mt-1 text-sm text-muted-foreground">{plan.description}</p>
@@ -139,10 +150,12 @@ function Planos() {
                 <span className="text-3xl font-black sm:text-4xl">{formatBRL(plan.price_cents)}</span>
                 <span className="text-sm text-muted-foreground">{t("plans.perMonth")}</span>
               </div>
-              <div className="mt-2 text-sm font-medium text-primary">{plan.monthly_credits} {t("plans.downloadsPerMonth")}</div>
+              <div className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-sm font-medium text-primary ring-1 ring-primary/20">
+                <Zap className="h-3.5 w-3.5" /> {plan.monthly_credits} {t("plans.downloadsPerMonth")}
+              </div>
               <ul className="mt-4 flex flex-1 flex-col gap-2 text-sm">
-                {(plan.features as string[]).map((f: string) => (
-                  <li key={f} className="flex items-start gap-2">
+                {(Array.isArray(plan.features) ? (plan.features as string[]) : []).map((f: string) => (
+                  <li key={f} className="flex items-start gap-2 transition-transform duration-200 hover:translate-x-1">
                     <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" /> {f}
                   </li>
                 ))}
@@ -150,7 +163,7 @@ function Planos() {
               <Button
                 onClick={() => handleSubscribe(plan.id)}
                 disabled={loadingId !== null}
-                className="mt-6 bg-gradient-brand text-brand-foreground shadow-brand hover:opacity-90"
+                className="mt-6 bg-gradient-brand text-brand-foreground shadow-brand transition-transform hover:-translate-y-0.5 hover:opacity-90"
               >
                 {loadingId === plan.id ? (
                   <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t("plans.redirecting")}</>
@@ -162,6 +175,7 @@ function Planos() {
             </div>
           ))}
         </div>
+
 
         <div className="mt-16 rounded-2xl border border-border/60 bg-card p-8">
           <h2 className="font-display text-2xl font-bold">{t("plans.howTitle")}</h2>
