@@ -1,11 +1,6 @@
 import { CheckCircle2, Download, FileStack, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { TestimonialsSection } from "@/features/home/testimonials-section";
 
 const AUDIENCE = [
@@ -30,7 +25,7 @@ const AUDIENCE = [
 const PERKS = [
   {
     icon: Download,
-    title: "Download Ilimitado e Imediato",
+    title: "Downloads Imediatos",
     desc: "Acesso instantâneo a todas as artes premium logo após a confirmação.",
   },
   {
@@ -60,7 +55,7 @@ const FAQ = [
   },
   {
     q: "Qual formato vêm os arquivos?",
-    a: "Os arquivos são entregues em alta resolução (300 DPI) nos principais formatos do mercado: PSD, AI, CDR, PNG transparente e PDF, conforme a arte escolhida.",
+    a: "Os arquivos são entregues em alta resolução, nos principais formatos do mercado: PSD, AI, CDR, PNG transparente e PDF, conforme a arte escolhida.",
   },
 ];
 
@@ -123,12 +118,8 @@ export function PlansLanding({ onScrollToPlans }: { onScrollToPlans: () => void 
         <Accordion type="single" collapsible className="mt-8 w-full">
           {FAQ.map((item) => (
             <AccordionItem key={item.q} value={item.q} className="border-border/60">
-              <AccordionTrigger className="text-left text-sm font-semibold sm:text-base">
-                {item.q}
-              </AccordionTrigger>
-              <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-                {item.a}
-              </AccordionContent>
+              <AccordionTrigger className="text-left text-sm font-semibold sm:text-base">{item.q}</AccordionTrigger>
+              <AccordionContent className="text-sm leading-relaxed text-muted-foreground">{item.a}</AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
