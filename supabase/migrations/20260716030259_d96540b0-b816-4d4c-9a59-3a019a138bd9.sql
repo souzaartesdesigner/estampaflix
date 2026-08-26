@@ -133,11 +133,11 @@ CREATE POLICY "Plans admin write" ON public.plans FOR ALL TO authenticated USING
 
 INSERT INTO public.plans (tier, name, description, price_cents, monthly_credits, features, sort_order) VALUES
   ('lite', 'Premium Lite', 'Ideal para começar. 10 downloads por mês.', 7990, 10,
-    '["10 downloads mensais","Acesso a todo o catálogo","Novas artes toda semana","Uso comercial permitido"]'::jsonb, 1),
+    '["10 downloads mensais","Acesso a todo o catálogo","Novas artes toda semana","Uso comercial permitido", "Gerador de Catálogo"]'::jsonb, 1),
   ('pro',  'Premium Pro',  'Para quem produz em ritmo intenso. 20 downloads por mês.', 13590, 20,
-    '["20 downloads mensais","Acesso a todo o catálogo","Coleções exclusivas","Uso comercial permitido","Suporte prioritário"]'::jsonb, 2),
+    '["20 downloads mensais","Acesso a todo o catálogo","Coleções exclusivas","Uso comercial permitido","Gerador de Catálogo"]'::jsonb, 2),
   ('plus', 'Premium Plus', 'Nosso plano mais completo. 30 downloads por mês.', 17990, 30,
-    '["30 downloads mensais","Acesso a todo o catálogo","Coleções exclusivas","Lançamentos antecipados","Uso comercial permitido","Suporte prioritário"]'::jsonb, 3);
+    '["30 downloads mensais","Acesso a todo o catálogo","Coleções exclusivas","Lançamentos antecipados","Uso comercial permitido",""Gerador de Catálogo""]'::jsonb, 3);
 
 -- ============ SUBSCRIPTIONS ============
 CREATE TABLE public.subscriptions (
