@@ -12,6 +12,7 @@ import { brlToCents } from "@/lib/format";
 
 import { ArtworkForm } from "@/features/admin/artes/artwork-form";
 import { ArtworksTable } from "@/features/admin/artes/artworks-table";
+import { VisualIndexPanel } from "@/features/admin/artes/visual-index-panel";
 
 export const Route = createFileRoute("/_authenticated/admin/artes")({ component: Artes });
 
@@ -155,6 +156,8 @@ function Artes() {
           </Button>
         </div>
       </div>
+
+      <VisualIndexPanel />
 
       <div className="grid gap-4 md:grid-cols-4">
         <div className="relative md:col-span-2">
