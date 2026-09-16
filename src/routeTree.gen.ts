@@ -24,6 +24,7 @@ import { Route as EsqueciASenhaRouteImport } from './routes/esqueci-a-senha'
 import { Route as DownloadsRouteImport } from './routes/downloads'
 import { Route as CobrancaRouteImport } from './routes/cobranca'
 import { Route as CadastroRouteImport } from './routes/cadastro'
+import { Route as BuscaVisualRouteImport } from './routes/busca-visual'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CatalogoIndexRouteImport } from './routes/catalogo.index'
@@ -136,6 +137,11 @@ const CobrancaRoute = CobrancaRouteImport.update({
 const CadastroRoute = CadastroRouteImport.update({
   id: '/cadastro',
   path: '/cadastro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuscaVisualRoute = BuscaVisualRouteImport.update({
+  id: '/busca-visual',
+  path: '/busca-visual',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -348,6 +354,7 @@ const AuthenticatedAdminPedidosIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/busca-visual': typeof BuscaVisualRoute
   '/cadastro': typeof CadastroRoute
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
@@ -402,6 +409,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/busca-visual': typeof BuscaVisualRoute
   '/cadastro': typeof CadastroRoute
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
@@ -457,6 +465,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/busca-visual': typeof BuscaVisualRoute
   '/cadastro': typeof CadastroRoute
   '/cobranca': typeof CobrancaRoute
   '/downloads': typeof DownloadsRoute
@@ -513,6 +522,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/busca-visual'
     | '/cadastro'
     | '/cobranca'
     | '/downloads'
@@ -567,6 +577,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/busca-visual'
     | '/cadastro'
     | '/cobranca'
     | '/downloads'
@@ -621,6 +632,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/busca-visual'
     | '/cadastro'
     | '/cobranca'
     | '/downloads'
@@ -677,6 +689,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  BuscaVisualRoute: typeof BuscaVisualRoute
   CadastroRoute: typeof CadastroRoute
   CobrancaRoute: typeof CobrancaRoute
   DownloadsRoute: typeof DownloadsRoute
@@ -812,6 +825,13 @@ declare module '@tanstack/react-router' {
       path: '/cadastro'
       fullPath: '/cadastro'
       preLoaderRoute: typeof CadastroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/busca-visual': {
+      id: '/busca-visual'
+      path: '/busca-visual'
+      fullPath: '/busca-visual'
+      preLoaderRoute: typeof BuscaVisualRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -1153,6 +1173,7 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  BuscaVisualRoute: BuscaVisualRoute,
   CadastroRoute: CadastroRoute,
   CobrancaRoute: CobrancaRoute,
   DownloadsRoute: DownloadsRoute,
