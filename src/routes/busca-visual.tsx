@@ -4,7 +4,7 @@ import { ImageOff, Sparkles } from "lucide-react";
 import { SiteLayout } from "@/components/site-layout";
 import { ArtworkCard } from "@/components/artwork-card";
 import { Button } from "@/components/ui/button";
-import { readVisualSearch, type VisualSearchPayload } from "@/lib/visual-search-store";
+import { readVisualSearch, VISUAL_SEARCH_EVENT, type VisualSearchPayload } from "@/lib/visual-search-store";
 
 export const Route = createFileRoute("/busca-visual")({
   head: () => ({
@@ -33,8 +33,13 @@ function VisualSearchPage() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    setPayload(readVisualSearch());
-    setReady(true);
+    const sync = () => {
+      setPayload(readVisualSearch());
+      setReady(true);
+    };
+    sync();
+    window.addEventListener(VISUAL_SEARCH_EVENT, sync);
+    return () => window.removeEventListener(VISUAL_SEARCH_EVENT, sync);
   }, []);
 
   const results = payload?.results ?? [];

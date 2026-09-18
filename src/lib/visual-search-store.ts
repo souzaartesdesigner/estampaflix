@@ -21,9 +21,16 @@ export type VisualSearchPayload = {
 
 const KEY = "estampaflix:visual-search";
 
+export const VISUAL_SEARCH_EVENT = "estampaflix:visual-search-updated";
+
 export function saveVisualSearch(payload: VisualSearchPayload) {
   try {
     sessionStorage.setItem(KEY, JSON.stringify(payload));
+  } catch {
+    /* ignore */
+  }
+  try {
+    window.dispatchEvent(new CustomEvent(VISUAL_SEARCH_EVENT));
   } catch {
     /* ignore */
   }
