@@ -49,7 +49,7 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
       return Number(data ?? 0);
     },
   });
-  const freeLimitReached = isFree && !!session && !hasActiveSub && freeToday >= 5 && !owned;
+  const freeLimitReached = isFree && !!session && !hasActiveSub && freeToday >= 2 && !owned;
   const [planDialogOpen, setPlanDialogOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const shareUrl = typeof window !== "undefined" ? window.location.href : `https://estampaflix.com/artes/${artwork.slug}`;
@@ -100,7 +100,7 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
     },
     onError: (err: any) => {
       const msg = err.message || "";
-      if (msg.includes("daily_limit_reached")) toast.error("Você atingiu o limite de 5 downloads gratuitos hoje. Assine um plano para downloads ilimitados.");
+      if (msg.includes("daily_limit_reached")) toast.error("Você atingiu o limite de 2 downloads gratuitos hoje. Assine um plano para downloads ilimitados.");
       else if (msg.includes("no_credits")) toast.error(t("product.errNoCredits"));
       else if (msg.includes("no_active_subscription")) toast.error(t("product.errNoSub"));
       else if (msg.includes("not_authenticated")) { toast.error(t("product.errLogin")); navigate({ to: "/login" }); }
@@ -168,8 +168,8 @@ export function ArtworkActions({ artwork, session, sub, owned, header }: Props) 
             ) : (
               <p className={`text-center text-xs ${freeLimitReached ? "text-warning" : "text-muted-foreground"}`}>
                 {freeLimitReached
-                  ? "Limite diário atingido (5/5)."
-                  : `${freeToday}/5 downloads gratuitos usados hoje.`}{" "}
+                  ? "Limite diário atingido (2/2)."
+                  : `${freeToday}/2 downloads gratuitos usados hoje.`}{" "}
                 <Link to="/planos" className="text-primary underline">{t("product.seePlans")}</Link>
               </p>
             )}
