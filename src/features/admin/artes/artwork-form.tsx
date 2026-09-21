@@ -443,7 +443,7 @@ export function ArtworkForm({ open, onOpenChange, editing, categories }: Props) 
               onChange={(e) => setForm({ ...form, license_type: e.target.value })}
             >
               <option value="premium">Premium (venda / créditos)</option>
-              <option value="free">Grátis (limite de 5/dia sem assinatura)</option>
+              <option value="free">Grátis (limite de 2/dia sem assinatura)</option>
             </select>
           </div>
 
